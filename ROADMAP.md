@@ -11,22 +11,21 @@
     - [ ] overheating of systems
   * code:
     - [ ] allow component interaction (for crew <-> life support)
-    - [ ] enable ship types in SpawnShip Event
     - [ ] separate shield and shield generator, hull not a system
-    - [ ] sort energy management code
-    - [ ] unify random
+    - [ ] rework position plotting
 
 ## Version 0.5 (combat update)
   * UI:
     - [ ] waypoints for move command
     - [ ] show currently active targets
-    - [ ] smoother scrolling
     - [ ] pause game
   * game:
     - [ ] change weapon modes into actual ammo types
     - [ ] rework damage model
-  * code:
-    - [ ] do not associate a physics::Object with a game object.
+    - [ ] shield radius
+  * physics:
+    - [ ] more collision tests
+    - [ ] hit scans
   * AI:
     - [ ] switch ammo based on target status
     - [ ] may focus fire on single target
@@ -34,9 +33,11 @@
     
 ## Version 0.6 (menu update)
   * UI:
-    - main menu
+    - [ ] main menu
   * game:
-    - load levels from xml
+    - [ ] load levels from xml
+    - [ ] custom combat
+    - [ ] add a few ship types
 
 ## Unspecified
 * optimizations:
@@ -47,8 +48,8 @@
   - physics world as ECS?
   - inheritance instead of variant for commands
   - collision handling: use current positions.
-  - ship - ship collisions
 * gameplay
+  - ship - ship collisions
   - increase weapon accuracy when repeatedly firing on
     same target.
   - Crew "component"

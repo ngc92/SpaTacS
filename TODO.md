@@ -1,0 +1,4 @@
+- unify random
+- sort energy management code
+- do not associate a physics::Object with a game object.
+- smoother scrolling
