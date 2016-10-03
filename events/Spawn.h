@@ -32,11 +32,12 @@ namespace events
     class SpawnShip : public IEvent
     {
     public:
-        SpawnShip(std::uint64_t team, std::string name, const length_vec& position);
+        SpawnShip(std::uint64_t team, std::string name, std::string type, const length_vec& position);
         virtual void apply(EventContext& context) const override;
     private:
         std::uint64_t mTeam;
         std::string mName;
+        std::string mType;
         length_vec mPosition;
     };
 }

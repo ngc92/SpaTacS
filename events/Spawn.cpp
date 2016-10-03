@@ -33,9 +33,10 @@ void SpawnProjectile::apply(EventContext& context) const
 
 
 
-SpawnShip::SpawnShip(std::uint64_t team, std::string name, const length_vec& position) :
+SpawnShip::SpawnShip(std::uint64_t team, std::string name, std::string type, const length_vec& position) :
     mTeam(team),
     mName(std::move(name)),
+    mType(std::move(type)),
     mPosition(position)
 {
 
@@ -44,7 +45,7 @@ SpawnShip::SpawnShip(std::uint64_t team, std::string name, const length_vec& pos
 void SpawnShip::apply(EventContext& context) const
 {
     boost::property_tree::ptree tree;
-    boost::property_tree::xml_parser::read_xml("data/ship.xml", tree);
+    boost::property_tree::xml_parser::read_xml("data/"+mType+".xml", tree);
 
     auto ship = core::Starship(mTeam, mName, tree);
     auto id = context.state.getNextFreeID();
