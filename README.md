@@ -1,0 +1,2 @@
+# SpaTacS
+space tactics simulator
