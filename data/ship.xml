@@ -1,0 +1,33 @@
+<engine>
+    <thrust>10000</thrust>
+    <energy_consumption>2</energy_consumption>
+    <HP>1</HP>
+</engine>
+
+<shield>
+    <strength>5.0</strength>
+    <recharge>0.2</recharge>
+    <efficiency>0.2</efficiency>
+    <dissipation>1</dissipation>
+    <HP>1</HP>
+</shield>
+
+<weapon>
+    <HE_strength>1</HE_strength>
+    <AP_strength>1</AP_strength>
+    <SO_strength>1</SO_strength>
+    <precision>30</precision>
+    <rpm>60</rpm>
+    <muzzle_velocity>2.5</muzzle_velocity>
+    <HP>1</HP>
+</weapon>
+
+<power_plant>
+    <power>5</power>
+    <HP>1</HP>
+</power_plant>
+
+<hull>
+	<armour>5</armour>
+    <HP>1</HP>
+</hull>
