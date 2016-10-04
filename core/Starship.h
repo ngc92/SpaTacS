@@ -35,16 +35,19 @@ namespace spatacs
             /// Ship info
             uint64_t team() const;
             const std::string& name() const;
+
+            float max_hp() const;
         protected:
             ShipData() = default;
             ShipData(std::uint64_t team, std::string name);
             ~ShipData() = default;
 
             float mHitPoints = 10;
+            float mMaxHitPoints = 10;
 
             // Energy management status
-            float mEnergyUsed     = 0;
-            float mEnergyProduced = 0;
+            double mEnergyUsed     = 0;
+            double mEnergyProduced = 0;
 
         private:
             std::uint64_t mTeam = 0;
@@ -73,8 +76,8 @@ namespace spatacs
             void setHP( float hp );
 
             /// energy
-            float producedEnergy() const;
-            float usedEnergy() const;
+            double producedEnergy() const;
+            double usedEnergy() const;
 
             /// Subcomponents
             // engine interface

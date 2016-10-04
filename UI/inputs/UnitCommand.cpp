@@ -15,6 +15,9 @@
 #include "core/components/IWeapon.h"
 #include <irrlicht/ICameraSceneNode.h>
 #include <iostream>
+#include "UI/gfx/ShipStatusUI.h"
+#include "core/components/ShieldGenerator.h"
+#include "core/components/Engine.h"
 
 using namespace spatacs;
 
@@ -34,9 +37,8 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv)
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mDistanceMarker = txt;
 
-    txt = guienv->addStaticText(L"", irr::core::recti(10, 10, 100, 90));
-    txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
-    mShipInfo = txt;
+    auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 10, 100, 120));
+    mShipInfo = sstat;
 
     txt = guienv->addStaticText(L"", irr::core::recti(700, 10, 790, 70));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
@@ -86,12 +88,18 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         std::wstringstream stream;
         stream << std::fixed << std::setprecision(1);
         stream << ship.name().c_str() << ":\n";
-        stream << " shield: " << ship.shield_strength().current << "/" << ship.shield_strength().max << "\n";
-        stream << " hull: " << ship.hull_status().current << "/" << ship.hull_status().max << "\n";
         stream << " hp: "     << ship.HP() << "\n";
         stream << " egy: " << ship.usedEnergy() / 0.1f << "/" << ship.producedEnergy() / 0.1f << "\n";
         stream << " mode: " << ship.weapon(0).mode() << "\n";
         mShipInfo->setText( stream.str().c_str() );
+        mShipInfo->setShipName( ship.name() );
+        mShipInfo->clearSystems();
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield generator", ship.shield().hp(), ship.shield().max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"engine", ship.engine().hp(), ship.engine().max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield_strength().current, ship.shield_strength().max} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"structure",  ship.HP(), ship.max_hp()} );
+        /// \todo power plant
     }
 
     if(mMode == MOVE)

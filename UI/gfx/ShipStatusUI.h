@@ -20,10 +20,10 @@ namespace irr
             float max_hp;
         };
 
-        class SystemStatusUI : public IGUIElement
+        class ShipStatusUI : public IGUIElement
         {
         public:
-            SystemStatusUI(IGUIEnvironment* environment, IGUIElement* parent, s32 id, const core::rect <s32>& rectangle);
+            ShipStatusUI(IGUIEnvironment* environment, IGUIElement* parent, s32 id, const core::rect <s32>& rectangle);
 
             virtual void draw() override;
 
@@ -33,7 +33,10 @@ namespace irr
 
             void clearSystems();
             void pushSystem( SystemStatus sys );
+            void setShipName(std::string name);
         private:
+
+            std::string mShipName;
             std::vector<SystemStatus> mSystems;
         };
     }

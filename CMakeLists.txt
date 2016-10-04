@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.5)
 project(SpaTacS)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -101,7 +101,7 @@ set(UI_SOURCE_FILES
         UI/AIPlayer.cpp
         UI/AIPlayer.h
         UI/inputs/UnitSelection.cpp
-        UI/inputs/UnitSelection.h)
+        UI/inputs/UnitSelection.h UI/gfx/ShipStatusUI.cpp UI/gfx/ShipStatusUI.h)
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}

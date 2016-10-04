@@ -19,6 +19,8 @@ namespace spatacs
 
             virtual void onStep() { };
 
+            // interaction with the energy system
+
             /// energy step. Returns the energy that remains in the cache and empties it.
             double getExcessEnergy() const;
 
@@ -31,9 +33,7 @@ namespace spatacs
             /// gets the priority for energy supply to this component
             float energyPriority() const;
 
-            /// sets the priority for energy supply to this component.
-            /// If p <= 1, p is set to 1.
-            void setEnergyPriority( float p );
+            // hitpoints stuff
 
             /// get the current hit points
             float hp() const;
@@ -45,6 +45,10 @@ namespace spatacs
             /// \return leftover damage.
             float dealDamage( float dmg );
 
+            // user interaction
+            /// sets the priority for energy supply to this component.
+            /// If p <= 1, p is set to 1.
+            void setEnergyPriority( float p );
 
             virtual IComponent* clone() const = 0;
 

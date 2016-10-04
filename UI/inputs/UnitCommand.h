@@ -10,6 +10,14 @@
 #include "UI/IInputMode.h"
 #include "vec.h"
 
+namespace irr
+{
+    namespace gui
+    {
+        class ShipStatusUI;
+    }
+}
+
 namespace spatacs {
     namespace ui {
         class UnitCommand : public IInputMode
@@ -36,9 +44,9 @@ namespace spatacs {
             length_t mTargetY = 0.0_km;
             length_t mBaseY   = 0.0_km;
 
-            irr::gui::IGUIElement* mDistanceMarker = nullptr;
-            irr::gui::IGUIElement* mShipInfo = nullptr;
-            irr::gui::IGUIElement* mTargetInfo = nullptr;
+            irr::gui::IGUIElement*    mDistanceMarker = nullptr;
+            irr::gui::ShipStatusUI*   mShipInfo       = nullptr;
+            irr::gui::IGUIElement*    mTargetInfo     = nullptr;
 
             enum Mode
             {ATTACK, MOVE} mMode;
