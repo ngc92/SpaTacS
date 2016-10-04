@@ -46,7 +46,8 @@ namespace spatacs {
             virtual void onLeftClick(  ray_t ray ) {}
             virtual void onRightClick( ray_t ray ) {}
             virtual void onWheel( float scroll )   {}
-            virtual void onKeyPress( irr::EKEY_CODE key ) { };
+            virtual void onKeyPress( irr::EKEY_CODE key )   { };
+            virtual void onKeyRelease( irr::EKEY_CODE key ) { };
             virtual void draw( irr::video::IVideoDriver*) { };
 
         protected:

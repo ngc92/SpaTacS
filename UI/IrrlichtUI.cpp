@@ -107,6 +107,10 @@ private:
         {
             if(mInputMode)
                 mInputMode->onKeyPress(key.Key);
+        } else
+        {
+            if(mInputMode)
+                mInputMode->onKeyRelease(key.Key);
         }
         return false;
     }
