@@ -88,7 +88,7 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         std::wstringstream stream;
         stream << std::fixed << std::setprecision(1);
         stream << ship.name().c_str() << ":\n";
-        stream << " hp: "     << ship.HP() << "\n";
+        stream << " hp: "     << ship.hp() << "\n";
         stream << " egy: " << ship.usedEnergy() / 0.1f << "/" << ship.producedEnergy() / 0.1f << "\n";
         stream << " mode: " << ship.weapon(0).mode() << "\n";
         mShipInfo->setText( stream.str().c_str() );
@@ -98,7 +98,7 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         mShipInfo->pushSystem( irr::gui::SystemStatus{"engine", ship.engine().hp(), ship.engine().max_hp()} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield_strength().current, ship.shield_strength().max} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"structure",  ship.HP(), ship.max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
         /// \todo power plant
     }
 
@@ -113,7 +113,7 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         stream << target.name().c_str() << ":\n";
         stream << " shield: " << target.shield_strength().current << "/" << target.shield_strength().max << "\n";
         stream << " hull: "   << target.hull_status().current     << "/" << target.hull_status().max << "\n";
-        stream << " hp: "     << target.HP() << "\n";
+        stream << " hp: "     << target.hp() << "\n";
         auto dst = distance(ship, target);
         stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius().value * target.radius().value) * 100 << "%\n";
         mTargetInfo->setText( stream.str().c_str() );

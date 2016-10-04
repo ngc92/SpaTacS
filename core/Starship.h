@@ -36,14 +36,21 @@ namespace spatacs
             uint64_t team() const;
             const std::string& name() const;
 
-            float max_hp() const;
+            double max_hp() const;
+
+            /// energy
+            double producedEnergy() const;
+            double usedEnergy() const;
+
+            double hp() const;
+
         protected:
             ShipData() = default;
             ShipData(std::uint64_t team, std::string name);
             ~ShipData() = default;
 
-            float mHitPoints = 10;
-            float mMaxHitPoints = 10;
+            double mHitPoints = 10;
+            double mMaxHitPoints = 10;
 
             // Energy management status
             double mEnergyUsed     = 0;
@@ -51,7 +58,7 @@ namespace spatacs
 
         private:
             std::uint64_t mTeam = 0;
-            std::string mName;
+            std::string   mName;
         };
 
         class Starship : public GameObject, public ShipData {
@@ -68,16 +75,11 @@ namespace spatacs
             // Ship from definition
             Starship(std::uint64_t team, std::string name, const boost::property_tree::ptree& data);
 
-            float HP() const;
             bool alive() const;
 
             /// called at the end of a game step.
             void onStep();
             void setHP( float hp );
-
-            /// energy
-            double producedEnergy() const;
-            double usedEnergy() const;
 
             /// Subcomponents
             // engine interface

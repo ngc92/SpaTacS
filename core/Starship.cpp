@@ -141,11 +141,6 @@ IWeapon& Starship::getWeapon( std::size_t id )
     return *mSubSystems->mArmament.at(id);
 }
 
-float Starship::HP() const
-{
-    return mHitPoints;
-}
-
 void Starship::setHP(float hp)
 {
     mHitPoints = hp;
@@ -226,16 +221,6 @@ SystemStatus Starship::shield_strength() const
     return SystemStatus{ shield().shield(), shield().max_shield() };
 }
 
-double Starship::producedEnergy() const
-{
-    return mEnergyProduced;
-}
-
-double Starship::usedEnergy() const
-{
-    return mEnergyUsed;
-}
-
 SystemStatus Starship::hull_status() const {
     return SystemStatus{hull().armour(), hull().max_armour()};
 }
@@ -279,7 +264,22 @@ const std::string& ShipData::name() const
     return mName;
 }
 
-float ShipData::max_hp() const
+double ShipData::max_hp() const
 {
     return mMaxHitPoints;
+}
+
+double ShipData::producedEnergy() const
+{
+    return mEnergyProduced;
+}
+
+double ShipData::usedEnergy() const
+{
+    return mEnergyUsed;
+}
+
+double ShipData::hp() const
+{
+    return mHitPoints;
 }

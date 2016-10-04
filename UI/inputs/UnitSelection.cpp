@@ -117,7 +117,7 @@ void UnitSelection::draw(irr::video::IVideoDriver* driver)
         ws << std::fixed << std::setprecision(1);
         ws << L"Ship: " << hover->id() << ":\n";
         auto status = hover->shield_strength();
-        ws << " " << status.current << "/" << hover->HP() << "\n";
+        ws << " " << status.current << "/" << hover->hp() << "\n";
         mHoverUI->setText(ws.str().c_str());
     }
 
@@ -142,4 +142,8 @@ void UnitSelection::onKeyPress(irr::EKEY_CODE key)
 void UnitSelection::onKeyRelease(irr::EKEY_CODE key)
 {
     mKeysDown.erase(key);
+    if(mChildMode)
+    {
+        mChildMode->onKeyRelease(key);
+    }
 }

@@ -88,7 +88,7 @@ namespace spatacs {
                     const auto& ss = mState.getShip(ship);
                     std::cout << "Ship " << ss.id() << ":\n";
                     std::cout << " pos:  " << ss.position() << "\n";
-                    std::cout << " HP:   " << ss.HP() << "\n";
+                    std::cout << " HP:   " << ss.hp() << "\n";
                     std::cout << " team: " << ss.team() << "\n";
                     std::cout << " shield: " << ss.shield().shield() << "\n";
                     std::cout << p1;
@@ -112,7 +112,7 @@ namespace spatacs {
             auto sp = std::setprecision(2);
             std::cout << "ships: \n";
             for (auto& ship : state.getShips()) {
-                std::cout << ship.id() << ": " << ship.team() << " " << sp << ship.HP() << " @ " << ship.position()
+                std::cout << ship.id() << ": " << ship.team() << " " << sp << ship.hp() << " @ " << ship.position()
                           << "\n";
             }
         }
