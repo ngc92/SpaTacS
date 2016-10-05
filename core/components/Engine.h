@@ -29,6 +29,7 @@ namespace core
         // engine config
         force_t mMaxThrust{1.0};
         float mEnergyConsumption = 2;
+        float mFuelConsumption   = 1;
 
         // engine status
         force_t mUnusedThrust{1.0};

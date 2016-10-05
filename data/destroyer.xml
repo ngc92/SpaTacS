@@ -1,6 +1,7 @@
 <engine>
     <thrust>10000</thrust>
     <energy_consumption>2</energy_consumption>
+    <fuel_consumption>1</fuel_consumption>
     <HP>1</HP>
 </engine>
 

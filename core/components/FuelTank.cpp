@@ -10,7 +10,7 @@ using namespace core;
 
 FuelTank::FuelTank(const ptree& props) :
     IComponent(props),
-    mFuelCapacity(props.get<double>("capacity")),
+    mFuelCapacity(props.get<double>("capacity") * 1000 /* tons */),
     mCurrentFuel( mFuelCapacity )
 {
 

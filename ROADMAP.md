@@ -9,9 +9,11 @@
     - [ ] LifeSupport component
     - [ ] fuel and power consumption curves
     - [ ] overheating of systems
+  * physics:
+    - [ ] hierarchy
   * code:
-    - [ ] allow component interaction (for crew <-> life support)
-    - [ ] hull not a system
+    - [x] allow component interaction (for crew <-> life support)
+    - [x] hull not a system
     - [ ] rework position plotting
 
 ## Version 0.5 (combat update)
