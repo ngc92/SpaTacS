@@ -16,7 +16,7 @@ namespace spatacs
         class RayWeapon : public IWeapon
         {
         public:
-            void onStep();
+            void onStep(Starship& ship);
 
             ~RayWeapon() override = default;
 

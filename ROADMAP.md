@@ -4,14 +4,14 @@
     - [ ] shield indicator
     - [ ] energy management
   * game:
-    - [ ] FuelTank component
+    - [x] FuelTank component
     - [ ] PowerBank component
     - [ ] LifeSupport component
     - [ ] fuel and power consumption curves
     - [ ] overheating of systems
   * code:
     - [ ] allow component interaction (for crew <-> life support)
-    - [ ] separate shield and shield generator, hull not a system
+    - [ ] hull not a system
     - [ ] rework position plotting
 
 ## Version 0.5 (combat update)

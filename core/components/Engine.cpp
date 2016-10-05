@@ -10,7 +10,7 @@ namespace spatacs
 {
     namespace  core
     {
-        void Engine::onStep()
+        void Engine::onStep(Starship& ship)
         {
             auto need_recharge = max_thrust() - mUnusedThrust;
             if(need_recharge < force_t(0))

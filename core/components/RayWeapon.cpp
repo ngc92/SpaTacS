@@ -22,7 +22,7 @@ namespace spatacs
             return mStrength * hit;
         }
 
-        void RayWeapon::onStep()
+        void RayWeapon::onStep(Starship& ship)
         {
             if(mRecharging) {
                 if(mCharge < mBurstLength)

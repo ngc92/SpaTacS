@@ -21,7 +21,7 @@ float ShieldGenerator::max_shield() const
     return mMaximumShieldStrength;
 }
 
-void ShieldGenerator::onStep()
+void ShieldGenerator::onStep(Starship& ship)
 {
     // shield decay
     float decay = std::exp( std::log(1-mDecayPerSecond)*0.1f);
@@ -47,14 +47,6 @@ ShieldGenerator& ShieldGenerator::setShield(float s)
 ShieldGenerator* ShieldGenerator::clone() const
 {
     return new ShieldGenerator(*this);
-}
-
-float ShieldGenerator::getDeflectionChance(const Vec& displacement, const Vec& impact_impulse) const
-{
-    Vec normal = parallel(impact_impulse, displacement);
-    float nimp = length(normal);
-    float rdsp = nimp / mCurrentShieldStrength;
-    return std::tanh( .1f / rdsp );
 }
 
 ShieldGenerator::ShieldGenerator(const ptree& props):

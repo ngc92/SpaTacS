@@ -16,7 +16,7 @@ namespace spatacs
         class ProjectileWeapon : public IWeapon
         {
         public:
-            void onStep();
+            void onStep(Starship& ship);
 
             ProjectileWeapon( const ptree& props );
             ~ProjectileWeapon() = default;

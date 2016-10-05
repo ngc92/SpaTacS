@@ -16,9 +16,9 @@ namespace spatacs
     namespace core {
         class Engine;
         class ShieldGenerator;
-        class Hull;
         class IWeapon;
         class PowerPlant;
+        class FuelTank;
 
         struct SystemStatus
         {
@@ -36,21 +36,33 @@ namespace spatacs
             uint64_t team() const;
             const std::string& name() const;
 
-            double max_hp() const;
+
 
             /// energy
             double producedEnergy() const;
             double usedEnergy() const;
 
+            // hitpoints
             double hp() const;
+            double max_hp() const;
+            void setHP( double hp );
+
+            double armour() const;
+            double max_armour() const;
+            void setArmour( double new_value );
 
         protected:
             ShipData() = default;
             ShipData(std::uint64_t team, std::string name);
             ~ShipData() = default;
 
-            double mHitPoints = 10;
+            // structure
+            double mHitPoints    = 10;
             double mMaxHitPoints = 10;
+
+            // armour
+            double mMaxArmour = 10;
+            double mCurArmour = 10;
 
             // Energy management status
             double mEnergyUsed     = 0;
@@ -79,7 +91,6 @@ namespace spatacs
 
             /// called at the end of a game step.
             void onStep();
-            void setHP( float hp );
 
             /// Subcomponents
             // engine interface
@@ -93,14 +104,15 @@ namespace spatacs
 
             // hull interface
             SystemStatus hull_status() const;
-            const Hull& hull() const;
-            Hull& getHull();
 
             // weapon interface
             std::size_t weapon_count() const;
             const IWeapon& weapon( std::size_t id) const;
             IWeapon& getWeapon( std::size_t id );
 
+            // tank interface
+            const FuelTank& tank() const;
+            FuelTank& getTank();
 
             // damage the ship
             void dealDamage( float dmg );

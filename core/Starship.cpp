@@ -9,7 +9,7 @@
 #include "components/ProjectileWeapon.h"
 #include "components/ShieldGenerator.h"
 #include "components/Engine.h"
-#include "components/Hull.h"
+#include "components/FuelTank.h"
 #include <boost/property_tree/ptree.hpp>
 #include "components/PowerPlant.h"
 
@@ -22,7 +22,7 @@ struct Starship::SubSystems
         mEngine(new Engine(data.get_child("engine"))),
         mShield(new ShieldGenerator(data.get_child("shield"))),
         mPowerPlant(new PowerPlant(data.get_child("power_plant"))),
-        mHull( new Hull(data.get_child("hull")) )
+        mFuelTank(new FuelTank(data.get_child("tank")))
     {
         mArmament.push_back(std::make_unique<ProjectileWeapon>(data.get_child("weapon")));
     }
@@ -32,7 +32,7 @@ struct Starship::SubSystems
     std::unique_ptr<Engine> mEngine;
     std::unique_ptr<ShieldGenerator> mShield;
     std::unique_ptr<PowerPlant> mPowerPlant;
-    std::unique_ptr<Hull> mHull;
+    std::unique_ptr<FuelTank> mFuelTank;
     std::vector<std::unique_ptr<IWeapon>> mArmament;
 };
 
@@ -113,7 +113,7 @@ void Starship::onStep()
 
     for(auto& c : cmps)
     {
-        c->onStep();
+        c->onStep(*this);
     }
 }
 
@@ -140,11 +140,6 @@ const IWeapon& Starship::weapon( std::size_t id ) const
 IWeapon& Starship::getWeapon( std::size_t id )
 {
     return *mSubSystems->mArmament.at(id);
-}
-
-void Starship::setHP(float hp)
-{
-    mHitPoints = hp;
 }
 
 bool Starship::alive() const
@@ -180,8 +175,8 @@ Starship::SubSystems::SubSystems( const SubSystems& other ):
         mEngine( clone(other.mEngine) ),
         mShield( clone(other.mShield) ),
         mPowerPlant( clone(other.mPowerPlant) ),
-        mHull( clone(other.mHull) ),
-        mArmament( clone(other.mArmament) )
+        mArmament( clone(other.mArmament) ),
+        mFuelTank( clone(other.mFuelTank) )
 {
 
 }
@@ -223,15 +218,7 @@ SystemStatus Starship::shield_strength() const
 }
 
 SystemStatus Starship::hull_status() const {
-    return SystemStatus{hull().armour(), hull().max_armour()};
-}
-
-const Hull& Starship::hull() const {
-    return *mSubSystems->mHull;
-}
-
-Hull& Starship::getHull() {
-    return *mSubSystems->mHull;
+    return SystemStatus{armour(), max_armour()};
 }
 
 void Starship::dealDamage(float dmg)
@@ -285,7 +272,37 @@ double ShipData::hp() const
     return mHitPoints;
 }
 
+double ShipData::armour() const
+{
+    return mCurArmour;
+}
+
+double ShipData::max_armour() const
+{
+    return mMaxArmour;
+}
+
+void ShipData::setArmour(double new_value)
+{
+    mCurArmour = new_value;
+}
+
 length_t Starship::radius() const
 {
     return mRadius;
+}
+
+const FuelTank& Starship::tank() const
+{
+    return *mSubSystems->mFuelTank;
+}
+
+FuelTank& Starship::getTank()
+{
+    return *mSubSystems->mFuelTank;
+}
+
+void ShipData::setHP(double hp)
+{
+    mHitPoints = hp;
 }

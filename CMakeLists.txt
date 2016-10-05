@@ -49,8 +49,6 @@ SET(CORE_SOURCE_FILES
         core/components/ProjectileWeapon.h
         core/components/RayWeapon.h
         core/components/RayWeapon.cpp
-        core/components/Hull.cpp
-        core/components/Hull.h
         core/Projectile.h
         core/Projectile.cpp
         core/components/IComponent.h
@@ -65,7 +63,7 @@ SET(CORE_SOURCE_FILES
         core/components/PowerPlant.h
         core/Simulation.cpp
         core/Simulation.h
-        core/Damage.h)
+        core/Damage.h core/components/FuelTank.h core/components/FuelTank.cpp)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h

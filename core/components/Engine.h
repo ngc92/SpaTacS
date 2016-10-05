@@ -18,7 +18,7 @@ namespace core
         Engine() = default;
         Engine(const ptree& props);
 
-        void onStep() override;
+        void onStep(Starship& ship) override;
 
         force_vec getThrust(const force_vec& accel);
         force_t max_thrust() const;

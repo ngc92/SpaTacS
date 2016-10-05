@@ -27,7 +27,7 @@ namespace spatacs
             using IComponent::IComponent;
             virtual  ~IWeapon() = default;
 
-            virtual void onStep() = 0;
+            virtual void onStep(Starship& ship) = 0;
 
             virtual IWeapon* clone() const override = 0;
             virtual void setMode( std::uint64_t mode ) = 0;

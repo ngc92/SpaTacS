@@ -12,12 +12,15 @@ namespace spatacs
 {
     namespace core
     {
+        class Starship;
+
         class IComponent
         {
         public:
             virtual ~IComponent() = default;
 
-            virtual void onStep() { };
+            virtual void onStep(Starship& ship)
+            { };
 
             // interaction with the energy system
 

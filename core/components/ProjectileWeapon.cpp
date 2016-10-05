@@ -33,7 +33,7 @@ namespace spatacs
             return 0;
         }
 
-        void ProjectileWeapon::onStep()
+        void ProjectileWeapon::onStep(Starship& ship)
         {
             mReload -= 0.1;
         }

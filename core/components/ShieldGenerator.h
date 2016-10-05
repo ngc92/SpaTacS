@@ -18,7 +18,7 @@ namespace spatacs {
 
             virtual ~ShieldGenerator() = default;
 
-            virtual void onStep() override;
+            virtual void onStep(Starship& ship) override;
 
             virtual ShieldGenerator* clone() const override;
 
@@ -26,10 +26,7 @@ namespace spatacs {
             float max_shield() const;
 
             float recharge_rate() const;
-
             ShieldGenerator& setShield( float s );
-
-            float getDeflectionChance(const Vec& displacement, const Vec& impact_impulse) const;
 
         private:
             // properties

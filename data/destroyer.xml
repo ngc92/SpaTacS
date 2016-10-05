@@ -27,7 +27,7 @@
     <HP>1</HP>
 </power_plant>
 
-<hull>
-	<armour>5</armour>
+<tank>
+    <capacity>10</capacity>
     <HP>1</HP>
-</hull>
+</tank>
