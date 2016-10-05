@@ -1,7 +1,7 @@
 ## Version 0.4 (systems update)
   * UI:
     - [ ] system status view
-    - [ ] shield inidcator
+    - [ ] shield indicator
     - [ ] energy management
   * game:
     - [ ] FuelTank component

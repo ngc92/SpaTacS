@@ -19,15 +19,26 @@ namespace spatacs
 
             const length_vec& position() const;
             const velocity_vec& velocity() const;
-            length_t radius() const;
+
+            void setPosition(const length_vec&   pos);
+            void setVelocity(const velocity_vec& vel);
+
             mass_t mass() const;
+            void setMass(mass_t m);
+
             std::uint64_t id() const;
             std::uint64_t physics_id() const;
 
             void setID(std::uint64_t id);
-            physics::Object& getPhysicsObject();
-        private:
-            physics::Object mPhysicsObj;
+            void setPhysicsID(std::uint64_t id);
+
+        protected:
+            std::uint64_t mID        = 0;
+            std::uint64_t mPhysicsID = 0;
+            mass_t mMass;
+
+            length_vec   mPosition;
+            velocity_vec mVelocity;
         };
     }
 }

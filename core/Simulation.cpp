@@ -28,13 +28,13 @@ auto core::Simulation::step(EventVec inEvents) -> EventVec
             mWorld->pushEvent(physics::events::Despawn{s.physics_id(), 0.0_s});
     }
 
-    auto e = remove_if(begin(mState.getShips()), end(mState.getShips()),
-                            [](const Starship& s) { return !s.alive(); });
-    mState.getShips().resize(distance(begin(mState.getShips()), e));
+    mState.getShips().erase(remove_if(begin(mState.getShips()), end(mState.getShips()),
+                                      [](const Starship& s) { return !s.alive(); }),
+                            end(mState.getShips()));
 
-    auto ep = remove_if(begin(mState.getProjectiles()), end(mState.getProjectiles()),
-                             [](const Projectile& s) { return s.age() > 10; });
-    mState.getProjectiles().resize(distance(begin(mState.getProjectiles()), ep));
+    mState.getProjectiles().erase(remove_if(begin(mState.getProjectiles()), end(mState.getProjectiles()),
+                                            [](const Projectile& s) { return s.age() > 10; }),
+                                  end(mState.getProjectiles()));
 
     // process events generated due to commands
     mEventCache = move(inEvents);
@@ -48,10 +48,14 @@ auto core::Simulation::step(EventVec inEvents) -> EventVec
 
     // copy new positions and velocities to game objects
     for (auto& ship : mState.getShips()) {
-        ship.getPhysicsObject() = mWorld->getObject( ship.physics_id() );
+        auto po = mWorld->getObject( ship.physics_id() );
+        ship.setPosition( po.position() );
+        ship.setVelocity( po.velocity() );
     }
     for (auto& proj : mState.getProjectiles()) {
-        proj.getPhysicsObject() = mWorld->getObject( proj.physics_id() );
+        auto po = mWorld->getObject( proj.physics_id() );
+        proj.setPosition( po.position() );
+        proj.setVelocity( po.velocity() );
     }
 
     // step all projectiles and objects
@@ -133,7 +137,11 @@ core::Simulation::Simulation():
 
     mWorld->setSpawnCallback([this](const physics::PhysicsWorld& w, const physics::Object& O)
                                          {
-                                             Simulation::mState.getObject(O.userdata()).getPhysicsObject() = O;
+                                             auto& obj = mState.getObject(O.userdata());
+                                             obj.setPhysicsID( O.id() );
+                                             obj.setMass( O.mass() );
+                                             obj.setPosition( O.position() );
+                                             obj.setVelocity( O.velocity() );
                                          }
     );
 

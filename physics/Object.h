@@ -49,7 +49,7 @@ namespace spatacs {
         private:
             std::uint64_t mID = 0;
             length_vec mPosition{0.0_m, 0.0_m, 0.0_m};
-            velocity_vec mVelocity{0.0_m / 0.0_s, 0.0_m / 0.0_s, 0.0_m / 0.0_s};
+            velocity_vec mVelocity{0.0_kps, 0.0_kps, 0.0_kps};
             length_t mRadius{0.01f};
             mass_t mMass = 1.0_kg;
             std::uint64_t mUserData;

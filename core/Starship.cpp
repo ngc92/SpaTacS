@@ -2,6 +2,7 @@
 // Created by erik on 9/18/16.
 //
 
+#include "GameObject.h"
 #include "Starship.h"
 #include <cmath>
 #include <algorithm>
@@ -282,4 +283,9 @@ double ShipData::usedEnergy() const
 double ShipData::hp() const
 {
     return mHitPoints;
+}
+
+length_t Starship::radius() const
+{
+    return mRadius;
 }

@@ -105,10 +105,14 @@ namespace spatacs
             // damage the ship
             void dealDamage( float dmg );
 
+            length_t radius() const;
+
         private:
             // components
             struct SubSystems;
             std::unique_ptr<SubSystems> mSubSystems;
+        protected:
+            length_t mRadius;
         };
 
         length_t distance(const Starship& s1, const Starship& s2);
