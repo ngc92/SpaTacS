@@ -10,6 +10,7 @@
 #include "components/ShieldGenerator.h"
 #include "components/Engine.h"
 #include "components/FuelTank.h"
+#include "components/LifeSupport.h"
 #include <boost/property_tree/ptree.hpp>
 #include "components/PowerPlant.h"
 
@@ -22,7 +23,8 @@ struct Starship::SubSystems
         mEngine(new Engine(data.get_child("engine"))),
         mShield(new ShieldGenerator(data.get_child("shield"))),
         mPowerPlant(new PowerPlant(data.get_child("power_plant"))),
-        mFuelTank(new FuelTank(data.get_child("tank")))
+        mFuelTank(new FuelTank(data.get_child("tank"))),
+        mLifeSupport( new LifeSupport(data.get_child("life_support")) )
     {
         mArmament.push_back(std::make_unique<ProjectileWeapon>(data.get_child("weapon")));
     }
@@ -33,6 +35,7 @@ struct Starship::SubSystems
     std::unique_ptr<ShieldGenerator> mShield;
     std::unique_ptr<PowerPlant> mPowerPlant;
     std::unique_ptr<FuelTank> mFuelTank;
+    std::unique_ptr<LifeSupport> mLifeSupport;
     std::vector<std::unique_ptr<IWeapon>> mArmament;
 };
 
@@ -63,6 +66,7 @@ void Starship::onStep()
     cmps.push_back( &getEngine() );
     cmps.push_back( &getShield() );
     cmps.push_back( mSubSystems->mPowerPlant.get() );
+    cmps.push_back( mSubSystems->mLifeSupport.get() );
     for(auto& wpn : mSubSystems->mArmament)
         cmps.push_back( wpn.get() );
 
@@ -176,6 +180,7 @@ Starship::SubSystems::SubSystems( const SubSystems& other ):
         mShield( clone(other.mShield) ),
         mPowerPlant( clone(other.mPowerPlant) ),
         mArmament( clone(other.mArmament) ),
+        mLifeSupport( clone(other.mLifeSupport) ),
         mFuelTank( clone(other.mFuelTank) )
 {
 
@@ -227,6 +232,7 @@ void Starship::dealDamage(float dmg)
     cmps.push_back( &getEngine() );
     cmps.push_back( &getShield() );
     cmps.push_back( mSubSystems->mPowerPlant.get() );
+    cmps.push_back( mSubSystems->mLifeSupport.get() );
     for(auto& wpn : mSubSystems->mArmament)
         cmps.push_back( wpn.get() );
 

@@ -6,7 +6,7 @@
   * game:
     - [x] FuelTank component
     - [ ] PowerBank component
-    - [ ] LifeSupport component
+    - [x] LifeSupport component
     - [ ] fuel and power consumption curves
     - [ ] overheating of systems
   * code:

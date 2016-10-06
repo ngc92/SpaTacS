@@ -32,3 +32,8 @@
     <capacity>10</capacity>
     <HP>1</HP>
 </tank>
+
+
+<life_support>
+    <HP>1</HP>
+</life_support>
