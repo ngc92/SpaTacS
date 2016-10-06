@@ -31,7 +31,7 @@ void ShipStatusUI::draw()
         std::wstringstream stream;        
         stream << std::fixed << std::setprecision(1);
         stream << sys.name.c_str() << " " << sys.hp << "/" << sys.max_hp;
-        Environment->getBuiltInFont()->draw(stream.str().c_str(), rect, video::SColor(255, 20, 20, 0), false, true, &clip);
+        Environment->getBuiltInFont()->draw(stream.str().c_str(), rect + irr::core::vector2di(4, 0), video::SColor(255, 20, 20, 0), false, true, &clip);
         rect += irr::core::vector2di(0, 19);
     }
 }

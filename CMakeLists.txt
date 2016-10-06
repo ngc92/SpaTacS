@@ -85,8 +85,6 @@ set(UI_SOURCE_FILES
         UI/ConsoleUI.cpp
         UI/gfx/GridNode.h
         UI/gfx/GridNode.cpp
-        UI/gfx/LocationPlotter3D.cpp
-        UI/gfx/LocationPlotter3D.h
         UI/gfx/ShipUI.h
         UI/gfx/ShotFx.cpp
         UI/gfx/ShotFx.h
@@ -99,7 +97,7 @@ set(UI_SOURCE_FILES
         UI/AIPlayer.cpp
         UI/AIPlayer.h
         UI/inputs/UnitSelection.cpp
-        UI/inputs/UnitSelection.h UI/gfx/ShipStatusUI.cpp UI/gfx/ShipStatusUI.h)
+        UI/inputs/UnitSelection.h UI/gfx/ShipStatusUI.cpp UI/gfx/ShipStatusUI.h UI/gfx/ShipFx.cpp UI/gfx/ShipFx.h)
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}

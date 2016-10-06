@@ -6,12 +6,11 @@
 #include <irrlicht/irrlicht.h>
 #include <algorithm>
 #include "gfx/GridNode.h"
-#include "gfx/LocationPlotter3D.h"
 #include "events/Combat.h"
 #include "gfx/ShotFx.h"
+#include "gfx/ShipFx.h"
 #include <sstream>
 #include <iomanip>
-#include <functional>
 #include <UI/inputs/UnitSelection.h>
 #include "IInputMode.h"
 #include "UI/inputs/UnitCommand.h"
@@ -143,10 +142,7 @@ void IrrlichtUI::init()
     cam->setTarget({50,0,0});
     mDevice->getSceneManager()->getRootSceneNode()->addChild( new scene::GridNode() );
 
-    mShipPlot = new scene::LocationPlotter3D();
-    mShipPlot->setColor(1, {255, 0, 200, 0});
-    mShipPlot->setColor(2, {255, 200, 0, 0});
-    mDevice->getSceneManager()->getRootSceneNode()->addChild(mShipPlot);
+    mMap = mDevice->getSceneManager()->addEmptySceneNode();
 }
 
 std::vector<spatacs::cmd::Command> IrrlichtUI::getCommands() const
@@ -160,7 +156,7 @@ void IrrlichtUI::setState(const spatacs::core::GameState& state)
     mCommands.validate(mState);
 
     // update the location map
-    std::vector<irr::scene::Location> ps;
+    mMap->removeAll();
     for(auto& ship : mState.getShips()) {
         if(!ship.alive())
             continue;
@@ -168,24 +164,20 @@ void IrrlichtUI::setState(const spatacs::core::GameState& state)
         pos *= 20;
         icore::vector3df vel{ship.velocity().x.value, ship.velocity().y.value, ship.velocity().z.value};
         vel *= 20;
-        ps.push_back({pos, vel, u8(ship.team())});
+        auto node = new scene::ShipFx( mMap, mDevice->getSceneManager() );
+        node->setShip( pos, vel );
+        video::SColor colors[] = {{255, 0, 200, 0}, {255, 200, 0, 0}};
+        node->setColor( colors[ship.team()-1] );
     }
-    mShipPlot->setLocations( std::move(ps) );
 
-    for(auto& s : mShots)
-    {
-        s->remove();
-    }
-    mShots.clear();
     for(auto& proj : mState.getProjectiles())
     {
         icore::vector3df pos{proj.position().x.value, proj.position().y.value, proj.position().z.value};
         pos *= 20;
         icore::vector3df vel{proj.velocity().x.value, proj.velocity().y.value, proj.velocity().z.value};
         vel *= 20;
-        auto shotfx = new scene::ShotFx( mDevice->getSceneManager()->getRootSceneNode(), mDevice->getSceneManager() );
+        auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
         shotfx->setShot( pos, vel );
-        mShots.push_back( shotfx );
     }
 
 }

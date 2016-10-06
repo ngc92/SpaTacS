@@ -1,6 +1,6 @@
 ## Version 0.4 (systems update)
   * UI:
-    - [ ] system status view
+    - [x] system status view
     - [ ] shield indicator
     - [ ] energy management
   * game:
@@ -9,8 +9,6 @@
     - [ ] LifeSupport component
     - [ ] fuel and power consumption curves
     - [ ] overheating of systems
-  * physics:
-    - [ ] hierarchy
   * code:
     - [x] allow component interaction (for crew <-> life support)
     - [x] hull not a system
@@ -25,6 +23,10 @@
     - [ ] change weapon modes into actual ammo types
     - [ ] rework damage model
     - [ ] shield radius
+  * code:
+    - [ ] make physics ECS
+      + [ ] components: kinematic state, mass, shape, userdata
+      + [ ] systems: update, collision
   * physics:
     - [ ] more collision tests
     - [ ] hit scans

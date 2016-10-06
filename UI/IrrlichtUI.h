@@ -18,7 +18,6 @@ namespace irr
     }
     namespace scene
     {
-        class LocationPlotter3D;
         class ISceneNode;
     }
 }
@@ -57,11 +56,11 @@ namespace spatacs {
             std::uint64_t mOwnTeam;
             irr::IrrlichtDevice* mDevice;
             core::GameState mState;
-            std::vector<irr::scene::ISceneNode*> mShots;
+
             class EventRec;
             std::unique_ptr<EventRec> mEventReceiver;
 
-            irr::scene::LocationPlotter3D* mShipPlot;
+            irr::scene::ISceneNode* mMap;
             cmd::CommandManager mCommands;
         };
     }
