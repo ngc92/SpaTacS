@@ -165,9 +165,13 @@ void IrrlichtUI::setState(const spatacs::core::GameState& state)
         icore::vector3df vel{ship.velocity().x.value, ship.velocity().y.value, ship.velocity().z.value};
         vel *= 20;
         auto node = new scene::ShipFx( mMap, mDevice->getSceneManager() );
-        node->setShip( pos, vel );
         video::SColor colors[] = {{255, 0, 200, 0}, {255, 200, 0, 0}};
         node->setColor( colors[ship.team()-1] );
+        node->setPosition(pos);
+
+        auto ani = mDevice->getSceneManager()->createFlyStraightAnimator(pos, pos+vel, 1000);
+        node->addAnimator(ani);
+        ani->drop();
     }
 
     for(auto& proj : mState.getProjectiles())
@@ -177,7 +181,10 @@ void IrrlichtUI::setState(const spatacs::core::GameState& state)
         icore::vector3df vel{proj.velocity().x.value, proj.velocity().y.value, proj.velocity().z.value};
         vel *= 20;
         auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
-        shotfx->setShot( pos, vel );
+        shotfx->setShot(vel);
+        auto ani = mDevice->getSceneManager()->createFlyStraightAnimator(pos, pos+vel, 1000);
+        shotfx->addAnimator(ani);
+        ani->drop();
     }
 
 }

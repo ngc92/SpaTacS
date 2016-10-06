@@ -6,6 +6,7 @@
 #include <irrlicht/ICameraSceneNode.h>
 #include <irrlicht/SViewFrustum.h>
 #include <cmath>
+#include <iostream>
 #include "ShipFx.h"
 
 using namespace irr;
@@ -14,18 +15,13 @@ using irr::scene::ShipFx;
 ShipFx::ShipFx(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id)
 :ISceneNode(parent, mgr, id)
 {
+    mBBox.reset( core::vector3df(-10, -10, -10) );
+    mBBox.addInternalPoint( core::vector3df(10, 10, 10) );
     mMaterial.Lighting = false;
 }
 
 void ShipFx::OnAnimate(u32 timeMs)
 {
-    if(mLastTime != 0)
-    {
-        mBasePosition += (timeMs - mLastTime) / 1000.f * mDirection;
-        mBBox.addInternalPoint( mBasePosition + mDirection );
-    }
-    mLastTime = timeMs;
-
     ISceneNode::OnAnimate(timeMs);
 }
 
@@ -43,14 +39,14 @@ void ShipFx::render()
     driver->setMaterial(mMaterial);
     driver->setTransform(video::ETS_WORLD, AbsoluteTransformation);
 
-    mBaseY = std::round(camera->getTarget().Y / 10) * 10;
+    auto baseY = std::round(camera->getTarget().Y / 10) * 10;
 
     float f = 1; /// \todo depend on radius
 
-    auto& pos = mBasePosition;
+    auto pos = core::vector3df(0,0,0);
     auto& col = mColor;
 
-    core::vector3df base{pos.X, mBaseY, pos.Z};
+    core::vector3df base{0, baseY - getAbsolutePosition().Y, 0};
     driver->draw3DLine( pos, base );
     const core::vector3df h ( m[0] * f, m[4] * f, m[8] * f );
     const core::vector3df v ( m[1] * f, m[5] * f, m[9] * f );
@@ -76,17 +72,6 @@ void ShipFx::OnRegisterSceneNode()
     if (IsVisible)
         SceneManager->registerNodeForRendering(this);
     ISceneNode::OnRegisterSceneNode();
-}
-
-void ShipFx::setShip(core::vector3df pos, core::vector3df vel)
-{
-    mBasePosition = pos;
-    mDirection = vel;
-    mBBox.reset( mBasePosition );
-    mBBox.addInternalPoint( mBasePosition + mDirection );
-    auto b0 = mBasePosition;
-    b0.Y  = mBaseY;
-    mBBox.addInternalPoint( b0 );
 }
 
 void ShipFx::setColor(video::SColor col)

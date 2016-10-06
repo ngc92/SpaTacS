@@ -21,19 +21,13 @@ namespace irr {
             const core::aabbox3d<f32>& getBoundingBox() const override;
             void OnRegisterSceneNode() override;
 
-            void setShip(core::vector3df pos, core::vector3df vel);
             void setColor( video::SColor col );
 
         private:
-            core::vector3df mBasePosition;
-            core::vector3df mDirection;
-
             video::SMaterial mMaterial;
             video::SColor    mColor;
 
             core::aabbox3d<f32> mBBox;
-            u32 mLastTime = 0;
-            float mBaseY = 0;
         };
     }
 }

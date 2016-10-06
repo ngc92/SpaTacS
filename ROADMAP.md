@@ -12,7 +12,7 @@
   * code:
     - [x] allow component interaction (for crew <-> life support)
     - [x] hull not a system
-    - [ ] rework position plotting
+    - [x] rework position plotting
 
 ## Version 0.5 (combat update)
   * UI:

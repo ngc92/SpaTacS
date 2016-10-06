@@ -19,14 +19,12 @@ namespace irr {
             const core::aabbox3d<f32>& getBoundingBox() const override;
             void OnRegisterSceneNode() override;
 
-            void setShot(core::vector3df pos, core::vector3df vel);
+            void setShot(core::vector3df vel);
 
         private:
-            core::vector3df mBasePosition;
             core::vector3df mDirection;
 
             core::aabbox3d<f32> mBBox;
-            u32 mLastTime = 0;
         };
     }
 }
