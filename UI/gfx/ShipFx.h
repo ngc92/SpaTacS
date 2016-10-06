@@ -22,12 +22,14 @@ namespace irr {
             void OnRegisterSceneNode() override;
 
             void setColor( video::SColor col );
+            void setShieldStatus(float s);
 
         private:
             video::SMaterial mMaterial;
             video::SColor    mColor;
 
             core::aabbox3d<f32> mBBox;
+            float mShieldStatus;
         };
     }
 }

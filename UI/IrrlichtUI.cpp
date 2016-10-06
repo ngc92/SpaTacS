@@ -168,6 +168,8 @@ void IrrlichtUI::setState(const spatacs::core::GameState& state)
         video::SColor colors[] = {{255, 0, 200, 0}, {255, 200, 0, 0}};
         node->setColor( colors[ship.team()-1] );
         node->setPosition(pos);
+        auto ss = ship.shield_strength();
+        node->setShieldStatus( ss.current / ss.max );
 
         auto ani = mDevice->getSceneManager()->createFlyStraightAnimator(pos, pos+vel, 1000);
         node->addAnimator(ani);
