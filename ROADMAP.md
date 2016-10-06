@@ -7,7 +7,6 @@
     - [x] FuelTank component
     - [ ] PowerBank component
     - [x] LifeSupport component
-    - [ ] fuel and power consumption curves
     - [ ] overheating of systems
   * code:
     - [x] allow component interaction (for crew <-> life support)
