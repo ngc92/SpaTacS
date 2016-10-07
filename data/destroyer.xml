@@ -20,7 +20,7 @@
     <SO_strength>1</SO_strength>
     <precision>30</precision>
     <rpm>60</rpm>
-    <muzzle_velocity>2.5</muzzle_velocity>
+    <muzzle_velocity>2500</muzzle_velocity>
     <HP>1</HP>
 </weapon>
 

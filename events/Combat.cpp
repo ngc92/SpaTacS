@@ -73,7 +73,7 @@ namespace spatacs
         Hit::Hit(const Starship& ship, const core::Projectile& proj) :
                 ShipEvent( ship.id() )
         {
-            auto relvel = length(ship.velocity() - proj.velocity());
+            auto relvel = length(ship.velocity() - proj.velocity()) / 1000.0;
             auto dmg = relvel * relvel * proj.mass();
             mDamage = proj.damage();
             mDamage.kinetic += dmg.value;
