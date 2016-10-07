@@ -19,14 +19,14 @@ namespace spatacs
             if(fuel_demand < 0.0_kg)
                 fuel_demand = 0.0_kg;
 
-            mUnusedMass += ship.getTank().requestFuel(fuel_demand);
+            mUnusedMass += ship.getTank().requestFuel(fuel_demand * status());
         }
 
         force_vec Engine::getThrust(const force_vec& accel)
         {
             force_t want    = length(accel);
             mass_t need_mass  = (want / mPropellantSpeed) * 0.1_s;
-            if( need_mass > mUnusedMass ){
+            if( need_mass > mUnusedMass ) {
                 need_mass = mUnusedMass;
             }
 

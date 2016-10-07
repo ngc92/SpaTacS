@@ -25,7 +25,7 @@ namespace spatacs {
             float shield() const;
             float max_shield() const;
 
-            float recharge_rate() const;
+            double recharge_rate() const;
             ShieldGenerator& setShield( float s );
 
         private:

@@ -28,11 +28,12 @@ void ShieldGenerator::onStep(Starship& ship)
     mCurrentShieldStrength *= decay;
     if(shield() < max_shield())
     {
-        float difference = max_shield() - shield();
-        float rec = std::min( recharge_rate() * .1f, difference );
-        float egy = rec * mEnergyPerShieldPoint;
+        double difference = max_shield() - shield();
+        double rec = std::min( recharge_rate() * .1, difference );
+        double egy = rec * mEnergyPerShieldPoint;
         rec *= requestEnergy( egy ) / egy;
         mCurrentShieldStrength += rec;
+        update_cooldown( rec );
     }
 }
 
@@ -59,7 +60,7 @@ ShieldGenerator::ShieldGenerator(const ptree& props):
     mCurrentShieldStrength = mMaximumShieldStrength;
 }
 
-float ShieldGenerator::recharge_rate() const
+double ShieldGenerator::recharge_rate() const
 {
-    return mShieldRecharge * status();
+    return mShieldRecharge * status() / temperature();
 }

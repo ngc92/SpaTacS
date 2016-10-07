@@ -2,10 +2,8 @@
   * UI:
     - [x] system status view
     - [x] shield indicator
-    - [ ] energy management
   * game:
     - [x] FuelTank component
-    - [ ] PowerBank component
     - [x] LifeSupport component
     - [ ] overheating of systems
   * code:
@@ -23,6 +21,7 @@
     - [ ] rework damage model
     - [ ] shield radius
   * code:
+    - [ ] make weapon component dumber
     - [ ] make physics ECS
       + [ ] components: kinematic state, mass, shape, userdata
       + [ ] systems: update, collision
@@ -37,18 +36,27 @@
 ## Version 0.6 (menu update)
   * UI:
     - [ ] main menu
+      + [ ] start level
+      + [ ] custom combat
+      + [ ] settings
+      + [ ] exit
+    - [ ] pause menu
+      + [ ] resume
+      + [ ] end game
+    - [ ] energy management
   * game:
     - [ ] load levels from xml
     - [ ] custom combat
     - [ ] add a few ship types
-
+  * code:
+    - [ ] units in xml files
+    
 ## Unspecified
 * optimizations:
   - Spatial data structure to speed up hit tests
   - Reduce dynamic allocs
   - disable projectile/projectile collision tests in physics
 * code
-  - physics world as ECS?
   - inheritance instead of variant for commands
   - collision handling: use current positions.
 * gameplay

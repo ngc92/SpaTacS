@@ -36,8 +36,10 @@ namespace spatacs
             /// gets the priority for energy supply to this component
             float energyPriority() const;
 
-            // hitpoints stuff
+            /// gets the temperature
+            double temperature() const;
 
+            // hitpoints stuff
             /// get the current hit points
             float hp() const;
             /// get maximum hit points
@@ -66,11 +68,17 @@ namespace spatacs
 
             /// places produced energy into the cache.
             void produceEnergy(double amount);
+
+            /// call every frame
+            void update_cooldown(double ein);
         private:
             // this comes in handy for basically all components, so we put this code here.
             double mEnergyCache      = 0;
             double mLastTotalRequest = 0;
             float mEnergyPriority    = 1;
+
+            // temperature stuff
+            double mTemperatur       = 0;
 
             float mMaxHitPoints;
             float mHitPoints;
