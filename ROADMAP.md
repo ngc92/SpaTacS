@@ -1,16 +1,3 @@
-## Version 0.4 (systems update)
-  * UI:
-    - [x] system status view
-    - [x] shield indicator
-  * game:
-    - [x] FuelTank component
-    - [x] LifeSupport component
-    - [ ] overheating of systems
-  * code:
-    - [x] allow component interaction (for crew <-> life support)
-    - [x] hull not a system
-    - [x] rework position plotting
-
 ## Version 0.5 (combat update)
   * UI:
     - [ ] waypoints for move command
