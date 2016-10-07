@@ -13,7 +13,7 @@ void LifeSupport::onStep(Starship& ship)
 {
     auto accel = length(ship.velocity() - mLastVelocity) / 0.1_s + 9.81_m/(1.0_s)/(1.0_s);
     mLastVelocity = ship.velocity();
-    double ereq = accel.value;
+    double ereq = accel.value / 1000.0;
     /// \todo for now, nothing happens when we do not get the requested energy!
     requestEnergy( ereq );
 }

@@ -11,6 +11,7 @@
 #include "UnitSelection.h"
 #include "UnitCommand.h"
 #include <irrlicht/ICameraSceneNode.h>
+#include "UI/convert.h"
 
 using namespace spatacs;
 using namespace ui;
@@ -107,8 +108,7 @@ void UnitSelection::draw(irr::video::IVideoDriver* driver)
         mHoverUI->setVisible(false);
     } else {
         /// \todo we are using the "actual" 3D position, but should be using the position inside the LocationPlotter3D
-        irr::core::vector3df p = {hover->position().x.value, hover->position().y.value, hover->position().z.value};
-        p *= 20;
+        auto p = convert(hover->position());
         p.Y += 5;
         auto screenpos = getScreenPosition(p);
         mHoverUI->setRelativePosition(screenpos);

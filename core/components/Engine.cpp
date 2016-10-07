@@ -14,28 +14,27 @@ namespace spatacs
     {
         void Engine::onStep(Starship& ship)
         {
-            auto need_recharge = max_thrust() - mUnusedThrust;
-            if(need_recharge < force_t(0))
-                need_recharge = force_t(0);
-            double energy_demand = mEnergyConsumption * ((need_recharge / mMaxThrust).value + 0.1);
-            double fuel_demand   = mFuelConsumption * ((need_recharge / mMaxThrust).value + 0.1);
-            double efac = requestEnergy(energy_demand) / energy_demand;
-            double ffac = ship.getTank().getFuel( fuel_demand ) / fuel_demand * 0.1;
+            auto mass_diff = mMassRate * 0.1_s;
+            mass_t fuel_demand = mass_diff - mUnusedMass;
+            if(fuel_demand < 0.0_kg)
+                fuel_demand = 0.0_kg;
 
-            mUnusedThrust += need_recharge * std::min(efac, ffac);
+            double energy_demand = mEnergyConsumption * (fuel_demand / mass_diff + 0.1);
+            double efac = requestEnergy(energy_demand) / energy_demand;
+            fuel_demand *= efac;
+            mUnusedMass +=ship.getTank().getFuel( fuel_demand );
         }
 
         force_vec Engine::getThrust(const force_vec& accel)
         {
-            auto want = length(accel);
-            double scale = 1;
-            if( want > mUnusedThrust ){
-                scale = (mUnusedThrust / want).value;
-                mUnusedThrust = force_t(0);
-            } else {
-                mUnusedThrust -= want;
+            force_t want    = length(accel);
+            mass_t need_mass  = (want / mPropellantSpeed) * 0.1_s;
+            if( need_mass > mUnusedMass ){
+                need_mass = mUnusedMass;
             }
-            return accel * scale;
+
+            force_t f = need_mass * mPropellantSpeed / 0.1_s;
+            return accel * (f / want);
         }
 
         Engine* Engine::clone() const
@@ -45,14 +44,14 @@ namespace spatacs
 
         force_t Engine::max_thrust() const
         {
-            return mMaxThrust * status();
+            return mPropellantSpeed * mMassRate * status();
         }
 
         Engine::Engine(const ptree& props):
             IComponent(props),
-            mMaxThrust( props.get<float>("thrust") ),
-            mEnergyConsumption( props.get<float>("energy_consumption") ),
-            mFuelConsumption( props.get<float>("fuel_consumption") )
+            mPropellantSpeed( kilometers(props.get<float>("propellant_speed")) / 1.0_s ),
+            mMassRate( kilogram(props.get<float>("fuel_consumption")) / 1.0_s ),
+            mEnergyConsumption( props.get<float>("energy_consumption") )
         {
 
         }

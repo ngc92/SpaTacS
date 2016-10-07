@@ -42,7 +42,7 @@ namespace spatacs {
             boost::optional<length_vec> mCurrentAim;
             std::uint64_t mCurrentAimShip;
             length_t mTargetY = 0.0_km;
-            length_t mBaseY   = 0.0_km;
+            float mBaseY      = 0.f;
 
             irr::gui::IGUIElement*    mDistanceMarker = nullptr;
             irr::gui::ShipStatusUI*   mShipInfo       = nullptr;

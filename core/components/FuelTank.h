@@ -6,6 +6,7 @@
 #define SPATACS_FUELTANK_H
 
 #include "IComponent.h"
+#include "physics/units.h"
 
 namespace spatacs
 {
@@ -18,11 +19,11 @@ namespace core
         void onStep(Starship& ship) override { };
         FuelTank* clone() const override;
 
-        double getFuel( double req );
+        mass_t getFuel(mass_t req);
 
     private:
-        double mFuelCapacity;
-        double mCurrentFuel;
+        mass_t mFuelCapacity;
+        mass_t mCurrentFuel;
     };
 }
 }

@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_SUITE(Collisions)
 
         auto res = intersect(sp_stat, sp_mov1);
         BOOST_CHECK( (bool)res );
-        BOOST_CHECK_CLOSE( res.value, 1.0 );
+        BOOST_CHECK_CLOSE( res.get().value, 1.0, 1e-6 );
     }
 
 BOOST_AUTO_TEST_SUITE_END()

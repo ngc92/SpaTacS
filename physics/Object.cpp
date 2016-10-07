@@ -30,7 +30,7 @@ const velocity_vec& Object::velocity() const
 
 length_vec Object::position(time_t dt) const
 {
-    return length_vec(mPosition + dt*mVelocity);
+    return mPosition + dt*mVelocity;
 }
 
 void Object::setPosition(const length_vec& p)

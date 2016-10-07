@@ -18,6 +18,7 @@
 #include "UI/gfx/ShipStatusUI.h"
 #include "core/components/ShieldGenerator.h"
 #include "core/components/Engine.h"
+#include "UI/convert.h"
 
 using namespace spatacs;
 
@@ -70,14 +71,14 @@ void ui::UnitCommand::onRightClick(ray_t ray)
         auto target = aim(ray);
         if(target) {
             auto vec = target.get();
-            addCommand(cmd::Move(mActiveShipID, vec.x, vec.y, vec.z, spatacs::speed_t(10)));
+            addCommand(cmd::Move(mActiveShipID, vec.x, vec.y, vec.z, 10.0_kps));
         }
     }
 }
 
 void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
 {
-    mBaseY = std::round(getCamera()->getTarget().Y / 10.0) * 10.0_km;
+    mBaseY = std::round(getCamera()->getTarget().Y / 10.f) * 10.f;
 
     using namespace irr;
     using irr::core::vector3df;
@@ -114,29 +115,26 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         stream << " hull: "   << target.hull_status().current     << "/" << target.hull_status().max << "\n";
         stream << " hp: "     << target.hp() << "\n";
         auto dst = distance(ship, target);
-        stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius().value * target.radius().value) * 100 << "%\n";
+        stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
         mTargetInfo->setText( stream.str().c_str() );
         mTargetInfo->setVisible(true);
     }
 
     if (mCurrentAim) {
-        vector3df sp{ship.position().x.value, ship.position().y.value, ship.position().z.value};
-        sp *= 20;
+        vector3df sp = convert(ship.position());
 
-        auto caim = mCurrentAim.get();
-        vector3df aim{caim.x.value, caim.y.value, caim.z.value};
-        aim *= 20;
+        auto aim = convert(mCurrentAim.get());
         auto aimbase = aim;
         aimbase.Y = std::round(getCamera()->getTarget().Y / 10) * 10;
         irr::core::line3df flightline(sp, aim);
 
         std::wstringstream stream;
-        stream << std::fixed << std::setprecision(1) << flightline.getLength() / 20 << "km\n";
+        stream << std::fixed << std::setprecision(1) << length(ship.position() - mCurrentAim.get()) << "\n";
         if(mMode == ATTACK)
         {
             auto& target = state().getShip(mCurrentAimShip);
             auto dst = distance(ship, target);
-            stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius().value * target.radius().value) * 100 << "%\n";
+            stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
         }
         mDistanceMarker->setText(stream.str().c_str());
         auto pos = getScreenPosition( flightline.getMiddle() );
@@ -182,11 +180,11 @@ void ui::UnitCommand::onMouseMove(ui::IInputMode::ray_t ray)
 boost::optional<length_vec> ui::UnitCommand::aim(const ray_t &ray) const
 {
     auto dir = ray.getVector();
-    float tty = (mBaseY.value-ray.start.Y) / dir.Y;
+    float tty = (mBaseY-ray.start.Y) / dir.Y;
     if (tty > 0) {
         auto target = ray.start + tty * dir;
-        target /= 20; // to world coordinates
-        return boost::optional<length_vec>(length_vec{target.X, mTargetY, target.Z});
+        target.Y = convert(mTargetY);
+        return convert(target);
     } else
     {
         return boost::none;

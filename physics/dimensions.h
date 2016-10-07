@@ -10,8 +10,8 @@
 
 namespace std
 {
-    template<long N, long D>
-    ostream& operator<<( ostream& stream, ratio<N, D> ratio );
+    template<class O, long N, long D>
+    basic_ostream<O>& operator<<( basic_ostream<O>& stream, ratio<N, D> ratio );
 }
 
 namespace spatacs
@@ -63,44 +63,58 @@ namespace spatacs
             using velocity_t     = div_t<length_t, time_t>;
             using acceleration_t = div_t<velocity_t, time_t>;
             using force_t        = mul_t<acceleration_t, mass_t>;
+            using area_t         = mul_t<length_t, length_t>;
+            template<class O>
+            struct unit_symbols;
 
-            template<class T>
-            struct unit_symbols {
-                constexpr static const char* km  = "km";
+            template<>
+            struct unit_symbols<char>
+            {
+                constexpr static const char* km  = "m";
                 constexpr static const char* kg  = "kg";
                 constexpr static const char* sec = "s";
                 constexpr static const char* exp = "^";
                 constexpr static const char* div = "/";
             };
 
-            template<class T>
-            std::ostream& operator<<( std::ostream& stream, DimBase<T> d )
+            template<>
+            struct unit_symbols<wchar_t>
+            {
+                constexpr static const wchar_t* km  = L"m";
+                constexpr static const wchar_t* kg  = L"kg";
+                constexpr static const wchar_t* sec = L"s";
+                constexpr static const wchar_t* exp = L"^";
+                constexpr static const wchar_t* div = L"/";
+            };
+
+            template<class O, class T>
+            std::basic_ostream<O>& operator<<( std::basic_ostream<O>& stream, DimBase<T> d )
             {
                 using len_t  = typename T::length;
                 using mass_t = typename T::mass;
                 using time_t = typename T::time;
 
-                if( len_t::num != 0 ) {
-                    stream << unit_symbols<T>::km;
-                    if( std::ratio_not_equal<len_t, One>::value )
+                if( mass_t::num != 0 ) {
+                    stream << unit_symbols<O>::kg;
+                    if( std::ratio_not_equal<mass_t, One>::value )
                     {
-                        stream << unit_symbols<T>::exp << len_t{};
+                        stream << unit_symbols<O>::exp << mass_t{};
                     }
                 }
 
-                if( mass_t::num != 0 ) {
-                    stream << unit_symbols<T>::kg;
-                    if( std::ratio_not_equal<mass_t, One>::value )
+                if( len_t::num != 0 ) {
+                    stream << unit_symbols<O>::km;
+                    if( std::ratio_not_equal<len_t, One>::value )
                     {
-                        stream << unit_symbols<T>::exp << mass_t{};
+                        stream << unit_symbols<O>::exp << len_t{};
                     }
                 }
 
                 if( time_t::num != 0 ) {
-                    stream << unit_symbols<T>::sec;
+                    stream << unit_symbols<O>::sec;
                     if( std::ratio_not_equal<time_t, One>::value )
                     {
-                        stream << unit_symbols<T>::exp << time_t{};
+                        stream << unit_symbols<O>::exp << time_t{};
                     }
                 }
 
@@ -110,12 +124,12 @@ namespace spatacs
     }
 }
 
-template<long N, long D>
-std::ostream& std::operator<<( std::ostream& stream, std::ratio<N, D> ratio )
+template<class O, long N, long D>
+std::basic_ostream<O>& std::operator<<( std::basic_ostream<O>& stream, std::ratio<N, D> ratio )
 {
     using ratio_t = std::ratio<N, D>;
     if( ratio_t::den != 1 ) {
-        return stream << ratio_t::num << spatacs::physics::dimensions::unit_symbols<ratio_t>::div << ratio_t::den;
+        return stream << ratio_t::num << spatacs::physics::dimensions::unit_symbols<O>::div << ratio_t::den;
     }else
     {
         return stream << ratio_t::num;

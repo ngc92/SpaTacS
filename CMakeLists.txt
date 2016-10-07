@@ -97,7 +97,7 @@ set(UI_SOURCE_FILES
         UI/AIPlayer.cpp
         UI/AIPlayer.h
         UI/inputs/UnitSelection.cpp
-        UI/inputs/UnitSelection.h UI/gfx/ShipStatusUI.cpp UI/gfx/ShipStatusUI.h UI/gfx/ShipFx.cpp UI/gfx/ShipFx.h)
+        UI/inputs/UnitSelection.h UI/gfx/ShipStatusUI.cpp UI/gfx/ShipStatusUI.h UI/gfx/ShipFx.cpp UI/gfx/ShipFx.h UI/convert.h UI/convert.cpp)
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}

@@ -12,6 +12,7 @@
 #include "components/FuelTank.h"
 #include "components/LifeSupport.h"
 #include <boost/property_tree/ptree.hpp>
+#include <iostream>
 #include "components/PowerPlant.h"
 
 using namespace spatacs;

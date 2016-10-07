@@ -26,13 +26,14 @@ namespace core
         virtual Engine* clone() const override;
 
     private:
+        using mrate_t = decltype(mass_t{} / time_t{});
         // engine config
-        force_t mMaxThrust{1.0};
+        speed_t mPropellantSpeed = 100.0_kps;
+        mrate_t mMassRate        = 1.0_kg / 1.0_s;
         float mEnergyConsumption = 2;
-        float mFuelConsumption   = 1;
 
         // engine status
-        force_t mUnusedThrust{1.0};
+        mass_t mUnusedMass       = 0.0_kg;
     };
 }
 }
