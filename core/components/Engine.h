@@ -30,7 +30,6 @@ namespace core
         // engine config
         speed_t mPropellantSpeed = 100.0_kps;
         mrate_t mMassRate        = 1.0_kg / 1.0_s;
-        float mEnergyConsumption = 2;
 
         // engine status
         mass_t mUnusedMass       = 0.0_kg;

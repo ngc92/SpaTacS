@@ -4,6 +4,7 @@
 
 #include "FuelTank.h"
 #include <boost/property_tree/ptree.hpp>
+#include <iostream>
 
 using namespace spatacs;
 using namespace core;
@@ -21,7 +22,7 @@ FuelTank* FuelTank::clone() const
     return new FuelTank(*this);
 }
 
-mass_t FuelTank::getFuel(mass_t req)
+mass_t FuelTank::requestFuel(mass_t req)
 {
     if(req < mCurrentFuel)
     {
@@ -33,4 +34,14 @@ mass_t FuelTank::getFuel(mass_t req)
         mCurrentFuel = 0.0_kg;
         return req;
     }
+}
+
+mass_t FuelTank::fuel() const
+{
+    return mCurrentFuel;
+}
+
+mass_t FuelTank::capacity() const
+{
+    return mFuelCapacity;
 }

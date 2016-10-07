@@ -19,10 +19,7 @@ namespace spatacs
             if(fuel_demand < 0.0_kg)
                 fuel_demand = 0.0_kg;
 
-            double energy_demand = mEnergyConsumption * (fuel_demand / mass_diff + 0.1);
-            double efac = requestEnergy(energy_demand) / energy_demand;
-            fuel_demand *= efac;
-            mUnusedMass +=ship.getTank().getFuel( fuel_demand );
+            mUnusedMass += ship.getTank().requestFuel(fuel_demand);
         }
 
         force_vec Engine::getThrust(const force_vec& accel)
@@ -34,6 +31,7 @@ namespace spatacs
             }
 
             force_t f = need_mass * mPropellantSpeed / 0.1_s;
+            mUnusedMass -= need_mass;
             return accel * (f / want);
         }
 
@@ -50,8 +48,7 @@ namespace spatacs
         Engine::Engine(const ptree& props):
             IComponent(props),
             mPropellantSpeed( kilometers(props.get<float>("propellant_speed")) / 1.0_s ),
-            mMassRate( kilogram(props.get<float>("fuel_consumption")) / 1.0_s ),
-            mEnergyConsumption( props.get<float>("energy_consumption") )
+            mMassRate( kilogram(props.get<float>("fuel_consumption")) / 1.0_s )
         {
 
         }

@@ -19,6 +19,7 @@
 #include "core/components/ShieldGenerator.h"
 #include "core/components/Engine.h"
 #include "UI/convert.h"
+#include "core/components/FuelTank.h"
 
 using namespace spatacs;
 
@@ -71,7 +72,7 @@ void ui::UnitCommand::onRightClick(ray_t ray)
         auto target = aim(ray);
         if(target) {
             auto vec = target.get();
-            addCommand(cmd::Move(mActiveShipID, vec.x, vec.y, vec.z, 10.0_kps));
+            addCommand(cmd::Move(mActiveShipID, vec.x, vec.y, vec.z, 2.5_kps));
         }
     }
 }
@@ -99,6 +100,8 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         mShipInfo->pushSystem( irr::gui::SystemStatus{"engine", ship.engine().hp(), ship.engine().max_hp()} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ship.tank().fuel().value / 1000,
+                                                      ship.tank().capacity().value / 1000} );
         /// \todo power plant
     }
 

@@ -53,6 +53,7 @@ void SpawnShip::apply(EventContext& context) const
 {
     boost::property_tree::ptree tree;
     boost::property_tree::xml_parser::read_xml("data/"+mType+".xml", tree);
+    auto mass = tonnes(tree.get<double>("mass"));
     auto id = context.state.getNextFreeID();
 
     auto ship = core::Starship(mTeam, mName, tree);
@@ -64,5 +65,5 @@ void SpawnShip::apply(EventContext& context) const
     std::cout << "spawn " << id << " " << ship.id() << "\n";
 
     context.state.addShip(std::move(ship));
-    context.world.pushEvent(physics::events::Spawn{mPosition, velocity_vec{0, 0, 0}, 65000.0_kg, 25.0_m, id, 0.0_s});
+    context.world.pushEvent(physics::events::Spawn{mPosition, velocity_vec{0, 0, 0}, mass, 25.0_m, id, 0.0_s});
 }

@@ -19,8 +19,9 @@ namespace core
         void onStep(Starship& ship) override { };
         FuelTank* clone() const override;
 
-        mass_t getFuel(mass_t req);
-
+        mass_t requestFuel(mass_t req);
+        mass_t fuel() const;
+        mass_t capacity() const;
     private:
         mass_t mFuelCapacity;
         mass_t mCurrentFuel;
