@@ -11,6 +11,7 @@
 #include "UnitSelection.h"
 #include "UnitCommand.h"
 #include <irrlicht/ICameraSceneNode.h>
+#include "UI/convert.h"
 
 using namespace spatacs;
 using namespace ui;
@@ -62,6 +63,42 @@ void UnitSelection::onWheel(float scroll)
 
 void UnitSelection::draw(irr::video::IVideoDriver* driver)
 {
+    if(mKeysDown.count(irr::KEY_KEY_A))
+    {
+        getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(0, 0, 1) );
+        getCamera()->setTarget( getCamera()->getTarget() + irr::core::vector3df(0, 0, 1) );
+    }
+
+    if(mKeysDown.count(irr::KEY_KEY_D))
+    {
+        getCamera()->setPosition( getCamera()->getPosition() - irr::core::vector3df(0, 0, 1) );
+        getCamera()->setTarget( getCamera()->getTarget() - irr::core::vector3df(0, 0, 1) );
+    }
+
+    if(mKeysDown.count(irr::KEY_KEY_W))
+    {
+        getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(1, 0, 0) );
+        getCamera()->setTarget( getCamera()->getTarget() + irr::core::vector3df(1, 0, 0) );
+    }
+
+    if(mKeysDown.count(irr::KEY_KEY_S))
+    {
+        getCamera()->setPosition( getCamera()->getPosition() - irr::core::vector3df(1, 0, 0) );
+        getCamera()->setTarget( getCamera()->getTarget() - irr::core::vector3df(1, 0, 0) );
+    }
+
+    if(mKeysDown.count(irr::KEY_KEY_Q))
+    {
+        getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(0, 1, 0) );
+        getCamera()->setTarget( getCamera()->getTarget() + irr::core::vector3df(0, 1, 0) );
+    }
+
+    if(mKeysDown.count(irr::KEY_KEY_Y))
+    {
+        getCamera()->setPosition( getCamera()->getPosition() - irr::core::vector3df(0, 1, 0) );
+        getCamera()->setTarget( getCamera()->getTarget() - irr::core::vector3df(0, 1, 0) );
+    }
+
     if(mChildMode)
         mChildMode->draw(driver);
 
@@ -71,8 +108,7 @@ void UnitSelection::draw(irr::video::IVideoDriver* driver)
         mHoverUI->setVisible(false);
     } else {
         /// \todo we are using the "actual" 3D position, but should be using the position inside the LocationPlotter3D
-        irr::core::vector3df p = {hover->position().x.value, hover->position().y.value, hover->position().z.value};
-        p *= 20;
+        auto p = convert(hover->position());
         p.Y += 5;
         auto screenpos = getScreenPosition(p);
         mHoverUI->setRelativePosition(screenpos);
@@ -81,7 +117,7 @@ void UnitSelection::draw(irr::video::IVideoDriver* driver)
         ws << std::fixed << std::setprecision(1);
         ws << L"Ship: " << hover->id() << ":\n";
         auto status = hover->shield_strength();
-        ws << " " << status.current << "/" << hover->HP() << "\n";
+        ws << " " << status.current << "/" << hover->hp() << "\n";
         mHoverUI->setText(ws.str().c_str());
     }
 
@@ -96,42 +132,18 @@ void UnitSelection::init(irr::gui::IGUIEnvironment* guienv)
 
 void UnitSelection::onKeyPress(irr::EKEY_CODE key)
 {
-    if(key == irr::KEY_KEY_A)
-    {
-        getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(0, 0, 1) );
-        getCamera()->setTarget( getCamera()->getTarget() + irr::core::vector3df(0, 0, 1) );
-    } else
-
-    if(key == irr::KEY_KEY_D)
-    {
-        getCamera()->setPosition( getCamera()->getPosition() - irr::core::vector3df(0, 0, 1) );
-        getCamera()->setTarget( getCamera()->getTarget() - irr::core::vector3df(0, 0, 1) );
-    } else
-
-    if(key == irr::KEY_KEY_W)
-    {
-        getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(1, 0, 0) );
-        getCamera()->setTarget( getCamera()->getTarget() + irr::core::vector3df(1, 0, 0) );
-    } else
-
-    if(key == irr::KEY_KEY_S)
-    {
-        getCamera()->setPosition( getCamera()->getPosition() - irr::core::vector3df(1, 0, 0) );
-        getCamera()->setTarget( getCamera()->getTarget() - irr::core::vector3df(1, 0, 0) );
-    } else
-
-    if(key == irr::KEY_KEY_Q)
-    {
-        getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(0, 1, 0) );
-        getCamera()->setTarget( getCamera()->getTarget() + irr::core::vector3df(0, 1, 0) );
-    } else
-
-    if(key == irr::KEY_KEY_Y)
-    {
-        getCamera()->setPosition( getCamera()->getPosition() - irr::core::vector3df(0, 1, 0) );
-        getCamera()->setTarget( getCamera()->getTarget() - irr::core::vector3df(0, 1, 0) );
-    } else if(mChildMode)
+    mKeysDown.insert(key);
+    if(mChildMode)
     {
         mChildMode->onKeyPress(key);
+    }
+}
+
+void UnitSelection::onKeyRelease(irr::EKEY_CODE key)
+{
+    mKeysDown.erase(key);
+    if(mChildMode)
+    {
+        mChildMode->onKeyRelease(key);
     }
 }

@@ -15,14 +15,14 @@ namespace spatacs
             return new RayWeapon(*this);
         }
 
-        float RayWeapon::strength(length_t distance, float xsec) const
+        float RayWeapon::strength(length_t distance, area_t xsec) const
         {
-            float shot_radius = distance.value / mDispLength;
-            float hit = std::min(1.f, xsec / (shot_radius * shot_radius));
+            auto shot_radius = distance / mDispLength;
+            float hit = std::min(1.0, double(xsec / shot_radius * shot_radius));
             return mStrength * hit;
         }
 
-        void RayWeapon::onStep()
+        void RayWeapon::onStep(Starship& ship)
         {
             if(mRecharging) {
                 if(mCharge < mBurstLength)
@@ -57,18 +57,18 @@ namespace spatacs
             return mReady;
         }
 
-        float RayWeapon::hit_chance(length_t distance, float xsec) const
+        float RayWeapon::hit_chance(length_t distance, area_t xsec) const
         {
             auto aim_radius  = distance / precision();
             auto shot_radius = distance / mDispLength;
 
             // shot radius increases the effective radius of the target
-            float effective_xsec = std::sqrt(xsec) + shot_radius.value;
-            effective_xsec *= effective_xsec;
+            auto effective_rad = sqrt(xsec) + shot_radius;
+            auto effective_xsec = effective_rad * effective_rad;
 
-            float area = aim_radius.value * aim_radius.value;
+            auto area = aim_radius * aim_radius;
             /// \todo test for distance == 0
-            return std::min(1.f, effective_xsec / area);
+            return std::min(1.0, double(effective_xsec / area));
         }
 
         double RayWeapon::precision() const

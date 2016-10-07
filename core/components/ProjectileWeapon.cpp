@@ -28,12 +28,12 @@ namespace spatacs
             return new ProjectileWeapon(*this);
         }
 
-        float ProjectileWeapon::strength(length_t, float) const
+        float ProjectileWeapon::strength(length_t, area_t) const
         {
             return 0;
         }
 
-        void ProjectileWeapon::onStep()
+        void ProjectileWeapon::onStep(Starship& ship)
         {
             mReload -= 0.1;
         }
@@ -57,8 +57,8 @@ namespace spatacs
             length_t aim_radius = d / precision();
             auto aim_radius_miss = (rand() % 1001 / 1000.0) * aim_radius;
 
-            Vec miss_base{ rand() % 1001 - 500.0, rand() % 1001 - 500.0, rand() % 1001 - 500.0};
-            auto miss = perpendicular(length_vec(miss_base), aim_pos);
+            auto miss_base = meters(rand() % 1001 - 500.0, rand() % 1001 - 500.0, rand() % 1001 - 500.0);
+            auto miss = perpendicular(miss_base, aim_pos);
 
             length_t n = length(miss);
             if( n == 0.0_m ) miss *= 0.0;
@@ -84,12 +84,12 @@ namespace spatacs
             return ShotData{aim_pos * vel/d, dmg};
         }
 
-        float ProjectileWeapon::hit_chance(length_t distance, float xsec) const
+        float ProjectileWeapon::hit_chance(length_t distance, area_t xsec) const
         {
             auto aim_radius = distance / precision();
-            float target_radius = std::sqrt(xsec);
+            length_t target_radius = sqrt(xsec);
             /// \todo test for distance == 0
-            return std::min(1.0, target_radius / aim_radius.value);
+            return std::min(1.0, (double)(target_radius / aim_radius));
         }
 
         double ProjectileWeapon::precision() const

@@ -2,14 +2,17 @@
 // Created by erik on 9/18/16.
 //
 
+#include "GameObject.h"
 #include "Starship.h"
 #include <cmath>
 #include <algorithm>
 #include "components/ProjectileWeapon.h"
 #include "components/ShieldGenerator.h"
 #include "components/Engine.h"
-#include "components/Hull.h"
+#include "components/FuelTank.h"
+#include "components/LifeSupport.h"
 #include <boost/property_tree/ptree.hpp>
+#include <iostream>
 #include "components/PowerPlant.h"
 
 using namespace spatacs;
@@ -21,7 +24,8 @@ struct Starship::SubSystems
         mEngine(new Engine(data.get_child("engine"))),
         mShield(new ShieldGenerator(data.get_child("shield"))),
         mPowerPlant(new PowerPlant(data.get_child("power_plant"))),
-        mHull( new Hull(data.get_child("hull")) )
+        mFuelTank(new FuelTank(data.get_child("tank"))),
+        mLifeSupport( new LifeSupport(data.get_child("life_support")) )
     {
         mArmament.push_back(std::make_unique<ProjectileWeapon>(data.get_child("weapon")));
     }
@@ -31,7 +35,8 @@ struct Starship::SubSystems
     std::unique_ptr<Engine> mEngine;
     std::unique_ptr<ShieldGenerator> mShield;
     std::unique_ptr<PowerPlant> mPowerPlant;
-    std::unique_ptr<Hull> mHull;
+    std::unique_ptr<FuelTank> mFuelTank;
+    std::unique_ptr<LifeSupport> mLifeSupport;
     std::vector<std::unique_ptr<IWeapon>> mArmament;
 };
 
@@ -58,10 +63,11 @@ Starship::~Starship() {
 void Starship::onStep()
 {
     std::vector<IComponent*> cmps;
-    std::vector<float> requests;
+    std::vector<double> requests;
     cmps.push_back( &getEngine() );
     cmps.push_back( &getShield() );
     cmps.push_back( mSubSystems->mPowerPlant.get() );
+    cmps.push_back( mSubSystems->mLifeSupport.get() );
     for(auto& wpn : mSubSystems->mArmament)
         cmps.push_back( wpn.get() );
 
@@ -75,12 +81,12 @@ void Starship::onStep()
     mEnergyProduced = energy_to_distribute;
 
     // energy distribution according to demand and priority
-    std::vector<float> supply( requests.size(), 0.f );
+    std::vector<double> supply( requests.size(), 0.f );
 
     const int num_iters = 10;
     for(unsigned p = 0; p < num_iters; ++p)
     {
-        float total_request = std::accumulate( begin(requests), end(requests), 0.f );
+        double total_request = std::accumulate( begin(requests), end(requests), 0.0 );
         if(total_request == 0)
             break;
 
@@ -89,7 +95,7 @@ void Starship::onStep()
         {
             if(requests[i] == 0) continue;
 
-            float add = requests[i] * edist / total_request * cmps[i]->energyPriority();
+            double add = requests[i] * edist / total_request * cmps[i]->energyPriority();
 
             if(supply[i] + add > cmps[i]->getEnergyRequest()) {
                add = cmps[i]->getEnergyRequest() - supply[i];
@@ -103,7 +109,7 @@ void Starship::onStep()
         }
     }
 
-    mEnergyUsed = std::accumulate(begin(supply), end(supply), 0.f);
+    mEnergyUsed = std::accumulate(begin(supply), end(supply), 0.0);
 
     // supply energy to systems
     for(unsigned i = 0; i < supply.size(); ++i) {
@@ -112,7 +118,7 @@ void Starship::onStep()
 
     for(auto& c : cmps)
     {
-        c->onStep();
+        c->onStep(*this);
     }
 }
 
@@ -139,16 +145,6 @@ const IWeapon& Starship::weapon( std::size_t id ) const
 IWeapon& Starship::getWeapon( std::size_t id )
 {
     return *mSubSystems->mArmament.at(id);
-}
-
-float Starship::HP() const
-{
-    return mHitPoints;
-}
-
-void Starship::setHP(float hp)
-{
-    mHitPoints = hp;
 }
 
 bool Starship::alive() const
@@ -184,8 +180,9 @@ Starship::SubSystems::SubSystems( const SubSystems& other ):
         mEngine( clone(other.mEngine) ),
         mShield( clone(other.mShield) ),
         mPowerPlant( clone(other.mPowerPlant) ),
-        mHull( clone(other.mHull) ),
-        mArmament( clone(other.mArmament) )
+        mArmament( clone(other.mArmament) ),
+        mLifeSupport( clone(other.mLifeSupport) ),
+        mFuelTank( clone(other.mFuelTank) )
 {
 
 }
@@ -226,26 +223,8 @@ SystemStatus Starship::shield_strength() const
     return SystemStatus{ shield().shield(), shield().max_shield() };
 }
 
-float Starship::producedEnergy() const
-{
-    return mEnergyProduced;
-}
-
-float Starship::usedEnergy() const
-{
-    return mEnergyUsed;
-}
-
 SystemStatus Starship::hull_status() const {
-    return SystemStatus{hull().armour(), hull().max_armour()};
-}
-
-const Hull& Starship::hull() const {
-    return *mSubSystems->mHull;
-}
-
-Hull& Starship::getHull() {
-    return *mSubSystems->mHull;
+    return SystemStatus{armour(), max_armour()};
 }
 
 void Starship::dealDamage(float dmg)
@@ -254,6 +233,7 @@ void Starship::dealDamage(float dmg)
     cmps.push_back( &getEngine() );
     cmps.push_back( &getShield() );
     cmps.push_back( mSubSystems->mPowerPlant.get() );
+    cmps.push_back( mSubSystems->mLifeSupport.get() );
     for(auto& wpn : mSubSystems->mArmament)
         cmps.push_back( wpn.get() );
 
@@ -267,6 +247,8 @@ length_t spatacs::core::distance(const Starship& s1, const Starship& s2)
     return length(s1.position() - s2.position());
 }
 
+
+
 uint64_t ShipData::team() const
 {
     return mTeam;
@@ -275,4 +257,59 @@ uint64_t ShipData::team() const
 const std::string& ShipData::name() const
 {
     return mName;
+}
+
+double ShipData::max_hp() const
+{
+    return mMaxHitPoints;
+}
+
+double ShipData::producedEnergy() const
+{
+    return mEnergyProduced;
+}
+
+double ShipData::usedEnergy() const
+{
+    return mEnergyUsed;
+}
+
+double ShipData::hp() const
+{
+    return mHitPoints;
+}
+
+double ShipData::armour() const
+{
+    return mCurArmour;
+}
+
+double ShipData::max_armour() const
+{
+    return mMaxArmour;
+}
+
+void ShipData::setArmour(double new_value)
+{
+    mCurArmour = new_value;
+}
+
+length_t Starship::radius() const
+{
+    return mRadius;
+}
+
+const FuelTank& Starship::tank() const
+{
+    return *mSubSystems->mFuelTank;
+}
+
+FuelTank& Starship::getTank()
+{
+    return *mSubSystems->mFuelTank;
+}
+
+void ShipData::setHP(double hp)
+{
+    mHitPoints = hp;
 }

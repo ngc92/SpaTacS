@@ -16,7 +16,7 @@ namespace spatacs
         class RayWeapon : public IWeapon
         {
         public:
-            void onStep();
+            void onStep(Starship& ship);
 
             ~RayWeapon() override = default;
 
@@ -26,8 +26,8 @@ namespace spatacs
 
             double precision() const;
 
-            float strength(length_t distance, float xsec) const override;
-            float hit_chance(length_t distance, float xsec) const override;
+            float strength(length_t distance, area_t xsec) const override;
+            float hit_chance(length_t distance, area_t xsec) const override;
 
             virtual void setMode(std::uint64_t mode) override;
 

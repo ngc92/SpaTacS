@@ -15,6 +15,11 @@
 #include "core/components/IWeapon.h"
 #include <irrlicht/ICameraSceneNode.h>
 #include <iostream>
+#include "UI/gfx/ShipStatusUI.h"
+#include "core/components/ShieldGenerator.h"
+#include "core/components/Engine.h"
+#include "UI/convert.h"
+#include "core/components/FuelTank.h"
 
 using namespace spatacs;
 
@@ -34,9 +39,8 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv)
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mDistanceMarker = txt;
 
-    txt = guienv->addStaticText(L"", irr::core::recti(10, 10, 100, 90));
-    txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
-    mShipInfo = txt;
+    auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 10, 100, 120));
+    mShipInfo = sstat;
 
     txt = guienv->addStaticText(L"", irr::core::recti(700, 10, 790, 70));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
@@ -68,14 +72,14 @@ void ui::UnitCommand::onRightClick(ray_t ray)
         auto target = aim(ray);
         if(target) {
             auto vec = target.get();
-            addCommand(cmd::Move(mActiveShipID, vec.x, vec.y, vec.z, spatacs::speed_t(10)));
+            addCommand(cmd::Move(mActiveShipID, vec.x, vec.y, vec.z, 2.5_kps));
         }
     }
 }
 
 void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
 {
-    mBaseY = std::round(getCamera()->getTarget().Y / 10.0) * 10.0_km;
+    mBaseY = std::round(getCamera()->getTarget().Y / 10.f) * 10.f;
 
     using namespace irr;
     using irr::core::vector3df;
@@ -86,12 +90,19 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         std::wstringstream stream;
         stream << std::fixed << std::setprecision(1);
         stream << ship.name().c_str() << ":\n";
-        stream << " shield: " << ship.shield_strength().current << "/" << ship.shield_strength().max << "\n";
-        stream << " hull: " << ship.hull_status().current << "/" << ship.hull_status().max << "\n";
-        stream << " hp: "     << ship.HP() << "\n";
+        stream << " hp: "     << ship.hp() << "\n";
         stream << " egy: " << ship.usedEnergy() / 0.1f << "/" << ship.producedEnergy() / 0.1f << "\n";
         stream << " mode: " << ship.weapon(0).mode() << "\n";
         mShipInfo->setText( stream.str().c_str() );
+        mShipInfo->setShipName( ship.name() );
+        mShipInfo->clearSystems();
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield generator", ship.shield().hp(), ship.shield().max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"engine", ship.engine().hp(), ship.engine().max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ship.tank().fuel().value / 1000,
+                                                      ship.tank().capacity().value / 1000} );
+        /// \todo power plant
     }
 
     if(mMode == MOVE)
@@ -105,31 +116,28 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         stream << target.name().c_str() << ":\n";
         stream << " shield: " << target.shield_strength().current << "/" << target.shield_strength().max << "\n";
         stream << " hull: "   << target.hull_status().current     << "/" << target.hull_status().max << "\n";
-        stream << " hp: "     << target.HP() << "\n";
+        stream << " hp: "     << target.hp() << "\n";
         auto dst = distance(ship, target);
-        stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius().value * target.radius().value) * 100 << "%\n";
+        stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
         mTargetInfo->setText( stream.str().c_str() );
         mTargetInfo->setVisible(true);
     }
 
     if (mCurrentAim) {
-        vector3df sp{ship.position().x.value, ship.position().y.value, ship.position().z.value};
-        sp *= 20;
+        vector3df sp = convert(ship.position());
 
-        auto caim = mCurrentAim.get();
-        vector3df aim{caim.x.value, caim.y.value, caim.z.value};
-        aim *= 20;
+        auto aim = convert(mCurrentAim.get());
         auto aimbase = aim;
         aimbase.Y = std::round(getCamera()->getTarget().Y / 10) * 10;
         irr::core::line3df flightline(sp, aim);
 
         std::wstringstream stream;
-        stream << std::fixed << std::setprecision(1) << flightline.getLength() / 20 << "km\n";
+        stream << std::fixed << std::setprecision(1) << length(ship.position() - mCurrentAim.get()) << "\n";
         if(mMode == ATTACK)
         {
             auto& target = state().getShip(mCurrentAimShip);
             auto dst = distance(ship, target);
-            stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius().value * target.radius().value) * 100 << "%\n";
+            stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
         }
         mDistanceMarker->setText(stream.str().c_str());
         auto pos = getScreenPosition( flightline.getMiddle() );
@@ -175,11 +183,11 @@ void ui::UnitCommand::onMouseMove(ui::IInputMode::ray_t ray)
 boost::optional<length_vec> ui::UnitCommand::aim(const ray_t &ray) const
 {
     auto dir = ray.getVector();
-    float tty = (mBaseY.value-ray.start.Y) / dir.Y;
+    float tty = (mBaseY-ray.start.Y) / dir.Y;
     if (tty > 0) {
         auto target = ray.start + tty * dir;
-        target /= 20; // to world coordinates
-        return boost::optional<length_vec>(length_vec{target.X, mTargetY, target.Z});
+        target.Y = convert(mTargetY);
+        return convert(target);
     } else
     {
         return boost::none;

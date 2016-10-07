@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.5)
 project(SpaTacS)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -49,8 +49,6 @@ SET(CORE_SOURCE_FILES
         core/components/ProjectileWeapon.h
         core/components/RayWeapon.h
         core/components/RayWeapon.cpp
-        core/components/Hull.cpp
-        core/components/Hull.h
         core/Projectile.h
         core/Projectile.cpp
         core/components/IComponent.h
@@ -65,7 +63,7 @@ SET(CORE_SOURCE_FILES
         core/components/PowerPlant.h
         core/Simulation.cpp
         core/Simulation.h
-        core/Damage.h)
+        core/Damage.h core/components/FuelTank.h core/components/FuelTank.cpp core/components/LifeSupport.cpp core/components/LifeSupport.h)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h
@@ -87,8 +85,6 @@ set(UI_SOURCE_FILES
         UI/ConsoleUI.cpp
         UI/gfx/GridNode.h
         UI/gfx/GridNode.cpp
-        UI/gfx/LocationPlotter3D.cpp
-        UI/gfx/LocationPlotter3D.h
         UI/gfx/ShipUI.h
         UI/gfx/ShotFx.cpp
         UI/gfx/ShotFx.h
@@ -101,7 +97,7 @@ set(UI_SOURCE_FILES
         UI/AIPlayer.cpp
         UI/AIPlayer.h
         UI/inputs/UnitSelection.cpp
-        UI/inputs/UnitSelection.h)
+        UI/inputs/UnitSelection.h UI/gfx/ShipStatusUI.cpp UI/gfx/ShipStatusUI.h UI/gfx/ShipFx.cpp UI/gfx/ShipFx.h UI/convert.h UI/convert.cpp)
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}

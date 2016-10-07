@@ -16,9 +16,9 @@ namespace spatacs
     namespace core {
         class Engine;
         class ShieldGenerator;
-        class Hull;
         class IWeapon;
         class PowerPlant;
+        class FuelTank;
 
         struct SystemStatus
         {
@@ -35,20 +35,42 @@ namespace spatacs
             /// Ship info
             uint64_t team() const;
             const std::string& name() const;
+
+
+
+            /// energy
+            double producedEnergy() const;
+            double usedEnergy() const;
+
+            // hitpoints
+            double hp() const;
+            double max_hp() const;
+            void setHP( double hp );
+
+            double armour() const;
+            double max_armour() const;
+            void setArmour( double new_value );
+
         protected:
             ShipData() = default;
             ShipData(std::uint64_t team, std::string name);
             ~ShipData() = default;
 
-            float mHitPoints = 10;
+            // structure
+            double mHitPoints    = 10;
+            double mMaxHitPoints = 10;
+
+            // armour
+            double mMaxArmour = 10;
+            double mCurArmour = 10;
 
             // Energy management status
-            float mEnergyUsed     = 0;
-            float mEnergyProduced = 0;
+            double mEnergyUsed     = 0;
+            double mEnergyProduced = 0;
 
         private:
             std::uint64_t mTeam = 0;
-            std::string mName;
+            std::string   mName;
         };
 
         class Starship : public GameObject, public ShipData {
@@ -65,16 +87,10 @@ namespace spatacs
             // Ship from definition
             Starship(std::uint64_t team, std::string name, const boost::property_tree::ptree& data);
 
-            float HP() const;
             bool alive() const;
 
             /// called at the end of a game step.
             void onStep();
-            void setHP( float hp );
-
-            /// energy
-            float producedEnergy() const;
-            float usedEnergy() const;
 
             /// Subcomponents
             // engine interface
@@ -88,22 +104,27 @@ namespace spatacs
 
             // hull interface
             SystemStatus hull_status() const;
-            const Hull& hull() const;
-            Hull& getHull();
 
             // weapon interface
             std::size_t weapon_count() const;
             const IWeapon& weapon( std::size_t id) const;
             IWeapon& getWeapon( std::size_t id );
 
+            // tank interface
+            const FuelTank& tank() const;
+            FuelTank& getTank();
 
             // damage the ship
             void dealDamage( float dmg );
+
+            length_t radius() const;
 
         private:
             // components
             struct SubSystems;
             std::unique_ptr<SubSystems> mSubSystems;
+        protected:
+            length_t mRadius;
         };
 
         length_t distance(const Starship& s1, const Starship& s2);

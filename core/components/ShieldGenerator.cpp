@@ -21,18 +21,19 @@ float ShieldGenerator::max_shield() const
     return mMaximumShieldStrength;
 }
 
-void ShieldGenerator::onStep()
+void ShieldGenerator::onStep(Starship& ship)
 {
     // shield decay
     float decay = std::exp( std::log(1-mDecayPerSecond)*0.1f);
     mCurrentShieldStrength *= decay;
     if(shield() < max_shield())
     {
-        float difference = max_shield() - shield();
-        float rec = std::min( recharge_rate() * .1f, difference );
-        float egy = rec * mEnergyPerShieldPoint;
+        double difference = max_shield() - shield();
+        double rec = std::min( recharge_rate() * .1, difference );
+        double egy = rec * mEnergyPerShieldPoint;
         rec *= requestEnergy( egy ) / egy;
         mCurrentShieldStrength += rec;
+        update_cooldown( rec );
     }
 }
 
@@ -49,14 +50,6 @@ ShieldGenerator* ShieldGenerator::clone() const
     return new ShieldGenerator(*this);
 }
 
-float ShieldGenerator::getDeflectionChance(const Vec& displacement, const Vec& impact_impulse) const
-{
-    Vec normal = parallel(impact_impulse, displacement);
-    float nimp = length(normal);
-    float rdsp = nimp / mCurrentShieldStrength;
-    return std::tanh( .1f / rdsp );
-}
-
 ShieldGenerator::ShieldGenerator(const ptree& props):
     IComponent(props),
     mMaximumShieldStrength( props.get<float>("strength") ),
@@ -67,7 +60,7 @@ ShieldGenerator::ShieldGenerator(const ptree& props):
     mCurrentShieldStrength = mMaximumShieldStrength;
 }
 
-float ShieldGenerator::recharge_rate() const
+double ShieldGenerator::recharge_rate() const
 {
-    return mShieldRecharge * status();
+    return mShieldRecharge * status() / temperature();
 }

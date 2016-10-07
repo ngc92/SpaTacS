@@ -1,0 +1,3 @@
+- unify random
+- sort energy management code
+- separate shield and shield generator

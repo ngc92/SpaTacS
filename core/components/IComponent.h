@@ -12,12 +12,17 @@ namespace spatacs
 {
     namespace core
     {
+        class Starship;
+
         class IComponent
         {
         public:
             virtual ~IComponent() = default;
 
-            virtual void onStep() { };
+            virtual void onStep(Starship& ship)
+            { };
+
+            // interaction with the energy system
 
             /// energy step. Returns the energy that remains in the cache and empties it.
             double getExcessEnergy() const;
@@ -31,10 +36,10 @@ namespace spatacs
             /// gets the priority for energy supply to this component
             float energyPriority() const;
 
-            /// sets the priority for energy supply to this component.
-            /// If p <= 1, p is set to 1.
-            void setEnergyPriority( float p );
+            /// gets the temperature
+            double temperature() const;
 
+            // hitpoints stuff
             /// get the current hit points
             float hp() const;
             /// get maximum hit points
@@ -45,6 +50,10 @@ namespace spatacs
             /// \return leftover damage.
             float dealDamage( float dmg );
 
+            // user interaction
+            /// sets the priority for energy supply to this component.
+            /// If p <= 1, p is set to 1.
+            void setEnergyPriority( float p );
 
             virtual IComponent* clone() const = 0;
 
@@ -59,11 +68,17 @@ namespace spatacs
 
             /// places produced energy into the cache.
             void produceEnergy(double amount);
+
+            /// call every frame
+            void update_cooldown(double ein);
         private:
             // this comes in handy for basically all components, so we put this code here.
             double mEnergyCache      = 0;
             double mLastTotalRequest = 0;
             float mEnergyPriority    = 1;
+
+            // temperature stuff
+            double mTemperatur       = 0;
 
             float mMaxHitPoints;
             float mHitPoints;

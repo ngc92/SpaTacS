@@ -8,6 +8,7 @@
 #include <memory>
 #include <irrlicht/IGUIElement.h>
 #include "UI/IInputMode.h"
+#include <set>
 
 namespace spatacs {
     namespace ui {
@@ -17,26 +18,29 @@ namespace spatacs {
             UnitSelection(std::uint64_t team);
 
         protected:
-            virtual void init(irr::gui::IGUIEnvironment* guienv) override;
+            void init(irr::gui::IGUIEnvironment* guienv) override;
 
         public:
-            virtual void onLeftClick(ray_t ray) override;
+            void onLeftClick(ray_t ray) override;
 
-            virtual void onMouseMove(ray_t ray) override;
+            void onMouseMove(ray_t ray) override;
 
-            virtual void onRightClick(ray_t ray) override;
+            void onRightClick(ray_t ray) override;
 
-            virtual void onWheel(float scroll) override;
+            void onWheel(float scroll) override;
 
-            virtual void onKeyPress( irr::EKEY_CODE key ) override;
+            void onKeyPress( irr::EKEY_CODE key ) override;
+            void onKeyRelease( irr::EKEY_CODE key ) override;
 
-            virtual void draw(irr::video::IVideoDriver* driver) override;
+            void draw(irr::video::IVideoDriver* driver) override;
 
         private:
             std::uint64_t mOwnTeam;
             std::shared_ptr<IInputMode> mChildMode;
             irr::gui::IGUIElement* mHoverUI = nullptr;
             ray_t mCurrentRay;
+
+            std::set<irr::EKEY_CODE> mKeysDown;
         };
     }
 }

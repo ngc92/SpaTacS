@@ -85,5 +85,16 @@ namespace spatacs
             return dmg - d;
         }
 
+        double IComponent::temperature() const
+        {
+            return 1 + mTemperatur;
+        }
+
+        void IComponent::update_cooldown(double ein)
+        {
+            mTemperatur += ein;
+            mTemperatur *= std::exp(-0.5*0.1);
+        }
+
     }
 }

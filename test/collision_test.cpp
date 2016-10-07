@@ -54,4 +54,16 @@ BOOST_AUTO_TEST_SUITE(Collisions)
         BOOST_CHECK( !(bool)res );
     }
 
+    BOOST_AUTO_TEST_CASE(within)
+    {
+        using namespace spatacs::physics;
+        // stationary reference target
+        MovingSphere sp_stat{ length_vec{0, 0, 0}, velocity_vec{0,0,0}, length_t(3), speed_t{0} };
+        MovingSphere sp_mov1{ length_vec{0, 0, 1}, velocity_vec{0,0,1}, length_t(1), speed_t{0} };
+
+        auto res = intersect(sp_stat, sp_mov1);
+        BOOST_CHECK( (bool)res );
+        BOOST_CHECK_CLOSE( res.get().value, 1.0, 1e-6 );
+    }
+
 BOOST_AUTO_TEST_SUITE_END()

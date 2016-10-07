@@ -6,20 +6,21 @@
 #include <irrlicht/irrlicht.h>
 #include <algorithm>
 #include "gfx/GridNode.h"
-#include "gfx/LocationPlotter3D.h"
 #include "events/Combat.h"
 #include "gfx/ShotFx.h"
+#include "gfx/ShipFx.h"
 #include <sstream>
 #include <iomanip>
-#include <functional>
 #include <UI/inputs/UnitSelection.h>
 #include "IInputMode.h"
 #include "UI/inputs/UnitCommand.h"
 #include <iostream>
+#include "convert.h"
 
 using namespace irr;
 using spatacs::ui::IrrlichtUI;
 using namespace spatacs;
+using namespace ui;
 namespace icore = irr::core;
 
 
@@ -29,9 +30,8 @@ const spatacs::core::Starship* pick(const spatacs::core::GameState& world, icore
     f64 md = 1e10;
     for(auto& ship : world.getShips())
     {
-        icore::vector3df sp{ ship.position().x.value, ship.position().y.value, ship.position().z.value };
-        sp *= 20;
-        float rad = (ship.radius() + 50.0_m).value * 20;
+        auto sp   = convert(ship.position());
+        float rad = convert(ship.radius() + 50.0_m);
         f64 temp;
         if(ray.getIntersectionWithSphere(sp, rad, temp) && temp < md)
         {
@@ -107,6 +107,10 @@ private:
         {
             if(mInputMode)
                 mInputMode->onKeyPress(key.Key);
+        } else
+        {
+            if(mInputMode)
+                mInputMode->onKeyRelease(key.Key);
         }
         return false;
     }
@@ -139,10 +143,7 @@ void IrrlichtUI::init()
     cam->setTarget({50,0,0});
     mDevice->getSceneManager()->getRootSceneNode()->addChild( new scene::GridNode() );
 
-    mShipPlot = new scene::LocationPlotter3D();
-    mShipPlot->setColor(1, {255, 0, 200, 0});
-    mShipPlot->setColor(2, {255, 200, 0, 0});
-    mDevice->getSceneManager()->getRootSceneNode()->addChild(mShipPlot);
+    mMap = mDevice->getSceneManager()->addEmptySceneNode();
 }
 
 std::vector<spatacs::cmd::Command> IrrlichtUI::getCommands() const
@@ -152,36 +153,35 @@ std::vector<spatacs::cmd::Command> IrrlichtUI::getCommands() const
 
 void IrrlichtUI::setState(const spatacs::core::GameState& state)
 {
+    auto smgr = mDevice->getSceneManager();
     mState = core::GameState(state);
     mCommands.validate(mState);
 
     // update the location map
-    std::vector<irr::scene::Location> ps;
+    mMap->removeAll();
     for(auto& ship : mState.getShips()) {
         if(!ship.alive())
             continue;
-        icore::vector3df pos{ship.position().x.value, ship.position().y.value, ship.position().z.value};
-        pos *= 20;
-        icore::vector3df vel{ship.velocity().x.value, ship.velocity().y.value, ship.velocity().z.value};
-        vel *= 20;
-        ps.push_back({pos, vel, u8(ship.team())});
-    }
-    mShipPlot->setLocations( std::move(ps) );
+        auto node = new scene::ShipFx( mMap, mDevice->getSceneManager() );
+        video::SColor colors[] = {{255, 0, 200, 0}, {255, 200, 0, 0}};
+        node->setColor( colors[ship.team()-1] );
+        auto ss = ship.shield_strength();
+        node->setShieldStatus( ss.current / ss.max );
 
-    for(auto& s : mShots)
-    {
-        s->remove();
+        auto ani = smgr->createFlyStraightAnimator(convert(ship.position()),
+                                          convert(ship.position() + 1.0_s * ship.velocity()), 1000);
+        node->addAnimator(ani);
+        ani->drop();
     }
-    mShots.clear();
+
     for(auto& proj : mState.getProjectiles())
     {
-        icore::vector3df pos{proj.position().x.value, proj.position().y.value, proj.position().z.value};
-        pos *= 20;
-        icore::vector3df vel{proj.velocity().x.value, proj.velocity().y.value, proj.velocity().z.value};
-        vel *= 20;
-        auto shotfx = new scene::ShotFx( mDevice->getSceneManager()->getRootSceneNode(), mDevice->getSceneManager() );
-        shotfx->setShot( pos, vel );
-        mShots.push_back( shotfx );
+        auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
+        shotfx->setShot(convert(proj.velocity()*1.0_s));
+        auto ani = smgr->createFlyStraightAnimator(convert(proj.position()),
+                                          convert(proj.position() + 1.0_s * proj.velocity()), 1000);
+        shotfx->addAnimator(ani);
+        ani->drop();
     }
 
 }
@@ -218,7 +218,7 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
                     float s = 5 * dmg + 1;
                     auto pos = mState.getShip(ship).position();
                     auto bb = mDevice->getSceneManager()->addBillboardSceneNode();
-                    bb->setPosition(20 * icore::vector3df{pos.x.value, pos.y.value, pos.z.value});
+                    bb->setPosition(convert(pos));
                     bb->setMaterialFlag(video::EMF_LIGHTING, false);
                     bb->setSize(s, s, s);
                     bb->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);

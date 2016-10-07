@@ -73,8 +73,8 @@ namespace spatacs {
                     const auto& ss = mState.getShip(shooter);
                     const auto& st = mState.getShip(target);
                     for(unsigned i = 0; i < ss.weapon_count(); ++i) {
-                        float hc = ss.weapon(i).hit_chance(distance(ss, st), st.radius().value * st.radius().value);
-                        float hd = ss.weapon(i).strength(distance(ss, st), st.radius().value * st.radius().value);
+                        float hc = ss.weapon(i).hit_chance(distance(ss, st), st.radius() * st.radius());
+                        float hd = ss.weapon(i).strength(distance(ss, st), st.radius() * st.radius());
                         std::cout << " hit chance " << 100 * hc << "% for ";
                         std::cout << hd << " ( "<< int(100*hc * hd) / 100.f <<" )\n";
                     }
@@ -88,16 +88,16 @@ namespace spatacs {
                     const auto& ss = mState.getShip(ship);
                     std::cout << "Ship " << ss.id() << ":\n";
                     std::cout << " pos:  " << ss.position() << "\n";
-                    std::cout << " HP:   " << ss.HP() << "\n";
+                    std::cout << " HP:   " << ss.hp() << "\n";
                     std::cout << " team: " << ss.team() << "\n";
                     std::cout << " shield: " << ss.shield().shield() << "\n";
                     std::cout << p1;
                     for(unsigned i = 0; i < ss.weapon_count(); ++i) {
-                        std::cout << " wpn (25m² target):\n";
-                        std::cout << "  precision 500m: " << ss.weapon(i).hit_chance(500.0_m, 0.0025) * 100 << "%\n";
-                        std::cout << "  strength  500m: " << ss.weapon(i).strength(500.0_m, 0.0025) << "\n";
-                        std::cout << "  precision 2km:  " << ss.weapon(i).hit_chance(2.0_km, 0.0025) * 100 << "%\n";
-                        std::cout << "  strength  2km:  " << ss.weapon(i).strength(2.0_km, 0.0025) << "\n";
+                        std::cout << " wpn (100m² target):\n";
+                        std::cout << "  precision 500m: " << ss.weapon(i).hit_chance(500.0_m, 10.0_m * 10.0_m) * 100 << "%\n";
+                        std::cout << "  strength  500m: " << ss.weapon(i).strength(500.0_m,  10.0_m * 10.0_m) << "\n";
+                        std::cout << "  precision 2km:  " << ss.weapon(i).hit_chance(2.0_km,  10.0_m * 10.0_m) * 100 << "%\n";
+                        std::cout << "  strength  2km:  " << ss.weapon(i).strength(2.0_km,  10.0_m * 10.0_m) << "\n";
                     }
                 } else if (command == "exit")
                 {
@@ -112,7 +112,7 @@ namespace spatacs {
             auto sp = std::setprecision(2);
             std::cout << "ships: \n";
             for (auto& ship : state.getShips()) {
-                std::cout << ship.id() << ": " << ship.team() << " " << sp << ship.HP() << " @ " << ship.position()
+                std::cout << ship.id() << ": " << ship.team() << " " << sp << ship.hp() << " @ " << ship.position()
                           << "\n";
             }
         }

@@ -116,7 +116,7 @@ namespace {
         auto delta = (command.target() - (ship.position() + time_to_brake * ship.velocity())) / 1.0_s;
         auto l = length(delta);
         if(l > command.speed())
-            delta *= (command.speed() / l).value;   // this is dimensionless, so value is legal, but ugly
+            delta *= double(command.speed() / l);
 
         /// \todo this looks fishy!
         auto dv = (delta - ship.velocity()) / 1.0_s;

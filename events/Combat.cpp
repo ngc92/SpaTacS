@@ -8,7 +8,6 @@
 #include "Spawn.h"
 #include "core/GameState.h"
 #include "core/components/ShieldGenerator.h"
-#include "core/components/Hull.h"
 #include "core/components/IWeapon.h"
 
 namespace spatacs
@@ -74,7 +73,7 @@ namespace spatacs
         Hit::Hit(const Starship& ship, const core::Projectile& proj) :
                 ShipEvent( ship.id() )
         {
-            auto relvel = length(ship.velocity() - proj.velocity());
+            auto relvel = length(ship.velocity() - proj.velocity()) / 1000.0;
             auto dmg = relvel * relvel * proj.mass();
             mDamage = proj.damage();
             mDamage.kinetic += dmg.value;
@@ -110,12 +109,12 @@ namespace spatacs
 
             // ---------------------------------------------------------------------------------
 
-            float oh = target.hull().armour();
+            float oh = target.armour();
 
             applyDamage( he, 0.33, oh );
             applyDamage( kd, 0.33, oh );
             applyDamage( ap, 1.0, oh );
-            target.getHull().setArmour( oh );
+            target.setArmour( oh );
 
             // ---------------------------------------------------------------------------------
 

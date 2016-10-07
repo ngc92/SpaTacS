@@ -14,7 +14,7 @@ namespace spatacs {
         public:
             PowerPlant(const ptree& data);
 
-            void onStep() override;
+            void onStep(Starship& ship) override;
 
             PowerPlant() = default;
             PowerPlant* clone() const override;

@@ -7,7 +7,7 @@
 
 using namespace spatacs;
 
-void core::PowerPlant::onStep()
+void core::PowerPlant::onStep(Starship& ship)
 {
     provideEnergy( 0.1f * power() );
 }

@@ -16,7 +16,7 @@ namespace spatacs
         class ProjectileWeapon : public IWeapon
         {
         public:
-            void onStep();
+            void onStep(Starship& ship);
 
             ProjectileWeapon( const ptree& props );
             ~ProjectileWeapon() = default;
@@ -26,8 +26,8 @@ namespace spatacs
             double precision() const;
 
             bool  ready() const override;
-            float strength(length_t distance, float xsec) const override;
-            float hit_chance(length_t distance, float xsec) const override;
+            float strength(length_t distance, area_t xsec) const override;
+            float hit_chance(length_t distance, area_t xsec) const override;
 
             virtual void setMode(std::uint64_t mode) override;
 

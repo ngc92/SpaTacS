@@ -28,13 +28,13 @@ auto core::Simulation::step(EventVec inEvents) -> EventVec
             mWorld->pushEvent(physics::events::Despawn{s.physics_id(), 0.0_s});
     }
 
-    auto e = remove_if(begin(mState.getShips()), end(mState.getShips()),
-                            [](const Starship& s) { return !s.alive(); });
-    mState.getShips().resize(distance(begin(mState.getShips()), e));
+    mState.getShips().erase(remove_if(begin(mState.getShips()), end(mState.getShips()),
+                                      [](const Starship& s) { return !s.alive(); }),
+                            end(mState.getShips()));
 
-    auto ep = remove_if(begin(mState.getProjectiles()), end(mState.getProjectiles()),
-                             [](const Projectile& s) { return s.age() > 10; });
-    mState.getProjectiles().resize(distance(begin(mState.getProjectiles()), ep));
+    mState.getProjectiles().erase(remove_if(begin(mState.getProjectiles()), end(mState.getProjectiles()),
+                                            [](const Projectile& s) { return s.age() > 10; }),
+                                  end(mState.getProjectiles()));
 
     // process events generated due to commands
     mEventCache = move(inEvents);
@@ -48,10 +48,14 @@ auto core::Simulation::step(EventVec inEvents) -> EventVec
 
     // copy new positions and velocities to game objects
     for (auto& ship : mState.getShips()) {
-        ship.getPhysicsObject() = mWorld->getObject( ship.physics_id() );
+        auto po = mWorld->getObject( ship.physics_id() );
+        ship.setPosition( po.position() );
+        ship.setVelocity( po.velocity() );
     }
     for (auto& proj : mState.getProjectiles()) {
-        proj.getPhysicsObject() = mWorld->getObject( proj.physics_id() );
+        auto po = mWorld->getObject( proj.physics_id() );
+        proj.setPosition( po.position() );
+        proj.setVelocity( po.velocity() );
     }
 
     // step all projectiles and objects
@@ -114,8 +118,10 @@ void core::Simulation::physics_callback(physics::PhysicsWorld& world, const phys
     {
         /// \todo use correct positions here!
         auto& proj = dynamic_cast<Projectile&>(*ob_B);
-        addEvent(std::make_unique<events::Hit>(*aship, proj));
-        proj.expire();
+        if(proj.shooter() != aship->id()) {
+            addEvent(std::make_unique<events::Hit>(*aship, proj));
+            proj.expire();
+        }
     } else
     {
         // nothing.
@@ -133,15 +139,19 @@ core::Simulation::Simulation():
 
     mWorld->setSpawnCallback([this](const physics::PhysicsWorld& w, const physics::Object& O)
                                          {
-                                             Simulation::mState.getObject(O.userdata()).getPhysicsObject() = O;
+                                             auto& obj = mState.getObject(O.userdata());
+                                             obj.setPhysicsID( O.id() );
+                                             obj.setMass( O.mass() );
+                                             obj.setPosition( O.position() );
+                                             obj.setVelocity( O.velocity() );
                                          }
     );
 
-    addEvent(std::make_unique<events::SpawnShip>(1, "SF Predator", length_vec{0, 0, 0.4f}));
-    addEvent(std::make_unique<events::SpawnShip>(1, "SF Fearless", length_vec{0, 0.2, -0.4f}));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Lion", length_vec{12, 2, 1}));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Wolf", length_vec{10, 1, -2}));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Tiger", length_vec{11, 2, 3}));
+    addEvent(std::make_unique<events::SpawnShip>(1, "SF Predator", "destroyer", kilometers(0, 0, 0.4)));
+    addEvent(std::make_unique<events::SpawnShip>(1, "SF Fearless", "destroyer", kilometers(0, 0.2, -0.4)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Lion",     "destroyer", kilometers(12, 2, 1)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Wolf",     "destroyer", kilometers(10, 1, -2)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Tiger",    "destroyer", kilometers(11, 2, 3)));
     eventLoop();
 }
 

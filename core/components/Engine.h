@@ -18,7 +18,7 @@ namespace core
         Engine() = default;
         Engine(const ptree& props);
 
-        void onStep() override;
+        void onStep(Starship& ship) override;
 
         force_vec getThrust(const force_vec& accel);
         force_t max_thrust() const;
@@ -26,12 +26,13 @@ namespace core
         virtual Engine* clone() const override;
 
     private:
+        using mrate_t = decltype(mass_t{} / time_t{});
         // engine config
-        force_t mMaxThrust{1.0};
-        float mEnergyConsumption = 2;
+        speed_t mPropellantSpeed = 100.0_kps;
+        mrate_t mMassRate        = 1.0_kg / 1.0_s;
 
         // engine status
-        force_t mUnusedThrust{1.0};
+        mass_t mUnusedMass       = 0.0_kg;
     };
 }
 }

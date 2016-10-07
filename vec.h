@@ -16,42 +16,48 @@ namespace spatacs
         template<class T>
         struct Vec3
         {
-            Vec3() = default;
+            constexpr Vec3() = default;
 
             template<class A, class B, class C>
-            Vec3(A x_, B y_, C z_) : x(x_), y(y_), z(z_)
+            constexpr Vec3(A x_, B y_, C z_) : x(x_), y(y_), z(z_)
             {}
 
             template<class S>
-            explicit Vec3(const Vec3<S>& o) : x(T(o.x)), y(T(o.y)), z(T(o.z))
+            constexpr explicit Vec3(const Vec3<S>& o) : x(T(o.x)), y(T(o.y)), z(T(o.z))
             {}
 
-            T x;
-            T y;
-            T z;
+            T x{0};
+            T y{0};
+            T z{0};
         };
 
         // operators
         template<class T, class S>
-        auto operator+(const Vec3<T>& a, const Vec3<S>& b)
+        constexpr auto operator+(const Vec3<T>& a, const Vec3<S>& b)
         {
             return Vec3<decltype(a.x + b.x)>{a.x + b.x, a.y + b.y, a.z + b.z};
         }
 
         template<class T, class S>
-        auto operator-(const Vec3<T>& a, const Vec3<S>& b)
+        constexpr auto operator-(const Vec3<T>& a, const Vec3<S>& b)
         {
             return Vec3<decltype(a.x - b.x)>{a.x - b.x, a.y - b.y, a.z - b.z};
         }
 
         template<class T>
-        auto operator*(const Vec3<T>& a, double s)
+        constexpr auto operator*(const Vec3<T>& a, double s)
         {
             return Vec3<T>{a.x * s, a.y * s, a.z * s};
         }
 
+        template<class T>
+        constexpr auto operator/(const Vec3<T>& a, double s)
+        {
+            return Vec3<T>{a.x / s, a.y / s, a.z / s};
+        }
+
         template<class S, class T>
-        auto operator*(const S& s, const Vec3<T>& a)
+        constexpr auto operator*(const S& s, const Vec3<T>& a)
         {
             return a * s;
         };
@@ -84,7 +90,7 @@ namespace spatacs
         };
 
         template<class T>
-        bool operator==(const Vec3<T>& a, const Vec3<T>& b)
+        constexpr bool operator==(const Vec3<T>& a, const Vec3<T>& b)
         {
             return std::tie(a.x, a.y, a.z) == std::tie(b.x, b.y, b.z);
         }

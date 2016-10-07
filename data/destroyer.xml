@@ -1,6 +1,8 @@
+<mass>650</mass>
 <engine>
     <thrust>10000</thrust>
-    <energy_consumption>2</energy_consumption>
+    <fuel_consumption>200</fuel_consumption>
+    <propellant_speed>100</propellant_speed>
     <HP>1</HP>
 </engine>
 
@@ -18,7 +20,7 @@
     <SO_strength>1</SO_strength>
     <precision>30</precision>
     <rpm>60</rpm>
-    <muzzle_velocity>2.5</muzzle_velocity>
+    <muzzle_velocity>2500</muzzle_velocity>
     <HP>1</HP>
 </weapon>
 
@@ -27,7 +29,12 @@
     <HP>1</HP>
 </power_plant>
 
-<hull>
-	<armour>5</armour>
+<tank>
+    <capacity>100</capacity>
     <HP>1</HP>
-</hull>
+</tank>
+
+
+<life_support>
+    <HP>1</HP>
+</life_support>
