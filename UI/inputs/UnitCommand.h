@@ -41,12 +41,14 @@ namespace spatacs {
             std::uint64_t mActiveShipID;
             boost::optional<length_vec> mCurrentAim;
             std::uint64_t mCurrentAimShip;
-            length_t mTargetY = 0.0_km;
+            length_t mTargetY     = 0.0_km;
+            speed_t  mTargetSpeed = 0.5_kps;
             float mBaseY      = 0.f;
 
             irr::gui::IGUIElement*    mDistanceMarker = nullptr;
             irr::gui::ShipStatusUI*   mShipInfo       = nullptr;
             irr::gui::IGUIElement*    mTargetInfo     = nullptr;
+            irr::gui::IGUIElement*    mSpeedInfo      = nullptr;
 
             enum Mode
             {ATTACK, MOVE} mMode;

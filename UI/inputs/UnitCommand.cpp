@@ -39,12 +39,16 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv)
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mDistanceMarker = txt;
 
-    auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 10, 100, 120));
+    auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 10, 100, 130));
     mShipInfo = sstat;
 
     txt = guienv->addStaticText(L"", irr::core::recti(700, 10, 790, 70));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mTargetInfo = txt;
+
+    txt = guienv->addStaticText(L"", irr::core::recti(10, 135, 100, 155));
+    txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
+    mSpeedInfo = txt;
 }
 
 
@@ -56,6 +60,8 @@ ui::UnitCommand::~UnitCommand()
         mShipInfo->remove();
     if(mTargetInfo)
         mTargetInfo->remove();
+    if(mSpeedInfo)
+        mSpeedInfo->remove();
 }
 
 void ui::UnitCommand::onRightClick(ray_t ray)
@@ -72,7 +78,7 @@ void ui::UnitCommand::onRightClick(ray_t ray)
         auto target = aim(ray);
         if(target) {
             auto vec = target.get();
-            addCommand(cmd::Move(mActiveShipID, vec.x, vec.y, vec.z, 2.5_kps));
+            addCommand(cmd::Move(mActiveShipID, vec, mTargetSpeed));
         }
     }
 }
@@ -90,18 +96,16 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         std::wstringstream stream;
         stream << std::fixed << std::setprecision(1);
         stream << ship.name().c_str() << ":\n";
-        stream << " hp: "     << ship.hp() << "\n";
         stream << " egy: " << ship.usedEnergy() / 0.1f << "/" << ship.producedEnergy() / 0.1f << "\n";
         stream << " mode: " << ship.weapon(0).mode() << "\n";
-        mShipInfo->setText( stream.str().c_str() );
         mShipInfo->setShipName( ship.name() );
         mShipInfo->clearSystems();
         mShipInfo->pushSystem( irr::gui::SystemStatus{"shield generator", ship.shield().hp(), ship.shield().max_hp()} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"engine", ship.engine().hp(), ship.engine().max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield_strength().current, ship.shield_strength().max} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ship.tank().fuel().value / 1000,
-                                                      ship.tank().capacity().value / 1000} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ship.tank().fuel().value / 1000, ship.tank().capacity().value / 1000} );
         /// \todo power plant
     }
 
@@ -121,6 +125,14 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
         mTargetInfo->setText( stream.str().c_str() );
         mTargetInfo->setVisible(true);
+    }
+
+    {
+        std::wstringstream stream;
+        stream << std::fixed << std::setprecision(1);
+        stream << "speed:  " << length(ship.velocity()) << "\n";
+        stream << "target: " << mTargetSpeed << "\n";
+        mSpeedInfo->setText(stream.str().c_str());
     }
 
     if (mCurrentAim) {
@@ -210,6 +222,14 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
             addCommand( cmd::SetWpnMode(mActiveShipID, 0, 1) );
         } else if (key == irr::KEY_KEY_3) {
             addCommand( cmd::SetWpnMode(mActiveShipID, 0, 2) );
+        } else if( key == irr::KEY_PLUS )
+        {
+            mTargetSpeed += 0.05_kps;
+        } else if( key == irr::KEY_MINUS )
+        {
+            mTargetSpeed -= 0.05_kps;
+            if(mTargetSpeed < 0.1_kps)
+                mTargetSpeed = 0.1_kps;
         }
     }
 }

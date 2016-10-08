@@ -3,6 +3,7 @@
     - [ ] waypoints for move command
     - [ ] show currently active targets
     - [ ] pause game
+    - [ ] select target velocity
   * game:
     - [ ] change weapon modes into actual ammo types
     - [ ] rework damage model
