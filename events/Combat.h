@@ -26,7 +26,7 @@ namespace spatacs {
         private:
 
             virtual void applyToShip(Starship& shooter, EventContext& context) const override;
-            EventPtr fireWeapon(Starship& shooter, const Starship& target, core::IWeapon& weapon) const;
+            EventPtr fireWeapon(Starship& shooter, const length_vec& tpos, const velocity_vec& tvel, core::IWeapon& weapon) const;
 
             std::uint64_t mTarget;
             std::uint64_t mWeaponId;

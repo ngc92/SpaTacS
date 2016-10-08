@@ -18,7 +18,7 @@
   * AI:
     - [ ] switch ammo based on target status
     - [ ] may focus fire on single target
-    - [ ] evasive maneuvers for damaged ships
+    - [x] evasive/aggressive maneuvers for damaged ships
     
 ## Version 0.6 (menu update)
   * UI:

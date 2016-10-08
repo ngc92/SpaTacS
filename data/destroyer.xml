@@ -1,6 +1,5 @@
 <mass>650</mass>
 <engine>
-    <thrust>10000</thrust>
     <fuel_consumption>200</fuel_consumption>
     <propellant_speed>100</propellant_speed>
     <HP>1</HP>
