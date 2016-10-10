@@ -132,7 +132,7 @@ core::Simulation::Simulation():
         mWorld(std::make_unique<physics::PhysicsWorld>() )
 {
     mWorld->setCollisionCallback([this](physics::PhysicsWorld& world,
-                                                    const physics::Object& A, const physics::Object& B, time_t time)
+                                        const physics::Object& A, const physics::Object& B, time_t time)
                                              {
                                                  this->physics_callback( world, A, B, time );
                                              });

@@ -77,7 +77,7 @@ SET(PHYSICS_SOURCE_FILES
         physics/HitTests.h
         physics/HitTests.cpp
         physics/Object.h
-        physics/Object.cpp )
+        physics/Object.cpp physics/Fixture.h physics/Fixture.cpp)
 
 set(UI_SOURCE_FILES
         UI/IUI.h

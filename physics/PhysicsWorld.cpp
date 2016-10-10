@@ -4,7 +4,7 @@
 
 #include "PhysicsWorld.h"
 #include "HitTests.h"
-#include <boost/throw_exception.hpp>
+#include "Fixture.h"
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
 #include <iostream>
@@ -70,7 +70,7 @@ void PhysicsWorld::simulate(time_t dt)
     // update positions
     for(auto& obr : mObjects)
     {
-        obr.second.object.simulate(dt);
+        obr.second.object.setPosition( obr.second.object.position() + dt * obr.second.object.velocity());
         obr.second.object.setVelocity( obr.second.object.velocity() + obr.second.acceleration );
         obr.second.acceleration = velocity_vec{Vec{0, 0, 0}};
     }
@@ -79,21 +79,24 @@ void PhysicsWorld::simulate(time_t dt)
 void PhysicsWorld::detectCollisionsOf(std::uint64_t id, time_t max_dt, bool all)
 {
     auto& obj = getObject(id);
-    MovingSphere ppath = { obj.position(), obj.velocity(), obj.radius(), speed_t(0) };
-    // check ship impact
-    for (auto& target : mObjects) {
-        // no self-intersection
-        /// \todo currently, we get every intersection twice.
-        if (target.first == id || (id < target.first && !all))
-            continue;
-        /// \todo disable projectile-projectile hit tests
-        Object& tobj = target.second.object;
-        MovingSphere tpath = {tobj.position(), tobj.velocity(), tobj.radius(), speed_t(0)};
-        auto hit = intersect(tpath, ppath);
-        if(hit) {
-            time_t time = hit.get();
-            if (time >= 0.0_s && time < max_dt) {
-                pushEvent( events::Collision{id, target.first, time} );
+    for(auto& fixa : obj) {
+        MovingSphere ppath = {obj.position(), obj.velocity(), fixa.radius(), speed_t(0)};
+        // check ship impact
+        for (auto& target : mObjects) {
+            // no self-intersection, check each pair only once
+            if (target.first == id || (id < target.first && !all))
+                continue;
+            /// \todo disable projectile-projectile hit tests
+            Object& tobj = target.second.object;
+            for (auto& fix : tobj) {
+                MovingSphere tpath = {tobj.position(), tobj.velocity(), fix.radius(), speed_t(0)};
+                auto hit = intersect(tpath, ppath);
+                if (hit) {
+                    time_t time = hit.get();
+                    if (time >= 0.0_s && time < max_dt) {
+                        pushEvent(events::Collision{id, target.first, time});
+                    }
+                }
             }
         }
     }

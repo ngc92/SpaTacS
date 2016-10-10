@@ -32,7 +32,9 @@ void SpawnProjectile::apply(EventContext& context) const
     proj.setVelocity( mVelocity );
     proj.setMass( mMass );
 
-    auto pid = context.world.spawn(physics::Object(mPosition, mVelocity, mRadius, mMass, new_id));
+    physics::Object obj(mPosition, mVelocity, mMass, new_id);
+    obj.addFixture( mRadius );
+    auto pid = context.world.spawn(obj);
     proj.setPhysicsID( pid );
 
     context.state.addProjectile( std::move(proj) );
@@ -65,7 +67,9 @@ void SpawnShip::apply(EventContext& context) const
 
     std::cout << "spawn " << id << " " << ship.id() << "\n";
 
-    auto pid = context.world.spawn(physics::Object(mPosition, velocity_vec{0,0,0}, 25.0_m, mass, id));
+    physics::Object obj(mPosition, velocity_vec{0,0,0}, mass, id);
+    obj.addFixture( 25.0_m );
+    auto pid = context.world.spawn(obj);
     ship.setPhysicsID( pid );
 
     context.state.addShip(std::move(ship));
