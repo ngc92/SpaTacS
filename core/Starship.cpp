@@ -42,7 +42,7 @@ Starship::~Starship() {
 void Starship::onStep()
 {
     mEnergyProduced = mSubSystems->produceEnergy();
-    mEnergyUsed     = mSubSystems->distributeEnergy(0);
+    mEnergyUsed     = mSubSystems->distributeEnergy(mEnergyProduced);
 
     for(auto& c : mSubSystems->mCompPtrs)
     {
