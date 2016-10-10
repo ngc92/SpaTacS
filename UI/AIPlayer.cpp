@@ -54,12 +54,12 @@ void AIPlayer::setState(const core::GameState& state)
         // fly closer if shield is stronger
         if(own_shield > target->shield_strength().current || own_shield > 2)
         {
-            mCommands.push_back( cmd::Move(own.id(), target->position(), 0.25_kps) );
+            mCommands.push_back( cmd::Move(own.id(), target->position(), 0.2_kps) );
         } else
         {
             auto delta = own.position() - target->position();
             delta *= 1.0_km / length(delta);
-            mCommands.push_back( cmd::Move(own.id(), own.position() + delta, 2.0_kps) );
+            mCommands.push_back( cmd::Move(own.id(), own.position() + delta, 1.0_kps) );
         }
     }
 

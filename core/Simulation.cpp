@@ -108,6 +108,7 @@ void core::Simulation::physics_callback(physics::PhysicsWorld& world, const phys
     if(bship) {
         std::swap(aship, bship);
         std::swap(ob_A, ob_B);
+        std::swap(info.fixture_A, info.fixture_B);
     }
 
     // Ship - Ship collision
@@ -118,9 +119,17 @@ void core::Simulation::physics_callback(physics::PhysicsWorld& world, const phys
     {
         /// \todo use correct positions here!
         auto& proj = dynamic_cast<Projectile&>(*ob_B);
-        if(proj.shooter() != aship->id()) {
-            addEvent(std::make_unique<events::Hit>(*aship, proj));
-            proj.expire();
+        if(proj.shooter() != aship->id() && proj.age() < 10.0)
+        {
+            if(info.fixture_A == 1) // shield fixture
+            {
+                addEvent(std::make_unique<events::HitShield>(*aship, proj));
+                eventLoop();
+            } else {    // ship fixture
+                addEvent(std::make_unique<events::Hit>(*aship, proj));
+                eventLoop();
+                proj.expire();
+            }
         }
     } else
     {

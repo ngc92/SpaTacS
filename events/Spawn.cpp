@@ -64,11 +64,13 @@ void SpawnShip::apply(EventContext& context) const
     ship.setMass( mass );
     ship.setVelocity( velocity_vec{0, 0, 0} );
     ship.setID(id);
+    ship.setRadius(25.0_m);
 
     std::cout << "spawn " << id << " " << ship.id() << "\n";
 
     physics::Object obj(mPosition, velocity_vec{0,0,0}, mass, id);
-    obj.addFixture( 25.0_m );
+    obj.addFixture( 25.0_m ).setUserdata(0); // ship
+    obj.addFixture( 50.0_m ).setUserdata(1); // shield
     auto pid = context.world.spawn(obj);
     ship.setPhysicsID( pid );
 

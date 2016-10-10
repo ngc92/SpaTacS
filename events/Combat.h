@@ -46,6 +46,17 @@ namespace spatacs {
             std::uint64_t mWeaponId;
         };
 
+        class HitShield : public ShipEvent
+        {
+        public:
+            HitShield(const Starship& ship, const core::Projectile& proj);
+        private:
+            virtual void applyToShip(Starship& target, EventContext& context) const override;
+
+            core::Damage mDamage;
+            std::uint64_t mProjectileID;
+        };
+
         class Hit : public ShipEvent
         {
         public:
@@ -64,8 +75,6 @@ namespace spatacs {
             core::Damage damage() const { return mDamage; }
         private:
             virtual void applyToShip(Starship& target, EventContext& context) const override;
-
-            void applyDamage(float& damage, float factor, float& target) const;
 
             core::Damage mDamage;
         };

@@ -25,7 +25,7 @@ void ShieldGenerator::onStep(Starship& ship)
 {
     auto dt = 0.1_s;
     // shield decay
-    float decay = std::exp( mDecay*dt );
+    double decay = std::exp( mDecay*dt );
     mCurrentShieldStrength *= decay;
     if(shield() < max_shield())
     {

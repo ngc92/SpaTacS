@@ -88,6 +88,47 @@ namespace spatacs
 
         // -------------------------------------------------------------------------------------------------------------
 
+        HitShield::HitShield(const Starship& ship, const core::Projectile& proj) :
+                ShipEvent( ship.id() )
+        {
+            auto relvel = length(ship.velocity() - proj.velocity()) / 1000.0;
+            auto dmg = relvel * relvel * proj.mass();
+            mDamage = proj.damage();
+            mDamage.kinetic += dmg.value;
+            mProjectileID = proj.id();
+        }
+
+        void applyDamage(float& damage, float factor, float& target);
+
+        void HitShield::applyToShip(Starship& target, EventContext& context) const
+        {
+            // next, let shield stop the HE part. HE only does 50% damage against shield
+            float so = mDamage.shield_overload;
+            float he = mDamage.high_explosive;
+            float ap = mDamage.armour_piercing;
+            float kd = mDamage.kinetic;
+            float os = target.shield().shield();
+
+            // first, apply shield overload
+            applyDamage(so, 1.0, os);
+            applyDamage(kd, 0.5, os);
+            applyDamage(he, 0.5, os);
+            applyDamage(ap, 0.33, os);
+            target.getShield().setShield( os );
+            auto& proj = context.state.getProjectile(mProjectileID);
+            if(kd == 0)
+            {
+                proj.expire();
+            } else
+            {
+                /// \todo currently, we cannot change anything in physics code, so
+                /// it is impossible to make the projectile change course.
+            }
+        }
+
+
+        // -------------------------------------------------------------------------------------------------------------
+
         Damage::Damage(std::uint64_t ship, const core::Damage& damage) :
                 ShipEvent( ship ), mDamage( damage )
         {
@@ -125,7 +166,7 @@ namespace spatacs
             target.dealDamage( damage );
         }
 
-        void Damage::applyDamage(float& damage, float factor, float& target) const {
+        void applyDamage(float& damage, float factor, float& target) {
             float dmg = std::min(target, damage*factor);
             damage -= dmg / factor;
             target -= dmg;
