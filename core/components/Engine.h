@@ -26,10 +26,9 @@ namespace core
         virtual Engine* clone() const override;
 
     private:
-        using mrate_t = decltype(mass_t{} / time_t{});
         // engine config
         speed_t mPropellantSpeed = 100.0_kps;
-        mrate_t mMassRate        = 1.0_kg / 1.0_s;
+        rate_t<mass_t> mMassRate = 1.0_kg / 1.0_s;
 
         // engine status
         mass_t mUnusedMass       = 0.0_kg;

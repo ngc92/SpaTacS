@@ -63,7 +63,7 @@ SET(CORE_SOURCE_FILES
         core/components/PowerPlant.h
         core/Simulation.cpp
         core/Simulation.h
-        core/Damage.h core/components/FuelTank.h core/components/FuelTank.cpp core/components/LifeSupport.cpp core/components/LifeSupport.h)
+        core/Damage.h core/components/FuelTank.h core/components/FuelTank.cpp core/components/LifeSupport.cpp core/components/LifeSupport.h UI/IrrRAII.h core/SubSystems.h core/SubSystems.cpp)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h

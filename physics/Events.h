@@ -18,20 +18,6 @@ namespace spatacs
 
         namespace events
         {
-            struct Spawn
-            {
-                //! \todo how do we handle ID assignment?
-                length_vec   position;
-                velocity_vec velocity;
-
-                mass_t mass;
-                length_t radius;
-
-                std::uint64_t udata;
-
-                time_t time;
-            };
-
             struct Despawn
             {
                 std::uint64_t target;
@@ -52,7 +38,7 @@ namespace spatacs
                 time_t time;
             };
 
-            using Event = boost::variant<Spawn, Despawn, ApplyForce, Collision>;
+            using Event = boost::variant<Despawn, ApplyForce, Collision>;
 
             // some helper functions
             //! \brief Checks whether the Event refers to an object with given \p id.
@@ -64,11 +50,6 @@ namespace spatacs
             //! \param event The event which to inspect.
             //! \return The time when \p event happens.
             time_t get_time(const Event &event);
-
-            //! Constructs the object that is represented by the spawn event.
-            //! \param spawn The event.
-            //! \return An Object with all properties set according to spawn.
-            Object get_object(const Spawn& spawn);
         }
     }
 }

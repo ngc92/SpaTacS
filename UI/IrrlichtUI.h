@@ -8,6 +8,7 @@
 #include <irrlicht/IGUIElement.h>
 #include "IUI.h"
 #include "cmd/CommandManager.h"
+#include "IrrRAII.h"
 
 namespace irr
 {

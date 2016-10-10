@@ -9,7 +9,6 @@
     - [ ] rework damage model
     - [ ] shield radius
   * code:
-    - [ ] make weapon component dumber
     - [ ] more flexibility for physics code
   * physics:
     - [ ] more collision tests

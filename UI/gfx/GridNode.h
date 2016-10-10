@@ -6,6 +6,7 @@
 #define SOI_GRIDNODE_H
 
 #include <irrlicht/ISceneNode.h>
+#include "UI/IrrRAII.h"
 
 namespace irr
 {
@@ -26,7 +27,7 @@ namespace irr
             void OnRegisterSceneNode();
         private:
             core::aabbox3d<f32> mBBox;
-            scene::IMeshBuffer* mMesh;
+            spatacs::ui::drop_ptr<scene::IMeshBuffer> mMesh;
         };
     }
 }

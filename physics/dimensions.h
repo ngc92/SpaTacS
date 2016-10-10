@@ -60,8 +60,11 @@ namespace spatacs
             using time_t    = Dimension_t<Zero, One, Zero>;
             using mass_t    = Dimension_t<Zero, Zero, One>;
 
-            using velocity_t     = div_t<length_t, time_t>;
-            using acceleration_t = div_t<velocity_t, time_t>;
+            template<class T>
+            using rate_dim_t = div_t<T, time_t>;
+
+            using velocity_t     = rate_dim_t<length_t>;
+            using acceleration_t = rate_dim_t<velocity_t>;
             using force_t        = mul_t<acceleration_t, mass_t>;
             using area_t         = mul_t<length_t, length_t>;
             template<class O>

@@ -30,12 +30,12 @@ void SpawnProjectile::apply(EventContext& context) const
     core::Projectile proj(new_id, mShooter, mDamage);
     proj.setPosition( mPosition );
     proj.setVelocity( mVelocity );
+    proj.setMass( mMass );
+
+    auto pid = context.world.spawn(physics::Object(mPosition, mVelocity, mRadius, mMass, new_id));
+    proj.setPhysicsID( pid );
 
     context.state.addProjectile( std::move(proj) );
-    physics::events::Spawn sp{mPosition, mVelocity,
-                              mMass, mRadius,
-                              new_id, 0.0_s};
-    context.world.pushEvent(std::move(sp));
 }
 
 
@@ -59,11 +59,14 @@ void SpawnShip::apply(EventContext& context) const
     auto ship = core::Starship(mTeam, mName, tree);
 
     ship.setPosition( mPosition );
+    ship.setMass( mass );
     ship.setVelocity( velocity_vec{0, 0, 0} );
     ship.setID(id);
 
     std::cout << "spawn " << id << " " << ship.id() << "\n";
 
+    auto pid = context.world.spawn(physics::Object(mPosition, velocity_vec{0,0,0}, 25.0_m, mass, id));
+    ship.setPhysicsID( pid );
+
     context.state.addShip(std::move(ship));
-    context.world.pushEvent(physics::events::Spawn{mPosition, velocity_vec{0, 0, 0}, mass, 25.0_m, id, 0.0_s});
 }
