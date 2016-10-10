@@ -27,7 +27,7 @@ namespace core
         void addEvent(EventPtr e );
 
         void physics_callback(physics::PhysicsWorld& world, const physics::Object& A, const physics::Object& B,
-                              time_t time);
+                              physics::ImpactInfo info);
 
     public:
         Simulation();

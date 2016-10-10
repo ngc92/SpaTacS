@@ -94,7 +94,7 @@ void PhysicsWorld::detectCollisionsOf(std::uint64_t id, time_t max_dt, bool all)
                 if (hit) {
                     time_t time = hit.get();
                     if (time >= 0.0_s && time < max_dt) {
-                        pushEvent(events::Collision{id, target.first, time});
+                        pushEvent(events::Collision{id, target.first, fixa.userdata(), fix.userdata(), time});
                     }
                 }
             }
@@ -104,7 +104,11 @@ void PhysicsWorld::detectCollisionsOf(std::uint64_t id, time_t max_dt, bool all)
 
 void PhysicsWorld::handleEvent(const events::Collision& c)
 {
-    mCollisionCallback( *this, getObject(c.A), getObject(c.B), c.time );
+    ImpactInfo info;
+    info.time = c.time;
+    info.fixture_A = c.fA;
+    info.fixture_B = c.fB;
+    mCollisionCallback( *this, getObject(c.A), getObject(c.B), info );
 }
 
 void PhysicsWorld::handleEvent(const events::Despawn& d)

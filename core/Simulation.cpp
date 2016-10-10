@@ -93,7 +93,7 @@ void core::Simulation::addEvent(EventPtr e)
 
 void core::Simulation::physics_callback(physics::PhysicsWorld& world, const physics::Object& A,
                                         const physics::Object& B,
-                                        time_t time)
+                                        physics::ImpactInfo info)
 {
     uint64_t id_a = A.userdata();
     uint64_t id_b = B.userdata();
@@ -132,9 +132,9 @@ core::Simulation::Simulation():
         mWorld(std::make_unique<physics::PhysicsWorld>() )
 {
     mWorld->setCollisionCallback([this](physics::PhysicsWorld& world,
-                                        const physics::Object& A, const physics::Object& B, time_t time)
+                                        const physics::Object& A, const physics::Object& B, physics::ImpactInfo info)
                                              {
-                                                 this->physics_callback( world, A, B, time );
+                                                 this->physics_callback( world, A, B, info );
                                              });
 
     addEvent(std::make_unique<events::SpawnShip>(1, "SF Predator", "destroyer", kilometers(0, 0, 0.4)));
