@@ -5,7 +5,7 @@
 #ifndef SOI_SHIELDGENERATOR_H
 #define SOI_SHIELDGENERATOR_H
 
-#include "vec.h"
+#include "physics/units.h"
 #include "IComponent.h"
 
 namespace spatacs {
@@ -32,7 +32,7 @@ namespace spatacs {
             // properties
             float mMaximumShieldStrength = 1.5;
             float mShieldRecharge        = 0.2;
-            float mDecayPerSecond        = 0.1; // per point
+            rate_t<scalar_t> mDecay;
             float mEnergyPerShieldPoint  = 5;
 
             // status

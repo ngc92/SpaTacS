@@ -23,8 +23,9 @@ float ShieldGenerator::max_shield() const
 
 void ShieldGenerator::onStep(Starship& ship)
 {
+    auto dt = 0.1_s;
     // shield decay
-    float decay = std::exp( std::log(1-mDecayPerSecond)*0.1f);
+    float decay = std::exp( mDecay*dt );
     mCurrentShieldStrength *= decay;
     if(shield() < max_shield())
     {
@@ -54,7 +55,7 @@ ShieldGenerator::ShieldGenerator(const ptree& props):
     IComponent(props),
     mMaximumShieldStrength( props.get<float>("strength") ),
     mShieldRecharge( props.get<float>("recharge") ),
-    mDecayPerSecond( props.get<float>("dissipation") / 100.f ),
+    mDecay( std::log(1-props.get<float>("dissipation") / 100.f) ),
     mEnergyPerShieldPoint( 1.f / props.get<float>("efficiency") )
 {
     mCurrentShieldStrength = mMaximumShieldStrength;
