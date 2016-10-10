@@ -187,11 +187,6 @@ void ShipData::setArmour(double new_value)
     mCurArmour = new_value;
 }
 
-length_t Starship::radius() const
-{
-    return mRadius;
-}
-
 const FuelTank& Starship::tank() const
 {
     return *mSubSystems->mFuelTank;
@@ -205,4 +200,14 @@ FuelTank& Starship::getTank()
 void ShipData::setHP(double hp)
 {
     mHitPoints = hp;
+}
+
+length_t ShipData::radius() const
+{
+    return mRadius;
+}
+
+void ShipData::setRadius(length_t radius)
+{
+    mRadius = radius;
 }

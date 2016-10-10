@@ -37,8 +37,6 @@ namespace spatacs
             uint64_t team() const;
             const std::string& name() const;
 
-
-
             /// energy
             double producedEnergy() const;
             double usedEnergy() const;
@@ -51,6 +49,10 @@ namespace spatacs
             double armour() const;
             double max_armour() const;
             void setArmour( double new_value );
+
+            length_t radius() const;
+            void setRadius(length_t radius);
+
         protected:
             ShipData() = default;
             ShipData(std::uint64_t team, std::string name);
@@ -118,8 +120,6 @@ namespace spatacs
 
             // damage the ship
             void dealDamage( float dmg );
-
-            length_t radius() const;
 
         private:
             // components
