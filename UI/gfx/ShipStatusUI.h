@@ -16,8 +16,8 @@ namespace irr
         struct SystemStatus
         {
             std::string name;
-            float hp;
-            float max_hp;
+            double hp;
+            double max_hp;
         };
 
         class ShipStatusUI : public IGUIElement

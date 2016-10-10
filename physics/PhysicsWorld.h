@@ -37,13 +37,15 @@ namespace physics
     class PhysicsWorld
     {
     public:
-        using collision_callback_fn = std::function<void(PhysicsWorld& world, const Object& A, const Object& B, time_t time)>;
-        using spawn_callback_fn = std::function<void(const PhysicsWorld& world, const Object& O)>;
+        using collision_callback_fn = std::function<void(PhysicsWorld& world, const Object& A, const Object& B, time_t time)>;;
 
         const Object& getObject( std::uint64_t id ) const;
         void pushEvent( events::Event evt );
         void setCollisionCallback( collision_callback_fn cb );
-        void setSpawnCallback( spawn_callback_fn cb );
+
+        /// spawn a new physics object.
+        /// \return the ID that was assigned to the new object.
+        std::uint64_t spawn(const Object& object);
 
         void simulate(time_t dt);
     private:
@@ -57,7 +59,6 @@ namespace physics
         queue_t mEventQueue;
         struct HandleEvent;
         void handleEvent(const events::ApplyForce&);
-        void handleEvent(const events::Spawn&);
         void handleEvent(const events::Despawn&);
         void handleEvent(const events::Collision&);
 
@@ -67,11 +68,11 @@ namespace physics
         struct ObjectRecord
         {
             Object       object;
-            velocity_vec acceleration; // this is premultipleid with the correct dt
+            velocity_vec acceleration; // this is premultiplied with the correct dt
         };
         std::map<std::uint64_t, ObjectRecord> mObjects;
         std::uint64_t mFreeID = 1;
-        spawn_callback_fn mSpawnCallback;
+
         const ObjectRecord& getObjectRec( std::uint64_t id ) const;
         ObjectRecord& getObjectRec( std::uint64_t id );
 
@@ -79,9 +80,6 @@ namespace physics
         collision_callback_fn mCollisionCallback;
         void detectCollisionsOf(std::uint64_t id, time_t max_dt, bool all = false);
         void filterCollisions( std::uint64_t id );
-
-        // step progression
-        float mTime;
     };
 }
 }

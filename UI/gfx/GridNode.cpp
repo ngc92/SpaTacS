@@ -25,7 +25,7 @@ scene::GridNode::GridNode(scene::ISceneNode* parent, scene::ISceneManager* mgr, 
     u16 W = 40;
     u16 H = 40;
 
-    auto buf = (SMeshBuffer*)(mMesh);
+    auto buf = (SMeshBuffer*)(mMesh.get());
     buf->Vertices.set_used(W * H);
     u32 i=0;
     for (u16 y = 0; y < H; ++y)
@@ -65,8 +65,6 @@ scene::GridNode::GridNode(scene::ISceneNode* parent, scene::ISceneManager* mgr, 
 
 scene::GridNode::~GridNode()
 {
-    if(mMesh)
-        mMesh->drop();
 }
 
 
@@ -85,8 +83,6 @@ void scene::GridNode::render()
     auto& driver = *SceneManager->getVideoDriver();
     auto& cam = *SceneManager->getActiveCamera();
 
-    auto mb = mMesh;
-
     video::SMaterial mat;
     mat.Lighting = false;
     mat.MaterialType = video::EMT_TRANSPARENT_VERTEX_ALPHA;
@@ -100,7 +96,7 @@ void scene::GridNode::render()
     mtx.setTranslation(tp);
     driver.setTransform(video::ETS_WORLD, mtx);
 
-    driver.drawVertexPrimitiveList(mb->getVertices(), mb->getVertexCount(), mb->getIndices(), mb->getIndexCount()/2,
+    driver.drawVertexPrimitiveList(mMesh->getVertices(), mMesh->getVertexCount(), mMesh->getIndices(), mMesh->getIndexCount()/2,
                                    video::EVT_STANDARD, EPT_LINES);
 }
 

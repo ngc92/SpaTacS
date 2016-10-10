@@ -48,16 +48,12 @@ class IrrlichtUI::EventRec : public IEventReceiver
 public:
     ~EventRec()
     {
-        if(mCollisionManager)
-            mCollisionManager->drop();
     }
 
     void setCollisionManager(scene::ISceneCollisionManager* cm)
     {
-        if(mCollisionManager)
-            mCollisionManager->drop();
-        mCollisionManager = cm;
         cm->grab();
+        mCollisionManager.reset(cm);
     }
 
     virtual bool OnEvent(const SEvent& event) override
@@ -124,7 +120,7 @@ private:
     }
 
     icore::line3df mPickLine;
-    scene::ISceneCollisionManager* mCollisionManager = nullptr;
+    drop_ptr<scene::ISceneCollisionManager> mCollisionManager;
 
 public:
     std::shared_ptr<IInputMode> mInputMode;
@@ -168,20 +164,18 @@ void IrrlichtUI::setState(const spatacs::core::GameState& state)
         auto ss = ship.shield_strength();
         node->setShieldStatus( ss.current / ss.max );
 
-        auto ani = smgr->createFlyStraightAnimator(convert(ship.position()),
-                                          convert(ship.position() + 1.0_s * ship.velocity()), 1000);
-        node->addAnimator(ani);
-        ani->drop();
+        drop_ptr<scene::ISceneNodeAnimator> ani{smgr->createFlyStraightAnimator(convert(ship.position()),
+                                          convert(ship.position() + 1.0_s * ship.velocity()), 1000)};
+        node->addAnimator(ani.get());
     }
 
     for(auto& proj : mState.getProjectiles())
     {
         auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
         shotfx->setShot(convert(proj.velocity()*1.0_s));
-        auto ani = smgr->createFlyStraightAnimator(convert(proj.position()),
-                                          convert(proj.position() + 1.0_s * proj.velocity()), 1000);
-        shotfx->addAnimator(ani);
-        ani->drop();
+        drop_ptr<scene::ISceneNodeAnimator> ani{smgr->createFlyStraightAnimator(convert(proj.position()),
+                                          convert(proj.position() + 1.0_s * proj.velocity()), 1000)};
+        shotfx->addAnimator(ani.get());
     }
 
 }

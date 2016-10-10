@@ -8,11 +8,6 @@
     - [ ] change weapon modes into actual ammo types
     - [ ] rework damage model
     - [ ] shield radius
-  * code:
-    - [ ] make weapon component dumber
-    - [ ] make physics ECS
-      + [ ] components: kinematic state, mass, shape, userdata
-      + [ ] systems: update, collision
   * physics:
     - [ ] more collision tests
     - [ ] hit scans
@@ -38,6 +33,9 @@
     - [ ] add a few ship types
   * code:
     - [ ] units in xml files
+
+## Simple tasks
+
     
 ## Unspecified
 * optimizations:

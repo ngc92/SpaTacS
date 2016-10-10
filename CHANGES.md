@@ -1,11 +1,11 @@
 ## Version 0.4 (systems update)
   * UI:
-    - [x] system status view
-    - [x] shield indicator
+    - system status view
+    - shield indicator
   * game:
-    - [x] FuelTank component
-    - [x] LifeSupport component
-    - [x] overheating of shield generator
+    - FuelTank component
+    - LifeSupport component
+    - overheating of shield generator
 
 ## Version 0.3 (damage update)
   * controls:

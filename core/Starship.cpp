@@ -11,34 +11,13 @@
 #include "components/Engine.h"
 #include "components/FuelTank.h"
 #include "components/LifeSupport.h"
+#include "SubSystems.h"
 #include <boost/property_tree/ptree.hpp>
 #include <iostream>
 #include "components/PowerPlant.h"
 
 using namespace spatacs;
 using namespace core;
-
-struct Starship::SubSystems
-{
-    SubSystems(const boost::property_tree::ptree& data):
-        mEngine(new Engine(data.get_child("engine"))),
-        mShield(new ShieldGenerator(data.get_child("shield"))),
-        mPowerPlant(new PowerPlant(data.get_child("power_plant"))),
-        mFuelTank(new FuelTank(data.get_child("tank"))),
-        mLifeSupport( new LifeSupport(data.get_child("life_support")) )
-    {
-        mArmament.push_back(std::make_unique<ProjectileWeapon>(data.get_child("weapon")));
-    }
-
-    SubSystems( const SubSystems& other );
-
-    std::unique_ptr<Engine> mEngine;
-    std::unique_ptr<ShieldGenerator> mShield;
-    std::unique_ptr<PowerPlant> mPowerPlant;
-    std::unique_ptr<FuelTank> mFuelTank;
-    std::unique_ptr<LifeSupport> mLifeSupport;
-    std::vector<std::unique_ptr<IWeapon>> mArmament;
-};
 
 ShipData::ShipData(std::uint64_t team, std::string name) : mTeam(team), mName( std::move(name) )
 {
@@ -62,61 +41,10 @@ Starship::~Starship() {
 
 void Starship::onStep()
 {
-    std::vector<IComponent*> cmps;
-    std::vector<double> requests;
-    cmps.push_back( &getEngine() );
-    cmps.push_back( &getShield() );
-    cmps.push_back( mSubSystems->mPowerPlant.get() );
-    cmps.push_back( mSubSystems->mLifeSupport.get() );
-    for(auto& wpn : mSubSystems->mArmament)
-        cmps.push_back( wpn.get() );
+    mEnergyProduced = mSubSystems->produceEnergy();
+    mEnergyUsed     = mSubSystems->distributeEnergy(0);
 
-    float energy_to_distribute = 0;
-    // get excess energy from each component
-    for(auto& sys : cmps) {
-        energy_to_distribute += sys->getExcessEnergy();
-        requests.push_back( sys->getEnergyRequest());
-    }
-
-    mEnergyProduced = energy_to_distribute;
-
-    // energy distribution according to demand and priority
-    std::vector<double> supply( requests.size(), 0.f );
-
-    const int num_iters = 10;
-    for(unsigned p = 0; p < num_iters; ++p)
-    {
-        double total_request = std::accumulate( begin(requests), end(requests), 0.0 );
-        if(total_request == 0)
-            break;
-
-        float edist = (p+1) / num_iters * energy_to_distribute;
-        for(unsigned i = 0; i < supply.size(); ++i)
-        {
-            if(requests[i] == 0) continue;
-
-            double add = requests[i] * edist / total_request * cmps[i]->energyPriority();
-
-            if(supply[i] + add > cmps[i]->getEnergyRequest()) {
-               add = cmps[i]->getEnergyRequest() - supply[i];
-            }
-            if(supply[i] + add > energy_to_distribute)
-                add = energy_to_distribute - supply[i];
-
-            supply[i] += add;
-            requests[i] -= add;
-            energy_to_distribute -= add;
-        }
-    }
-
-    mEnergyUsed = std::accumulate(begin(supply), end(supply), 0.0);
-
-    // supply energy to systems
-    for(unsigned i = 0; i < supply.size(); ++i) {
-        cmps[i]->provideEnergy(supply[i]);
-    }
-
-    for(auto& c : cmps)
+    for(auto& c : mSubSystems->mCompPtrs)
     {
         c->onStep(*this);
     }
@@ -152,37 +80,10 @@ bool Starship::alive() const
     return mHitPoints > 0;
 }
 
-template<class T>
-std::unique_ptr<T> clone( const std::unique_ptr<T>& original )
-{
-    return std::unique_ptr<T>( original->clone() );
-}
-
-template<class T>
-std::vector<T> clone( const std::vector<T>& original )
-{
-    std::vector<T> cl;
-    cl.reserve( original.size() );
-    std::transform( begin(original), end(original),
-                    std::back_inserter(cl), [](const T& t){ return clone(t); } );
-    return std::move(cl);
-}
-
 Starship::Starship(const Starship& other):
     GameObject( other ),
     ShipData( other ),
     mSubSystems( std::make_unique<SubSystems>( *other.mSubSystems ) )
-{
-
-}
-
-Starship::SubSystems::SubSystems( const SubSystems& other ):
-        mEngine( clone(other.mEngine) ),
-        mShield( clone(other.mShield) ),
-        mPowerPlant( clone(other.mPowerPlant) ),
-        mArmament( clone(other.mArmament) ),
-        mLifeSupport( clone(other.mLifeSupport) ),
-        mFuelTank( clone(other.mFuelTank) )
 {
 
 }
@@ -229,16 +130,8 @@ SystemStatus Starship::hull_status() const {
 
 void Starship::dealDamage(float dmg)
 {
-    std::vector<IComponent*> cmps;
-    cmps.push_back( &getEngine() );
-    cmps.push_back( &getShield() );
-    cmps.push_back( mSubSystems->mPowerPlant.get() );
-    cmps.push_back( mSubSystems->mLifeSupport.get() );
-    for(auto& wpn : mSubSystems->mArmament)
-        cmps.push_back( wpn.get() );
-
-    auto dmg_target = rand() % cmps.size();
-    auto leftover = cmps[dmg_target]->dealDamage( dmg );
+    auto dmg_target = rand() % mSubSystems->mCompPtrs.size();
+    auto leftover = mSubSystems->mCompPtrs[dmg_target]->dealDamage( dmg );
     mHitPoints -= leftover;
 }
 

@@ -40,8 +40,3 @@ spatacs::physics::time_t spatacs::physics::events::get_time(const Event &event)
 {
     return boost::apply_visitor(GetTime{}, event);
 }
-
-Object spatacs::physics::events::get_object(const Spawn& spawn)
-{
-    return Object(spawn.position, spawn.velocity, spawn.radius, spawn.mass, spawn.udata);
-}

@@ -10,6 +10,7 @@
 #include "vec.h"
 #include "core/Damage.h"
 #include <boost/optional.hpp>
+#include "physics/units.h"
 
 namespace spatacs
 {

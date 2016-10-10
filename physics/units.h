@@ -17,6 +17,8 @@ namespace physics
     class UnitWrapper
     {
     public:
+        using dimension_t = U;
+
         UnitWrapper() : value(T{}) { }
         explicit constexpr UnitWrapper( const T& val ) : value(val) { };
         explicit constexpr operator T() const { return value; }
@@ -192,6 +194,9 @@ namespace physics
         using force_t   = UnitWrapper<base_t, dimensions::force_t>;
         using area_t    = UnitWrapper<base_t, dimensions::area_t>;
 
+        template<class T>
+        using rate_t    = UnitWrapper<base_t, dimensions::rate_dim_t<typename T::dimension_t>>;
+
         using length_vec   = Vec3<length_t>;
         using velocity_vec = Vec3<speed_t>;
         using accel_vec    = Vec3<accel_t>;
@@ -212,18 +217,17 @@ namespace physics
         constexpr auto newton(base_t v) { return force_t(v); }
         constexpr auto kilonewton(base_t v) { return force_t(v * 1000); }
 
+        inline constexpr length_t operator ""_km(long double f) { return kilometers(f); }
+        inline constexpr length_t operator ""_m(long double f) { return meters(f); }
+
+        inline constexpr mass_t operator ""_kg(long double f) { return kilogram(f); }
+        inline constexpr mass_t operator ""_t(long double f) { return tonnes(f); }
+
+        inline constexpr time_t operator ""_s(long double f) { return time_t(f); }
+        inline constexpr speed_t operator ""_kps(long double f) { return kilometers(f) / 1.0_s; }
     }
 
     using namespace unit_types;
-
-    inline constexpr length_t operator ""_km(long double f) { return kilometers(f); }
-    inline constexpr length_t operator ""_m(long double f) { return meters(f); }
-
-    inline constexpr mass_t operator ""_kg(long double f) { return kilogram(f); }
-    inline constexpr mass_t operator ""_t(long double f) { return tonnes(f); }
-
-    inline constexpr time_t operator ""_s(long double f) { return time_t(f); }
-    inline constexpr speed_t operator ""_kps(long double f) { return kilometers(f) / 1.0_s; }
 }
     using namespace physics::unit_types;
 

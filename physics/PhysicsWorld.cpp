@@ -128,18 +128,6 @@ void PhysicsWorld::filterCollisions(std::uint64_t id)
     mEventQueue = queue_t(Compare(), std::move(container));
 }
 
-void PhysicsWorld::handleEvent(const events::Spawn& s)
-{
-    ObjectRecord new_rec;
-    new_rec.object = get_object(s);
-    new_rec.object.setID(mFreeID);
-    new_rec.acceleration = velocity_vec(Vec{0, 0, 0});
-    mObjects[mFreeID] = std::move(new_rec);
-    mSpawnCallback(*this, mObjects[mFreeID].object);
-    ++mFreeID;
-    /// \todo trigger calculation of collision events.
-}
-
 void PhysicsWorld::handleEvent(const events::ApplyForce& f)
 {
     /// \todo this is a fixed end time! Change!
@@ -160,9 +148,17 @@ PhysicsWorld::ObjectRecord& PhysicsWorld::getObjectRec(std::uint64_t id)
     return mObjects.at(id);
 }
 
-void PhysicsWorld::setSpawnCallback(PhysicsWorld::spawn_callback_fn cb)
+std::uint64_t PhysicsWorld::spawn(const Object& object)
 {
-    mSpawnCallback = std::move(cb);
+    ObjectRecord new_rec;
+    new_rec.object = object;
+    new_rec.object.setID(mFreeID);
+    new_rec.acceleration = velocity_vec(Vec{0, 0, 0});
+    mObjects[mFreeID] = std::move(new_rec);
+    std::uint64_t id = mFreeID;
+    ++mFreeID;
+    return id;
+    /// \todo trigger calculation of collision events.
 }
 
 bool PhysicsWorld::Compare::operator()(const events::Event& a, const events::Event& b) const

@@ -83,7 +83,6 @@ void Game::run()
 
         for(auto& itf : mUIs)
         {
-            /// \todo the design makes it necessary to copy state here, improve
             itf->setState( mState );
             itf->notifyEvents( mEvents );
         }

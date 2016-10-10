@@ -137,16 +137,6 @@ core::Simulation::Simulation():
                                                  this->physics_callback( world, A, B, time );
                                              });
 
-    mWorld->setSpawnCallback([this](const physics::PhysicsWorld& w, const physics::Object& O)
-                                         {
-                                             auto& obj = mState.getObject(O.userdata());
-                                             obj.setPhysicsID( O.id() );
-                                             obj.setMass( O.mass() );
-                                             obj.setPosition( O.position() );
-                                             obj.setVelocity( O.velocity() );
-                                         }
-    );
-
     addEvent(std::make_unique<events::SpawnShip>(1, "SF Predator", "destroyer", kilometers(0, 0, 0.4)));
     addEvent(std::make_unique<events::SpawnShip>(1, "SF Fearless", "destroyer", kilometers(0, 0.2, -0.4)));
     addEvent(std::make_unique<events::SpawnShip>(2, "ES Lion",     "destroyer", kilometers(12, 2, 1)));

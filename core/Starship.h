@@ -19,6 +19,7 @@ namespace spatacs
         class IWeapon;
         class PowerPlant;
         class FuelTank;
+        class SubSystems;
 
         struct SystemStatus
         {
@@ -50,7 +51,6 @@ namespace spatacs
             double armour() const;
             double max_armour() const;
             void setArmour( double new_value );
-
         protected:
             ShipData() = default;
             ShipData(std::uint64_t team, std::string name);
@@ -67,6 +67,8 @@ namespace spatacs
             // Energy management status
             double mEnergyUsed     = 0;
             double mEnergyProduced = 0;
+
+            length_t mRadius;
 
         private:
             std::uint64_t mTeam = 0;
@@ -121,10 +123,7 @@ namespace spatacs
 
         private:
             // components
-            struct SubSystems;
             std::unique_ptr<SubSystems> mSubSystems;
-        protected:
-            length_t mRadius;
         };
 
         length_t distance(const Starship& s1, const Starship& s2);
