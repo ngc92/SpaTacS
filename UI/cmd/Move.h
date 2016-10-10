@@ -14,6 +14,7 @@ namespace cmd
 	{
 	public:
 		Move(std::uint64_t object, length_t x, length_t y, length_t z, speed_t speed);
+		Move(std::uint64_t object, length_vec p, speed_t speed);
 		Move( std::istream& in );
 		
 		std::uint64_t object() const;

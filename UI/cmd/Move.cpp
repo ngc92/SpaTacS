@@ -35,7 +35,13 @@ namespace cmd
 		return mSpeed;
 	}
 
-	namespace
+    Move::Move(std::uint64_t object, length_vec p, speed_t speed) :
+		mObject(object), mTarget(p), mSpeed(speed)
+    {
+
+    }
+
+    namespace
 	{
 		Move from_stream( std::istream& in )
 		{

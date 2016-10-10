@@ -3,22 +3,21 @@
     - [ ] waypoints for move command
     - [ ] show currently active targets
     - [ ] pause game
+    - [x] select target velocity
   * game:
     - [ ] change weapon modes into actual ammo types
     - [ ] rework damage model
     - [ ] shield radius
   * code:
     - [ ] make weapon component dumber
-    - [ ] make physics ECS
-      + [ ] components: kinematic state, mass, shape, userdata
-      + [ ] systems: update, collision
+    - [ ] more flexibility for physics code
   * physics:
     - [ ] more collision tests
     - [ ] hit scans
   * AI:
     - [ ] switch ammo based on target status
     - [ ] may focus fire on single target
-    - [ ] evasive maneuvers for damaged ships
+    - [x] evasive/aggressive maneuvers for damaged ships
     
 ## Version 0.6 (menu update)
   * UI:

@@ -18,9 +18,9 @@ void ShipStatusUI::draw()
 {
     auto p = getAbsolutePosition().UpperLeftCorner;
     auto clip = getAbsoluteClippingRect();
-    irr::core::recti rect {p, p + irr::core::vector2di(getAbsolutePosition().getWidth(), 17)};
+    irr::core::recti rect {p, p + irr::core::vector2di(getAbsolutePosition().getWidth(), 16)};
     Environment->getBuiltInFont()->draw(mShipName.c_str(), rect, video::SColor(255, 255, 255, 255), false, false, &clip);
-    rect += irr::core::vector2di(1, 16);
+    rect += irr::core::vector2di(1, 15);
 
     for(auto& sys : mSystems)
     {
@@ -32,7 +32,7 @@ void ShipStatusUI::draw()
         stream << std::fixed << std::setprecision(1);
         stream << sys.name.c_str() << " " << sys.hp << "/" << sys.max_hp;
         Environment->getBuiltInFont()->draw(stream.str().c_str(), rect + irr::core::vector2di(4, 0), video::SColor(255, 20, 20, 0), false, true, &clip);
-        rect += irr::core::vector2di(0, 19);
+        rect += irr::core::vector2di(0, 18);
     }
 }
 

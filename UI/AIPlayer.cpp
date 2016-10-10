@@ -5,6 +5,7 @@
 #include "AIPlayer.h"
 #include <boost/range/adaptor/indirected.hpp>
 #include <events/Combat.h>
+#include <iostream>
 
 using namespace spatacs;
 using namespace ui;
@@ -19,23 +20,46 @@ std::vector<cmd::Command> AIPlayer::getCommands() const
     return mCommands;
 }
 
+
 void AIPlayer::setState(const core::GameState& state)
 {
     mCommands.clear();
-    for(auto& own : state.getShips()) {
+    for(auto& own : state.getShips())
+    {
         if(own.team() != mOwnTeam)
             continue;
-        length_t min = 10.0_km;
-        std::uint64_t attack = 0;
-        for (auto& e : state.getShips()) {
+
+        // if the shield is damaged.
+        float own_shield = own.shield_strength().current;
+
+        length_t min = 100.0_km;
+        // find closest ship to attack
+        const core::Starship* target = nullptr;
+        for (auto& e : state.getShips())
+        {
             if (e.team() != own.team() && distance(e, own) < min) {
                 min = distance(e, own);
-                attack = e.id();
+                target = &e;
             }
         }
 
-        if(attack != 0) {
-            mCommands.push_back( cmd::Attack(own.id(), attack) );
+        if(!target)
+            continue;
+
+        // if found, do attack
+        if(min < 10.0_km)  {
+            mCommands.push_back( cmd::Attack(own.id(), target->id()) );
+        }
+
+        // fly closer if shield is stronger
+        if(own_shield > target->shield_strength().current || own_shield > 2)
+        {
+            mCommands.push_back( cmd::Move(own.id(), target->position(), 0.25_kps) );
+        } else
+        {
+            auto delta = own.position() - target->position();
+            delta *= 1.0_km / length(delta);
+            mCommands.push_back( cmd::Move(own.id(), own.position() + delta, 2.0_kps) );
         }
     }
 
@@ -61,11 +85,7 @@ bool AIPlayer::step()
     {
         if(mLastState->getShip(hit).team() == mOwnTeam)
         {
-            auto opos = mLastState->getShip(hit).position();
-            opos.x += (rand() % 101 - 50.0) * 0.01_km;
-            opos.y += (rand() % 101 - 50.0) * 0.01_km;
-            opos.z += (rand() % 101 - 50.0) * 0.01_km;
-            mCommands.push_back( cmd::Move(hit, opos.x, opos.y, opos.z, 2.0_kps) );
+            // don't do anything for now!
         }
     }
     return false;

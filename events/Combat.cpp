@@ -27,25 +27,27 @@ namespace spatacs
 
             auto& target = context.state.getShip( mTarget );
             auto& wpn = shooter.getWeapon( mWeaponId );
-            auto ev = fireWeapon( shooter, target, wpn );
+            auto tpos = target.position();
+            auto tvel = target.velocity();
+            auto ev = fireWeapon(shooter, tpos, tvel, wpn);
             if(ev)
                 context.events.push_back( std::move(ev) );
 
          }
 
-        auto FireWeapon::fireWeapon(Starship& shooter, const Starship& target,  core::IWeapon& weapon) const -> EventPtr
+        auto FireWeapon::fireWeapon(Starship& shooter, const length_vec& tpos, const velocity_vec& tvel, core::IWeapon& weapon) const -> EventPtr
         {
             // check that weapon is ready
             if(!weapon.ready())
                 return nullptr;
 
             // let the weapon create a projectile
-            auto oproj = weapon.fire( target.position() - shooter.position(), target.velocity() - shooter.velocity() );
+            auto oproj = weapon.fire( tpos - shooter.position(), tvel - shooter.velocity() );
 
             if( oproj) {
                 auto& shot = oproj.get();
-                // update position and velocity according to shooter state
 
+                // update position and velocity according to shooter state
                 return EventPtr(new SpawnProjectile(shooter.id(), shooter.position(), shot.vel + shooter.velocity(), 0.2_kg,
                                                     0.0_m, shot.damage));
             }
