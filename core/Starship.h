@@ -91,10 +91,11 @@ namespace spatacs
             // Ship from definition
             Starship(std::uint64_t team, std::string name, const boost::property_tree::ptree& data);
 
-            bool alive() const;
+            bool alive() const override;
+            Starship* clone() const override;
 
             /// called at the end of a game step.
-            void onStep();
+            void onStep() override;
 
             /// Subcomponents
             // engine interface
@@ -125,8 +126,6 @@ namespace spatacs
             // components
             std::unique_ptr<SubSystems> mSubSystems;
         };
-
-        length_t distance(const Starship& s1, const Starship& s2);
     }
 }
 

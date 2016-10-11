@@ -9,6 +9,7 @@
 #include "core/components/ShieldGenerator.h"
 #include <iostream>
 #include "core/components/IWeapon.h"
+#include "core/Starship.h"
 
 namespace spatacs {
     namespace ui {
@@ -111,9 +112,11 @@ namespace spatacs {
         {
             auto sp = std::setprecision(2);
             std::cout << "ships: \n";
-            for (auto& ship : state.getShips()) {
-                std::cout << ship.id() << ": " << ship.team() << " " << sp << ship.hp() << " @ " << ship.position()
-                          << "\n";
+            for (auto& obj : state) {
+                if(auto ship = dynamic_cast<const core::Starship*>(&obj)) {
+                    std::cout << obj.id() << ": " << ship->team() << " " << sp << ship->hp() << " @ " << obj.position()
+                              << "\n";
+                }
             }
         }
 

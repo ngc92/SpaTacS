@@ -16,6 +16,7 @@
 #include "UI/inputs/UnitCommand.h"
 #include <iostream>
 #include "convert.h"
+#include "core/Starship.h"
 
 using namespace irr;
 using spatacs::ui::IrrlichtUI;
@@ -28,15 +29,19 @@ const spatacs::core::Starship* pick(const spatacs::core::GameState& world, icore
 {
     const spatacs::core::Starship* picked = nullptr;
     f64 md = 1e10;
-    for(auto& ship : world.getShips())
+    for(auto& obj : world)
     {
-        auto sp   = convert(ship.position());
-        float rad = convert(ship.radius() + 50.0_m);
+        auto ship = dynamic_cast<const spatacs::core::Starship*>(&obj);
+        if(!ship)
+            continue;
+
+        auto sp   = convert(ship->position());
+        float rad = convert(ship->radius() + 50.0_m);
         f64 temp;
         if(ray.getIntersectionWithSphere(sp, rad, temp) && temp < md)
         {
             md = temp;
-            picked = &ship;
+            picked = ship;
         }
     }
     return picked;
@@ -155,27 +160,28 @@ void IrrlichtUI::setState(const spatacs::core::GameState& state)
 
     // update the location map
     mMap->removeAll();
-    for(auto& ship : mState.getShips()) {
-        if(!ship.alive())
+    for(auto& obj : mState) {
+        if(!obj.alive())
             continue;
-        auto node = new scene::ShipFx( mMap, mDevice->getSceneManager() );
-        video::SColor colors[] = {{255, 0, 200, 0}, {255, 200, 0, 0}};
-        node->setColor( colors[ship.team()-1] );
-        auto ss = ship.shield_strength();
-        node->setShieldStatus( ss.current / ss.max );
+        irr::scene::ISceneNode* node = nullptr;
+        if(auto ship = dynamic_cast<const core::Starship*>(&obj)) {
+            auto shipfx = new scene::ShipFx(mMap, mDevice->getSceneManager());
+            video::SColor colors[] = {{255, 0,   200, 0},
+                                      {255, 200, 0,   0}};
+            shipfx->setColor(colors[ship->team() - 1]);
+            auto ss = ship->shield_strength();
+            shipfx->setShieldStatus(ss.current / ss.max);
+            node = shipfx;
+        } else
+        {
+            auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
+            shotfx->setShot(convert(obj.velocity()*1.0_s));
+            node = shotfx;
+        }
 
-        drop_ptr<scene::ISceneNodeAnimator> ani{smgr->createFlyStraightAnimator(convert(ship.position()),
-                                          convert(ship.position() + 1.0_s * ship.velocity()), 1000)};
+        drop_ptr<scene::ISceneNodeAnimator> ani{smgr->createFlyStraightAnimator(convert(obj.position()),
+                                          convert(obj.position() + 1.0_s * obj.velocity()), 1000)};
         node->addAnimator(ani.get());
-    }
-
-    for(auto& proj : mState.getProjectiles())
-    {
-        auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
-        shotfx->setShot(convert(proj.velocity()*1.0_s));
-        drop_ptr<scene::ISceneNodeAnimator> ani{smgr->createFlyStraightAnimator(convert(proj.position()),
-                                          convert(proj.position() + 1.0_s * proj.velocity()), 1000)};
-        shotfx->addAnimator(ani.get());
     }
 
 }

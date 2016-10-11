@@ -7,12 +7,11 @@
   * game:
     - [ ] change weapon modes into actual ammo types
     - [ ] rework damage model
-    - [ ] shield radius
-  * code:
-    - [ ] more flexibility for physics code
+    - [x] shield radius
   * physics:
     - [ ] more collision tests
     - [ ] hit scans
+    - [x] fixtures
   * AI:
     - [ ] switch ammo based on target status
     - [ ] may focus fire on single target

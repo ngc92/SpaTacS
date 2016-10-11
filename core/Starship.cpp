@@ -135,13 +135,6 @@ void Starship::dealDamage(float dmg)
     mHitPoints -= leftover;
 }
 
-length_t spatacs::core::distance(const Starship& s1, const Starship& s2)
-{
-    return length(s1.position() - s2.position());
-}
-
-
-
 uint64_t ShipData::team() const
 {
     return mTeam;
@@ -195,6 +188,11 @@ const FuelTank& Starship::tank() const
 FuelTank& Starship::getTank()
 {
     return *mSubSystems->mFuelTank;
+}
+
+Starship* Starship::clone() const
+{
+    return new Starship(*this);
 }
 
 void ShipData::setHP(double hp)

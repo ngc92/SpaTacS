@@ -8,6 +8,8 @@
 #include "physics/HitTests.h"
 #include "GameThread.h"
 #include "Simulation.h"
+#include "core/Starship.h"
+#include "core/Projectile.h"
 
 using namespace spatacs;
 
@@ -16,25 +18,13 @@ auto core::Simulation::step(EventVec inEvents) -> EventVec
     mAllEvents.clear();
 
     // remove dead objects
-    for(auto& s : mState.getShips())
+    for(auto& s : mState)
     {
         if(!s.alive())
             mWorld->pushEvent( physics::events::Despawn{s.physics_id(), 0.0_s } );
     }
 
-    for(auto& s : mState.getProjectiles())
-    {
-        if(s.age() > 10)
-            mWorld->pushEvent(physics::events::Despawn{s.physics_id(), 0.0_s});
-    }
-
-    mState.getShips().erase(remove_if(begin(mState.getShips()), end(mState.getShips()),
-                                      [](const Starship& s) { return !s.alive(); }),
-                            end(mState.getShips()));
-
-    mState.getProjectiles().erase(remove_if(begin(mState.getProjectiles()), end(mState.getProjectiles()),
-                                            [](const Projectile& s) { return s.age() > 10; }),
-                                  end(mState.getProjectiles()));
+    mState.cleanup();
 
     // process events generated due to commands
     mEventCache = move(inEvents);
@@ -47,23 +37,14 @@ auto core::Simulation::step(EventVec inEvents) -> EventVec
     eventLoop();
 
     // copy new positions and velocities to game objects
-    for (auto& ship : mState.getShips()) {
+    for (auto& ship : mState) {
         auto po = mWorld->getObject( ship.physics_id() );
         ship.setPosition( po.position() );
         ship.setVelocity( po.velocity() );
     }
-    for (auto& proj : mState.getProjectiles()) {
-        auto po = mWorld->getObject( proj.physics_id() );
-        proj.setPosition( po.position() );
-        proj.setVelocity( po.velocity() );
-    }
 
-    // step all projectiles and objects
-    for (auto& proj : mState.getProjectiles()) {
-        proj.onStep();
-    }
-
-    for (auto& ship : mState.getShips()) {
+    // step all objects
+    for (auto& ship : mState) {
         ship.onStep();
     }
 

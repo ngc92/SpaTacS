@@ -5,16 +5,23 @@
 #ifndef SOI_GAMESTATE_H
 #define SOI_GAMESTATE_H
 
-#include <vector>
+#include <boost/ptr_container/ptr_vector.hpp>
 #include <cstdint>
 
-#include "Starship.h"
-#include "Projectile.h"
+#include "GameObject.h"
 
 namespace spatacs
 {
 namespace core
 {
+    inline GameObject* new_clone( const GameObject& s )
+    {
+        return s.clone();
+    }
+
+    class Starship;
+    class Projectile;
+
     class GameState
     {
     public:
@@ -28,24 +35,29 @@ namespace core
         // Ships
         Starship& getShip( const std::uint64_t id );
         const Starship& getShip( const std::uint64_t id ) const;
-        std::vector<Starship>& getShips();
-        const std::vector<Starship>& getShips() const;
-
-        void addShip(Starship ship);
+        void add(std::unique_ptr<Starship> ship);
 
         // Projectiles
-        void addProjectile( Projectile proj );
-        std::vector<Projectile>& getProjectiles();
-        const std::vector<Projectile>& getProjectiles() const;
+        void add(std::unique_ptr<Projectile> proj);
         Projectile& getProjectile(std::uint64_t id);
         const Projectile& getProjectile( std::uint64_t id ) const;
 
+        // Objccts
         GameObject& getObject( std::uint64_t id );
+        const GameObject& getObject( std::uint64_t id ) const;
+
+        auto begin() { return mObjects.begin(); };
+        auto begin() const { return mObjects.begin(); };
+        auto end() { return mObjects.end(); };
+        auto end() const { return mObjects.end(); };
+
+        /// removes all objects that are not alive
+        void cleanup();
 
         std::uint64_t getNextFreeID();
     private:
-        std::vector<Starship> mStarships;
-        std::vector<Projectile> mProjectiles;
+        boost::ptr_vector<GameObject> mObjects;
+
         std::uint64_t mFreeID = 0;
     };
 }

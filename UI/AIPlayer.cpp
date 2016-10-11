@@ -6,6 +6,7 @@
 #include <boost/range/adaptor/indirected.hpp>
 #include <events/Combat.h>
 #include <iostream>
+#include "core/Starship.h"
 
 using namespace spatacs;
 using namespace ui;
@@ -24,8 +25,14 @@ std::vector<cmd::Command> AIPlayer::getCommands() const
 void AIPlayer::setState(const core::GameState& state)
 {
     mCommands.clear();
-    for(auto& own : state.getShips())
+    for(auto& obj : state)
     {
+        if(!dynamic_cast<const core::Starship*>(&obj))
+        {
+            continue;
+        }
+        auto& own = dynamic_cast<const core::Starship&>(obj);
+
         if(own.team() != mOwnTeam)
             continue;
 
@@ -35,11 +42,15 @@ void AIPlayer::setState(const core::GameState& state)
         length_t min = 100.0_km;
         // find closest ship to attack
         const core::Starship* target = nullptr;
-        for (auto& e : state.getShips())
+        for (auto& e : state)
         {
-            if (e.team() != own.team() && distance(e, own) < min) {
+            auto eship = dynamic_cast<const core::Starship*>(&e);
+            if(!eship)
+                continue;
+
+            if (eship->team() != own.team() && distance(e, own) < min) {
                 min = distance(e, own);
-                target = &e;
+                target = eship;
             }
         }
 

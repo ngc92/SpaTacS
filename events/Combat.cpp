@@ -9,6 +9,8 @@
 #include "core/GameState.h"
 #include "core/components/ShieldGenerator.h"
 #include "core/components/IWeapon.h"
+#include "core/Starship.h"
+#include "core/Projectile.h"
 
 namespace spatacs
 {

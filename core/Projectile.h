@@ -20,7 +20,7 @@ namespace core
     public:
         Projectile() = default;
         Projectile(std::uint64_t id, std::uint64_t shooter, Damage damage);
-        void onStep();
+        void onStep() override;
 
         float age() const;
         const Damage& damage() const;
@@ -28,6 +28,8 @@ namespace core
         std::uint64_t shooter() const;
 
         void expire();
+        bool alive() const override;
+        Projectile* clone() const override;
 
     private:
         float mAge = 0;

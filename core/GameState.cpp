@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include "GameState.h"
 #include <algorithm>
+#include "Starship.h"
+#include "Projectile.h"
 
 using namespace spatacs;
 using namespace core;
@@ -21,83 +23,49 @@ GameState::~GameState()
 }
 
 Starship& GameState::getShip(const std::uint64_t id) {
-    for(auto& s : mStarships)
-    {
-        if(s.id() == id)
-            return s;
-    }
-
-    BOOST_THROW_EXCEPTION(std::logic_error("Could not find Ship ID"));
+    return dynamic_cast<Starship&>( getObject(id) );
 }
 
 const Starship& GameState::getShip(const std::uint64_t id) const
 {
-    for(auto& s : mStarships)
-    {
-        if(s.id() == id)
-            return s;
-    }
-
-    BOOST_THROW_EXCEPTION(std::logic_error("Could not find Ship ID"));
+    return dynamic_cast<const Starship&>( getObject(id) );
 }
 
-std::vector<Starship>& GameState::getShips()
-{
-    return mStarships;
-}
-
-const std::vector<Starship>& GameState::getShips() const
-{
-    return mStarships;
-}
-void GameState::addShip(Starship ship) {
+void GameState::add(std::unique_ptr<Starship> ship) {
     /// \todo ensure uniqueness of ids
-    mStarships.push_back( std::move(ship) );
+    mObjects.push_back( ship.release() );
 }
 
 
-void GameState::addProjectile(Projectile proj)
+void GameState::add(std::unique_ptr<Projectile> proj)
 {
-    mProjectiles.push_back( std::move(proj) );
-}
-
-std::vector<Projectile>& GameState::getProjectiles()
-{
-    return mProjectiles;
-}
-
-const std::vector<Projectile>& GameState::getProjectiles() const
-{
-    return mProjectiles;
+    mObjects.push_back( proj.release() );
 }
 
 Projectile& GameState::getProjectile(std::uint64_t id)
 {
-    for(auto& p : mProjectiles)
-        if(p.id() == id)
-            return p;
-
-    BOOST_THROW_EXCEPTION( std::logic_error("Projectile not found") );
+    return dynamic_cast<Projectile&>( getObject(id) );
 }
 
 const Projectile& GameState::getProjectile(std::uint64_t id) const
 {
-    for(auto& p : mProjectiles)
-        if(p.id() == id)
-            return p;
-
-    BOOST_THROW_EXCEPTION( std::logic_error("Projectile not found") );
+    return dynamic_cast<const Projectile&>( getObject(id) );
 }
 
 GameObject& GameState::getObject(std::uint64_t id)
 {
-    for(auto& p : mProjectiles)
+    for(auto& p : mObjects)
         if(p.id() == id)
             return p;
-    for(auto& s : mStarships)
-        if(s.id() == id)
-            return s;
 
+    BOOST_THROW_EXCEPTION(std::logic_error("Could not find Object"));
+}
+
+const GameObject& GameState::getObject(std::uint64_t id) const
+{
+    for(auto& p : mObjects)
+        if(p.id() == id)
+            return p;
 
     BOOST_THROW_EXCEPTION(std::logic_error("Could not find Object"));
 }
@@ -105,4 +73,9 @@ GameObject& GameState::getObject(std::uint64_t id)
 std::uint64_t GameState::getNextFreeID()
 {
     return ++mFreeID;
+}
+
+void GameState::cleanup()
+{
+    mObjects.erase_if( [](const GameObject& s) { return !s.alive(); });
 }

@@ -32,6 +32,10 @@ namespace spatacs
             void setID(std::uint64_t id);
             void setPhysicsID(std::uint64_t id);
 
+            virtual bool alive() const = 0;
+            virtual void onStep() = 0;
+            virtual GameObject* clone() const = 0;
+
         protected:
             std::uint64_t mID        = 0;
             std::uint64_t mPhysicsID = 0;
@@ -40,6 +44,8 @@ namespace spatacs
             length_vec   mPosition;
             velocity_vec mVelocity;
         };
+
+        length_t distance(const GameObject& s1, const GameObject& s2);
     }
 }
 

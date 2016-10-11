@@ -9,6 +9,7 @@
 #include "components/Engine.h"
 #include <iostream>
 #include "core/components/IWeapon.h"
+#include "core/Starship.h"
 
 using namespace spatacs;
 using namespace core;

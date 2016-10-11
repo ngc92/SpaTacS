@@ -20,6 +20,7 @@
 #include "core/components/Engine.h"
 #include "UI/convert.h"
 #include "core/components/FuelTank.h"
+#include "core/Starship.h"
 
 using namespace spatacs;
 
