@@ -201,6 +201,7 @@ bool IrrlichtUI::step()
 
 void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events::IEvent>>& events)
 {
+    auto smgr = mDevice->getSceneManager();
     for(auto& evt : events)
     {
         try {
@@ -211,15 +212,39 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
                 if (dmg > 0.1) {
                     float s = 5 * dmg + 1;
                     auto pos = mState.getShip(ship).position();
-                    auto bb = mDevice->getSceneManager()->addBillboardSceneNode();
+                    auto bb = smgr->addBillboardSceneNode();
                     bb->setPosition(convert(pos));
                     bb->setMaterialFlag(video::EMF_LIGHTING, false);
                     bb->setSize(s, s, s);
                     bb->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
                     bb->setMaterialTexture(0, mDevice->getVideoDriver()->getTexture("data/attack.png"));
-                    bb->addAnimator(mDevice->getSceneManager()->createDeleteAnimator(1000));
+                    bb->addAnimator(smgr->createDeleteAnimator(200));
+                }
+            } else if (auto h = dynamic_cast<const events::HitShield*>(evt.get())) {
+                auto& ship = mState.getShip(h->id());
+                if(ship.shield_strength().current > 0) {
+                    float s = 5;
+                    auto pos = ship.position();
+                    auto bb = smgr->addBillboardSceneNode();
+                    bb->setPosition(convert(pos));
+                    bb->setMaterialFlag(video::EMF_LIGHTING, false);
+                    bb->setSize(s, s, s);
+                    bb->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
+                    bb->setRotation( irr::core::vector3df(rand() % 100, rand() % 100, rand() % 100) );
+                    bb->addAnimator(smgr->createDeleteAnimator(500));
+                    irr::core::array<irr::video::ITexture*> textures;
+                    for (int i = 1; i <= 32; ++i) {
+                        textures.push_back(mDevice->getVideoDriver()->getTexture(
+                                ("data/fx7_energyBall/aura_test_1_32_" + std::to_string(i) + ".png").c_str()));
+                    }
+                    bb->addAnimator(smgr->createTextureAnimator(textures, 20));
+                    drop_ptr<scene::ISceneNodeAnimator> ani{
+                            smgr->createFlyStraightAnimator(convert(pos), convert(pos + ship.velocity() * 1.0_s), 1000)};
+                    bb->addAnimator(ani.get());
                 }
             }
+
+
         } catch( std::exception& e )
         {
             std::cerr << e.what() << "\n";
