@@ -6,7 +6,7 @@
 </engine>
 
 <shield>
-    <strength>5.0</strength>
+    <strength>7.0</strength>
     <recharge>0.2</recharge>
     <efficiency>0.2</efficiency>
     <dissipation>1</dissipation>

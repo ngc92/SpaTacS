@@ -58,22 +58,29 @@ void ShipFx::render()
 
     u16 indices[] = {0, 1, 2, 0, 2, 3};
     driver->drawIndexedTriangleList(&vertices[0], 4, &indices[0], 2);
+    drawCircle(view, h, v, 2, mShieldStatus, video::SColor(128, 0, 0, 128));
+    drawCircle(view, h, v, 1.8, mHullStatus, video::SColor(255, 64, 64, 64));
 
-    // shield wheel
-    constexpr std::uint32_t vtx_ct = 13;
+}
+
+void ShipFx::drawCircle(const core::vector3df& view, const core::vector3df& h, const core::vector3df& v, float radius,
+                        float status, const video::SColor& color) const
+{
+    video::IVideoDriver* driver = SceneManager->getVideoDriver();
+    constexpr uint32_t vtx_ct = 13;
     video::S3DVertex svtx[vtx_ct];
-    irr::u16 idx[vtx_ct];
-    for(std::uint16_t i = 0; i < vtx_ct; ++i)
+    u16 idx[vtx_ct];
+    for(uint16_t i = 0; i < vtx_ct; ++i)
     {
-        float a = mShieldStatus * 2 * i * 3.1415f / (vtx_ct - 1) + 3.1415f/2;
-        svtx[i].Pos = 2*(std::sin(a) * h + std::cos(a) * v);
-        svtx[i].Color = video::SColor(128, 0, 0, 128);
+        float a = status * 2 * i * 3.1415f / (vtx_ct - 1) + 3.1415f / 2;
+        svtx[i].Pos = radius*(std::sin(a) * h + std::cos(a) * v);
+        svtx[i].Color = color;
         svtx[i].Normal = -view;
         idx[i] = i;
     }
     driver->drawVertexPrimitiveList(svtx, vtx_ct, idx, vtx_ct-1, video::EVT_STANDARD, EPT_LINE_STRIP);
-
 }
+
 
 const core::aabbox3d<f32>& ShipFx::getBoundingBox() const
 {
@@ -96,4 +103,10 @@ void ShipFx::setShieldStatus(float s)
 {
     if(s >= 0 && s <= 1)
         mShieldStatus = s;
+}
+
+void ShipFx::setHullStatus(float s)
+{
+    if(s >= 0 && s <= 1)
+        mHullStatus = s;
 }

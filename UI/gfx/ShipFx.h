@@ -23,6 +23,7 @@ namespace irr {
 
             void setColor( video::SColor col );
             void setShieldStatus(float s);
+            void setHullStatus(float s);
 
         private:
             video::SMaterial mMaterial;
@@ -30,6 +31,10 @@ namespace irr {
 
             core::aabbox3d<f32> mBBox;
             float mShieldStatus;
+            float mHullStatus;
+
+            void drawCircle(const core::vector3df& view, const core::vector3df& h, const core::vector3df& v, float radius,
+                                        float status, const video::SColor& color) const;
         };
     }
 }
