@@ -7,7 +7,7 @@
 using namespace spatacs::physics;
 using irr::core::vector3df;
 
-const auto scale = 50.0_m;
+const auto scale = 75.0_m;
 
 vector3df spatacs::ui::convert(const length_vec& l)
 {

@@ -129,8 +129,8 @@ core::Simulation::Simulation():
 
     addEvent(std::make_unique<events::SpawnShip>(1, "SF Predator", "destroyer", kilometers(0, 0, 0.4)));
     addEvent(std::make_unique<events::SpawnShip>(1, "SF Fearless", "destroyer", kilometers(0, 0.2, -0.4)));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Lion",     "destroyer", kilometers(12, 2, 1)));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Wolf",     "destroyer", kilometers(10, 1, -2)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Lion",     "destroyer", kilometers(17, 4, 2)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Wolf",     "destroyer", kilometers(15, 2, -4)));
     addEvent(std::make_unique<events::SpawnShip>(2, "ES Tiger",    "destroyer", kilometers(11, 2, 3)));
     eventLoop();
 }

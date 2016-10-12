@@ -55,3 +55,5 @@
   - ship icons
   - skybox
 * AI    
+* other
+  - Ship Editor

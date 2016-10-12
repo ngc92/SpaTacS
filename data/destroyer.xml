@@ -1,12 +1,12 @@
 <mass>650</mass>
 <engine>
     <fuel_consumption>250</fuel_consumption>
-    <propellant_speed>100</propellant_speed>
+    <propellant_speed>150</propellant_speed>
     <HP>1</HP>
 </engine>
 
 <shield>
-    <strength>7.0</strength>
+    <strength>10.0</strength>
     <recharge>0.2</recharge>
     <efficiency>0.2</efficiency>
     <dissipation>1</dissipation>
@@ -17,7 +17,7 @@
     <HE_strength>1</HE_strength>
     <AP_strength>1</AP_strength>
     <SO_strength>1</SO_strength>
-    <precision>30</precision>
+    <precision>45</precision>
     <rpm>60</rpm>
     <muzzle_velocity>2500</muzzle_velocity>
     <HP>1</HP>

@@ -1,2 +1,3 @@
 - unify random
 - separate shield and shield generator
+- crash when active ship gets removed and gets a command.
