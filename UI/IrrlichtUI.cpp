@@ -147,11 +147,6 @@ void IrrlichtUI::init()
     mMap = mDevice->getSceneManager()->addEmptySceneNode();
 }
 
-std::vector<spatacs::cmd::Command> IrrlichtUI::getCommands() const
-{
-    return mCommands.getCommands();
-}
-
 void IrrlichtUI::setState(const spatacs::core::GameState& state)
 {
     auto smgr = mDevice->getSceneManager();
@@ -289,4 +284,9 @@ IrrlichtUI::~IrrlichtUI()
 
 IrrlichtUI::IrrlichtUI(std::uint64_t team) : mOwnTeam(team)
 {
+}
+
+void IrrlichtUI::getCommandEvents(std::vector<events::EventPtr>& evts) const
+{
+    mCommands.transcribe(mState, evts);
 }

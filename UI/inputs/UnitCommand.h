@@ -51,7 +51,7 @@ namespace spatacs {
             irr::gui::IGUIElement*    mSpeedInfo      = nullptr;
 
             enum Mode
-            {ATTACK, MOVE} mMode;
+            {ATTACK, MOVE} mMode = MOVE;
         };
     }
 }

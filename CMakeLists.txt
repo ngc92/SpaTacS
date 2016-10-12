@@ -7,11 +7,10 @@ add_compile_options(-Wall)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 find_library(Boost 1.58 REQUIRED)
+include_directories(.
+        Boost_INCLUDE_DIRS)
 
-
-
-
-
+## SOURCE FILES ##
 set(EVENT_SOURCE_FILES
         events/Accelerate.h
         events/Accelerate.cpp
@@ -81,8 +80,6 @@ SET(PHYSICS_SOURCE_FILES
 
 set(UI_SOURCE_FILES
         UI/IUI.h
-        UI/ConsoleUI.h
-        UI/ConsoleUI.cpp
         UI/gfx/GridNode.h
         UI/gfx/GridNode.cpp
         UI/gfx/ShipUI.h
@@ -110,10 +107,10 @@ set(SOURCE_FILES
 
 set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp)
 
-
-include_directories(.
-        Boost_INCLUDE_DIRS)
-
 add_executable(SpaTacS ${SOURCE_FILES})
 add_executable(tests ${TEST_SOURCE_FILES} physics/HitTests.cpp)
 target_link_libraries(SpaTacS Irrlicht pthread)
+
+
+## data files ##
+set(DATA_SHEETS data/destroyer.xml)

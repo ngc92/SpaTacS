@@ -79,3 +79,11 @@ void GameState::cleanup()
 {
     mObjects.erase_if( [](const GameObject& s) { return !s.alive(); });
 }
+
+const bool GameState::hasObject(std::uint64_t id) const
+{
+    for (auto& p : mObjects)
+        if (p.id() == id)
+            return true;
+    return false;
+}

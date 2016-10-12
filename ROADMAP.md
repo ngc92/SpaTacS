@@ -5,7 +5,6 @@
     - [ ] pause game
     - [x] select target velocity
   * game:
-    - [ ] change weapon modes into actual ammo types
     - [ ] rework damage model
     - [x] shield radius
   * physics:

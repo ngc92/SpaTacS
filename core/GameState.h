@@ -45,6 +45,7 @@ namespace core
         // Objccts
         GameObject& getObject( std::uint64_t id );
         const GameObject& getObject( std::uint64_t id ) const;
+        const bool hasObject( std::uint64_t id ) const;
 
         auto begin() { return mObjects.begin(); };
         auto begin() const { return mObjects.begin(); };

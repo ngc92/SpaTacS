@@ -9,6 +9,7 @@
 #include <vector>
 #include <unordered_map>
 #include <boost/optional.hpp>
+#include <events/IEvent.h>
 
 namespace spatacs
 {
@@ -29,7 +30,7 @@ namespace spatacs
         public:
             void validate( const core::GameState& state );
             void addCommand( Command cmd );
-            std::vector<Command> getCommands() const;
+            void transcribe(const core::GameState& state, std::vector<events::EventPtr>& events) const;
         private:
             std::unordered_map<std::uint64_t, CommandSlot> mCommandSlots;
             std::vector<SetWpnMode> mOneShotCommands;

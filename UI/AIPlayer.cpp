@@ -7,6 +7,7 @@
 #include <events/Combat.h>
 #include <iostream>
 #include "core/Starship.h"
+#include "core/GameState.h"
 
 using namespace spatacs;
 using namespace ui;
@@ -16,15 +17,8 @@ void AIPlayer::init()
 
 }
 
-std::vector<cmd::Command> AIPlayer::getCommands() const
-{
-    return mCommands;
-}
-
-
 void AIPlayer::setState(const core::GameState& state)
 {
-    mCommands.clear();
     for(auto& obj : state)
     {
         if(!dynamic_cast<const core::Starship*>(&obj))
@@ -33,7 +27,7 @@ void AIPlayer::setState(const core::GameState& state)
         }
         auto& own = dynamic_cast<const core::Starship&>(obj);
 
-        if(own.team() != mOwnTeam)
+        if(own.team() != mOwnTeam || !own.alive())
             continue;
 
         // if the shield is damaged.
@@ -45,7 +39,7 @@ void AIPlayer::setState(const core::GameState& state)
         for (auto& e : state)
         {
             auto eship = dynamic_cast<const core::Starship*>(&e);
-            if(!eship)
+            if(!eship || !eship->alive())
                 continue;
 
             if (eship->team() != own.team() && distance(e, own) < min) {
@@ -59,21 +53,22 @@ void AIPlayer::setState(const core::GameState& state)
 
         // if found, do attack
         if(min < 10.0_km)  {
-            mCommands.push_back( cmd::Attack(own.id(), target->id()) );
+            mCommands.addCommand( cmd::Attack(own.id(), target->id()) );
         }
 
         // fly closer if shield is stronger
         if(own_shield > target->shield_strength().current || own_shield > 2)
         {
-            mCommands.push_back( cmd::Move(own.id(), target->position(), 0.2_kps) );
+            mCommands.addCommand( cmd::Move(own.id(), target->position(), 0.2_kps) );
         } else
         {
             auto delta = own.position() - target->position();
             delta *= 1.0_km / length(delta);
-            mCommands.push_back( cmd::Move(own.id(), own.position() + delta, 1.0_kps) );
+            mCommands.addCommand( cmd::Move(own.id(), own.position() + delta, 1.0_kps) );
         }
     }
 
+    mCommands.validate(state);
     mLastState = &state;
 }
 
@@ -105,4 +100,9 @@ bool AIPlayer::step()
 AIPlayer::AIPlayer(std::uint64_t team) : mOwnTeam( team )
 {
 
+}
+
+void AIPlayer::getCommandEvents(std::vector<events::EventPtr>& evts) const
+{
+    mCommands.transcribe(*mLastState, evts);
 }

@@ -2,7 +2,6 @@
 
 #include "core/Game.h"
 
-#include "UI/ConsoleUI.h"
 #include "UI/IrrlichtUI.h"
 #include "UI/AIPlayer.h"
 
@@ -12,7 +11,6 @@ int main()
 {
 	core::Game game;
 
-    game.addInterface( std::make_shared<ui::ConsoleUI>() );
     game.addInterface( std::make_shared<ui::AIPlayer>(2) );
     auto irrlicht = std::make_shared<ui::IrrlichtUI>(1);
     game.addInterface( irrlicht );

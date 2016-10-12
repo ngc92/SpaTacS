@@ -5,6 +5,10 @@
 #include "CommandManager.h"
 #include "core/GameState.h"
 #include <iostream>
+#include "events/Accelerate.h"
+#include "core/Starship.h"
+#include "core/components/IWeapon.h"
+#include "events/Combat.h"
 
 using namespace spatacs;
 using cmd::CommandManager;
@@ -46,10 +50,18 @@ void CommandManager::validate(const core::GameState& state)
     for(auto it = begin(mCommandSlots); it != end(mCommandSlots); )
     {
         try {
-            state.getShip(it->first);
+            auto& sp = state.getShip(it->first);
+            if(!sp.alive()) {
+                it = mCommandSlots.erase(it);
+                continue;
+            }
             if(it->second.attack)
             {
-                state.getShip(it->second.attack.get().target());
+                auto& sp2 = state.getShip(it->second.attack.get().target());
+                if(!sp2.alive()) {
+                    it = mCommandSlots.erase(it);
+                    continue;
+                }
             }
             ++it;
         } catch (...) {
@@ -58,18 +70,49 @@ void CommandManager::validate(const core::GameState& state)
     }
 }
 
-std::vector<cmd::Command> CommandManager::getCommands() const
+void CommandManager::transcribe(const core::GameState& state, std::vector<events::EventPtr>& events) const
 {
-    auto vec = std::vector<cmd::Command>();
-    vec.reserve( mCommandSlots.size() * 2 );
     for(auto& c : mCommandSlots)
     {
         if(c.second.attack)
-            vec.push_back(c.second.attack.get());
-        if(c.second.move)
-            vec.push_back(c.second.move.get());
-    }
-    std::copy( begin(mOneShotCommands), end(mOneShotCommands), std::back_inserter(vec) );
+        {
+            auto& command = c.second.attack.get();
+            auto& ship   = state.getShip(command.object());
+            auto& target = state.getShip(command.target());
+            /// \todo prevent deliberate friendly fire
 
-    return std::move(vec);
+            // dead ships don't shoot
+            if(ship.alive() && target.alive())
+            {
+                std::size_t wp_count = ship.weapon_count();
+                for(std::size_t i = 0; i < wp_count; ++i)
+                {
+                    if(ship.weapon(i).ready())
+                        events.push_back( events::EventPtr(new events::FireWeapon(ship.id(), target.id(), i)) );
+                }
+            }
+        }
+        if(c.second.move)
+        {
+            auto& command = c.second.move.get();
+            auto& ship = state.getShip(command.object());
+            if(ship.alive()) {
+                // and handle the command
+                auto dv = command.calcThrust(ship);
+                std::cout << "acc " << ship.id() << "\n";
+                events.push_back(events::EventPtr(new events::Accelerate(ship.id(), dv)));
+            }
+        }
+    }
+
+    for(auto& s : mOneShotCommands) {
+        auto& ship = state.getShip(s.object());
+
+        // dead ships don't shoot
+        if (!ship.alive()) {
+            continue;
+        }
+
+        events.push_back(events::EventPtr(new events::SetWeaponMode(ship.id(), s.weapon(), s.mode())));
+    }
 }

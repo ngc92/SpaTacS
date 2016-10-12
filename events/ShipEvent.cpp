@@ -13,7 +13,9 @@ namespace spatacs
     {
         void ShipEvent::apply(EventContext& context) const
         {
-            applyToShip(context.state.getShip(id()), context);
+            if(context.state.hasObject(id())) {
+                applyToShip(context.state.getShip(id()), context);
+            }
         }
 
         std::uint64_t ShipEvent::id() const
