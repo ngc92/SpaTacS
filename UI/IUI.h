@@ -26,7 +26,7 @@ namespace spatacs
             /// \param evts Push your events into this vector!
             virtual void getCommandEvents(std::vector<events::EventPtr>& evts) const = 0;
 
-            virtual void setState( const core::GameState& state ) = 0;
+            virtual void setState(const std::shared_ptr<const core::GameState>& state) = 0;
             virtual void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) = 0;
             virtual bool step() = 0;
         private:

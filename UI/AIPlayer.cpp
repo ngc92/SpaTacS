@@ -14,12 +14,12 @@ using namespace ui;
 
 void AIPlayer::init()
 {
-
+    mState = std::make_shared<core::GameState>();
 }
 
-void AIPlayer::setState(const core::GameState& state)
+void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
 {
-    for(auto& obj : state)
+    for(auto& obj : *state)
     {
         if(!dynamic_cast<const core::Starship*>(&obj))
         {
@@ -36,7 +36,7 @@ void AIPlayer::setState(const core::GameState& state)
         length_t min = 100.0_km;
         // find closest ship to attack
         const core::Starship* target = nullptr;
-        for (auto& e : state)
+        for (auto& e : *state)
         {
             auto eship = dynamic_cast<const core::Starship*>(&e);
             if(!eship || !eship->alive())
@@ -68,8 +68,8 @@ void AIPlayer::setState(const core::GameState& state)
         }
     }
 
-    mCommands.validate(state);
-    mLastState = &state;
+    mCommands.validate(*state);
+    mState = state;
 }
 
 void AIPlayer::notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events)
@@ -89,7 +89,7 @@ bool AIPlayer::step()
 {
     for(auto& hit : mHits)
     {
-        if(mLastState->getShip(hit).team() == mOwnTeam)
+        if(mState->getShip(hit).team() == mOwnTeam)
         {
             // don't do anything for now!
         }
@@ -104,5 +104,5 @@ AIPlayer::AIPlayer(std::uint64_t team) : mOwnTeam( team )
 
 void AIPlayer::getCommandEvents(std::vector<events::EventPtr>& evts) const
 {
-    mCommands.transcribe(*mLastState, evts);
+    mCommands.transcribe(*mState, evts);
 }

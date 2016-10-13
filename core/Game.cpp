@@ -36,7 +36,7 @@ void Game::run()
     if( mThread->has_data() )
     {
         // if yes, we update stuff
-        mState  = mThread->getState();
+        mState  = std::make_shared<GameState>(mThread->getState());
         mEvents = mThread->getEvents();
 
         std::vector<events::EventPtr> in_events;
