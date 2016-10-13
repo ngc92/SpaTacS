@@ -1,6 +1,6 @@
 ## Version 0.5 (player update)
   * UI:
-    - [ ] waypoints for move command
+    - [x] waypoints for move command
     - [x] show currently active targets
     - [ ] pause game
     - [x] select target velocity

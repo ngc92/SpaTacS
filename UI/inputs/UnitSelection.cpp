@@ -44,10 +44,10 @@ void UnitSelection::onMouseMove(IInputMode::ray_t ray)
         mChildMode->onMouseMove(ray);
 }
 
-void UnitSelection::onRightClick(IInputMode::ray_t ray)
+void UnitSelection::onRightClick(ray_t ray, const irr::SEvent::SMouseInput& event)
 {
     if(mChildMode)
-        mChildMode->onRightClick(ray);
+        mChildMode->onRightClick(ray, event);
 }
 
 void UnitSelection::onWheel(float scroll)

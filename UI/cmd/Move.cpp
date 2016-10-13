@@ -9,7 +9,7 @@ namespace spatacs
 namespace cmd
 {
 	Move::Move(std::uint64_t object, length_t x, length_t y, length_t z, speed_t speed):
-		mObject( object ), mTarget( {x, y, z} ), mSpeed(speed)
+		Move(object, length_vec{x, y, z}, speed)
 	{
 	}
 		
@@ -18,9 +18,9 @@ namespace cmd
 		return mObject;
 	}
 
-	const length_vec& Move::target() const
+	const length_vec& Move::target(std::size_t id) const
 	{
-		return mTarget;
+		return mTargets.at(id);
 	}
 
 	speed_t Move::speed() const
@@ -29,7 +29,7 @@ namespace cmd
 	}
 
     Move::Move(std::uint64_t object, length_vec p, speed_t speed) :
-		mObject(object), mTarget(p), mSpeed(speed)
+		mObject(object), mTargets({p}), mSpeed(speed)
     {
 
     }
@@ -38,17 +38,39 @@ namespace cmd
     {
         assert(ship.id() == object());
 
+        length_vec target_pos = ship.position();
+        if( !mTargets.empty() )
+        {
+            target_pos = mTargets.front();
+        }
+
         // and handle the command
         physics::time_t time_to_brake = length(ship.velocity()) / (ship.engine().max_thrust() / ship.mass());
 
-        auto delta = (target() - (ship.position() + time_to_brake * ship.velocity())) / 1.0_s;
+        if( length(target_pos - ship.position()) < 0.5_km)
+        {
+            const_cast<Move*>(this)->mTargets.erase(mTargets.begin());
+        }
+
+        auto delta = (target_pos - (ship.position() + time_to_brake * ship.velocity())) / 1.0_s;
         auto l = length(delta);
         if(l > speed())
             delta *= double(speed() / l);
 
+
         /// \todo this looks fishy!
         auto dv = (delta - ship.velocity()) / 1.0_s;
         return dv;
+    }
+
+    std::size_t Move::waypoint_count() const
+    {
+        return mTargets.size();
+    }
+
+    void Move::addWaypoint(length_vec wp)
+    {
+        mTargets.push_back(wp);
     }
 }
 }

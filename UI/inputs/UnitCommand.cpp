@@ -58,7 +58,7 @@ ui::UnitCommand::~UnitCommand()
 {
 }
 
-void ui::UnitCommand::onRightClick(ray_t ray)
+void ui::UnitCommand::onRightClick(ray_t ray, const irr::SEvent::SMouseInput& event)
 {
     auto& ship = state().getShip(mActiveShipID);
     auto t = pick(state(), ray);
@@ -72,7 +72,24 @@ void ui::UnitCommand::onRightClick(ray_t ray)
         auto target = aim(ray);
         if(target) {
             auto vec = target.get();
-            getCmdMgr().addCommand(cmd::Move(mActiveShipID, vec, mTargetSpeed));
+            if(event.Shift) {
+                try {
+                    auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
+
+                    if (cmd.move) {
+                        cmd::Move cp = cmd.move.get();
+                        cp.addWaypoint(vec);
+                        getCmdMgr().addCommand(cp);
+                    } else {
+                        getCmdMgr().addCommand(cmd::Move(mActiveShipID, vec, mTargetSpeed));
+                    }
+                } catch( std::exception& )
+                {
+                    getCmdMgr().addCommand(cmd::Move(mActiveShipID, vec, mTargetSpeed));
+                }
+            } else {
+                getCmdMgr().addCommand(cmd::Move(mActiveShipID, vec, mTargetSpeed));
+            }
         }
     }
 }
@@ -113,7 +130,11 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         if(cmd.move)
         {
             auto& mv = cmd.move.get();
-            driver->draw3DLine(sp, convert(mv.target()), video::SColor(255, 0, 128, 0));
+            auto src = sp;
+            for(unsigned i = 0; i < mv.waypoint_count(); ++i) {
+                driver->draw3DLine(src, convert(mv.target(i)), video::SColor(255, 0, 128, 0));
+                src = convert(mv.target(i));
+            }
         }
 
         if(cmd.attack)

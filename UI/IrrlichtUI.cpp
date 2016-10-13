@@ -89,7 +89,7 @@ private:
                 break;
             case EMIE_RMOUSE_PRESSED_DOWN:
                 if(mInputMode)
-                    mInputMode->onRightClick(mPickLine);
+                    mInputMode->onRightClick(mPickLine, mouse);
                 break;
             case EMIE_MOUSE_MOVED:
                 if(mInputMode)
