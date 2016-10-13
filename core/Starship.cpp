@@ -42,7 +42,7 @@ Starship::~Starship() {
 void Starship::onStep()
 {
     mEnergyProduced = mSubSystems->produceEnergy();
-    mEnergyUsed     = mSubSystems->distributeEnergy(0);
+    mEnergyUsed     = mSubSystems->distributeEnergy(mEnergyProduced);
 
     for(auto& c : mSubSystems->mCompPtrs)
     {
@@ -135,13 +135,6 @@ void Starship::dealDamage(float dmg)
     mHitPoints -= leftover;
 }
 
-length_t spatacs::core::distance(const Starship& s1, const Starship& s2)
-{
-    return length(s1.position() - s2.position());
-}
-
-
-
 uint64_t ShipData::team() const
 {
     return mTeam;
@@ -187,11 +180,6 @@ void ShipData::setArmour(double new_value)
     mCurArmour = new_value;
 }
 
-length_t Starship::radius() const
-{
-    return mRadius;
-}
-
 const FuelTank& Starship::tank() const
 {
     return *mSubSystems->mFuelTank;
@@ -202,7 +190,22 @@ FuelTank& Starship::getTank()
     return *mSubSystems->mFuelTank;
 }
 
+Starship* Starship::clone() const
+{
+    return new Starship(*this);
+}
+
 void ShipData::setHP(double hp)
 {
     mHitPoints = hp;
+}
+
+length_t ShipData::radius() const
+{
+    return mRadius;
+}
+
+void ShipData::setRadius(length_t radius)
+{
+    mRadius = radius;
 }

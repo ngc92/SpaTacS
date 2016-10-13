@@ -9,6 +9,7 @@
 #include "IUI.h"
 #include "cmd/CommandManager.h"
 #include "IrrRAII.h"
+#include "core/GameState.h"
 
 namespace irr
 {
@@ -39,7 +40,7 @@ namespace spatacs {
             ~IrrlichtUI();
             void init() override;
 
-            std::vector<cmd::Command> getCommands() const override;
+            virtual void getCommandEvents(std::vector<events::EventPtr>& evts) const override;
 
             void setState(const core::GameState& state) override;
 

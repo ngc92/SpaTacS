@@ -5,8 +5,9 @@
 #ifndef SOI_PHYSICSOBJECT_H
 #define SOI_PHYSICSOBJECT_H
 
-#include "vec.h"
 #include "units.h"
+#include "Fixture.h"
+#include <vector>
 
 namespace spatacs {
     namespace physics {
@@ -14,7 +15,7 @@ namespace spatacs {
         {
         public:
             Object() = default;
-            Object(const length_vec& p, const velocity_vec& v, length_t r, mass_t m, std::uint64_t udata = 0);
+            Object(const length_vec& p, const velocity_vec& v, mass_t m, std::uint64_t udata = 0);
 
             // userdata
             std::uint64_t userdata() const;
@@ -40,18 +41,22 @@ namespace spatacs {
             mass_t mass() const;
             void setMass(mass_t mass);
 
-            // simulate for a time
-            void simulate(time_t dt);
+            // iterate over fixtures
+            auto begin() const { return mFixtures.begin(); }
+            auto end()   const { return mFixtures.end();   }
 
-            // shape data
-            length_t radius() const;
-            void setRadius(length_t rad);
+            // adding a fixture
+            Fixture& addFixture(length_t radius);
+
         private:
             std::uint64_t mID = 0;
             length_vec mPosition{0.0_m, 0.0_m, 0.0_m};
             velocity_vec mVelocity{0.0_kps, 0.0_kps, 0.0_kps};
-            length_t mRadius{0.01f};
             mass_t mMass = 1.0_kg;
+
+            // fixtures
+            std::vector<Fixture> mFixtures;
+
             std::uint64_t mUserData;
         };
     }

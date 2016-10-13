@@ -7,6 +7,8 @@
 #include "core/GameState.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include "core/Starship.h"
+#include "core/Projectile.h"
 
 using namespace spatacs;
 using namespace events;
@@ -27,15 +29,17 @@ void SpawnProjectile::apply(EventContext& context) const
 {
     auto new_id = context.state.getNextFreeID();
 
-    core::Projectile proj(new_id, mShooter, mDamage);
-    proj.setPosition( mPosition );
-    proj.setVelocity( mVelocity );
-    proj.setMass( mMass );
+    auto proj = std::make_unique<core::Projectile>(new_id, mShooter, mDamage);
+    proj->setPosition( mPosition );
+    proj->setVelocity( mVelocity );
+    proj->setMass( mMass );
 
-    auto pid = context.world.spawn(physics::Object(mPosition, mVelocity, mRadius, mMass, new_id));
-    proj.setPhysicsID( pid );
+    physics::Object obj(mPosition, mVelocity, mMass, new_id);
+    obj.addFixture( mRadius );
+    auto pid = context.world.spawn(obj);
+    proj->setPhysicsID( pid );
 
-    context.state.addProjectile( std::move(proj) );
+    context.state.add(std::move(proj));
 }
 
 
@@ -56,17 +60,21 @@ void SpawnShip::apply(EventContext& context) const
     auto mass = tonnes(tree.get<double>("mass"));
     auto id = context.state.getNextFreeID();
 
-    auto ship = core::Starship(mTeam, mName, tree);
+    auto ship = std::make_unique<core::Starship>(mTeam, mName, tree);
 
-    ship.setPosition( mPosition );
-    ship.setMass( mass );
-    ship.setVelocity( velocity_vec{0, 0, 0} );
-    ship.setID(id);
+    ship->setPosition( mPosition );
+    ship->setMass( mass );
+    ship->setVelocity( velocity_vec{0, 0, 0} );
+    ship->setID(id);
+    ship->setRadius(25.0_m);
 
-    std::cout << "spawn " << id << " " << ship.id() << "\n";
+    std::cout << "spawn " << id << " " << ship->id() << "\n";
 
-    auto pid = context.world.spawn(physics::Object(mPosition, velocity_vec{0,0,0}, 25.0_m, mass, id));
-    ship.setPhysicsID( pid );
+    physics::Object obj(mPosition, velocity_vec{0,0,0}, mass, id);
+    obj.addFixture( 25.0_m ).setUserdata(0); // ship
+    obj.addFixture( 50.0_m ).setUserdata(1); // shield
+    auto pid = context.world.spawn(obj);
+    ship->setPhysicsID( pid );
 
-    context.state.addShip(std::move(ship));
+    context.state.add(std::move(ship));
 }

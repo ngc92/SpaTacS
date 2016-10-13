@@ -33,8 +33,10 @@ namespace spatacs
 
             struct Collision
             {
-                std::uint64_t A;
-                std::uint64_t B;
+                std::uint64_t A;        //!< ID of object A
+                std::uint64_t B;        //!< ID of object B
+                std::uint64_t fA;       //!< Userdata of fixture A
+                std::uint64_t fB;       //!< Userdata of fixture B
                 time_t time;
             };
 

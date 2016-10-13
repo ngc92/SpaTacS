@@ -16,6 +16,7 @@
 #include "UI/inputs/UnitCommand.h"
 #include <iostream>
 #include "convert.h"
+#include "core/Starship.h"
 
 using namespace irr;
 using spatacs::ui::IrrlichtUI;
@@ -28,15 +29,19 @@ const spatacs::core::Starship* pick(const spatacs::core::GameState& world, icore
 {
     const spatacs::core::Starship* picked = nullptr;
     f64 md = 1e10;
-    for(auto& ship : world.getShips())
+    for(auto& obj : world)
     {
-        auto sp   = convert(ship.position());
-        float rad = convert(ship.radius() + 50.0_m);
+        auto ship = dynamic_cast<const spatacs::core::Starship*>(&obj);
+        if(!ship)
+            continue;
+
+        auto sp   = convert(ship->position());
+        float rad = convert(ship->radius() + 50.0_m);
         f64 temp;
         if(ray.getIntersectionWithSphere(sp, rad, temp) && temp < md)
         {
             md = temp;
-            picked = &ship;
+            picked = ship;
         }
     }
     return picked;
@@ -142,11 +147,6 @@ void IrrlichtUI::init()
     mMap = mDevice->getSceneManager()->addEmptySceneNode();
 }
 
-std::vector<spatacs::cmd::Command> IrrlichtUI::getCommands() const
-{
-    return mCommands.getCommands();
-}
-
 void IrrlichtUI::setState(const spatacs::core::GameState& state)
 {
     auto smgr = mDevice->getSceneManager();
@@ -155,27 +155,30 @@ void IrrlichtUI::setState(const spatacs::core::GameState& state)
 
     // update the location map
     mMap->removeAll();
-    for(auto& ship : mState.getShips()) {
-        if(!ship.alive())
+    for(auto& obj : mState) {
+        if(!obj.alive())
             continue;
-        auto node = new scene::ShipFx( mMap, mDevice->getSceneManager() );
-        video::SColor colors[] = {{255, 0, 200, 0}, {255, 200, 0, 0}};
-        node->setColor( colors[ship.team()-1] );
-        auto ss = ship.shield_strength();
-        node->setShieldStatus( ss.current / ss.max );
+        irr::scene::ISceneNode* node = nullptr;
+        if(auto ship = dynamic_cast<const core::Starship*>(&obj)) {
+            auto shipfx = new scene::ShipFx(mMap, mDevice->getSceneManager());
+            video::SColor colors[] = {{255, 0,   200, 0},
+                                      {255, 200, 0,   0}};
+            shipfx->setColor(colors[ship->team() - 1]);
+            auto ss = ship->shield_strength();
+            shipfx->setShieldStatus(ss.current / ss.max);
+            auto hs = ship->hull_status();
+            shipfx->setHullStatus(hs.current / hs.max);
+            node = shipfx;
+        } else
+        {
+            auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
+            shotfx->setShot(convert(obj.velocity()*1.0_s));
+            node = shotfx;
+        }
 
-        drop_ptr<scene::ISceneNodeAnimator> ani{smgr->createFlyStraightAnimator(convert(ship.position()),
-                                          convert(ship.position() + 1.0_s * ship.velocity()), 1000)};
+        drop_ptr<scene::ISceneNodeAnimator> ani{smgr->createFlyStraightAnimator(convert(obj.position()),
+                                          convert(obj.position() + 1.0_s * obj.velocity()), 1000)};
         node->addAnimator(ani.get());
-    }
-
-    for(auto& proj : mState.getProjectiles())
-    {
-        auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
-        shotfx->setShot(convert(proj.velocity()*1.0_s));
-        drop_ptr<scene::ISceneNodeAnimator> ani{smgr->createFlyStraightAnimator(convert(proj.position()),
-                                          convert(proj.position() + 1.0_s * proj.velocity()), 1000)};
-        shotfx->addAnimator(ani.get());
     }
 
 }
@@ -201,6 +204,8 @@ bool IrrlichtUI::step()
 
 void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events::IEvent>>& events)
 {
+    using drop_ani_ptr = drop_ptr<scene::ISceneNodeAnimator>;
+    auto smgr = mDevice->getSceneManager();
     for(auto& evt : events)
     {
         try {
@@ -211,15 +216,44 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
                 if (dmg > 0.1) {
                     float s = 5 * dmg + 1;
                     auto pos = mState.getShip(ship).position();
-                    auto bb = mDevice->getSceneManager()->addBillboardSceneNode();
+                    auto bb = smgr->addBillboardSceneNode();
                     bb->setPosition(convert(pos));
                     bb->setMaterialFlag(video::EMF_LIGHTING, false);
                     bb->setSize(s, s, s);
                     bb->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
                     bb->setMaterialTexture(0, mDevice->getVideoDriver()->getTexture("data/attack.png"));
-                    bb->addAnimator(mDevice->getSceneManager()->createDeleteAnimator(1000));
+                    drop_ani_ptr a{smgr->createDeleteAnimator(200)};
+                    bb->addAnimator(a.get());
+                }
+            } else if (auto h = dynamic_cast<const events::HitShield*>(evt.get())) {
+                auto& ship = mState.getShip(h->id());
+                if(ship.shield_strength().current > 0) {
+                    float s = 5;
+                    auto pos = ship.position();
+                    auto bb = smgr->addBillboardSceneNode();
+                    bb->setPosition(convert(pos));
+                    bb->setMaterialFlag(video::EMF_LIGHTING, false);
+                    bb->setSize(s, s, s);
+                    bb->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
+                    bb->setRotation( irr::core::vector3df(rand() % 100, rand() % 100, rand() % 100) );
+                    drop_ani_ptr a{smgr->createDeleteAnimator(500)};
+                    bb->addAnimator(a.get());
+                    irr::core::array<irr::video::ITexture*> textures;
+                    for (int i = 1; i <= 32; ++i) {
+                        textures.push_back(mDevice->getVideoDriver()->getTexture(
+                                ("data/fx7_energyBall/aura_test_1_32_" + std::to_string(i) + ".png").c_str()));
+                    }
+                    a.reset(smgr->createTextureAnimator(textures, 20));
+                    bb->addAnimator(a.get());
+                    a.reset(smgr->createFlyStraightAnimator(convert(pos),
+                                                            convert(pos + ship.velocity() * 1.0_s),
+                                                            1000)
+                    );
+                    bb->addAnimator(a.get());
                 }
             }
+
+
         } catch( std::exception& e )
         {
             std::cerr << e.what() << "\n";
@@ -250,4 +284,9 @@ IrrlichtUI::~IrrlichtUI()
 
 IrrlichtUI::IrrlichtUI(std::uint64_t team) : mOwnTeam(team)
 {
+}
+
+void IrrlichtUI::getCommandEvents(std::vector<events::EventPtr>& evts) const
+{
+    mCommands.transcribe(mState, evts);
 }

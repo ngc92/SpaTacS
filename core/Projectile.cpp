@@ -41,3 +41,13 @@ const Damage& Projectile::damage() const
     return mDamage;
 }
 
+bool Projectile::alive() const
+{
+    return mAge < 10;
+}
+
+Projectile* Projectile::clone() const
+{
+    return new Projectile(*this);
+}
+

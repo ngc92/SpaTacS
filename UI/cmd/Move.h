@@ -8,6 +8,10 @@
 
 namespace spatacs
 {
+namespace core
+{
+    class Starship;
+}
 namespace cmd
 {
 	class Move : public ICommand
@@ -20,6 +24,8 @@ namespace cmd
 		std::uint64_t object() const;
 		const length_vec& target() const;
         speed_t speed() const;
+
+        accel_vec calcThrust(const core::Starship& ship) const;
 	private:
 		std::uint64_t mObject;
 		length_vec mTarget;

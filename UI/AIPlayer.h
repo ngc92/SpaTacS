@@ -5,6 +5,7 @@
 #ifndef SOI_AIPLAYER_H
 #define SOI_AIPLAYER_H
 
+#include "cmd/CommandManager.h"
 #include "IUI.h"
 
 namespace spatacs {
@@ -16,7 +17,10 @@ namespace spatacs {
 
             virtual void init() override;
 
-            virtual std::vector<cmd::Command> getCommands() const override;
+            /// this function gets all the events that this interface wants to transfer
+            /// into the simulation.
+            /// \param evts Push your events into this vector!
+            void getCommandEvents(std::vector<events::EventPtr>& evts) const override;
 
             virtual void setState(const core::GameState& state) override;
 
@@ -26,7 +30,7 @@ namespace spatacs {
 
         private:
             std::uint64_t mOwnTeam;
-            std::vector<cmd::Command> mCommands;
+            cmd::CommandManager mCommands;
 
             const core::GameState* mLastState;
             std::vector<std::uint64_t> mHits;

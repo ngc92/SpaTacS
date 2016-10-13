@@ -11,6 +11,8 @@ namespace spatacs
     {
         class ICommand
         {
+        public:
+        private:
 
         };
     }

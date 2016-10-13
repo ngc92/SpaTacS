@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "SubSystems.h"
 #include <boost/property_tree/ptree.hpp>
+#include <iostream>
 #include "components/ProjectileWeapon.h"
 
 using namespace spatacs;
@@ -63,7 +64,7 @@ SubSystems::SubSystems( const SubSystems& other ):
 }
 
 double SubSystems::distributeEnergy(double energy)
-{ ;
+{
     std::vector<double> requests;
 
     double energy_to_distribute = energy;

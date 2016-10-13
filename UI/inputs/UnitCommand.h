@@ -42,7 +42,7 @@ namespace spatacs {
             boost::optional<length_vec> mCurrentAim;
             std::uint64_t mCurrentAimShip;
             length_t mTargetY     = 0.0_km;
-            speed_t  mTargetSpeed = 0.5_kps;
+            speed_t  mTargetSpeed = 0.75_kps;
             float mBaseY      = 0.f;
 
             irr::gui::IGUIElement*    mDistanceMarker = nullptr;
@@ -51,7 +51,7 @@ namespace spatacs {
             irr::gui::IGUIElement*    mSpeedInfo      = nullptr;
 
             enum Mode
-            {ATTACK, MOVE} mMode;
+            {ATTACK, MOVE} mMode = MOVE;
         };
     }
 }

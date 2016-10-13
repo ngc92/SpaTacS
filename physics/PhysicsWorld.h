@@ -18,6 +18,15 @@ namespace spatacs
 {
 namespace physics
 {
+    struct ImpactInfo
+    {
+        std::uint64_t fixture_A;  //!< Userdata of the fixture of the first object.
+        std::uint64_t fixture_B;  //!< Userdata of the fixture of the second object;
+        length_vec touch_point;
+        time_t time;
+    };
+
+
     /*! \brief The main class of the physics simulation.
      *  \details This class is where the (physical) magic happens.
      *  \paragraph Data storage:
@@ -37,7 +46,8 @@ namespace physics
     class PhysicsWorld
     {
     public:
-        using collision_callback_fn = std::function<void(PhysicsWorld& world, const Object& A, const Object& B, time_t time)>;;
+        using collision_callback_fn = std::function<void(PhysicsWorld& world, const Object& A,
+                                                         const Object& B, ImpactInfo info)>;
 
         const Object& getObject( std::uint64_t id ) const;
         void pushEvent( events::Event evt );

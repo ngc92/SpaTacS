@@ -8,6 +8,8 @@
 #include "physics/HitTests.h"
 #include "GameThread.h"
 #include "Simulation.h"
+#include "core/Starship.h"
+#include "core/Projectile.h"
 
 using namespace spatacs;
 
@@ -16,25 +18,13 @@ auto core::Simulation::step(EventVec inEvents) -> EventVec
     mAllEvents.clear();
 
     // remove dead objects
-    for(auto& s : mState.getShips())
+    for(auto& s : mState)
     {
         if(!s.alive())
             mWorld->pushEvent( physics::events::Despawn{s.physics_id(), 0.0_s } );
     }
 
-    for(auto& s : mState.getProjectiles())
-    {
-        if(s.age() > 10)
-            mWorld->pushEvent(physics::events::Despawn{s.physics_id(), 0.0_s});
-    }
-
-    mState.getShips().erase(remove_if(begin(mState.getShips()), end(mState.getShips()),
-                                      [](const Starship& s) { return !s.alive(); }),
-                            end(mState.getShips()));
-
-    mState.getProjectiles().erase(remove_if(begin(mState.getProjectiles()), end(mState.getProjectiles()),
-                                            [](const Projectile& s) { return s.age() > 10; }),
-                                  end(mState.getProjectiles()));
+    mState.cleanup();
 
     // process events generated due to commands
     mEventCache = move(inEvents);
@@ -47,23 +37,14 @@ auto core::Simulation::step(EventVec inEvents) -> EventVec
     eventLoop();
 
     // copy new positions and velocities to game objects
-    for (auto& ship : mState.getShips()) {
+    for (auto& ship : mState) {
         auto po = mWorld->getObject( ship.physics_id() );
         ship.setPosition( po.position() );
         ship.setVelocity( po.velocity() );
     }
-    for (auto& proj : mState.getProjectiles()) {
-        auto po = mWorld->getObject( proj.physics_id() );
-        proj.setPosition( po.position() );
-        proj.setVelocity( po.velocity() );
-    }
 
-    // step all projectiles and objects
-    for (auto& proj : mState.getProjectiles()) {
-        proj.onStep();
-    }
-
-    for (auto& ship : mState.getShips()) {
+    // step all objects
+    for (auto& ship : mState) {
         ship.onStep();
     }
 
@@ -93,7 +74,7 @@ void core::Simulation::addEvent(EventPtr e)
 
 void core::Simulation::physics_callback(physics::PhysicsWorld& world, const physics::Object& A,
                                         const physics::Object& B,
-                                        time_t time)
+                                        physics::ImpactInfo info)
 {
     uint64_t id_a = A.userdata();
     uint64_t id_b = B.userdata();
@@ -108,6 +89,7 @@ void core::Simulation::physics_callback(physics::PhysicsWorld& world, const phys
     if(bship) {
         std::swap(aship, bship);
         std::swap(ob_A, ob_B);
+        std::swap(info.fixture_A, info.fixture_B);
     }
 
     // Ship - Ship collision
@@ -118,9 +100,17 @@ void core::Simulation::physics_callback(physics::PhysicsWorld& world, const phys
     {
         /// \todo use correct positions here!
         auto& proj = dynamic_cast<Projectile&>(*ob_B);
-        if(proj.shooter() != aship->id()) {
-            addEvent(std::make_unique<events::Hit>(*aship, proj));
-            proj.expire();
+        if(proj.shooter() != aship->id() && proj.age() < 10.0)
+        {
+            if(info.fixture_A == 1) // shield fixture
+            {
+                addEvent(std::make_unique<events::HitShield>(*aship, proj));
+                eventLoop();
+            } else {    // ship fixture
+                addEvent(std::make_unique<events::Hit>(*aship, proj));
+                eventLoop();
+                proj.expire();
+            }
         }
     } else
     {
@@ -132,15 +122,15 @@ core::Simulation::Simulation():
         mWorld(std::make_unique<physics::PhysicsWorld>() )
 {
     mWorld->setCollisionCallback([this](physics::PhysicsWorld& world,
-                                                    const physics::Object& A, const physics::Object& B, time_t time)
+                                        const physics::Object& A, const physics::Object& B, physics::ImpactInfo info)
                                              {
-                                                 this->physics_callback( world, A, B, time );
+                                                 this->physics_callback( world, A, B, info );
                                              });
 
     addEvent(std::make_unique<events::SpawnShip>(1, "SF Predator", "destroyer", kilometers(0, 0, 0.4)));
     addEvent(std::make_unique<events::SpawnShip>(1, "SF Fearless", "destroyer", kilometers(0, 0.2, -0.4)));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Lion",     "destroyer", kilometers(12, 2, 1)));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Wolf",     "destroyer", kilometers(10, 1, -2)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Lion",     "destroyer", kilometers(17, 4, 2)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Wolf",     "destroyer", kilometers(15, 2, -4)));
     addEvent(std::make_unique<events::SpawnShip>(2, "ES Tiger",    "destroyer", kilometers(11, 2, 3)));
     eventLoop();
 }

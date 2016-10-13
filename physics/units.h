@@ -29,6 +29,7 @@ namespace physics
     class UnitWrapper<T, dimensions::dimless_t >
     {
     public:
+        using dimension_t = dimensions::dimless_t;
         UnitWrapper() : value(T{}) { }
         constexpr UnitWrapper( const T& val ) : value(val) { };
         constexpr operator T() const { return value; }
@@ -186,6 +187,8 @@ namespace physics
     namespace unit_types {
 
         using base_t    = double;
+
+        using scalar_t  = UnitWrapper<base_t, dimensions::dimless_t>;
         using length_t  = UnitWrapper<base_t, dimensions::length_t>;
         using mass_t    = UnitWrapper<base_t, dimensions::mass_t>;
         using time_t    = UnitWrapper<base_t, dimensions::time_t>;
@@ -230,13 +233,6 @@ namespace physics
     using namespace unit_types;
 }
     using namespace physics::unit_types;
-
-    using physics::operator""_km;
-    using physics::operator""_m;
-    using physics::operator""_kg;
-    using physics::operator""_t;
-    using physics::operator""_s;
-    using physics::operator""_kps;
 }
 
 #endif //SOI_UNITS_H

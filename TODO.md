@@ -1,3 +1,4 @@
 - unify random
-- sort energy management code
 - separate shield and shield generator
+- crash when active ship gets removed and gets a command.
+- remove_ptr

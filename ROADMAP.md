@@ -3,14 +3,14 @@
     - [ ] waypoints for move command
     - [ ] show currently active targets
     - [ ] pause game
-    - [ ] select target velocity
+    - [x] select target velocity
   * game:
-    - [ ] change weapon modes into actual ammo types
     - [ ] rework damage model
-    - [ ] shield radius
+    - [x] shield radius
   * physics:
     - [ ] more collision tests
     - [ ] hit scans
+    - [x] fixtures
   * AI:
     - [ ] switch ammo based on target status
     - [ ] may focus fire on single target
@@ -33,9 +33,6 @@
     - [ ] add a few ship types
   * code:
     - [ ] units in xml files
-
-## Simple tasks
-
     
 ## Unspecified
 * optimizations:
@@ -57,3 +54,5 @@
   - ship icons
   - skybox
 * AI    
+* other
+  - Ship Editor

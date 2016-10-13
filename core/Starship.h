@@ -37,8 +37,6 @@ namespace spatacs
             uint64_t team() const;
             const std::string& name() const;
 
-
-
             /// energy
             double producedEnergy() const;
             double usedEnergy() const;
@@ -51,6 +49,10 @@ namespace spatacs
             double armour() const;
             double max_armour() const;
             void setArmour( double new_value );
+
+            length_t radius() const;
+            void setRadius(length_t radius);
+
         protected:
             ShipData() = default;
             ShipData(std::uint64_t team, std::string name);
@@ -89,10 +91,11 @@ namespace spatacs
             // Ship from definition
             Starship(std::uint64_t team, std::string name, const boost::property_tree::ptree& data);
 
-            bool alive() const;
+            bool alive() const override;
+            Starship* clone() const override;
 
             /// called at the end of a game step.
-            void onStep();
+            void onStep() override;
 
             /// Subcomponents
             // engine interface
@@ -119,14 +122,10 @@ namespace spatacs
             // damage the ship
             void dealDamage( float dmg );
 
-            length_t radius() const;
-
         private:
             // components
             std::unique_ptr<SubSystems> mSubSystems;
         };
-
-        length_t distance(const Starship& s1, const Starship& s2);
     }
 }
 

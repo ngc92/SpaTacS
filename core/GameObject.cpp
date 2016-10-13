@@ -58,3 +58,8 @@ void GameObject::setMass(mass_t m)
 {
     mMass = m;
 }
+
+length_t spatacs::core::distance(const GameObject& s1, const GameObject& s2)
+{
+    return length(s1.position() - s2.position());
+}
