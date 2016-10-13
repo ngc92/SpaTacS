@@ -115,3 +115,8 @@ void CommandManager::transcribe(const core::GameState& state, std::vector<events
         events.push_back(events::EventPtr(new events::SetWeaponMode(ship.id(), s.weapon(), s.mode())));
     }
 }
+
+const cmd::CommandSlot& CommandManager::getCommandsOf(std::uint64_t ship) const
+{
+    return mCommandSlots.at(ship);
+}

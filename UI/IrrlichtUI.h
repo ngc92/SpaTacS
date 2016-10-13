@@ -28,7 +28,7 @@ namespace spatacs {
         class IrrlichtUI : public IUI
         {
         public:
-            IrrlichtUI(std::uint64_t team);
+            IrrlichtUI(std::uint64_t team, irr::IrrlichtDevice* device);
             ~IrrlichtUI();
             void init() override;
 
@@ -42,7 +42,8 @@ namespace spatacs {
 
             // interface for tools
             const core::GameState& state() const { return mState; }
-            void addCommand( cmd::Command c );
+            void addCommand( spatacs::cmd::Command c );
+            cmd::CommandManager& getCommandMgr();
 
             irr::IrrlichtDevice* getDevice() { return mDevice; }
 
