@@ -17,6 +17,7 @@
 #include <iostream>
 #include "convert.h"
 #include "core/Starship.h"
+#include "core/Projectile.h"
 
 using namespace irr;
 using spatacs::ui::IrrlichtUI;
@@ -173,6 +174,14 @@ void IrrlichtUI::setState(const std::shared_ptr<const core::GameState>& state)
         {
             auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
             shotfx->setShot(convert(obj.velocity()*1.0_s));
+            auto proj = dynamic_cast<const core::Projectile*>(&obj);
+            if(proj->damage().shield_overload > 0)
+            {
+                shotfx->setColor(video::SColor(255, 255, 0, 128));
+            } else if(proj->damage().high_explosive > 0)
+            {
+                shotfx->setColor(video::SColor(255, 255, 128, 0));
+            }
             node = shotfx;
         }
 

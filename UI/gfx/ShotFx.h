@@ -21,10 +21,13 @@ namespace irr {
 
             void setShot(core::vector3df vel);
 
+            void setColor( video::SColor col );
+            const video::SColor& getColor() const;
+
         private:
             core::vector3df mDirection;
-
             core::aabbox3d<f32> mBBox;
+            video::SColor mColor;
         };
     }
 }

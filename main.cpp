@@ -16,6 +16,7 @@ int main()
                                                     32);
 
     game.addInterface( std::make_shared<ui::AIPlayer>(2) );
+    game.addInterface( std::make_shared<ui::AIPlayer>(1) );
     auto irrlicht = std::make_shared<ui::IrrlichtUI>(1, device);
     game.addInterface( irrlicht );
 

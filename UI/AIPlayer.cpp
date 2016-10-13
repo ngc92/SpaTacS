@@ -19,6 +19,8 @@ void AIPlayer::init()
 
 void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
 {
+    mCommands.validate(*state);
+
     for(auto& obj : *state)
     {
         if(!dynamic_cast<const core::Starship*>(&obj))
@@ -54,6 +56,16 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
         // if found, do attack
         if(min < 10.0_km)  {
             mCommands.addCommand( cmd::Attack(own.id(), target->id()) );
+            if( target->shield_strength().current > 2.0 )
+            {
+                mCommands.addCommand( cmd::SetWpnMode(own.id(), 0, 2) );
+            } else if(target->hull_status().current > 2.0)
+            {
+                mCommands.addCommand( cmd::SetWpnMode(own.id(), 0, 0) );
+            }else
+            {
+                mCommands.addCommand( cmd::SetWpnMode(own.id(), 0, 1) );
+            }
         }
 
         // fly closer if shield is stronger
@@ -68,7 +80,6 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
         }
     }
 
-    mCommands.validate(*state);
     mState = state;
 }
 
