@@ -99,7 +99,6 @@ void CommandManager::transcribe(const core::GameState& state, std::vector<events
             if(ship.alive()) {
                 // and handle the command
                 auto dv = command.calcThrust(ship);
-                std::cout << "acc " << ship.id() << "\n";
                 events.push_back(events::EventPtr(new events::Accelerate(ship.id(), dv)));
             }
         }

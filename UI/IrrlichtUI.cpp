@@ -133,7 +133,6 @@ public:
 
 void IrrlichtUI::init()
 {
-    mDevice = createDevice(video::EDT_OPENGL, icore::dimension2du(800, 600), 32);
     mEventReceiver.reset( new EventRec );
     mEventReceiver->setCollisionManager( mDevice->getSceneManager()->getSceneCollisionManager() );
     mEventReceiver->mInputMode = std::make_shared<UnitSelection>(mOwnTeam);
@@ -185,21 +184,15 @@ void IrrlichtUI::setState(const spatacs::core::GameState& state)
 
 bool IrrlichtUI::step()
 {
-    if(mDevice->run()) {
-        mDevice->getVideoDriver()->beginScene();
-        mDevice->getSceneManager()->drawAll();
-        mDevice->getGUIEnvironment()->drawAll();
-        try {
-            if(mEventReceiver->mInputMode)
-               mEventReceiver->mInputMode->draw(mDevice->getVideoDriver());
-        } catch( std::exception& ex )
-        {
-        }
-        mDevice->getVideoDriver()->endScene();
-        return true;
+    mDevice->getSceneManager()->drawAll();
+    mDevice->getGUIEnvironment()->drawAll();
+    try {
+        if(mEventReceiver->mInputMode)
+           mEventReceiver->mInputMode->draw(mDevice->getVideoDriver());
+    } catch( std::exception& ex )
+    {
     }
-    exit(0); /// \todo not like this ... not like this
-    return false;
+    return true;
 }
 
 void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events::IEvent>>& events)
@@ -282,7 +275,9 @@ IrrlichtUI::~IrrlichtUI()
 
 }
 
-IrrlichtUI::IrrlichtUI(std::uint64_t team) : mOwnTeam(team)
+IrrlichtUI::IrrlichtUI(std::uint64_t team, IrrlichtDevice* device) :
+        mOwnTeam(team),
+        mDevice(device)
 {
 }
 

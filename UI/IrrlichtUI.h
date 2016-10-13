@@ -36,7 +36,7 @@ namespace spatacs {
         class IrrlichtUI : public IUI
         {
         public:
-            IrrlichtUI(std::uint64_t team);
+            IrrlichtUI(std::uint64_t team, irr::IrrlichtDevice* device);
             ~IrrlichtUI();
             void init() override;
 

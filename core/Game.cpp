@@ -49,7 +49,6 @@ void Game::run()
         std::shuffle(begin(in_events), end(in_events), mRandom);
 
         // process events generated due to commands
-        std::cout << "push events in\n";
         mThread->setInEvents( std::move(in_events) );
 
         for(auto& itf : mUIs)
