@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <boost/optional.hpp>
+#include "UI/IrrRAII.h"
 #include "UI/IInputMode.h"
 #include "vec.h"
 
@@ -45,10 +46,10 @@ namespace spatacs {
             speed_t  mTargetSpeed = 0.75_kps;
             float mBaseY      = 0.f;
 
-            irr::gui::IGUIElement*    mDistanceMarker = nullptr;
-            irr::gui::ShipStatusUI*   mShipInfo       = nullptr;
-            irr::gui::IGUIElement*    mTargetInfo     = nullptr;
-            irr::gui::IGUIElement*    mSpeedInfo      = nullptr;
+            remove_ptr<irr::gui::IGUIElement>  mDistanceMarker;
+            remove_ptr<irr::gui::ShipStatusUI> mShipInfo;
+            remove_ptr<irr::gui::IGUIElement>  mTargetInfo;
+            remove_ptr<irr::gui::IGUIElement>  mSpeedInfo;
 
             enum Mode
             {ATTACK, MOVE} mMode = MOVE;

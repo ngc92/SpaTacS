@@ -23,7 +23,23 @@ namespace spatacs {
         };
 
         template<class T>
+        struct remover
+        {
+            /// Default constructor
+            constexpr remover() noexcept = default;
+
+            /// remove on call.
+            void operator()(T* ptr) const
+            {
+                ptr->remove();
+            }
+        };
+
+        template<class T>
         using drop_ptr = std::unique_ptr<T, dropper>;
+
+        template<class T>
+        using remove_ptr = std::unique_ptr<T, remover<T>>;
     }
 }
 
