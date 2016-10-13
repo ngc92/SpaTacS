@@ -21,6 +21,7 @@
 #include "UI/convert.h"
 #include "core/components/FuelTank.h"
 #include "core/Starship.h"
+#include "UI/IrrlichtUI.h"
 
 using namespace spatacs;
 
@@ -100,6 +101,30 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ship.tank().fuel().value / 1000, ship.tank().capacity().value / 1000} );
         /// \todo power plant
+    }
+
+    try {
+        auto& cmd = getMainUI()->getCommandMgr().getCommandsOf(mActiveShipID);
+        vector3df sp = convert(ship.position());
+        video::SMaterial mat;
+        mat.Lighting = false;
+        driver->setMaterial(mat);
+        driver->setTransform(video::ETS_WORLD, irr::core::matrix4());
+        if(cmd.move)
+        {
+            auto& mv = cmd.move.get();
+            driver->draw3DLine(sp, convert(mv.target()), video::SColor(255, 0, 128, 0));
+        }
+
+        if(cmd.attack)
+        {
+            auto& at = cmd.attack.get();
+            driver->draw3DLine(sp, convert(state().getShip(at.target()).position()),
+                               video::SColor(255, 128, 0, 0));
+        }
+    } catch (...)
+    {
+
     }
 
     if(mMode == MOVE)

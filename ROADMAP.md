@@ -1,7 +1,7 @@
 ## Version 0.5 (combat update)
   * UI:
     - [ ] waypoints for move command
-    - [ ] show currently active targets
+    - [x] show currently active targets
     - [ ] pause game
     - [x] select target velocity
   * game:

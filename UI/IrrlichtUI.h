@@ -42,7 +42,8 @@ namespace spatacs {
 
             // interface for tools
             const core::GameState& state() const { return mState; }
-            void addCommand( cmd::Command c );
+            void addCommand( spatacs::cmd::Command c );
+            cmd::CommandManager& getCommandMgr();
 
             irr::IrrlichtDevice* getDevice() { return mDevice; }
 

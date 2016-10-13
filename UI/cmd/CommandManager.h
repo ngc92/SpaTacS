@@ -31,6 +31,8 @@ namespace spatacs
             void validate( const core::GameState& state );
             void addCommand( Command cmd );
             void transcribe(const core::GameState& state, std::vector<events::EventPtr>& events) const;
+
+            const CommandSlot& getCommandsOf( std::uint64_t ship ) const;
         private:
             std::unordered_map<std::uint64_t, CommandSlot> mCommandSlots;
             std::vector<SetWpnMode> mOneShotCommands;

@@ -260,6 +260,11 @@ void IrrlichtUI::addCommand( spatacs::cmd::Command c )
         mCommands.addCommand(std::move(c));
 }
 
+cmd::CommandManager& IrrlichtUI::getCommandMgr()
+{
+    return mCommands;
+}
+
 IrrlichtUI::~IrrlichtUI()
 {
 
