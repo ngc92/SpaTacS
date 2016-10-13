@@ -38,31 +38,23 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv)
     mTargetY = state().getShip(mActiveShipID).position().y;
     auto txt = guienv->addStaticText(L"", irr::core::recti(0, 0, 100, 40));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
-    mDistanceMarker = txt;
+    mDistanceMarker.reset(txt);
 
     auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 10, 100, 130));
-    mShipInfo = sstat;
+    mShipInfo.reset(sstat);
 
     txt = guienv->addStaticText(L"", irr::core::recti(700, 10, 790, 70));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
-    mTargetInfo = txt;
+    mTargetInfo.reset(txt);
 
     txt = guienv->addStaticText(L"", irr::core::recti(10, 135, 100, 155));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
-    mSpeedInfo = txt;
+    mSpeedInfo.reset(txt);
 }
 
 
 ui::UnitCommand::~UnitCommand()
 {
-    if(mDistanceMarker)
-        mDistanceMarker->remove();
-    if(mShipInfo)
-        mShipInfo->remove();
-    if(mTargetInfo)
-        mTargetInfo->remove();
-    if(mSpeedInfo)
-        mSpeedInfo->remove();
 }
 
 void ui::UnitCommand::onRightClick(ray_t ray)

@@ -5,7 +5,6 @@
 #ifndef SOI_IRRLICHTUI_H
 #define SOI_IRRLICHTUI_H
 
-#include <irrlicht/IGUIElement.h>
 #include "IUI.h"
 #include "cmd/CommandManager.h"
 #include "IrrRAII.h"
@@ -26,13 +25,6 @@ namespace irr
 
 namespace spatacs {
     namespace ui {
-
-        struct Explosion
-        {
-            Vec pos;
-            float timer;
-            float size;
-        };
         class IrrlichtUI : public IUI
         {
         public:

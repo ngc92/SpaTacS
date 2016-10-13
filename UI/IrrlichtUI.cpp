@@ -254,16 +254,6 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
     }
 }
 
-struct GetShip : public boost::static_visitor<std::uint64_t>
-{
-    template<class T>
-    std::uint64_t operator()(const T& t) const
-    {
-        return t.object();
-    }
-};
-
-
 void IrrlichtUI::addCommand( spatacs::cmd::Command c )
 {
     if(mState.getShip(get_ship(c)).team() == mOwnTeam)
