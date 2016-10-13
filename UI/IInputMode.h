@@ -8,7 +8,6 @@
 #include <irrlicht/line3d.h>
 #include <irrlicht/vector2d.h>
 #include <irrlicht/Keycodes.h>
-#include "UI/cmd/Commands.h"
 
 namespace irr
 {
@@ -33,6 +32,11 @@ namespace spatacs {
     {
         class GameState;
     }
+    namespace cmd
+    {
+        class CommandManager;
+    }
+
     namespace ui {
         class IrrlichtUI;
         class IInputMode
@@ -57,7 +61,7 @@ namespace spatacs {
             irr::scene::ICameraSceneNode* getCamera();
 
             const core::GameState& state() const;
-            void addCommand( cmd::Command c );
+            cmd::CommandManager& getCmdMgr();
 
 
             IrrlichtUI* getMainUI() { return mMainUI; }

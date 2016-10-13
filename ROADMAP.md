@@ -1,19 +1,15 @@
-## Version 0.5 (combat update)
+## Version 0.5 (player update)
   * UI:
     - [ ] waypoints for move command
     - [x] show currently active targets
     - [ ] pause game
     - [x] select target velocity
   * game:
-    - [ ] rework damage model
     - [x] shield radius
   * physics:
-    - [ ] more collision tests
-    - [ ] hit scans
     - [x] fixtures
   * AI:
     - [ ] switch ammo based on target status
-    - [ ] may focus fire on single target
     - [x] evasive/aggressive maneuvers for damaged ships
     
 ## Version 0.6 (menu update)
@@ -33,7 +29,14 @@
     - [ ] add a few ship types
   * code:
     - [ ] units in xml files
-    
+
+## Version 0.7 (engine update)
+  * UI
+  * code
+    - [ ] game entities 
+  * game
+  * physics
+
 ## Unspecified
 * optimizations:
   - Spatial data structure to speed up hit tests

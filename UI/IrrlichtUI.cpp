@@ -255,12 +255,6 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
     }
 }
 
-void IrrlichtUI::addCommand( spatacs::cmd::Command c )
-{
-    if(mState->getShip(get_ship(c)).team() == mOwnTeam)
-        mCommands.addCommand(std::move(c));
-}
-
 cmd::CommandManager& IrrlichtUI::getCommandMgr()
 {
     return mCommands;

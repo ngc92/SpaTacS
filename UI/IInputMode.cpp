@@ -12,9 +12,9 @@ const core::GameState& ui::IInputMode::state() const
     return mMainUI->state();
 }
 
-void ui::IInputMode::addCommand(cmd::Command c)
+cmd::CommandManager& ui::IInputMode::getCmdMgr()
 {
-    mMainUI->addCommand(c);
+    return mMainUI->getCommandMgr();
 }
 
 void ui::IInputMode::setMainUI(ui::IrrlichtUI* mainui)

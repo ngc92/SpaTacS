@@ -12,16 +12,6 @@ namespace cmd
 		mObject( object ), mTarget( {x, y, z} ), mSpeed(speed)
 	{
 	}
-	
-	namespace
-	{
-		Move from_stream( std::istream& in );
-	}
-	
-	Move::Move( std::istream& in ) : Move( from_stream( in ) )
-	{
-		
-	}
 		
 	std::uint64_t Move::object() const
 	{
@@ -60,21 +50,5 @@ namespace cmd
         auto dv = (delta - ship.velocity()) / 1.0_s;
         return dv;
     }
-
-    namespace
-	{
-		Move from_stream( std::istream& in )
-		{
-			std::uint64_t o;
-			double x, y, z, s;
-			in >> o >> x >> y >> z >> s;
-			return Move(o, x*1.0_km, y*1.0_km, z*1.0_km, s*1.0_km / 1.0_s);
-		}
-	}
-	
-	std::ostream& operator<<( std::ostream& out, const Move& m )
-	{
-		return out << "move["<< m.object() <<", " <<  m.target() << ", " << m.speed() << "]";
-	}
 }
 }

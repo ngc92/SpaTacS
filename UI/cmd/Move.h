@@ -2,7 +2,6 @@
 #define MOVE_H_INCLUDED
 
 #include <cstdint>
-#include <iosfwd>
 #include "physics/units.h"
 #include "ICommand.h"
 
@@ -14,12 +13,11 @@ namespace core
 }
 namespace cmd
 {
-	class Move : public ICommand
+	class Move
 	{
 	public:
 		Move(std::uint64_t object, length_t x, length_t y, length_t z, speed_t speed);
 		Move(std::uint64_t object, length_vec p, speed_t speed);
-		Move( std::istream& in );
 		
 		std::uint64_t object() const;
 		const length_vec& target() const;
@@ -31,8 +29,6 @@ namespace cmd
 		length_vec mTarget;
 		speed_t mSpeed;
 	};
-	
-	std::ostream& operator<<( std::ostream& out, const Move& move );
 }
 }
 
