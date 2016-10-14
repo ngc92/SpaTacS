@@ -17,6 +17,7 @@
 #include <iostream>
 #include "convert.h"
 #include "core/Starship.h"
+#include "core/Projectile.h"
 
 using namespace irr;
 using spatacs::ui::IrrlichtUI;
@@ -91,7 +92,7 @@ private:
                 break;
             case EMIE_RMOUSE_PRESSED_DOWN:
                 if(mInputMode)
-                    mInputMode->onRightClick(mPickLine);
+                    mInputMode->onRightClick(mPickLine, mouse);
                 break;
             case EMIE_MOUSE_MOVED:
                 if(mInputMode)
@@ -139,6 +140,7 @@ public:
 
 void IrrlichtUI::init()
 {
+    mState = std::make_shared<core::GameState>();
     mEventReceiver.reset( new EventRec );
     mEventReceiver->setCollisionManager( mDevice->getSceneManager()->getSceneCollisionManager() );
     mEventReceiver->mInputMode = std::make_shared<UnitSelection>(mOwnTeam);
@@ -152,15 +154,15 @@ void IrrlichtUI::init()
     mMap = mDevice->getSceneManager()->addEmptySceneNode();
 }
 
-void IrrlichtUI::setState(const spatacs::core::GameState& state)
+void IrrlichtUI::setState(const std::shared_ptr<const core::GameState>& state)
 {
     auto smgr = mDevice->getSceneManager();
-    mState = core::GameState(state);
-    mCommands.validate(mState);
+    mState = state;
+    mCommands.validate(*mState);
 
     // update the location map
     mMap->removeAll();
-    for(auto& obj : mState) {
+    for(auto& obj : *mState) {
         if(!obj.alive())
             continue;
         irr::scene::ISceneNode* node = nullptr;
@@ -178,6 +180,14 @@ void IrrlichtUI::setState(const spatacs::core::GameState& state)
         {
             auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
             shotfx->setShot(convert(obj.velocity()*1.0_s));
+            auto proj = dynamic_cast<const core::Projectile*>(&obj);
+            if(proj->damage().shield_overload > 0)
+            {
+                shotfx->setColor(video::SColor(255, 255, 0, 128));
+            } else if(proj->damage().high_explosive > 0)
+            {
+                shotfx->setColor(video::SColor(255, 255, 128, 0));
+            }
             node = shotfx;
         }
 
@@ -214,7 +224,7 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
                             + h->damage().shield_overload;
                 if (dmg > 0.1) {
                     float s = 5 * dmg + 1;
-                    auto pos = mState.getShip(ship).position();
+                    auto pos = mState->getShip(ship).position();
                     auto bb = smgr->addBillboardSceneNode();
                     bb->setPosition(convert(pos));
                     bb->setMaterialFlag(video::EMF_LIGHTING, false);
@@ -225,7 +235,7 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
                     bb->addAnimator(a.get());
                 }
             } else if (auto h = dynamic_cast<const events::HitShield*>(evt.get())) {
-                auto& ship = mState.getShip(h->id());
+                auto& ship = mState->getShip(h->id());
                 if(ship.shield_strength().current > 0) {
                     float s = 5;
                     auto pos = ship.position();
@@ -260,12 +270,6 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
     }
 }
 
-void IrrlichtUI::addCommand( spatacs::cmd::Command c )
-{
-    if(mState.getShip(get_ship(c)).team() == mOwnTeam)
-        mCommands.addCommand(std::move(c));
-}
-
 cmd::CommandManager& IrrlichtUI::getCommandMgr()
 {
     return mCommands;
@@ -284,7 +288,7 @@ IrrlichtUI::IrrlichtUI(std::uint64_t team, IrrlichtDevice* device) :
 
 void IrrlichtUI::getCommandEvents(std::vector<events::EventPtr>& evts) const
 {
-    mCommands.transcribe(mState, evts);
+    mCommands.transcribe(*mState, evts);
 }
 
 bool IrrlichtUI::pause() const

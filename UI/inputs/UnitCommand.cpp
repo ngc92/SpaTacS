@@ -58,7 +58,7 @@ ui::UnitCommand::~UnitCommand()
 {
 }
 
-void ui::UnitCommand::onRightClick(ray_t ray)
+void ui::UnitCommand::onRightClick(ray_t ray, const irr::SEvent::SMouseInput& event)
 {
     auto& ship = state().getShip(mActiveShipID);
     auto t = pick(state(), ray);
@@ -66,13 +66,30 @@ void ui::UnitCommand::onRightClick(ray_t ray)
     {
         if(t->team() != ship.team())
         {
-            addCommand(cmd::Attack(mActiveShipID, t->id()));
+            getCmdMgr().addCommand(cmd::Attack(mActiveShipID, t->id()));
         }
     }else {
         auto target = aim(ray);
         if(target) {
             auto vec = target.get();
-            addCommand(cmd::Move(mActiveShipID, vec, mTargetSpeed));
+            if(event.Shift) {
+                try {
+                    auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
+
+                    if (cmd.move) {
+                        cmd::Move cp = cmd.move.get();
+                        cp.addWaypoint(vec);
+                        getCmdMgr().addCommand(cp);
+                    } else {
+                        getCmdMgr().addCommand(cmd::Move(mActiveShipID, vec, mTargetSpeed));
+                    }
+                } catch( std::exception& )
+                {
+                    getCmdMgr().addCommand(cmd::Move(mActiveShipID, vec, mTargetSpeed));
+                }
+            } else {
+                getCmdMgr().addCommand(cmd::Move(mActiveShipID, vec, mTargetSpeed));
+            }
         }
     }
 }
@@ -104,7 +121,7 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
     }
 
     try {
-        auto& cmd = getMainUI()->getCommandMgr().getCommandsOf(mActiveShipID);
+        auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
         vector3df sp = convert(ship.position());
         video::SMaterial mat;
         mat.Lighting = false;
@@ -113,7 +130,11 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         if(cmd.move)
         {
             auto& mv = cmd.move.get();
-            driver->draw3DLine(sp, convert(mv.target()), video::SColor(255, 0, 128, 0));
+            auto src = sp;
+            for(unsigned i = 0; i < mv.waypoint_count(); ++i) {
+                driver->draw3DLine(src, convert(mv.target(i)), video::SColor(255, 0, 128, 0));
+                src = convert(mv.target(i));
+            }
         }
 
         if(cmd.attack)
@@ -235,11 +256,11 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
 {
     if(mActiveShipID != 0) {
         if (key == irr::KEY_KEY_1) {
-            addCommand( cmd::SetWpnMode(mActiveShipID, 0, 0) );
+            getCmdMgr().addCommand( cmd::SetWpnMode(mActiveShipID, 0, 0) );
         } else if (key == irr::KEY_KEY_2) {
-            addCommand( cmd::SetWpnMode(mActiveShipID, 0, 1) );
+            getCmdMgr().addCommand( cmd::SetWpnMode(mActiveShipID, 0, 1) );
         } else if (key == irr::KEY_KEY_3) {
-            addCommand( cmd::SetWpnMode(mActiveShipID, 0, 2) );
+            getCmdMgr().addCommand( cmd::SetWpnMode(mActiveShipID, 0, 2) );
         } else if( key == irr::KEY_PLUS )
         {
             mTargetSpeed += 0.05_kps;

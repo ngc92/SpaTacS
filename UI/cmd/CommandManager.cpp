@@ -106,7 +106,6 @@ void CommandManager::transcribe(const core::GameState& state, std::vector<events
 
     for(auto& s : mOneShotCommands) {
         auto& ship = state.getShip(s.object());
-
         // dead ships don't shoot
         if (!ship.alive()) {
             continue;

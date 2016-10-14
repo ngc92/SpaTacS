@@ -34,14 +34,14 @@ namespace spatacs {
 
             virtual void getCommandEvents(std::vector<events::EventPtr>& evts) const override;
 
-            void setState(const core::GameState& state) override;
+            void setState(const std::shared_ptr<const core::GameState>& state) override;
 
             bool step() override;
 
             void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) override;
 
             // interface for tools
-            const core::GameState& state() const { return mState; }
+            const core::GameState& state() const { return *mState; }
             void addCommand( spatacs::cmd::Command c );
             cmd::CommandManager& getCommandMgr();
 
@@ -50,7 +50,7 @@ namespace spatacs {
         private:
             std::uint64_t mOwnTeam;
             irr::IrrlichtDevice* mDevice;
-            core::GameState mState;
+            std::shared_ptr<const core::GameState> mState;
 
             class EventRec;
             std::unique_ptr<EventRec> mEventReceiver;

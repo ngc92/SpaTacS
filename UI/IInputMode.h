@@ -8,7 +8,7 @@
 #include <irrlicht/line3d.h>
 #include <irrlicht/vector2d.h>
 #include <irrlicht/Keycodes.h>
-#include "UI/cmd/Commands.h"
+#include <irrlicht/IEventReceiver.h>
 
 namespace irr
 {
@@ -33,6 +33,11 @@ namespace spatacs {
     {
         class GameState;
     }
+    namespace cmd
+    {
+        class CommandManager;
+    }
+
     namespace ui {
         class IrrlichtUI;
         class IInputMode
@@ -44,7 +49,8 @@ namespace spatacs {
 
             virtual void onMouseMove(  ray_t ray ) {}
             virtual void onLeftClick(  ray_t ray ) {}
-            virtual void onRightClick( ray_t ray ) {}
+            virtual void onRightClick(ray_t ray, const irr::SEvent::SMouseInput& event)
+            {}
             virtual void onWheel( float scroll )   {}
             virtual void onKeyPress( irr::EKEY_CODE key )   { };
             virtual void onKeyRelease( irr::EKEY_CODE key ) { };
@@ -57,7 +63,7 @@ namespace spatacs {
             irr::scene::ICameraSceneNode* getCamera();
 
             const core::GameState& state() const;
-            void addCommand( cmd::Command c );
+            cmd::CommandManager& getCmdMgr();
 
 
             IrrlichtUI* getMainUI() { return mMainUI; }

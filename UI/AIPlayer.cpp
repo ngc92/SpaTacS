@@ -14,12 +14,14 @@ using namespace ui;
 
 void AIPlayer::init()
 {
-
+    mState = std::make_shared<core::GameState>();
 }
 
-void AIPlayer::setState(const core::GameState& state)
+void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
 {
-    for(auto& obj : state)
+    mCommands.validate(*state);
+
+    for(auto& obj : *state)
     {
         if(!dynamic_cast<const core::Starship*>(&obj))
         {
@@ -36,7 +38,7 @@ void AIPlayer::setState(const core::GameState& state)
         length_t min = 100.0_km;
         // find closest ship to attack
         const core::Starship* target = nullptr;
-        for (auto& e : state)
+        for (auto& e : *state)
         {
             auto eship = dynamic_cast<const core::Starship*>(&e);
             if(!eship || !eship->alive())
@@ -54,6 +56,16 @@ void AIPlayer::setState(const core::GameState& state)
         // if found, do attack
         if(min < 10.0_km)  {
             mCommands.addCommand( cmd::Attack(own.id(), target->id()) );
+            if( target->shield_strength().current > 2.0 )
+            {
+                mCommands.addCommand( cmd::SetWpnMode(own.id(), 0, 2) );
+            } else if(target->hull_status().current > 2.0)
+            {
+                mCommands.addCommand( cmd::SetWpnMode(own.id(), 0, 0) );
+            }else
+            {
+                mCommands.addCommand( cmd::SetWpnMode(own.id(), 0, 1) );
+            }
         }
 
         // fly closer if shield is stronger
@@ -68,8 +80,7 @@ void AIPlayer::setState(const core::GameState& state)
         }
     }
 
-    mCommands.validate(state);
-    mLastState = &state;
+    mState = state;
 }
 
 void AIPlayer::notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events)
@@ -89,7 +100,7 @@ bool AIPlayer::step()
 {
     for(auto& hit : mHits)
     {
-        if(mLastState->getShip(hit).team() == mOwnTeam)
+        if(mState->getShip(hit).team() == mOwnTeam)
         {
             // don't do anything for now!
         }
@@ -104,5 +115,5 @@ AIPlayer::AIPlayer(std::uint64_t team) : mOwnTeam( team )
 
 void AIPlayer::getCommandEvents(std::vector<events::EventPtr>& evts) const
 {
-    mCommands.transcribe(*mLastState, evts);
+    mCommands.transcribe(*mState, evts);
 }

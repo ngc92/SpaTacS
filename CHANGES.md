@@ -1,3 +1,17 @@
+## Version 0.5 (player update)
+  * UI:
+    - waypoints for move command
+    - show currently active targets
+    - pause game
+    - select target velocity
+  * game:
+    - shield radius
+  * physics:
+    - fixtures
+  * AI:
+    - switch ammo based on target status
+    - evasive/aggressive maneuvers for damaged ships
+
 ## Version 0.4 (systems update)
   * UI:
     - system status view

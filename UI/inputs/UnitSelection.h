@@ -25,7 +25,7 @@ namespace spatacs {
 
             void onMouseMove(ray_t ray) override;
 
-            void onRightClick(ray_t ray) override;
+            void onRightClick(ray_t ray, const irr::SEvent::SMouseInput& event) override;
 
             void onWheel(float scroll) override;
 

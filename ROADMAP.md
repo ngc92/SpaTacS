@@ -1,22 +1,4 @@
-## Version 0.5 (combat update)
-  * UI:
-    - [ ] waypoints for move command
-    - [x] show currently active targets
-    - [ ] pause game
-    - [x] select target velocity
-  * game:
-    - [ ] rework damage model
-    - [x] shield radius
-  * physics:
-    - [ ] more collision tests
-    - [ ] hit scans
-    - [x] fixtures
-  * AI:
-    - [ ] switch ammo based on target status
-    - [ ] may focus fire on single target
-    - [x] evasive/aggressive maneuvers for damaged ships
-    
-## Version 0.6 (menu update)
+  ## Version 0.6 (menu update)
   * UI:
     - [ ] main menu
       + [ ] start level
@@ -26,14 +8,21 @@
     - [ ] pause menu
       + [ ] resume
       + [ ] end game
-    - [ ] energy management
   * game:
     - [ ] load levels from xml
     - [ ] custom combat
     - [ ] add a few ship types
   * code:
-    - [ ] units in xml files
-    
+    - [ ] restructure Irrlicht handling to allow for menus
+
+
+## Version 0.7 (engine update)
+  * UI
+  * code
+    - [ ] game entities 
+  * game
+  * physics
+
 ## Unspecified
 * optimizations:
   - Spatial data structure to speed up hit tests

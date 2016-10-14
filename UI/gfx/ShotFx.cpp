@@ -15,7 +15,7 @@ void scene::ShotFx::render()
     SceneManager->getVideoDriver()->setMaterial(mat);
     SceneManager->getVideoDriver()->setTransform(video::ETS_WORLD, core::matrix4());
     auto p = getAbsolutePosition();
-    SceneManager->getVideoDriver()->draw3DLine( p - 0.1*mDirection, p, video::SColor(255, 255, 0, 0 ));
+    SceneManager->getVideoDriver()->draw3DLine( p - 0.1*mDirection, p, mColor);
 }
 
 const core::aabbox3d<f32>& scene::ShotFx::getBoundingBox() const
@@ -24,7 +24,7 @@ const core::aabbox3d<f32>& scene::ShotFx::getBoundingBox() const
 }
 
 scene::ShotFx::ShotFx(scene::ISceneNode* parent, scene::ISceneManager* mgr, s32 id) :
-        ISceneNode(parent, mgr, id)
+        ISceneNode(parent, mgr, id), mColor(255, 255, 0, 0)
 {
     mBBox.reset( core::vector3df(0,0,0) );
 }
@@ -45,4 +45,14 @@ void scene::ShotFx::OnRegisterSceneNode()
     if (IsVisible)
         SceneManager->registerNodeForRendering(this);
     ISceneNode::OnRegisterSceneNode();
+}
+
+void scene::ShotFx::setColor(video::SColor col)
+{
+    mColor = col;
+}
+
+const video::SColor& scene::ShotFx::getColor() const
+{
+    return mColor;
 }

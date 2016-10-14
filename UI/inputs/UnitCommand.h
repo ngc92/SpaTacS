@@ -30,7 +30,7 @@ namespace spatacs {
             virtual void init(irr::gui::IGUIEnvironment* guienv) override;
 
             void onMouseMove(ray_t ray) override;
-            void onRightClick(ray_t ray) override;
+            void onRightClick(ray_t ray, const irr::SEvent::SMouseInput& event) override;
             void onWheel(float scroll) override;
             void onKeyPress(irr::EKEY_CODE key) override;
 

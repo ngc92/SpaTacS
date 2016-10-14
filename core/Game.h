@@ -4,7 +4,6 @@
 #include "UI/cmd/Commands.h"
 #include <random>
 #include <memory>
-#include "GameState.h"
 
 namespace spatacs
 {
@@ -36,8 +35,8 @@ namespace spatacs
 
             std::default_random_engine mRandom;
 
-            GameState mState;
-            std::vector<EventPtr> mEvents;
+            std::shared_ptr<GameState> mState;
+            std::vector<EventPtr>      mEvents;
 
             // interfaces
             std::vector<std::shared_ptr<ui::IUI>> mUIs;
