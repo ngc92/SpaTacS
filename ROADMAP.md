@@ -1,4 +1,4 @@
-  ## Version 0.6 (menu update)
+## Version 0.6 (menu update)
   * UI:
     - [ ] main menu
       + [ ] start level
