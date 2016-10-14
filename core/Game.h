@@ -28,6 +28,7 @@ namespace spatacs
 
             void run();
             void addInterface( std::shared_ptr<ui::IUI> ui );
+            void setPause(bool p);
 
         private:
 

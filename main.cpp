@@ -21,6 +21,7 @@ int main()
 
 	while(device->run())
 	{
+        game.setPause(irrlicht->pause());
         device->getVideoDriver()->beginScene();
         game.run();
         device->getVideoDriver()->endScene();

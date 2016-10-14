@@ -40,6 +40,9 @@ namespace core
         // profile info
         /// returns average frame simulation time in microseconds
         double getAverageSimulationTime() const;
+
+        // pausing
+        void setPause( bool pause );
     private:
         void thread_run();
 
@@ -56,6 +59,7 @@ namespace core
         EventVec mOutEvents;
         EventVec mInEvents;
         std::atomic<bool> mHasData;
+        std::atomic<bool> mPause;
 
         // profiling
         boost::accumulators::accumulator_set<double, boost::accumulators::features<boost::accumulators::tag::rolling_mean>> mProfileStats;

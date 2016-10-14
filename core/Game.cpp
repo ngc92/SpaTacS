@@ -65,3 +65,8 @@ void Game::addInterface(std::shared_ptr<ui::IUI> ui)
     mUIs.push_back( std::move(ui) );
 }
 
+void Game::setPause(bool p)
+{
+    mThread->setPause(p);
+}
+

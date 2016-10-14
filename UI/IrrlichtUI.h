@@ -46,7 +46,7 @@ namespace spatacs {
             cmd::CommandManager& getCommandMgr();
 
             irr::IrrlichtDevice* getDevice() { return mDevice; }
-
+            bool pause() const;
         private:
             std::uint64_t mOwnTeam;
             irr::IrrlichtDevice* mDevice;
