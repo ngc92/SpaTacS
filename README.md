@@ -10,3 +10,4 @@ controls:
     - 1 armour piercing
     - 2 high explosive
     - 3 shield overload
+  * pause: P

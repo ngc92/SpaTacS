@@ -18,7 +18,8 @@ using chrono::steady_clock;
 
 GameThread::GameThread() : mSimulation( std::make_unique<Simulation>() ),
                            mLastStep( steady_clock::now() ),
-                           mProfileStats( boost::accumulators::tag::rolling_window::window_size = 100 )
+                           mProfileStats( boost::accumulators::tag::rolling_window::window_size = 100 ),
+                           mPause( false )
 {
     mThread = std::thread([this](){ this->thread_run(); });
 }
@@ -32,7 +33,7 @@ void GameThread::thread_run()
     {
         auto now = steady_clock::now();
         // check that we are ready for the next frame: last data has been processed, and enough time has passed
-        if( !has_data() && now - mLastStep > mFrameTime )
+        if( !has_data() && now - mLastStep > mFrameTime &&!mPause )
         {
             mLastStep += mFrameTime;
             assert(mHasData == false);
@@ -90,5 +91,13 @@ void GameThread::setInEvents(GameThread::EventVec events)
 
 double GameThread::getAverageSimulationTime() const {
     return boost::accumulators::rolling_mean( mProfileStats );
+}
+
+void GameThread::setPause(bool pause)
+{
+    if(mPause != pause) {
+        mPause = pause;
+        mLastStep = steady_clock::now();
+    }
 }
 

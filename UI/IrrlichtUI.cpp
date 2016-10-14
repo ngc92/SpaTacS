@@ -78,6 +78,8 @@ public:
     {
         return mPickLine;
     }
+
+    bool mWantPause = false;
 private:
     bool handleMouseEvent( const SEvent::SMouseInput& mouse )
     {
@@ -107,6 +109,10 @@ private:
     {
         if(key.PressedDown)
         {
+            if(key.Key == KEY_KEY_P)
+            {
+                mWantPause = !mWantPause;
+            }
             if(mInputMode)
                 mInputMode->onKeyPress(key.Key);
         } else
@@ -186,7 +192,7 @@ void IrrlichtUI::setState(const std::shared_ptr<const core::GameState>& state)
         }
 
         drop_ptr<scene::ISceneNodeAnimator> ani{smgr->createFlyStraightAnimator(convert(obj.position()),
-                                          convert(obj.position() + 1.0_s * obj.velocity()), 1000)};
+                                          convert(obj.position() + 0.1_s * obj.velocity()), 100)};
         node->addAnimator(ani.get());
     }
 
@@ -283,4 +289,9 @@ IrrlichtUI::IrrlichtUI(std::uint64_t team, IrrlichtDevice* device) :
 void IrrlichtUI::getCommandEvents(std::vector<events::EventPtr>& evts) const
 {
     mCommands.transcribe(*mState, evts);
+}
+
+bool IrrlichtUI::pause() const
+{
+    return mEventReceiver->mWantPause;
 }
