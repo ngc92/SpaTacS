@@ -60,6 +60,7 @@ namespace core
         EventVec mInEvents;
         std::atomic<bool> mHasData;
         std::atomic<bool> mPause;
+        std::atomic<bool> mRunThread;
 
         // profiling
         boost::accumulators::accumulator_set<double, boost::accumulators::features<boost::accumulators::tag::rolling_mean>> mProfileStats;

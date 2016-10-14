@@ -19,17 +19,20 @@ using chrono::steady_clock;
 GameThread::GameThread() : mSimulation( std::make_unique<Simulation>() ),
                            mLastStep( steady_clock::now() ),
                            mProfileStats( boost::accumulators::tag::rolling_window::window_size = 100 ),
-                           mPause( false )
+                           mPause( false ), mRunThread(true)
 {
     mThread = std::thread([this](){ this->thread_run(); });
 }
 
 GameThread::~GameThread()
-{}
+{
+    mRunThread = false;
+    mThread.join();
+}
 
 void GameThread::thread_run()
 {
-    while(true)
+    while(mRunThread)
     {
         auto now = steady_clock::now();
         // check that we are ready for the next frame: last data has been processed, and enough time has passed
