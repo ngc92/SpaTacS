@@ -127,11 +127,11 @@ core::Simulation::Simulation():
                                                  this->physics_callback( world, A, B, info );
                                              });
 
-    addEvent(std::make_unique<events::SpawnShip>(1, "SF Predator", "destroyer", kilometers(0, 0, 0.4)));
+    addEvent(std::make_unique<events::SpawnShip>(1, "SF Predator", "cruiser",   kilometers(0, 0, 0.4)));
     addEvent(std::make_unique<events::SpawnShip>(1, "SF Fearless", "destroyer", kilometers(0, 0.2, -0.4)));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Lion",     "destroyer", kilometers(17, 4, 2)));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Wolf",     "destroyer", kilometers(15, 2, -4)));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Tiger",    "destroyer", kilometers(11, 2, 3)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Lion",     "destroyer", kilometers(22, 4, 2)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Wolf",     "destroyer", kilometers(18, 2, -4)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Tiger",    "destroyer", kilometers(15, 2, 3)));
     eventLoop();
 }
 

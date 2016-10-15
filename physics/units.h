@@ -175,6 +175,12 @@ namespace physics
         return UnitWrapper<U, dimensions::pow_t<V, 1, 2>>( std::sqrt(s.value) );
     };
 
+    template<class U, class V>
+    auto abs( const UnitWrapper<U, V>& s )
+    {
+        return UnitWrapper<U, V>( std::abs(s.value) );
+    };
+
     template<class O, class T, class U>
     std::basic_ostream<O>& operator<<(std::basic_ostream<O>& stream, const UnitWrapper<T, U>& u)
     {

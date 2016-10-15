@@ -19,7 +19,14 @@
 using namespace spatacs;
 using namespace core;
 
-ShipData::ShipData(std::uint64_t team, std::string name) : mTeam(team), mName( std::move(name) )
+ShipData::ShipData(std::uint64_t team, std::string name, const boost::property_tree::ptree& data) :
+        mTeam(team),
+        mName(std::move(name) ),
+        mRadius( meters(data.get<double>("radius")) ),
+        mMaxHitPoints( data.get<double>("hitpoints") ),
+        mHitPoints( mMaxHitPoints ),
+        mMaxArmour( data.get<double>("armour") ),
+        mCurArmour( mMaxArmour )
 {
 
 }
@@ -30,7 +37,7 @@ Starship::Starship()
 
 }
 Starship::Starship(std::uint64_t team, std::string name, const boost::property_tree::ptree& data) :
-        ShipData( team, std::move(name) ),
+        ShipData(team, std::move(name), data),
         mSubSystems( std::make_unique<SubSystems>(data) )
 {
 }

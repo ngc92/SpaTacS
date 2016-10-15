@@ -37,7 +37,7 @@ const spatacs::core::Starship* pick(const spatacs::core::GameState& world, icore
             continue;
 
         auto sp   = convert(ship->position());
-        float rad = convert(ship->radius() + 50.0_m);
+        float rad = convert(ship->radius() + 100.0_m);
         f64 temp;
         if(ray.getIntersectionWithSphere(sp, rad, temp) && temp < md)
         {

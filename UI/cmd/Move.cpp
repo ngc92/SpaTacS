@@ -47,7 +47,7 @@ namespace cmd
         // and handle the command
         physics::time_t time_to_brake = length(ship.velocity()) / (ship.engine().max_thrust() / ship.mass());
 
-        if( length(target_pos - ship.position()) < 0.5_km)
+        if( length(target_pos - ship.position()) < 0.5_km && mTargets.size() > 0)
         {
             const_cast<Move*>(this)->mTargets.erase(mTargets.begin());
         }

@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <irrlicht/irrlicht.h>
+#include <fenv.h>
 #include "UI/states/MainMenu.h"
 #include "UI/states/GameState.h"
 #include "UI/StateManager.h"
@@ -9,6 +10,8 @@ using namespace spatacs;
 
 int main()
 {
+    feenableexcept(FE_INVALID | FE_OVERFLOW);
+
     irr::IrrlichtDevice* device = irr::createDevice(irr::video::EDT_OPENGL,
                                                     irr::core::dimension2du(800, 600),
                                                     32);

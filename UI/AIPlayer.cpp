@@ -54,7 +54,7 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
             continue;
 
         // if found, do attack
-        if(min < 10.0_km)  {
+        if(min < 15.0_km)  {
             mCommands.addCommand( cmd::Attack(own.id(), target->id()) );
             if( target->shield_strength().current > 2.0 )
             {
@@ -71,12 +71,12 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
         // fly closer if shield is stronger
         if(own_shield > target->shield_strength().current || own_shield > 2)
         {
-            mCommands.addCommand( cmd::Move(own.id(), target->position(), 0.2_kps) );
+            mCommands.addCommand( cmd::Move(own.id(), target->position(), 0.25_kps) );
         } else
         {
             auto delta = own.position() - target->position();
-            delta *= 1.0_km / length(delta);
-            mCommands.addCommand( cmd::Move(own.id(), own.position() + delta, 1.0_kps) );
+            delta *= 10.0_km / length(delta);
+            mCommands.addCommand( cmd::Move(own.id(), own.position() + delta, 2.0_kps) );
         }
     }
 

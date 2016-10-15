@@ -51,7 +51,18 @@ namespace spatacs
             // perfect aim
             speed_t vel = mMuzzleVelocity; // km/s
             auto d = length(delta_p);
-            auto aim_pos = delta_p + (d / vel) * delta_v;
+            auto aim_pos = delta_p;
+
+            for(unsigned i = 0; i < 3; ++i) {
+                aim_pos = delta_p + (d / vel) * delta_v;
+                auto old_d = d;
+                d = length(aim_pos);
+                //std::cout << "correct: " << i << " " << abs(d - old_d) << "\n";
+                if( abs(d - old_d) < 10.0_m )
+                    break;
+            }
+
+
 
             // miss-aim
             length_t aim_radius = d / precision();
