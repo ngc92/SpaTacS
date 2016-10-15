@@ -16,6 +16,10 @@ namespace irr
 namespace spatacs
 {
     class IrrlichtUI;
+    namespace cmd
+    {
+        class CommandManager;
+    }
     namespace core
     {
         class Game;
@@ -32,7 +36,9 @@ namespace spatacs
             bool OnEvent(const irr::SEvent& event) override;
         private:
             std::unique_ptr<core::Game> mGame;
-            std::shared_ptr<IrrlichtUI> mIrrUI;
+
+            std::shared_ptr<IrrlichtUI>          mIrrUI;
+            std::shared_ptr<cmd::CommandManager> mCmdMgr;
         };
     }
 }

@@ -22,6 +22,7 @@
 #include "core/components/FuelTank.h"
 #include "core/Starship.h"
 #include "UI/IrrlichtUI.h"
+#include "UI/cmd/CommandManager.h"
 
 using namespace spatacs;
 
@@ -66,29 +67,20 @@ void ui::UnitCommand::onRightClick(ray_t ray, const irr::SEvent::SMouseInput& ev
     {
         if(t->team() != ship.team())
         {
-            getCmdMgr().addCommand(cmd::Attack(mActiveShipID, t->id()));
+            getCmdMgr().addCommand(mActiveShipID, cmd::Attack(t->id()));
         }
     }else {
         auto target = aim(ray);
         if(target) {
             auto vec = target.get();
             if(event.Shift) {
-                try {
-                    auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
-
-                    if (cmd.move) {
-                        cmd::Move cp = cmd.move.get();
-                        cp.addWaypoint(vec);
-                        getCmdMgr().addCommand(cp);
-                    } else {
-                        getCmdMgr().addCommand(cmd::Move(mActiveShipID, vec, mTargetSpeed));
-                    }
-                } catch( std::exception& )
-                {
-                    getCmdMgr().addCommand(cmd::Move(mActiveShipID, vec, mTargetSpeed));
-                }
+                auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
+                cmd::Move cp = cmd.move;
+                cp.addWaypoint(vec);
+                cp.setSpeed( mTargetSpeed );
+                getCmdMgr().addCommand(mActiveShipID, cp);
             } else {
-                getCmdMgr().addCommand(cmd::Move(mActiveShipID, vec, mTargetSpeed));
+                getCmdMgr().addCommand(mActiveShipID, cmd::Move(vec, mTargetSpeed));
             }
         }
     }
@@ -127,15 +119,14 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
         mat.Lighting = false;
         driver->setMaterial(mat);
         driver->setTransform(video::ETS_WORLD, irr::core::matrix4());
-        if(cmd.move)
-        {
-            auto& mv = cmd.move.get();
-            auto src = sp;
-            for(unsigned i = 0; i < mv.waypoint_count(); ++i) {
-                driver->draw3DLine(src, convert(mv.target(i)), video::SColor(255, 0, 128, 0));
-                src = convert(mv.target(i));
-            }
+
+        auto& mv = cmd.move;
+        auto src = sp;
+        for(unsigned i = 0; i < mv.waypoint_count(); ++i) {
+            driver->draw3DLine(src, convert(mv.target(i)), video::SColor(255, 0, 128, 0));
+            src = convert(mv.target(i));
         }
+
 
         if(cmd.attack)
         {
@@ -207,11 +198,11 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
             driver->draw3DLine(sp, aim, video::SColor(255, 255, 0, 0));
         }
         if(mMode == MOVE) {
-            driver->draw3DLine(aimbase + vector3df(-2, 0, -2), aimbase + vector3df(2, 0, 2),
+            driver->draw3DLine(aimbase + vector3df(-1, 0, -1), aimbase + vector3df(1, 0, 1),
                                video::SColor(128, 255, 255, 255));
-            driver->draw3DLine(aimbase + vector3df(-2, 0, 2), aimbase + vector3df(2, 0, -2),
+            driver->draw3DLine(aimbase + vector3df(-1, 0, 1), aimbase + vector3df(1, 0, -1),
                                video::SColor(128, 255, 255, 255));
-            driver->draw3DLine(aimbase + vector3df(0, -1, 0), aimbase + vector3df(0, 1, 0),
+            driver->draw3DLine(aimbase + vector3df(0, -0.5, 0), aimbase + vector3df(0, 0.5, 0),
                                video::SColor(128, 255, 255, 255));
         }
     }
@@ -256,11 +247,11 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
 {
     if(mActiveShipID != 0) {
         if (key == irr::KEY_KEY_1) {
-            getCmdMgr().addCommand( cmd::SetWpnMode(mActiveShipID, 0, 0) );
+            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, 0) );
         } else if (key == irr::KEY_KEY_2) {
-            getCmdMgr().addCommand( cmd::SetWpnMode(mActiveShipID, 0, 1) );
+            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, 1) );
         } else if (key == irr::KEY_KEY_3) {
-            getCmdMgr().addCommand( cmd::SetWpnMode(mActiveShipID, 0, 2) );
+            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, 2) );
         } else if( key == irr::KEY_PLUS )
         {
             mTargetSpeed += 0.05_kps;

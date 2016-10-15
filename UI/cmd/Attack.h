@@ -11,13 +11,11 @@ namespace cmd
 	class Attack
 	{
 	public:
-		Attack( std::uint64_t object, std::uint64_t target );
+		Attack( std::uint64_t target );
 		Attack( std::istream& in );
-		
-		std::uint64_t object() const;
+
 		std::uint64_t target() const;
 	private:
-		std::uint64_t mObject;
 		std::uint64_t mTarget;
 	};
 	
