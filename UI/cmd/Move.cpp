@@ -8,17 +8,12 @@ namespace spatacs
 {
 namespace cmd
 {
-	Move::Move(std::uint64_t object, length_t x, length_t y, length_t z, speed_t speed):
-		Move(object, length_vec{x, y, z}, speed)
+	Move::Move(length_t x, length_t y, length_t z, speed_t speed) :
+            Move(length_vec{x, y, z}, speed)
 	{
-	}
-		
-	std::uint64_t Move::object() const
-	{
-		return mObject;
 	}
 
-	const length_vec& Move::target(std::size_t id) const
+    const length_vec& Move::target(std::size_t id) const
 	{
 		return mTargets.at(id);
 	}
@@ -28,16 +23,14 @@ namespace cmd
 		return mSpeed;
 	}
 
-    Move::Move(std::uint64_t object, length_vec p, speed_t speed) :
-		mObject(object), mTargets({p}), mSpeed(speed)
+    Move::Move(length_vec p, speed_t speed) :
+		mTargets({p}), mSpeed(speed)
     {
 
     }
 
     accel_vec Move::calcThrust(const core::Starship& ship) const
     {
-        assert(ship.id() == object());
-
         length_vec target_pos = ship.position();
         if( !mTargets.empty() )
         {
@@ -68,9 +61,16 @@ namespace cmd
         return mTargets.size();
     }
 
-    void Move::addWaypoint(length_vec wp)
+    Move& Move::addWaypoint(length_vec wp)
     {
         mTargets.push_back(wp);
+        return *this;
+    }
+
+    Move& Move::setSpeed(speed_t s)
+    {
+        mSpeed = s;
+        return *this;
     }
 }
 }

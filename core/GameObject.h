@@ -12,9 +12,16 @@ namespace spatacs
 {
     namespace core
     {
+        enum class ObjectType
+        {
+            STARSHIP,
+            PROJECTILE
+        };
+
         class GameObject
         {
         public:
+            GameObject(ObjectType t);
             virtual ~GameObject() = default;
 
             const length_vec& position() const;
@@ -36,7 +43,10 @@ namespace spatacs
             virtual void onStep() = 0;
             virtual GameObject* clone() const = 0;
 
+            ObjectType type() const;
+
         protected:
+            ObjectType    mType;
             std::uint64_t mID        = 0;
             std::uint64_t mPhysicsID = 0;
             mass_t mMass;

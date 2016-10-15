@@ -4,15 +4,18 @@
 
 #include "UI/AIPlayer.h"
 #include "UI/IrrlichtUI.h"
+#include "UI/cmd/CommandManager.h"
 #include "GameState.h"
 #include "core/Game.h"
 
 using namespace spatacs::ui;
 
 GameState::GameState() :
-        mGame( std::make_unique<core::Game>() )
+        mGame( std::make_unique<core::Game>() ),
+        mCmdMgr( std::make_shared<cmd::CommandManager>() )
 {
-    mGame->addInterface( std::make_shared<ui::AIPlayer>(2) );
+    mGame->addInterface( std::make_shared<ui::AIPlayer>(2, mCmdMgr) );
+    mGame->addInterface( mCmdMgr );
 }
 
 GameState::~GameState()
@@ -27,7 +30,7 @@ void GameState::step(StateManager& smgr)
 
 void GameState::init(irr::IrrlichtDevice* dev)
 {
-    mIrrUI = std::make_shared<ui::IrrlichtUI>(1, dev);
+    mIrrUI = std::make_shared<ui::IrrlichtUI>(1, dev, mCmdMgr);
     mGame->addInterface( mIrrUI );
 }
 

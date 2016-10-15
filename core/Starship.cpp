@@ -31,11 +31,12 @@ ShipData::ShipData(std::uint64_t team, std::string name, const boost::property_t
 }
 
 
-Starship::Starship()
+Starship::Starship() : GameObject(ObjectType::STARSHIP)
 {
 
 }
 Starship::Starship(std::uint64_t team, std::string name, const boost::property_tree::ptree& data) :
+        GameObject(ObjectType::STARSHIP),
         ShipData(team, std::move(name), data),
         mSubSystems( std::make_unique<SubSystems>(data) )
 {

@@ -13,20 +13,6 @@ namespace cmd
 {
 	using Command = boost::variant<Move, Attack, SetWpnMode>;
 
-	struct GetShip : public boost::static_visitor<std::uint64_t>
-	{
-		template<class T>
-		std::uint64_t operator()(const T& t) const
-		{
-			return t.object();
-		}
-	};
-
-    inline std::uint64_t get_ship( const Command& c )
-    {
-        return boost::apply_visitor(GetShip(), c);
-    }
-
 }
 }
 

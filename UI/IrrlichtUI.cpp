@@ -152,7 +152,6 @@ void IrrlichtUI::setState(const std::shared_ptr<const core::GameState>& state)
 {
     auto smgr = mDevice->getSceneManager();
     mState = state;
-    mCommands.validate(*mState);
 
     // update the location map
     mMap->removeAll();
@@ -265,7 +264,7 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
 
 cmd::CommandManager& IrrlichtUI::getCommandMgr()
 {
-    return mCommands;
+    return *mCommands;
 }
 
 IrrlichtUI::~IrrlichtUI()
@@ -273,15 +272,15 @@ IrrlichtUI::~IrrlichtUI()
 
 }
 
-IrrlichtUI::IrrlichtUI(std::uint64_t team, IrrlichtDevice* device) :
+IrrlichtUI::IrrlichtUI(std::uint64_t team, irr::IrrlichtDevice* device, std::shared_ptr<cmd::CommandManager> cmd) :
         mOwnTeam(team),
-        mDevice(device)
+        mDevice(device),
+        mCommands( std::move(cmd) )
 {
 }
 
 void IrrlichtUI::getCommandEvents(std::vector<events::EventPtr>& evts) const
 {
-    mCommands.transcribe(*mState, evts);
 }
 
 bool IrrlichtUI::pause() const
