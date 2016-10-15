@@ -63,42 +63,6 @@ void UnitSelection::onWheel(float scroll)
 
 void UnitSelection::draw(irr::video::IVideoDriver* driver)
 {
-    if(mKeysDown.count(irr::KEY_KEY_A))
-    {
-        getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(0, 0, 1) );
-        getCamera()->setTarget( getCamera()->getTarget() + irr::core::vector3df(0, 0, 1) );
-    }
-
-    if(mKeysDown.count(irr::KEY_KEY_D))
-    {
-        getCamera()->setPosition( getCamera()->getPosition() - irr::core::vector3df(0, 0, 1) );
-        getCamera()->setTarget( getCamera()->getTarget() - irr::core::vector3df(0, 0, 1) );
-    }
-
-    if(mKeysDown.count(irr::KEY_KEY_W))
-    {
-        getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(1, 0, 0) );
-        getCamera()->setTarget( getCamera()->getTarget() + irr::core::vector3df(1, 0, 0) );
-    }
-
-    if(mKeysDown.count(irr::KEY_KEY_S))
-    {
-        getCamera()->setPosition( getCamera()->getPosition() - irr::core::vector3df(1, 0, 0) );
-        getCamera()->setTarget( getCamera()->getTarget() - irr::core::vector3df(1, 0, 0) );
-    }
-
-    if(mKeysDown.count(irr::KEY_KEY_Q))
-    {
-        getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(0, 1, 0) );
-        getCamera()->setTarget( getCamera()->getTarget() + irr::core::vector3df(0, 1, 0) );
-    }
-
-    if(mKeysDown.count(irr::KEY_KEY_Y))
-    {
-        getCamera()->setPosition( getCamera()->getPosition() - irr::core::vector3df(0, 1, 0) );
-        getCamera()->setTarget( getCamera()->getTarget() - irr::core::vector3df(0, 1, 0) );
-    }
-
     if(mChildMode)
         mChildMode->draw(driver);
 
@@ -146,4 +110,46 @@ void UnitSelection::onKeyRelease(irr::EKEY_CODE key)
     {
         mChildMode->onKeyRelease(key);
     }
+}
+
+void UnitSelection::step()
+{
+    if(mKeysDown.count(irr::KEY_KEY_A))
+    {
+        getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(0, 0, 1) );
+        getCamera()->setTarget( getCamera()->getTarget() + irr::core::vector3df(0, 0, 1) );
+    }
+
+    if(mKeysDown.count(irr::KEY_KEY_D))
+    {
+        getCamera()->setPosition( getCamera()->getPosition() - irr::core::vector3df(0, 0, 1) );
+        getCamera()->setTarget( getCamera()->getTarget() - irr::core::vector3df(0, 0, 1) );
+    }
+
+    if(mKeysDown.count(irr::KEY_KEY_W))
+    {
+        getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(1, 0, 0) );
+        getCamera()->setTarget( getCamera()->getTarget() + irr::core::vector3df(1, 0, 0) );
+    }
+
+    if(mKeysDown.count(irr::KEY_KEY_S))
+    {
+        getCamera()->setPosition( getCamera()->getPosition() - irr::core::vector3df(1, 0, 0) );
+        getCamera()->setTarget( getCamera()->getTarget() - irr::core::vector3df(1, 0, 0) );
+    }
+
+    if(mKeysDown.count(irr::KEY_KEY_Q))
+    {
+        getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(0, 1, 0) );
+        getCamera()->setTarget( getCamera()->getTarget() + irr::core::vector3df(0, 1, 0) );
+    }
+
+    if(mKeysDown.count(irr::KEY_KEY_Y))
+    {
+        getCamera()->setPosition( getCamera()->getPosition() - irr::core::vector3df(0, 1, 0) );
+        getCamera()->setTarget( getCamera()->getTarget() - irr::core::vector3df(0, 1, 0) );
+    }
+
+    if(mChildMode)
+        mChildMode->step();
 }

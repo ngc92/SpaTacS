@@ -194,6 +194,7 @@ void IrrlichtUI::setState(const std::shared_ptr<const core::GameState>& state)
 
 bool IrrlichtUI::step()
 {
+    mEventReceiver->mInputMode->step();
     try {
         if(mEventReceiver->mInputMode)
            mEventReceiver->mInputMode->draw(mDevice->getVideoDriver());

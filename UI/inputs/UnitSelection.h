@@ -33,6 +33,7 @@ namespace spatacs {
             void onKeyRelease( irr::EKEY_CODE key ) override;
 
             void draw(irr::video::IVideoDriver* driver) override;
+            void step() override;
 
         private:
             std::uint64_t mOwnTeam;

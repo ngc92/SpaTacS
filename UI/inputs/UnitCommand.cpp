@@ -103,23 +103,6 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
 
     // ship info text
     auto& ship = state().getShip(mActiveShipID);
-    {
-        std::wstringstream stream;
-        stream << std::fixed << std::setprecision(1);
-        stream << ship.name().c_str() << ":\n";
-        stream << " egy: " << ship.usedEnergy() / 0.1f << "/" << ship.producedEnergy() / 0.1f << "\n";
-        stream << " mode: " << ship.weapon(0).mode() << "\n";
-        mShipInfo->setShipName( ship.name() );
-        mShipInfo->clearSystems();
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield generator", ship.shield().hp(), ship.shield().max_hp()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"engine", ship.engine().hp(), ship.engine().max_hp()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield_strength().current, ship.shield_strength().max} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ship.tank().fuel().value / 1000, ship.tank().capacity().value / 1000} );
-        /// \todo power plant
-    }
-
     try {
         auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
         vector3df sp = convert(ship.position());
@@ -148,52 +131,12 @@ void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
 
     }
 
-    if(mMode == MOVE)
-    {
-        mTargetInfo->setVisible(false);
-    } else
-    {
-        auto& target = state().getShip(mCurrentAimShip);
-        std::wstringstream stream;
-        stream << std::fixed << std::setprecision(1);
-        stream << target.name().c_str() << ":\n";
-        stream << " shield: " << target.shield_strength().current << "/" << target.shield_strength().max << "\n";
-        stream << " hull: "   << target.hull_status().current     << "/" << target.hull_status().max << "\n";
-        stream << " hp: "     << target.hp() << "\n";
-        auto dst = distance(ship, target);
-        stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
-        mTargetInfo->setText( stream.str().c_str() );
-        mTargetInfo->setVisible(true);
-    }
-
-    {
-        std::wstringstream stream;
-        stream << std::fixed << std::setprecision(1);
-        stream << "speed:  " << length(ship.velocity()) << "\n";
-        stream << "target: " << mTargetSpeed << "\n";
-        mSpeedInfo->setText(stream.str().c_str());
-    }
-
     if (mCurrentAim) {
         vector3df sp = convert(ship.position());
 
         auto aim = convert(mCurrentAim.get());
         auto aimbase = aim;
         aimbase.Y = std::round(getCamera()->getTarget().Y / 10) * 10;
-        irr::core::line3df flightline(sp, aim);
-
-        std::wstringstream stream;
-        stream << std::fixed << std::setprecision(1) << length(ship.position() - mCurrentAim.get()) << "\n";
-        if(mMode == ATTACK)
-        {
-            auto& target = state().getShip(mCurrentAimShip);
-            auto dst = distance(ship, target);
-            stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
-        }
-        mDistanceMarker->setText(stream.str().c_str());
-        auto pos = getScreenPosition( flightline.getMiddle() );
-        pos.Y -= 10;
-        mDistanceMarker->setRelativePosition( pos );
 
         video::SMaterial mat;
         mat.Lighting = false;
@@ -270,5 +213,73 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
             if(mTargetSpeed < 0.1_kps)
                 mTargetSpeed = 0.1_kps;
         }
+    }
+}
+
+void ui::UnitCommand::step()
+{
+    mBaseY = std::round(getCamera()->getTarget().Y / 10.f) * 10.f;
+
+    using namespace irr;
+    using irr::core::vector3df;
+
+    // ship info text
+    auto& ship = state().getShip(mActiveShipID);
+    {
+        std::wstringstream stream;
+        stream << std::fixed << std::setprecision(1);
+        stream << ship.name().c_str() << ":\n";
+        stream << " egy: " << ship.usedEnergy() / 0.1f << "/" << ship.producedEnergy() / 0.1f << "\n";
+        stream << " mode: " << ship.weapon(0).mode() << "\n";
+        mShipInfo->setShipName( ship.name() );
+        mShipInfo->clearSystems();
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield generator", ship.shield().hp(), ship.shield().max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"engine", ship.engine().hp(), ship.engine().max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield_strength().current, ship.shield_strength().max} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ship.tank().fuel().value / 1000, ship.tank().capacity().value / 1000} );
+        /// \todo power plant
+    }
+
+    if(mMode == MOVE)
+    {
+        mTargetInfo->setVisible(false);
+    } else
+    {
+        auto& target = state().getShip(mCurrentAimShip);
+        std::wstringstream stream;
+        stream << std::fixed << std::setprecision(1);
+        stream << target.name().c_str() << ":\n";
+        stream << " shield: " << target.shield_strength().current << "/" << target.shield_strength().max << "\n";
+        stream << " hull: "   << target.hull_status().current     << "/" << target.hull_status().max << "\n";
+        stream << " hp: "     << target.hp() << "\n";
+        mTargetInfo->setText( stream.str().c_str() );
+        mTargetInfo->setVisible(true);
+    }
+
+    {
+        std::wstringstream stream;
+        stream << std::fixed << std::setprecision(1);
+        stream << "speed:  " << length(ship.velocity()) << "\n";
+        stream << "target: " << mTargetSpeed << "\n";
+        mSpeedInfo->setText(stream.str().c_str());
+    }
+
+    if (mCurrentAim) {
+        irr::core::line3df flightline(convert(ship.position()), convert(mCurrentAim.get()));
+
+        std::wstringstream stream;
+        stream << std::fixed << std::setprecision(1) << length(ship.position() - mCurrentAim.get()) << "\n";
+        if(mMode == ATTACK)
+        {
+            auto& target = state().getShip(mCurrentAimShip);
+            auto dst = distance(ship, target);
+            stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
+        }
+        mDistanceMarker->setText(stream.str().c_str());
+        auto pos = getScreenPosition( flightline.getMiddle() );
+        pos.Y -= 10;
+        mDistanceMarker->setRelativePosition( pos );
     }
 }

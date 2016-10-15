@@ -35,6 +35,7 @@ namespace spatacs {
             void onKeyPress(irr::EKEY_CODE key) override;
 
             void draw(irr::video::IVideoDriver* driver) override;
+            void step() override;
 
         private:
             boost::optional<length_vec> aim(const ray_t &ray) const;
