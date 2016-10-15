@@ -4,11 +4,11 @@
 
 #include "RayWeapon.h"
 #include <cmath>
-#include "core/Projectile.h"
+#include "game/Projectile.h"
 
 namespace spatacs
 {
-    namespace core
+    namespace game
     {
         RayWeapon* RayWeapon::clone() const
         {

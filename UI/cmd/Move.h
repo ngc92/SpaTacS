@@ -8,7 +8,7 @@
 
 namespace spatacs
 {
-namespace core
+namespace game
 {
     class Starship;
 }
@@ -29,7 +29,7 @@ namespace cmd
 
         Move& addWaypoint(length_vec wp);
 
-        accel_vec calcThrust(const core::Starship& ship) const;
+        accel_vec calcThrust(const game::Starship& ship) const;
 	private:
 		std::vector<length_vec> mTargets;
 		speed_t mSpeed;

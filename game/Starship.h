@@ -13,7 +13,7 @@
 
 namespace spatacs
 {
-    namespace core {
+    namespace game {
         class Engine;
         class ShieldGenerator;
         class IWeapon;

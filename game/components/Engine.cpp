@@ -5,12 +5,12 @@
 #include "Engine.h"
 #include <iostream>
 #include <boost/property_tree/ptree.hpp>
-#include "core/Starship.h"
+#include "game/Starship.h"
 #include "FuelTank.h"
 
 namespace spatacs
 {
-    namespace  core
+    namespace  game
     {
         void Engine::onStep(Starship& ship)
         {

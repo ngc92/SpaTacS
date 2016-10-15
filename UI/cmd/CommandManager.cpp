@@ -6,8 +6,8 @@
 #include "core/GameState.h"
 #include <iostream>
 #include "events/Accelerate.h"
-#include "core/Starship.h"
-#include "core/components/IWeapon.h"
+#include "game/Starship.h"
+#include "game/components/IWeapon.h"
 #include "events/Combat.h"
 
 using namespace spatacs;
@@ -107,9 +107,9 @@ void CommandManager::validate()
     }
 
     // Iterate over all entities
-    for(const core::GameObject& o : *mState)
+    for(const game::GameObject& o : *mState)
     {
-        if(o.alive() && o.type() == core::ObjectType::STARSHIP)
+        if(o.alive() && o.type() == game::ObjectType::STARSHIP)
         {
             mCommandSlots[o.id()].delflag = false;
         }

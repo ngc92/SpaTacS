@@ -5,16 +5,16 @@
 #ifndef SOI_IWEAPON_H_H
 #define SOI_IWEAPON_H_H
 
-#include "IComponent.h"
+#include "game/components/IComponent.h"
 #include <memory>
 #include "vec.h"
-#include "core/Damage.h"
+#include "game/Damage.h"
 #include <boost/optional.hpp>
 #include "physics/units.h"
 
 namespace spatacs
 {
-    namespace core
+    namespace game
     {
         struct ShotData
         {

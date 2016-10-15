@@ -7,10 +7,10 @@
 #include "Combat.h"
 #include "Spawn.h"
 #include "core/GameState.h"
-#include "core/components/ShieldGenerator.h"
-#include "core/components/IWeapon.h"
-#include "core/Starship.h"
-#include "core/Projectile.h"
+#include "game/components/ShieldGenerator.h"
+#include "game/components/IWeapon.h"
+#include "game/Starship.h"
+#include "game/Projectile.h"
 
 namespace spatacs
 {
@@ -37,7 +37,7 @@ namespace spatacs
 
          }
 
-        auto FireWeapon::fireWeapon(Starship& shooter, const length_vec& tpos, const velocity_vec& tvel, core::IWeapon& weapon) const -> EventPtr
+        auto FireWeapon::fireWeapon(Starship& shooter, const length_vec& tpos, const velocity_vec& tvel, game::IWeapon& weapon) const -> EventPtr
         {
             // check that weapon is ready
             if(!weapon.ready())
@@ -74,7 +74,7 @@ namespace spatacs
 
         // -------------------------------------------------------------------------------------------------------------
 
-        Hit::Hit(const Starship& ship, const core::Projectile& proj) :
+        Hit::Hit(const Starship& ship, const game::Projectile& proj) :
                 ShipEvent( ship.id() )
         {
             auto relvel = length(ship.velocity() - proj.velocity()) / 1000.0;
@@ -90,7 +90,7 @@ namespace spatacs
 
         // -------------------------------------------------------------------------------------------------------------
 
-        HitShield::HitShield(const Starship& ship, const core::Projectile& proj) :
+        HitShield::HitShield(const Starship& ship, const game::Projectile& proj) :
                 ShipEvent( ship.id() )
         {
             auto relvel = length(ship.velocity() - proj.velocity()) / 1000.0;
@@ -131,7 +131,7 @@ namespace spatacs
 
         // -------------------------------------------------------------------------------------------------------------
 
-        Damage::Damage(std::uint64_t ship, const core::Damage& damage) :
+        Damage::Damage(std::uint64_t ship, const game::Damage& damage) :
                 ShipEvent( ship ), mDamage( damage )
         {
         }

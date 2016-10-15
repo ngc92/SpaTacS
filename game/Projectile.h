@@ -9,11 +9,11 @@
 #include "physics/Object.h"
 #include "physics/units.h"
 #include "GameObject.h"
-#include "Damage.h"
+#include "game/Damage.h"
 
 namespace spatacs
 {
-namespace core
+namespace game
 {
     class Projectile : public GameObject
     {

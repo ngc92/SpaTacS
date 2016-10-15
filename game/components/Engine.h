@@ -10,7 +10,7 @@
 
 namespace spatacs
 {
-namespace core
+namespace game
 {
     class Engine : public IComponent
     {

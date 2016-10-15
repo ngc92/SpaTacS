@@ -6,7 +6,7 @@
 #include <boost/range/adaptor/indirected.hpp>
 #include <events/Combat.h>
 #include <iostream>
-#include "core/Starship.h"
+#include "game/Starship.h"
 #include "core/GameState.h"
 #include "UI/cmd/CommandManager.h"
 
@@ -22,11 +22,11 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
 {
     for(auto& obj : *state)
     {
-        if(!dynamic_cast<const core::Starship*>(&obj))
+        if(!dynamic_cast<const game::Starship*>(&obj))
         {
             continue;
         }
-        auto& own = dynamic_cast<const core::Starship&>(obj);
+        auto& own = dynamic_cast<const game::Starship&>(obj);
 
         if(own.team() != mOwnTeam || !own.alive())
             continue;
@@ -36,10 +36,10 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
 
         length_t min = 100.0_km;
         // find closest ship to attack
-        const core::Starship* target = nullptr;
+        const game::Starship* target = nullptr;
         for (auto& e : *state)
         {
-            auto eship = dynamic_cast<const core::Starship*>(&e);
+            auto eship = dynamic_cast<const game::Starship*>(&e);
             if(!eship || !eship->alive())
                 continue;
 

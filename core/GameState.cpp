@@ -6,11 +6,12 @@
 #include <stdexcept>
 #include "GameState.h"
 #include <algorithm>
-#include "Starship.h"
-#include "Projectile.h"
+#include "game/Starship.h"
+#include "game/Projectile.h"
 
 using namespace spatacs;
 using namespace core;
+using namespace game;
 
 GameState::GameState()
 {

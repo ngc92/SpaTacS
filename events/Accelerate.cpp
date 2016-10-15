@@ -3,9 +3,9 @@
 //
 
 #include "Accelerate.h"
-#include "core/Starship.h"
+#include "game/Starship.h"
 #include <iostream>
-#include "core/components/Engine.h"
+#include "game/components/Engine.h"
 #include "physics/Events.h"
 
 namespace spatacs

@@ -3,21 +3,21 @@
 //
 
 #include "GameObject.h"
-#include "Starship.h"
+#include "game/Starship.h"
 #include <cmath>
 #include <algorithm>
-#include "components/ProjectileWeapon.h"
-#include "components/ShieldGenerator.h"
-#include "components/Engine.h"
-#include "components/FuelTank.h"
-#include "components/LifeSupport.h"
-#include "SubSystems.h"
+#include "game/components/ProjectileWeapon.h"
+#include "game/components/ShieldGenerator.h"
+#include "game/components/Engine.h"
+#include "game/components/FuelTank.h"
+#include "game/components/LifeSupport.h"
+#include "game/SubSystems.h"
 #include <boost/property_tree/ptree.hpp>
 #include <iostream>
-#include "components/PowerPlant.h"
+#include "game/components/PowerPlant.h"
 
 using namespace spatacs;
-using namespace core;
+using namespace game;
 
 ShipData::ShipData(std::uint64_t team, std::string name, const boost::property_tree::ptree& data) :
         mTeam(team),

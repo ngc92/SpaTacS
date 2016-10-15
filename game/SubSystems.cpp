@@ -4,13 +4,13 @@
 
 #include "Starship.h"
 #include "GameObject.h"
-#include "SubSystems.h"
+#include "game/SubSystems.h"
 #include <boost/property_tree/ptree.hpp>
 #include <iostream>
-#include "components/ProjectileWeapon.h"
+#include "game/components/ProjectileWeapon.h"
 
 using namespace spatacs;
-using namespace core;
+using namespace game;
 
 SubSystems::SubSystems(const boost::property_tree::ptree& data):
         mEngine(new Engine(data.get_child("engine"))),

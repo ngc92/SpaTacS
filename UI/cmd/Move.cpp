@@ -1,7 +1,7 @@
 #include "Move.h"
 #include <iostream>
-#include <core/components/Engine.h>
-#include <core/Starship.h>
+#include <game/components/Engine.h>
+#include <game/Starship.h>
 #include <events/Accelerate.h>
 
 namespace spatacs
@@ -29,7 +29,7 @@ namespace cmd
 
     }
 
-    accel_vec Move::calcThrust(const core::Starship& ship) const
+    accel_vec Move::calcThrust(const game::Starship& ship) const
     {
         length_vec target_pos = ship.position();
         if( !mTargets.empty() )

@@ -4,7 +4,7 @@
 
 #include "ShipEvent.h"
 
-#include "core/Starship.h"
+#include "game/Starship.h"
 #include "core/GameState.h"
 
 namespace spatacs

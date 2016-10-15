@@ -5,10 +5,10 @@
 #ifndef SOI_POWERPLANT_H
 #define SOI_POWERPLANT_H
 
-#include "IComponent.h"
+#include "game/components/IComponent.h"
 
 namespace spatacs {
-    namespace core {
+    namespace game {
         class PowerPlant : public IComponent
         {
         public:

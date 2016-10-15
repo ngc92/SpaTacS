@@ -5,12 +5,12 @@
 #ifndef SPATACS_LIFESUPPORT_H
 #define SPATACS_LIFESUPPORT_H
 
-#include "IComponent.h"
+#include "game/components/IComponent.h"
 #include "physics/units.h"
 
 namespace spatacs
 {
-namespace core
+namespace game
 {
     class LifeSupport : public IComponent
     {

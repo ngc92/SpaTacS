@@ -6,10 +6,10 @@
 #include "GameThread.h"
 #include "events/Accelerate.h"
 #include "events/Combat.h"
-#include "components/Engine.h"
+#include "game/components/Engine.h"
 #include <iostream>
-#include "core/components/IWeapon.h"
-#include "core/Starship.h"
+#include "game/components/IWeapon.h"
+#include "game/Starship.h"
 
 using namespace spatacs;
 using namespace core;

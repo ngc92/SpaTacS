@@ -11,7 +11,7 @@
 using namespace spatacs::ui;
 
 GameState::GameState() :
-        mGame( std::make_unique<core::Game>() ),
+        mGame( std::make_unique<spatacs::core::Game>() ),
         mCmdMgr( std::make_shared<cmd::CommandManager>() )
 {
     mGame->addInterface( std::make_shared<ui::AIPlayer>(2, mCmdMgr) );

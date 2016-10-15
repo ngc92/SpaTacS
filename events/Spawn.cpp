@@ -7,14 +7,14 @@
 #include "core/GameState.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include "core/Starship.h"
-#include "core/Projectile.h"
+#include "game/Starship.h"
+#include "game/Projectile.h"
 
 using namespace spatacs;
 using namespace events;
 
 SpawnProjectile::SpawnProjectile(std::uint64_t shooter, length_vec pos, velocity_vec vel, mass_t mass, length_t rad,
-                                 core::Damage dmg) :
+                                 game::Damage dmg) :
     mShooter(shooter),
     mPosition(pos),
     mVelocity(vel),
@@ -29,7 +29,7 @@ void SpawnProjectile::apply(EventContext& context) const
 {
     auto new_id = context.state.getNextFreeID();
 
-    auto proj = std::make_unique<core::Projectile>(new_id, mShooter, mDamage);
+    auto proj = std::make_unique<game::Projectile>(new_id, mShooter, mDamage);
     proj->setPosition( mPosition );
     proj->setVelocity( mVelocity );
     proj->setMass( mMass );
@@ -61,7 +61,7 @@ void SpawnShip::apply(EventContext& context) const
     auto mass = tonnes(data.get<double>("mass"));
     auto id = context.state.getNextFreeID();
 
-    auto ship = std::make_unique<core::Starship>(mTeam, mName, data);
+    auto ship = std::make_unique<game::Starship>(mTeam, mName, data);
 
     ship->setPosition( mPosition );
     ship->setMass( mass );

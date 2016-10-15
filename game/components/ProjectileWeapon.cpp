@@ -9,7 +9,7 @@
 
 namespace spatacs
 {
-    namespace core
+    namespace game
     {
         ProjectileWeapon::ProjectileWeapon(const IComponent::ptree& props):
                 IWeapon(props),

@@ -7,11 +7,11 @@
 
 #include "ShipEvent.h"
 #include "vec.h"
-#include "core/Damage.h"
+#include "game/Damage.h"
 
 namespace spatacs {
 
-    namespace core
+    namespace game
     {
         class IWeapon;
         class Projectile;
@@ -26,7 +26,7 @@ namespace spatacs {
         private:
 
             virtual void applyToShip(Starship& shooter, EventContext& context) const override;
-            EventPtr fireWeapon(Starship& shooter, const length_vec& tpos, const velocity_vec& tvel, core::IWeapon& weapon) const;
+            EventPtr fireWeapon(Starship& shooter, const length_vec& tpos, const velocity_vec& tvel, game::IWeapon& weapon) const;
 
             std::uint64_t mTarget;
             std::uint64_t mWeaponId;
@@ -49,34 +49,34 @@ namespace spatacs {
         class HitShield : public ShipEvent
         {
         public:
-            HitShield(const Starship& ship, const core::Projectile& proj);
+            HitShield(const Starship& ship, const game::Projectile& proj);
         private:
             virtual void applyToShip(Starship& target, EventContext& context) const override;
 
-            core::Damage mDamage;
+            game::Damage mDamage;
             std::uint64_t mProjectileID;
         };
 
         class Hit : public ShipEvent
         {
         public:
-            Hit(const Starship& ship, const core::Projectile& proj);
+            Hit(const Starship& ship, const game::Projectile& proj);
         private:
             virtual void applyToShip(Starship& target, EventContext& context) const override;
 
-            core::Damage mDamage;
+            game::Damage mDamage;
         };
 
         class Damage : public ShipEvent
         {
         public:
-            Damage(std::uint64_t ship, const core::Damage& damage);
+            Damage(std::uint64_t ship, const game::Damage& damage);
 
-            core::Damage damage() const { return mDamage; }
+            game::Damage damage() const { return mDamage; }
         private:
             virtual void applyToShip(Starship& target, EventContext& context) const override;
 
-            core::Damage mDamage;
+            game::Damage mDamage;
         };
     }
 }

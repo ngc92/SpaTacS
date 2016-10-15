@@ -7,11 +7,11 @@
 
 
 #include <physics/units.h>
-#include "IWeapon.h"
+#include "game/components/IWeapon.h"
 
 namespace spatacs
 {
-    namespace core
+    namespace game
     {
         class RayWeapon : public IWeapon
         {

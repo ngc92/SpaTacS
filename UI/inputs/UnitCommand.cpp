@@ -12,22 +12,22 @@
 #include <iomanip>
 #include "UnitCommand.h"
 #include "core/GameState.h"
-#include "core/components/IWeapon.h"
+#include "game/components/IWeapon.h"
 #include <irrlicht/ICameraSceneNode.h>
 #include <iostream>
 #include "UI/gfx/ShipStatusUI.h"
-#include "core/components/ShieldGenerator.h"
-#include "core/components/Engine.h"
+#include "game/components/ShieldGenerator.h"
+#include "game/components/Engine.h"
 #include "UI/convert.h"
-#include "core/components/FuelTank.h"
-#include "core/Starship.h"
+#include "game/components/FuelTank.h"
+#include "game/Starship.h"
 #include "UI/IrrlichtUI.h"
 #include "UI/cmd/CommandManager.h"
 
 using namespace spatacs;
 
 /// \todo this is copy past, improve that!
-const spatacs::core::Starship* pick(const spatacs::core::GameState& world, irr::core::line3df ray);
+const game::Starship* pick(const core::GameState& world, irr::core::line3df ray);
 
 ui::UnitCommand::UnitCommand(std::uint64_t id) :
         mActiveShipID(id)

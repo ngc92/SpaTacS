@@ -9,17 +9,17 @@
 
 // include all that stuff in the header, so defaulted
 // constructors work.
-#include "components/IWeapon.h"
-#include "components/ShieldGenerator.h"
-#include "components/Engine.h"
-#include "components/FuelTank.h"
-#include "components/LifeSupport.h"
-#include "components/PowerPlant.h"
+#include "game/components/IWeapon.h"
+#include "game/components/ShieldGenerator.h"
+#include "game/components/Engine.h"
+#include "game/components/FuelTank.h"
+#include "game/components/LifeSupport.h"
+#include "game/components/PowerPlant.h"
 #include "GameObject.h"
 
 namespace spatacs
 {
-    namespace core
+    namespace game
     {
         struct SubSystems
         {

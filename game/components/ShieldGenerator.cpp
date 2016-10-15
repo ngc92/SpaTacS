@@ -8,7 +8,7 @@
 #include <boost/property_tree/ptree.hpp>
 
 using namespace spatacs;
-using core::ShieldGenerator;
+using game::ShieldGenerator;
 using boost::property_tree::ptree;
 
 float ShieldGenerator::shield() const
