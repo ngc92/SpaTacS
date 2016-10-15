@@ -1,16 +1,10 @@
 ## Version 0.6 (menu update)
   * UI:
-    - [ ] main menu
-      + [ ] start level
-      + [ ] custom combat
-      + [ ] settings
+    - [x] main menu
+      + [x] start level
       + [x] exit
-    - [ ] pause menu
-      + [ ] resume
-      + [ ] end game
   * game:
     - [ ] load levels from xml
-    - [ ] custom combat
     - [ ] add a few ship types
   * code:
     - [x] restructure Irrlicht handling to allow for menus

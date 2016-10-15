@@ -50,8 +50,8 @@ namespace spatacs
 
         Engine::Engine(const ptree& props):
             IComponent(props),
-            mPropellantSpeed( kilometers(props.get<float>("propellant_speed")) / 1.0_s ),
-            mMassRate( kilogram(props.get<float>("fuel_consumption")) / 1.0_s )
+            mPropellantSpeed( props.get<speed_t>("propellant_speed") ),
+            mMassRate( props.get<physics::rate_t<mass_t>>("fuel_consumption") )
         {
 
         }

@@ -18,7 +18,7 @@ namespace spatacs
                          props.get<float>("AP_strength") },
                 mPrecision( props.get<float>("precision") ),
                 mRPM( props.get<float>("rpm") ),
-                mMuzzleVelocity( props.get<float>("muzzle_velocity") )
+                mMuzzleVelocity( props.get<speed_t>("muzzle_velocity") )
         {
 
         }

@@ -8,6 +8,7 @@
 #include "vec.h"
 #include "dimensions.h"
 #include <iosfwd>
+#include <iostream>
 
 namespace spatacs
 {
@@ -189,6 +190,67 @@ namespace physics
         else
             return stream << u.value / 1000. << O('k') << U{};
     }
+
+    template<class I, class T, class U>
+    std::basic_istream<I>& operator>>(std::basic_istream<I>& stream, UnitWrapper<T, U>& u)
+    {
+        T val;
+        std::string unit;
+
+        stream >> val;
+        stream >> unit;
+
+        // generate this at compile time!
+        if( unit == "m" || unit == "km" )
+        {
+            if( !dimensions::dimensions_equal<U, dimensions::length_t>() )
+            {
+                stream.setstate( stream.failbit );
+            }
+            if(unit == "km")
+                val *= 1000;
+        }
+         else if( unit == "mps" || unit == "m/s" || unit == "ms^-1")
+        {
+            if( !dimensions::dimensions_equal<U, dimensions::velocity_t>() )
+            {
+                stream.setstate( stream.failbit );
+            }
+        } else if( unit == "kps" || unit == "km/s" || unit == "kms^-1")
+        {
+            if( !dimensions::dimensions_equal<U, dimensions::velocity_t>() )
+            {
+                stream.setstate( stream.failbit );
+            }
+            val *= 1000;
+        } else if( unit == "kg" || unit == "t" )
+        {
+            if( !dimensions::dimensions_equal<U, dimensions::mass_t>() )
+            {
+                stream.setstate( stream.failbit );
+            }
+            if(unit == "t")
+                val *= 1000;
+        }
+        else if( unit == "kg/s" || unit == "t/s" )
+        {
+            if( !dimensions::dimensions_equal<U, dimensions::rate_dim_t<dimensions::mass_t>>() )
+            {
+                stream.setstate( stream.failbit );
+            }
+            if(unit == "t")
+                val *= 1000;
+        }
+        else
+        {
+            stream.setstate( stream.failbit );
+        }
+
+
+
+        u.value = val;
+        return stream;
+    };
 
     namespace unit_types {
 

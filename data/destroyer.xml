@@ -1,12 +1,12 @@
 <ship>
-    <mass>650</mass>
-    <radius>25</radius>
+    <mass>650t</mass>
+    <radius>25m</radius>
     <hitpoints>10</hitpoints>
     <armour>10</armour>
 
     <engine>
-        <fuel_consumption>250</fuel_consumption>
-        <propellant_speed>200</propellant_speed>
+        <fuel_consumption>250 kg/s</fuel_consumption>
+        <propellant_speed>200 km/s</propellant_speed>
         <HP>1</HP>
     </engine>
 
@@ -24,7 +24,7 @@
         <SO_strength>1</SO_strength>
         <precision>60</precision>
         <rpm>60</rpm>
-        <muzzle_velocity>3000</muzzle_velocity>
+        <muzzle_velocity>3000 m/s</muzzle_velocity>
         <HP>1</HP>
     </weapon>
 
@@ -34,7 +34,7 @@
     </power_plant>
 
     <tank>
-        <capacity>100</capacity>
+        <capacity>100t</capacity>
         <HP>1</HP>
     </tank>
 

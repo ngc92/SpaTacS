@@ -58,7 +58,7 @@ void SpawnShip::apply(EventContext& context) const
     boost::property_tree::ptree tree;
     boost::property_tree::xml_parser::read_xml("data/"+mType+".xml", tree);
     auto data = tree.get_child("ship");
-    auto mass = tonnes(data.get<double>("mass"));
+    auto mass = data.get<mass_t>("mass");
     auto id = context.state.getNextFreeID();
 
     auto ship = std::make_unique<core::Starship>(mTeam, mName, data);

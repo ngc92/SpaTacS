@@ -1,5 +1,4 @@
 - unify random
 - separate shield and shield generator
 - crash when active ship gets removed and gets a command.
-- units in xml files
 - make CmdMgr an interface on its own
