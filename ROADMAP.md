@@ -4,7 +4,7 @@
       + [ ] start level
       + [ ] custom combat
       + [ ] settings
-      + [ ] exit
+      + [x] exit
     - [ ] pause menu
       + [ ] resume
       + [ ] end game
@@ -13,7 +13,7 @@
     - [ ] custom combat
     - [ ] add a few ship types
   * code:
-    - [ ] restructure Irrlicht handling to allow for menus
+    - [x] restructure Irrlicht handling to allow for menus
 
 
 ## Version 0.7 (engine update)

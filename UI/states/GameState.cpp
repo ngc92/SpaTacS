@@ -1,0 +1,38 @@
+//
+// Created by erik on 10/15/16.
+//
+
+#include "UI/AIPlayer.h"
+#include "UI/IrrlichtUI.h"
+#include "GameState.h"
+#include "core/Game.h"
+
+using namespace spatacs::ui;
+
+GameState::GameState() :
+        mGame( std::make_unique<core::Game>() )
+{
+    mGame->addInterface( std::make_shared<ui::AIPlayer>(2) );
+}
+
+GameState::~GameState()
+{}
+
+
+void GameState::step(StateManager& smgr)
+{
+    mGame->setPause(mIrrUI->pause());
+    mGame->run(); /// \todo get this out of the gfx loop!
+}
+
+void GameState::init(irr::IrrlichtDevice* dev)
+{
+    mIrrUI = std::make_shared<ui::IrrlichtUI>(1, dev);
+    mGame->addInterface( mIrrUI );
+}
+
+bool GameState::OnEvent(const irr::SEvent& event)
+{
+    return mIrrUI->handleUIEvent(event);
+}
+

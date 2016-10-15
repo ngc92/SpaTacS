@@ -74,11 +74,6 @@ public:
         return false;
     }
 
-    icore::line3df getPickLine() const
-    {
-        return mPickLine;
-    }
-
     bool mWantPause = false;
 private:
     bool handleMouseEvent( const SEvent::SMouseInput& mouse )
@@ -145,7 +140,6 @@ void IrrlichtUI::init()
     mEventReceiver->setCollisionManager( mDevice->getSceneManager()->getSceneCollisionManager() );
     mEventReceiver->mInputMode = std::make_shared<UnitSelection>(mOwnTeam);
     mEventReceiver->mInputMode->setMainUI(this);
-    mDevice->setEventReceiver( mEventReceiver.get() );
     auto cam = mDevice->getSceneManager()->addCameraSceneNode();
     cam->setPosition({-20, 35, 0});
     cam->setTarget({50,0,0});
@@ -200,8 +194,6 @@ void IrrlichtUI::setState(const std::shared_ptr<const core::GameState>& state)
 
 bool IrrlichtUI::step()
 {
-    mDevice->getSceneManager()->drawAll();
-    mDevice->getGUIEnvironment()->drawAll();
     try {
         if(mEventReceiver->mInputMode)
            mEventReceiver->mInputMode->draw(mDevice->getVideoDriver());
@@ -294,4 +286,9 @@ void IrrlichtUI::getCommandEvents(std::vector<events::EventPtr>& evts) const
 bool IrrlichtUI::pause() const
 {
     return mEventReceiver->mWantPause;
+}
+
+bool IrrlichtUI::handleUIEvent(const irr::SEvent& ev)
+{
+    return mEventReceiver->OnEvent(ev);
 }

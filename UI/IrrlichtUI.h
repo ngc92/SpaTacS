@@ -13,6 +13,7 @@
 namespace irr
 {
     class IrrlichtDevice;
+    class SEvent;
     namespace video
     {
         class IVideoDriver;
@@ -40,11 +41,11 @@ namespace spatacs {
 
             void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) override;
 
+            bool handleUIEvent( const irr::SEvent& ev );
+
             // interface for tools
             const core::GameState& state() const { return *mState; }
-            void addCommand( spatacs::cmd::Command c );
             cmd::CommandManager& getCommandMgr();
-
             irr::IrrlichtDevice* getDevice() { return mDevice; }
             bool pause() const;
         private:
