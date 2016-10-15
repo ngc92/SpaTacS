@@ -110,7 +110,7 @@ set(UI_SOURCE_FILES
         UI/gfx/ShipFx.h
         UI/convert.h
         UI/convert.cpp
-        UI/IrrRAII.h UI/states/MainMenu.h UI/states/MainMenu.cpp UI/AppState.h UI/states/GameState.h UI/states/GameState.cpp UI/StateManager.h UI/StateManager.cpp)
+        UI/IrrRAII.h UI/states/MainMenu.h UI/states/MainMenu.cpp UI/AppState.h UI/states/GameState.h UI/states/GameState.cpp UI/StateManager.h UI/StateManager.cpp UI/states/SettingsMenu.h UI/states/SettingsMenu.cpp)
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}
