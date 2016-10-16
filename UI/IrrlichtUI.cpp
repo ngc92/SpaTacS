@@ -194,8 +194,9 @@ void IrrlichtUI::setState(const std::shared_ptr<const spatacs::core::GameState>&
 bool IrrlichtUI::step()
 {
     try {
-        if(mEventReceiver->mInputMode)
-           mEventReceiver->mInputMode->draw(mDevice->getVideoDriver());
+        if(mEventReceiver->mInputMode) {
+            mEventReceiver->mInputMode->step();
+        }
     } catch( std::exception& ex )
     {
     }

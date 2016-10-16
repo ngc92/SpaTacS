@@ -23,6 +23,8 @@
 #include "game/Starship.h"
 #include "UI/IrrlichtUI.h"
 #include "UI/cmd/CommandManager.h"
+#include <irrlicht/ISceneManager.h>
+#include "UI/gfx/MultiLineNode.h"
 
 using namespace spatacs;
 
@@ -35,7 +37,7 @@ ui::UnitCommand::UnitCommand(std::uint64_t id) :
 
 }
 
-void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv)
+void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::ISceneManager* smgr)
 {
     mTargetY = state().getShip(mActiveShipID).position().y;
     auto txt = guienv->addStaticText(L"", irr::core::recti(0, 0, 100, 40));
@@ -52,6 +54,8 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv)
     txt = guienv->addStaticText(L"", irr::core::recti(10, 135, 100, 155));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mSpeedInfo.reset(txt);
+
+    mTrajectoryPlotter.reset( new irr::scene::MultiLineNode(smgr->getRootSceneNode(), smgr) );
 }
 
 
@@ -82,128 +86,6 @@ void ui::UnitCommand::onRightClick(ray_t ray, const irr::SEvent::SMouseInput& ev
             } else {
                 getCmdMgr().addCommand(mActiveShipID, cmd::Move(vec, mTargetSpeed));
             }
-        }
-    }
-}
-
-void ui::UnitCommand::draw(irr::video::IVideoDriver* driver)
-{
-    mBaseY = std::round(getCamera()->getTarget().Y / 10.f) * 10.f;
-
-    using namespace irr;
-    using irr::core::vector3df;
-
-    // ship info text
-    auto& ship = state().getShip(mActiveShipID);
-    {
-        std::wstringstream stream;
-        stream << std::fixed << std::setprecision(1);
-        stream << ship.name().c_str() << ":\n";
-        stream << " egy: " << ship.usedEnergy() / 0.1f << "/" << ship.producedEnergy() / 0.1f << "\n";
-        stream << " mode: " << ship.weapon(0).mode() << "\n";
-        mShipInfo->setShipName( ship.name() );
-        mShipInfo->clearSystems();
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield generator", ship.shield().hp(), ship.shield().max_hp()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"engine", ship.engine().hp(), ship.engine().max_hp()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield_strength().current, ship.shield_strength().max} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ship.tank().fuel().value / 1000, ship.tank().capacity().value / 1000} );
-        /// \todo power plant
-    }
-
-    try {
-        auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
-        vector3df sp = convert(ship.position());
-        video::SMaterial mat;
-        mat.Lighting = false;
-        driver->setMaterial(mat);
-        driver->setTransform(video::ETS_WORLD, irr::core::matrix4());
-
-        auto& mv = cmd.move;
-        auto src = sp;
-        for(unsigned i = 0; i < mv.waypoint_count(); ++i) {
-            driver->draw3DLine(src, convert(mv.target(i)), video::SColor(255, 0, 128, 0));
-            src = convert(mv.target(i));
-        }
-
-
-        if(cmd.attack)
-        {
-            auto& at = cmd.attack.get();
-            driver->draw3DLine(sp, convert(state().getShip(at.target()).position()),
-                               video::SColor(255, 128, 0, 0));
-        }
-    } catch (...)
-    {
-
-    }
-
-    if(mMode == MOVE)
-    {
-        mTargetInfo->setVisible(false);
-    } else
-    {
-        auto& target = state().getShip(mCurrentAimShip);
-        std::wstringstream stream;
-        stream << std::fixed << std::setprecision(1);
-        stream << target.name().c_str() << ":\n";
-        stream << " shield: " << target.shield_strength().current << "/" << target.shield_strength().max << "\n";
-        stream << " hull: "   << target.hull_status().current     << "/" << target.hull_status().max << "\n";
-        stream << " hp: "     << target.hp() << "\n";
-        auto dst = distance(ship, target);
-        stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
-        mTargetInfo->setText( stream.str().c_str() );
-        mTargetInfo->setVisible(true);
-    }
-
-    {
-        std::wstringstream stream;
-        stream << std::fixed << std::setprecision(1);
-        stream << "speed:  " << length(ship.velocity()) << "\n";
-        stream << "target: " << mTargetSpeed << "\n";
-        mSpeedInfo->setText(stream.str().c_str());
-    }
-
-    if (mCurrentAim) {
-        vector3df sp = convert(ship.position());
-
-        auto aim = convert(mCurrentAim.get());
-        auto aimbase = aim;
-        aimbase.Y = std::round(getCamera()->getTarget().Y / 10) * 10;
-        irr::core::line3df flightline(sp, aim);
-
-        std::wstringstream stream;
-        stream << std::fixed << std::setprecision(1) << length(ship.position() - mCurrentAim.get()) << "\n";
-        if(mMode == ATTACK)
-        {
-            auto& target = state().getShip(mCurrentAimShip);
-            auto dst = distance(ship, target);
-            stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
-        }
-        mDistanceMarker->setText(stream.str().c_str());
-        auto pos = getScreenPosition( flightline.getMiddle() );
-        pos.Y -= 10;
-        mDistanceMarker->setRelativePosition( pos );
-
-        video::SMaterial mat;
-        mat.Lighting = false;
-        driver->setMaterial(mat);
-        driver->setTransform(video::ETS_WORLD, irr::core::matrix4());
-
-        if(mMode == MOVE) {
-            driver->draw3DLine(sp, aim);
-        } else
-        {
-            driver->draw3DLine(sp, aim, video::SColor(255, 255, 0, 0));
-        }
-        if(mMode == MOVE) {
-            driver->draw3DLine(aimbase + vector3df(-1, 0, -1), aimbase + vector3df(1, 0, 1),
-                               video::SColor(128, 255, 255, 255));
-            driver->draw3DLine(aimbase + vector3df(-1, 0, 1), aimbase + vector3df(1, 0, -1),
-                               video::SColor(128, 255, 255, 255));
-            driver->draw3DLine(aimbase + vector3df(0, -0.5, 0), aimbase + vector3df(0, 0.5, 0),
-                               video::SColor(128, 255, 255, 255));
         }
     }
 }
@@ -262,4 +144,111 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
                 mTargetSpeed = 0.1_kps;
         }
     }
+}
+
+void ui::UnitCommand::step()
+{
+    mBaseY = std::round(getCamera()->getTarget().Y / 10.f) * 10.f;
+
+    using namespace irr;
+
+    mTrajectoryPlotter->clear();
+
+    // ship info text
+    auto& ship = state().getShip(mActiveShipID);
+    auto sp = convert(ship.position());
+    {
+        std::wstringstream stream;
+        stream << std::fixed << std::setprecision(1);
+        stream << ship.name().c_str() << ":\n";
+        stream << " egy: " << ship.usedEnergy() / 0.1f << "/" << ship.producedEnergy() / 0.1f << "\n";
+        stream << " mode: " << ship.weapon(0).mode() << "\n";
+        mShipInfo->setShipName( ship.name() );
+        mShipInfo->clearSystems();
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield generator", ship.shield().hp(), ship.shield().max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"engine", ship.engine().hp(), ship.engine().max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield_strength().current, ship.shield_strength().max} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ship.tank().fuel().value / 1000, ship.tank().capacity().value / 1000} );
+        /// \todo power plant
+    }
+
+    if(mMode == MOVE)
+    {
+        mTargetInfo->setVisible(false);
+    } else
+    {
+        auto& target = state().getShip(mCurrentAimShip);
+        std::wstringstream stream;
+        stream << std::fixed << std::setprecision(1);
+        stream << target.name().c_str() << ":\n";
+        stream << " shield: " << target.shield_strength().current << "/" << target.shield_strength().max << "\n";
+        stream << " hull: "   << target.hull_status().current     << "/" << target.hull_status().max << "\n";
+        stream << " hp: "     << target.hp() << "\n";
+        auto dst = distance(ship, target);
+        stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
+        mTargetInfo->setText( stream.str().c_str() );
+        mTargetInfo->setVisible(true);
+    }
+
+    {
+        std::wstringstream stream;
+        stream << std::fixed << std::setprecision(1);
+        stream << "speed:  " << length(ship.velocity()) << "\n";
+        stream << "target: " << mTargetSpeed << "\n";
+        mSpeedInfo->setText(stream.str().c_str());
+    }
+
+    if (mCurrentAim) {
+        auto aim = convert(mCurrentAim.get());
+        auto aimbase = aim;
+        aimbase.Y = std::round(getCamera()->getTarget().Y / 10) * 10;
+        irr::core::line3df flightline(sp, aim);
+
+        std::wstringstream stream;
+        stream << std::fixed << std::setprecision(1) << length(ship.position() - mCurrentAim.get()) << "\n";
+        if(mMode == ATTACK)
+        {
+            auto& target = state().getShip(mCurrentAimShip);
+            auto dst = distance(ship, target);
+            stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
+        }
+        mDistanceMarker->setText(stream.str().c_str());
+        auto pos = getScreenPosition( flightline.getMiddle() );
+        pos.Y -= 10;
+        mDistanceMarker->setRelativePosition( pos );
+
+        if(mMode == MOVE) {
+            mTrajectoryPlotter->addLine(sp, aim, video::SColor(255, 255, 255, 255));
+        } else
+        {
+            mTrajectoryPlotter->addLine(sp, aim, video::SColor(255, 255, 0, 0));
+        }
+        if(mMode == MOVE) {
+            using irr::core::vector3df;
+            mTrajectoryPlotter->addLine(aimbase + vector3df(-1, 0, -1), aimbase + vector3df(1, 0, 1),
+                                        video::SColor(128, 255, 255, 255));
+            mTrajectoryPlotter->addLine(aimbase + vector3df(-1, 0, 1), aimbase + vector3df(1, 0, -1),
+                                        video::SColor(128, 255, 255, 255));
+            mTrajectoryPlotter->addLine(aimbase + vector3df(0, -0.5, 0), aimbase + vector3df(0, 0.5, 0),
+                                        video::SColor(128, 255, 255, 255));
+        }
+    }
+
+    auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
+    auto& mv = cmd.move;
+    auto src = sp;
+    for(unsigned i = 0; i < mv.waypoint_count(); ++i) {
+        mTrajectoryPlotter->addLine(src, convert(mv.target(i)), video::SColor(255, 0, 128, 0));
+        src = convert(mv.target(i));
+    }
+    if(cmd.attack)
+    {
+        auto& at = cmd.attack.get();
+        mTrajectoryPlotter->addLine(sp, convert(state().getShip(at.target()).position()),
+                           video::SColor(255, 128, 0, 0));
+    }
+
+
 }

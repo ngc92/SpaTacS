@@ -21,10 +21,10 @@ int main()
 
 	while(device->run())
 	{
+        statemgr.step();
         device->getVideoDriver()->beginScene();
         device->getSceneManager()->drawAll();
         device->getGUIEnvironment()->drawAll();
-        statemgr.step(); /// \todo get this out of the gfx loop!
         device->getVideoDriver()->endScene();
 	}
 }

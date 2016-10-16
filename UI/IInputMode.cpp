@@ -20,7 +20,7 @@ cmd::CommandManager& ui::IInputMode::getCmdMgr()
 void ui::IInputMode::setMainUI(ui::IrrlichtUI* mainui)
 {
     mMainUI = mainui;
-    init(mMainUI->getDevice()->getGUIEnvironment());
+    init(mMainUI->getDevice()->getGUIEnvironment(), mMainUI->getDevice()->getSceneManager());
 }
 
 irr::core::vector2di ui::IInputMode::getScreenPosition(const irr::core::vector3df pos3d)
