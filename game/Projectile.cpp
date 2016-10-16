@@ -4,12 +4,13 @@
 
 #include <limits>
 #include <iostream>
-#include "Projectile.h"
+#include "game/Projectile.h"
 
-using namespace spatacs::core;
+using namespace spatacs::game;
 using spatacs::Vec;
 
 Projectile::Projectile(std::uint64_t id, std::uint64_t shooter, Damage damage) :
+    GameObject(ObjectType::PROJECTILE),
     mDamage( damage ), mShooterId(shooter)
 {
     setID(id);

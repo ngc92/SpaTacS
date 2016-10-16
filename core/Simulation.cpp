@@ -8,12 +8,14 @@
 #include "physics/HitTests.h"
 #include "GameThread.h"
 #include "Simulation.h"
-#include "core/Starship.h"
-#include "core/Projectile.h"
+#include "game/Starship.h"
+#include "game/Projectile.h"
 
 using namespace spatacs;
+using namespace core;
+using namespace game;
 
-auto core::Simulation::step(EventVec inEvents) -> EventVec
+auto Simulation::step(EventVec inEvents) -> EventVec
 {
     mAllEvents.clear();
 
@@ -51,7 +53,7 @@ auto core::Simulation::step(EventVec inEvents) -> EventVec
     return std::move(mAllEvents);
 }
 
-void core::Simulation::eventLoop()
+void Simulation::eventLoop()
 {
     std::vector<GameThread::EventPtr> events = move(mEventCache);
     while(!events.empty()) {
@@ -67,12 +69,12 @@ void core::Simulation::eventLoop()
     }
 }
 
-void core::Simulation::addEvent(EventPtr e)
+void Simulation::addEvent(EventPtr e)
 {
     mEventCache.push_back( move(e) );
 }
 
-void core::Simulation::physics_callback(physics::PhysicsWorld& world, const physics::Object& A,
+void Simulation::physics_callback(physics::PhysicsWorld& world, const physics::Object& A,
                                         const physics::Object& B,
                                         physics::ImpactInfo info)
 {
@@ -118,7 +120,7 @@ void core::Simulation::physics_callback(physics::PhysicsWorld& world, const phys
     }
 }
 
-core::Simulation::Simulation():
+Simulation::Simulation():
         mWorld(std::make_unique<physics::PhysicsWorld>() )
 {
     mWorld->setCollisionCallback([this](physics::PhysicsWorld& world,
@@ -127,15 +129,15 @@ core::Simulation::Simulation():
                                                  this->physics_callback( world, A, B, info );
                                              });
 
-    addEvent(std::make_unique<events::SpawnShip>(1, "SF Predator", "destroyer", kilometers(0, 0, 0.4)));
+    addEvent(std::make_unique<events::SpawnShip>(1, "SF Predator", "cruiser",   kilometers(0, 0, 0.4)));
     addEvent(std::make_unique<events::SpawnShip>(1, "SF Fearless", "destroyer", kilometers(0, 0.2, -0.4)));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Lion",     "destroyer", kilometers(17, 4, 2)));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Wolf",     "destroyer", kilometers(15, 2, -4)));
-    addEvent(std::make_unique<events::SpawnShip>(2, "ES Tiger",    "destroyer", kilometers(11, 2, 3)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Lion",     "destroyer", kilometers(22, 4, 2)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Wolf",     "destroyer", kilometers(18, 2, -4)));
+    addEvent(std::make_unique<events::SpawnShip>(2, "ES Tiger",    "destroyer", kilometers(15, 2, 3)));
     eventLoop();
 }
 
-core::GameState core::Simulation::extractState()
+GameState Simulation::extractState()
 {
-    return core::GameState(mState);
+    return GameState(mState);
 }

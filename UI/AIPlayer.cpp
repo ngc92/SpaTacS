@@ -6,8 +6,9 @@
 #include <boost/range/adaptor/indirected.hpp>
 #include <events/Combat.h>
 #include <iostream>
-#include "core/Starship.h"
+#include "game/Starship.h"
 #include "core/GameState.h"
+#include "UI/cmd/CommandManager.h"
 
 using namespace spatacs;
 using namespace ui;
@@ -19,15 +20,13 @@ void AIPlayer::init()
 
 void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
 {
-    mCommands.validate(*state);
-
     for(auto& obj : *state)
     {
-        if(!dynamic_cast<const core::Starship*>(&obj))
+        if(!dynamic_cast<const game::Starship*>(&obj))
         {
             continue;
         }
-        auto& own = dynamic_cast<const core::Starship&>(obj);
+        auto& own = dynamic_cast<const game::Starship&>(obj);
 
         if(own.team() != mOwnTeam || !own.alive())
             continue;
@@ -37,10 +36,10 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
 
         length_t min = 100.0_km;
         // find closest ship to attack
-        const core::Starship* target = nullptr;
+        const game::Starship* target = nullptr;
         for (auto& e : *state)
         {
-            auto eship = dynamic_cast<const core::Starship*>(&e);
+            auto eship = dynamic_cast<const game::Starship*>(&e);
             if(!eship || !eship->alive())
                 continue;
 
@@ -54,29 +53,28 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
             continue;
 
         // if found, do attack
-        if(min < 10.0_km)  {
-            mCommands.addCommand( cmd::Attack(own.id(), target->id()) );
+        if(min < 15.0_km)  {
+            mCommands->addCommand( own.id(), cmd::Attack(target->id()) );
+            uint64_t mode = 1;
             if( target->shield_strength().current > 2.0 )
             {
-                mCommands.addCommand( cmd::SetWpnMode(own.id(), 0, 2) );
+                mode = 2;
             } else if(target->hull_status().current > 2.0)
             {
-                mCommands.addCommand( cmd::SetWpnMode(own.id(), 0, 0) );
-            }else
-            {
-                mCommands.addCommand( cmd::SetWpnMode(own.id(), 0, 1) );
+                mode = 0;
             }
+            mCommands->addCommand( own.id(), cmd::SetWpnMode(own.id(), 0, mode) );
         }
 
         // fly closer if shield is stronger
         if(own_shield > target->shield_strength().current || own_shield > 2)
         {
-            mCommands.addCommand( cmd::Move(own.id(), target->position(), 0.2_kps) );
+            mCommands->addCommand( own.id(), cmd::Move(target->position(), 0.25_kps));
         } else
         {
             auto delta = own.position() - target->position();
             delta *= 1.0_km / length(delta);
-            mCommands.addCommand( cmd::Move(own.id(), own.position() + delta, 1.0_kps) );
+            mCommands->addCommand( own.id(), cmd::Move(own.position() + delta, 2.0_kps));
         }
     }
 
@@ -108,12 +106,13 @@ bool AIPlayer::step()
     return false;
 }
 
-AIPlayer::AIPlayer(std::uint64_t team) : mOwnTeam( team )
+AIPlayer::AIPlayer(std::uint64_t team, std::shared_ptr<cmd::CommandManager> cmd) :
+        mOwnTeam( team ),
+        mCommands( std::move(cmd) )
 {
 
 }
 
 void AIPlayer::getCommandEvents(std::vector<events::EventPtr>& evts) const
 {
-    mCommands.transcribe(*mState, evts);
 }

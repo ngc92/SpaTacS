@@ -6,10 +6,10 @@
 #define SOI_SHIELDGENERATOR_H
 
 #include "physics/units.h"
-#include "IComponent.h"
+#include "game/components/IComponent.h"
 
 namespace spatacs {
-    namespace core {
+    namespace game {
         class ShieldGenerator : public IComponent
         {
         public:

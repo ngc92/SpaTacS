@@ -5,12 +5,12 @@
 #include "Engine.h"
 #include <iostream>
 #include <boost/property_tree/ptree.hpp>
-#include "core/Starship.h"
+#include "game/Starship.h"
 #include "FuelTank.h"
 
 namespace spatacs
 {
-    namespace  core
+    namespace  game
     {
         void Engine::onStep(Starship& ship)
         {
@@ -25,6 +25,9 @@ namespace spatacs
         force_vec Engine::getThrust(const force_vec& accel)
         {
             force_t want    = length(accel);
+            if(want == force_t(0))
+                return accel;
+
             mass_t need_mass  = (want / mPropellantSpeed) * 0.1_s;
             if( need_mass > mUnusedMass ) {
                 need_mass = mUnusedMass;

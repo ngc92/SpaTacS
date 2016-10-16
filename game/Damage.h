@@ -7,7 +7,7 @@
 
 namespace spatacs
 {
-    namespace core
+    namespace game
     {
         struct Damage
         {

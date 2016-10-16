@@ -7,7 +7,7 @@
 #include <iostream>
 
 using namespace spatacs;
-using namespace core;
+using namespace game;
 
 FuelTank::FuelTank(const ptree& props) :
     IComponent(props),

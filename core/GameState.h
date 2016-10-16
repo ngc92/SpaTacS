@@ -8,22 +8,27 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <cstdint>
 
-#include "GameObject.h"
+#include "game/GameObject.h"
 
 namespace spatacs
 {
-namespace core
+namespace game
 {
-    inline GameObject* new_clone( const GameObject& s )
+    class Starship;
+    class Projectile;
+    inline game::GameObject* new_clone( const game::GameObject& s )
     {
         return s.clone();
     }
+}
 
-    class Starship;
-    class Projectile;
-
+namespace core
+{
     class GameState
     {
+        using GameObject = game::GameObject;
+        using Starship   = game::Starship;
+        using Projectile = game::Projectile;
     public:
         GameState();
         ~GameState();

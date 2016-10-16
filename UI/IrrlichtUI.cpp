@@ -16,8 +16,8 @@
 #include "UI/inputs/UnitCommand.h"
 #include <iostream>
 #include "convert.h"
-#include "core/Starship.h"
-#include "core/Projectile.h"
+#include "game/Starship.h"
+#include "game/Projectile.h"
 
 using namespace irr;
 using spatacs::ui::IrrlichtUI;
@@ -26,18 +26,18 @@ using namespace ui;
 namespace icore = irr::core;
 
 
-const spatacs::core::Starship* pick(const spatacs::core::GameState& world, icore::line3df ray)
+const game::Starship* pick(const spatacs::core::GameState& world, icore::line3df ray)
 {
-    const spatacs::core::Starship* picked = nullptr;
+    const spatacs::game::Starship* picked = nullptr;
     f64 md = 1e10;
     for(auto& obj : world)
     {
-        auto ship = dynamic_cast<const spatacs::core::Starship*>(&obj);
+        auto ship = dynamic_cast<const spatacs::game::Starship*>(&obj);
         if(!ship)
             continue;
 
         auto sp   = convert(ship->position());
-        float rad = convert(ship->radius() + 50.0_m);
+        float rad = convert(ship->radius() + 100.0_m);
         f64 temp;
         if(ray.getIntersectionWithSphere(sp, rad, temp) && temp < md)
         {
@@ -72,11 +72,6 @@ public:
                 return handleKeyEvent( event.KeyInput );
         }
         return false;
-    }
-
-    icore::line3df getPickLine() const
-    {
-        return mPickLine;
     }
 
     bool mWantPause = false;
@@ -140,12 +135,11 @@ public:
 
 void IrrlichtUI::init()
 {
-    mState = std::make_shared<core::GameState>();
+    mState = std::make_shared<spatacs::core::GameState>();
     mEventReceiver.reset( new EventRec );
     mEventReceiver->setCollisionManager( mDevice->getSceneManager()->getSceneCollisionManager() );
     mEventReceiver->mInputMode = std::make_shared<UnitSelection>(mOwnTeam);
     mEventReceiver->mInputMode->setMainUI(this);
-    mDevice->setEventReceiver( mEventReceiver.get() );
     auto cam = mDevice->getSceneManager()->addCameraSceneNode();
     cam->setPosition({-20, 35, 0});
     cam->setTarget({50,0,0});
@@ -154,11 +148,10 @@ void IrrlichtUI::init()
     mMap = mDevice->getSceneManager()->addEmptySceneNode();
 }
 
-void IrrlichtUI::setState(const std::shared_ptr<const core::GameState>& state)
+void IrrlichtUI::setState(const std::shared_ptr<const spatacs::core::GameState>& state)
 {
     auto smgr = mDevice->getSceneManager();
     mState = state;
-    mCommands.validate(*mState);
 
     // update the location map
     mMap->removeAll();
@@ -166,7 +159,7 @@ void IrrlichtUI::setState(const std::shared_ptr<const core::GameState>& state)
         if(!obj.alive())
             continue;
         irr::scene::ISceneNode* node = nullptr;
-        if(auto ship = dynamic_cast<const core::Starship*>(&obj)) {
+        if(auto ship = dynamic_cast<const game::Starship*>(&obj)) {
             auto shipfx = new scene::ShipFx(mMap, mDevice->getSceneManager());
             video::SColor colors[] = {{255, 0,   200, 0},
                                       {255, 200, 0,   0}};
@@ -180,7 +173,7 @@ void IrrlichtUI::setState(const std::shared_ptr<const core::GameState>& state)
         {
             auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
             shotfx->setShot(convert(obj.velocity()*1.0_s));
-            auto proj = dynamic_cast<const core::Projectile*>(&obj);
+            auto proj = dynamic_cast<const game::Projectile*>(&obj);
             if(proj->damage().shield_overload > 0)
             {
                 shotfx->setColor(video::SColor(255, 255, 0, 128));
@@ -200,8 +193,6 @@ void IrrlichtUI::setState(const std::shared_ptr<const core::GameState>& state)
 
 bool IrrlichtUI::step()
 {
-    mDevice->getSceneManager()->drawAll();
-    mDevice->getGUIEnvironment()->drawAll();
     try {
         if(mEventReceiver->mInputMode)
            mEventReceiver->mInputMode->draw(mDevice->getVideoDriver());
@@ -272,7 +263,7 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
 
 cmd::CommandManager& IrrlichtUI::getCommandMgr()
 {
-    return mCommands;
+    return *mCommands;
 }
 
 IrrlichtUI::~IrrlichtUI()
@@ -280,18 +271,23 @@ IrrlichtUI::~IrrlichtUI()
 
 }
 
-IrrlichtUI::IrrlichtUI(std::uint64_t team, IrrlichtDevice* device) :
+IrrlichtUI::IrrlichtUI(std::uint64_t team, irr::IrrlichtDevice* device, std::shared_ptr<cmd::CommandManager> cmd) :
         mOwnTeam(team),
-        mDevice(device)
+        mDevice(device),
+        mCommands( std::move(cmd) )
 {
 }
 
 void IrrlichtUI::getCommandEvents(std::vector<events::EventPtr>& evts) const
 {
-    mCommands.transcribe(*mState, evts);
 }
 
 bool IrrlichtUI::pause() const
 {
     return mEventReceiver->mWantPause;
+}
+
+bool IrrlichtUI::handleUIEvent(const irr::SEvent& ev)
+{
+    return mEventReceiver->OnEvent(ev);
 }

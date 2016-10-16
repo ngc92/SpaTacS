@@ -36,40 +36,40 @@ set(COMMAND_SOURCE_FILES
         UI/cmd/SetMode.cpp)
 
 SET(CORE_SOURCE_FILES
-        core/Starship.h
+        game/Starship.h
         core/Game.h
         core/Game.cpp
         core/GameState.h
         core/GameState.cpp
-        core/Starship.cpp
-        core/components/Engine.h
-        core/components/Engine.cpp
-        core/components/IWeapon.h
-        core/components/ProjectileWeapon.cpp
-        core/components/ProjectileWeapon.h
-        core/components/RayWeapon.h
-        core/components/RayWeapon.cpp
-        core/Projectile.h
-        core/Projectile.cpp
-        core/components/IComponent.h
-        core/components/IComponent.cpp
-        core/components/ShieldGenerator.cpp
-        core/components/ShieldGenerator.h
+        game/Starship.cpp
+        game/components/Engine.h
+        game/components/Engine.cpp
+        game/components/IWeapon.h
+        game/components/ProjectileWeapon.cpp
+        game/components/ProjectileWeapon.h
+        game/components/RayWeapon.h
+        game/components/RayWeapon.cpp
+        game/Projectile.h
+        game/Projectile.cpp
+        game/components/IComponent.h
+        game/components/IComponent.cpp
+        game/components/ShieldGenerator.cpp
+        game/components/ShieldGenerator.h
         core/GameThread.cpp
         core/GameThread.h
-        core/GameObject.h
-        core/GameObject.cpp
-        core/components/PowerPlant.cpp
-        core/components/PowerPlant.h
+        game/GameObject.h
+        game/GameObject.cpp
+        game/components/PowerPlant.cpp
+        game/components/PowerPlant.h
         core/Simulation.cpp
         core/Simulation.h
-        core/Damage.h
-        core/components/FuelTank.h
-        core/components/FuelTank.cpp
-        core/components/LifeSupport.cpp
-        core/components/LifeSupport.h
-        core/SubSystems.h
-        core/SubSystems.cpp)
+        game/Damage.h
+        game/components/FuelTank.h
+        game/components/FuelTank.cpp
+        game/components/LifeSupport.cpp
+        game/components/LifeSupport.h
+        game/SubSystems.h
+        game/SubSystems.cpp)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h
@@ -110,7 +110,7 @@ set(UI_SOURCE_FILES
         UI/gfx/ShipFx.h
         UI/convert.h
         UI/convert.cpp
-        UI/IrrRAII.h)
+        UI/IrrRAII.h UI/states/MainMenu.h UI/states/MainMenu.cpp UI/AppState.h UI/states/GameState.h UI/states/GameState.cpp UI/StateManager.h UI/StateManager.cpp)
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}

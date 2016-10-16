@@ -8,7 +8,7 @@
 
 namespace spatacs
 {
-namespace core
+namespace game
 {
     class Starship;
 }
@@ -17,19 +17,20 @@ namespace cmd
 	class Move
 	{
 	public:
-		Move(std::uint64_t object, length_t x, length_t y, length_t z, speed_t speed);
-		Move(std::uint64_t object, length_vec p, speed_t speed);
-		
-		std::uint64_t object() const;
+		Move() = default;
+		Move(length_t x, length_t y, length_t z, speed_t speed);
+		Move(length_vec p, speed_t speed);
+
 		std::size_t waypoint_count() const;
 		const length_vec& target(std::size_t id = 0) const;
+
         speed_t speed() const;
+        Move& setSpeed( speed_t s );
 
-        void addWaypoint( length_vec wp );
+        Move& addWaypoint(length_vec wp);
 
-        accel_vec calcThrust(const core::Starship& ship) const;
+        accel_vec calcThrust(const game::Starship& ship) const;
 	private:
-		std::uint64_t mObject;
 		std::vector<length_vec> mTargets;
 		speed_t mSpeed;
 	};

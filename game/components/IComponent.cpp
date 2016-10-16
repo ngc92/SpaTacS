@@ -7,7 +7,7 @@
 
 namespace spatacs
 {
-    namespace core
+    namespace game
     {
         double IComponent::requestEnergy(double amount)
         {

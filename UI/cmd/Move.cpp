@@ -1,24 +1,19 @@
 #include "Move.h"
 #include <iostream>
-#include <core/components/Engine.h>
-#include <core/Starship.h>
+#include <game/components/Engine.h>
+#include <game/Starship.h>
 #include <events/Accelerate.h>
 
 namespace spatacs
 {
 namespace cmd
 {
-	Move::Move(std::uint64_t object, length_t x, length_t y, length_t z, speed_t speed):
-		Move(object, length_vec{x, y, z}, speed)
+	Move::Move(length_t x, length_t y, length_t z, speed_t speed) :
+            Move(length_vec{x, y, z}, speed)
 	{
-	}
-		
-	std::uint64_t Move::object() const
-	{
-		return mObject;
 	}
 
-	const length_vec& Move::target(std::size_t id) const
+    const length_vec& Move::target(std::size_t id) const
 	{
 		return mTargets.at(id);
 	}
@@ -28,16 +23,14 @@ namespace cmd
 		return mSpeed;
 	}
 
-    Move::Move(std::uint64_t object, length_vec p, speed_t speed) :
-		mObject(object), mTargets({p}), mSpeed(speed)
+    Move::Move(length_vec p, speed_t speed) :
+		mTargets({p}), mSpeed(speed)
     {
 
     }
 
-    accel_vec Move::calcThrust(const core::Starship& ship) const
+    accel_vec Move::calcThrust(const game::Starship& ship) const
     {
-        assert(ship.id() == object());
-
         length_vec target_pos = ship.position();
         if( !mTargets.empty() )
         {
@@ -47,7 +40,7 @@ namespace cmd
         // and handle the command
         physics::time_t time_to_brake = length(ship.velocity()) / (ship.engine().max_thrust() / ship.mass());
 
-        if( length(target_pos - ship.position()) < 0.5_km)
+        if( length(target_pos - ship.position()) < 0.5_km && mTargets.size() > 0)
         {
             const_cast<Move*>(this)->mTargets.erase(mTargets.begin());
         }
@@ -68,9 +61,16 @@ namespace cmd
         return mTargets.size();
     }
 
-    void Move::addWaypoint(length_vec wp)
+    Move& Move::addWaypoint(length_vec wp)
     {
         mTargets.push_back(wp);
+        return *this;
+    }
+
+    Move& Move::setSpeed(speed_t s)
+    {
+        mSpeed = s;
+        return *this;
     }
 }
 }

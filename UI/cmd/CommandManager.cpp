@@ -6,8 +6,8 @@
 #include "core/GameState.h"
 #include <iostream>
 #include "events/Accelerate.h"
-#include "core/Starship.h"
-#include "core/components/IWeapon.h"
+#include "game/Starship.h"
+#include "game/components/IWeapon.h"
 #include "events/Combat.h"
 
 using namespace spatacs;
@@ -36,49 +36,26 @@ struct UpdateVisitor : public boost::static_visitor<void>
     }
 };
 
-void CommandManager::addCommand(cmd::Command c)
+void CommandManager::addCommand( std::uint64_t target, cmd::Command c)
 {
-    auto ship = get_ship(c);
-    auto& commands = mCommandSlots[ship];
+    auto& commands = mCommandSlots[target];
     boost::apply_visitor( UpdateVisitor{commands, mOneShotCommands}, c );
 }
 
-void CommandManager::validate(const core::GameState& state)
+const cmd::CommandSlot& CommandManager::getCommandsOf(std::uint64_t ship) const
 {
-    mOneShotCommands.clear();
-    // remove commands of dead ships
-    for(auto it = begin(mCommandSlots); it != end(mCommandSlots); )
-    {
-        try {
-            auto& sp = state.getShip(it->first);
-            if(!sp.alive()) {
-                it = mCommandSlots.erase(it);
-                continue;
-            }
-            if(it->second.attack)
-            {
-                auto& sp2 = state.getShip(it->second.attack.get().target());
-                if(!sp2.alive()) {
-                    it = mCommandSlots.erase(it);
-                    continue;
-                }
-            }
-            ++it;
-        } catch (...) {
-            it = mCommandSlots.erase( it );
-        }
-    }
+    return mCommandSlots.at(ship);
 }
 
-void CommandManager::transcribe(const core::GameState& state, std::vector<events::EventPtr>& events) const
+void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events) const
 {
     for(auto& c : mCommandSlots)
     {
         if(c.second.attack)
         {
             auto& command = c.second.attack.get();
-            auto& ship   = state.getShip(command.object());
-            auto& target = state.getShip(command.target());
+            auto& ship   = mState->getShip(c.first);
+            auto& target = mState->getShip(command.target());
             /// \todo prevent deliberate friendly fire
 
             // dead ships don't shoot
@@ -92,20 +69,19 @@ void CommandManager::transcribe(const core::GameState& state, std::vector<events
                 }
             }
         }
-        if(c.second.move)
-        {
-            auto& command = c.second.move.get();
-            auto& ship = state.getShip(command.object());
-            if(ship.alive()) {
-                // and handle the command
-                auto dv = command.calcThrust(ship);
-                events.push_back(events::EventPtr(new events::Accelerate(ship.id(), dv)));
-            }
+
+        auto& command = c.second.move;
+        auto& ship = mState->getShip(c.first);
+        if(ship.alive()) {
+            // and handle the command
+            auto dv = command.calcThrust(ship);
+            events.push_back(events::EventPtr(new events::Accelerate(ship.id(), dv)));
         }
+
     }
 
     for(auto& s : mOneShotCommands) {
-        auto& ship = state.getShip(s.object());
+        auto& ship = mState->getShip(s.object());
         // dead ships don't shoot
         if (!ship.alive()) {
             continue;
@@ -115,7 +91,33 @@ void CommandManager::transcribe(const core::GameState& state, std::vector<events
     }
 }
 
-const cmd::CommandSlot& CommandManager::getCommandsOf(std::uint64_t ship) const
+void CommandManager::setState(const std::shared_ptr<const core::GameState>& state)
 {
-    return mCommandSlots.at(ship);
+    mState = state;
+    mOneShotCommands.clear();
+    validate();
+}
+
+
+void CommandManager::validate()
+{
+    for(auto& p : mCommandSlots )
+    {
+        p.second.delflag = true;
+    }
+
+    // Iterate over all entities
+    for(const game::GameObject& o : *mState)
+    {
+        if(o.alive() && o.type() == game::ObjectType::STARSHIP)
+        {
+            mCommandSlots[o.id()].delflag = false;
+        }
+    }
+
+    // erase all those that are marked for deletion
+    for( auto it = mCommandSlots.begin(); it != mCommandSlots.end(); ) {
+        if( it->second.delflag) it = mCommandSlots.erase(it);
+        else ++it;
+    }
 }

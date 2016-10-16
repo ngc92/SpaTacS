@@ -7,7 +7,7 @@
 
 #include "IEvent.h"
 #include <memory>
-#include "core/Damage.h"
+#include "game/Damage.h"
 
 namespace spatacs
 {
@@ -17,7 +17,7 @@ namespace events
     {
     public:
         SpawnProjectile(std::uint64_t shooter, length_vec pos, velocity_vec vel, mass_t mass, length_t rad,
-                                core::Damage dmg);
+                                game::Damage dmg);
 
         virtual void apply(EventContext& context) const override;
     private:
@@ -26,7 +26,7 @@ namespace events
         velocity_vec  mVelocity;
         mass_t        mMass;
         length_t      mRadius;
-        core::Damage  mDamage;
+        game::Damage  mDamage;
     };
 
     class SpawnShip : public IEvent

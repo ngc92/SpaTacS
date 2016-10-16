@@ -13,7 +13,7 @@
 
 namespace spatacs
 {
-    namespace core {
+    namespace game {
         class Engine;
         class ShieldGenerator;
         class IWeapon;
@@ -55,12 +55,12 @@ namespace spatacs
 
         protected:
             ShipData() = default;
-            ShipData(std::uint64_t team, std::string name);
+            ShipData(std::uint64_t team, std::string name, const boost::property_tree::ptree& data);
             ~ShipData() = default;
 
             // structure
-            double mHitPoints    = 10;
             double mMaxHitPoints = 10;
+            double mHitPoints    = 10;
 
             // armour
             double mMaxArmour = 10;

@@ -3,11 +3,11 @@
 //
 
 #include "LifeSupport.h"
-#include "core/Starship.h"
+#include "game/Starship.h"
 #include <boost/property_tree/ptree.hpp>
 #include <iostream>
 
-using namespace spatacs::core;
+using namespace spatacs::game;
 
 void LifeSupport::onStep(Starship& ship)
 {

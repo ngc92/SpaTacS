@@ -6,12 +6,12 @@
 #define SOI_WEAPON_H
 
 #include <physics/units.h>
-#include "IWeapon.h"
-#include "core/Damage.h"
+#include "game/components/IWeapon.h"
+#include "game/Damage.h"
 
 namespace spatacs
 {
-    namespace core
+    namespace game
     {
         class ProjectileWeapon : public IWeapon
         {

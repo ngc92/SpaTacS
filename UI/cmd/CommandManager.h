@@ -2,14 +2,15 @@
 // Created by erik on 9/22/16.
 //
 
-#ifndef SOI_COMMANDMANAGER_H_H
-#define SOI_COMMANDMANAGER_H_H
+#ifndef SPATACS_COMMANDMANAGER_H_H
+#define SPATACS_COMMANDMANAGER_H_H
 
 #include "Commands.h"
 #include <vector>
 #include <unordered_map>
 #include <boost/optional.hpp>
 #include <events/IEvent.h>
+#include "UI/IUI.h"
 
 namespace spatacs
 {
@@ -21,21 +22,32 @@ namespace spatacs
     {
         struct CommandSlot
         {
-            boost::optional<Move> move;
+            Move move;
             boost::optional<Attack> attack;
+            bool delflag;
         };
 
-        class CommandManager
+        class CommandManager : public ui::IUI
         {
         public:
-            void validate( const core::GameState& state );
-            void addCommand( Command cmd );
-            void transcribe(const core::GameState& state, std::vector<events::EventPtr>& events) const;
+            void addCommand( std::uint64_t target, Command cmd );
 
             const CommandSlot& getCommandsOf( std::uint64_t ship ) const;
+
+
+            //
+            void init() override { };
+            void getCommandEvents(std::vector<events::EventPtr>& evts) const override;
+            void setState(const std::shared_ptr<const core::GameState>& state) override;
+            void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) override { }
+            bool step() override { return true; }
+
         private:
+            void validate( );
+
             std::unordered_map<std::uint64_t, CommandSlot> mCommandSlots;
             std::vector<SetWpnMode> mOneShotCommands;
+            std::shared_ptr<const core::GameState> mState;
         };
     }
 }

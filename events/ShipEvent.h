@@ -6,7 +6,7 @@
 
 namespace spatacs
 {
-namespace core
+namespace game
 {
     class Starship;
 }
@@ -16,7 +16,7 @@ namespace events
     class ShipEvent : public IEvent
     {
     public:
-        using Starship  = core::Starship;
+        using Starship  = game::Starship;
 
         ShipEvent( std::uint64_t target ) : mObject( target ) { }
 

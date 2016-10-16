@@ -7,24 +7,24 @@
 
 using namespace spatacs;
 
-void core::PowerPlant::onStep(Starship& ship)
+void game::PowerPlant::onStep(Starship& ship)
 {
     provideEnergy( 0.1f * power() );
 }
 
-core::PowerPlant* core::PowerPlant::clone() const
+game::PowerPlant* game::PowerPlant::clone() const
 {
     return new PowerPlant(*this);
 }
 
-core::PowerPlant::PowerPlant(const ptree& data) :
+game::PowerPlant::PowerPlant(const ptree& data) :
     IComponent( data ),
     mEnergyProduction( data.get<float>("power") )
 {
 
 }
 
-float core::PowerPlant::power() const
+float game::PowerPlant::power() const
 {
     return mEnergyProduction * status();
 }

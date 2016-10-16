@@ -5,15 +5,18 @@
 #ifndef SOI_AIPLAYER_H
 #define SOI_AIPLAYER_H
 
-#include "cmd/CommandManager.h"
 #include "IUI.h"
 
 namespace spatacs {
+    namespace cmd
+    {
+        class CommandManager;
+    }
     namespace ui {
         class AIPlayer : public IUI
         {
         public:
-            AIPlayer(std::uint64_t team);
+            AIPlayer(std::uint64_t team, std::shared_ptr<cmd::CommandManager> cmd);
 
             virtual void init() override;
 
@@ -30,7 +33,7 @@ namespace spatacs {
 
         private:
             std::uint64_t mOwnTeam;
-            cmd::CommandManager mCommands;
+            std::shared_ptr<cmd::CommandManager> mCommands;
 
             std::shared_ptr<const core::GameState> mState;
             std::vector<std::uint64_t> mHits;

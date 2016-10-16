@@ -6,13 +6,13 @@
 #define SOI_IRRLICHTUI_H
 
 #include "IUI.h"
-#include "cmd/CommandManager.h"
 #include "IrrRAII.h"
 #include "core/GameState.h"
 
 namespace irr
 {
     class IrrlichtDevice;
+    class SEvent;
     namespace video
     {
         class IVideoDriver;
@@ -24,11 +24,16 @@ namespace irr
 }
 
 namespace spatacs {
+    namespace cmd
+    {
+        class CommandManager;
+    };
+
     namespace ui {
         class IrrlichtUI : public IUI
         {
         public:
-            IrrlichtUI(std::uint64_t team, irr::IrrlichtDevice* device);
+            IrrlichtUI(std::uint64_t team, irr::IrrlichtDevice* device, std::shared_ptr<cmd::CommandManager> cmd);
             ~IrrlichtUI();
             void init() override;
 
@@ -40,11 +45,11 @@ namespace spatacs {
 
             void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) override;
 
+            bool handleUIEvent( const irr::SEvent& ev );
+
             // interface for tools
             const core::GameState& state() const { return *mState; }
-            void addCommand( spatacs::cmd::Command c );
             cmd::CommandManager& getCommandMgr();
-
             irr::IrrlichtDevice* getDevice() { return mDevice; }
             bool pause() const;
         private:
@@ -56,7 +61,7 @@ namespace spatacs {
             std::unique_ptr<EventRec> mEventReceiver;
 
             irr::scene::ISceneNode* mMap;
-            cmd::CommandManager mCommands;
+            std::shared_ptr<cmd::CommandManager> mCommands;
         };
     }
 }

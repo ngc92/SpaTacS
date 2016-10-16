@@ -1,36 +1,36 @@
 <ship>
-    <mass>650</mass>
-    <radius>25</radius>
-    <hitpoints>10</hitpoints>
+    <mass>850</mass>
+    <radius>35</radius>
+    <hitpoints>15</hitpoints>
     <armour>10</armour>
 
     <engine>
         <fuel_consumption>250</fuel_consumption>
         <propellant_speed>200</propellant_speed>
-        <HP>1</HP>
+        <HP>2</HP>
     </engine>
 
     <shield>
-        <strength>10.0</strength>
-        <recharge>0.2</recharge>
+        <strength>15.0</strength>
+        <recharge>0.4</recharge>
         <efficiency>0.2</efficiency>
         <dissipation>1</dissipation>
-        <HP>1</HP>
+        <HP>2</HP>
     </shield>
 
     <weapon>
         <HE_strength>1</HE_strength>
         <AP_strength>1</AP_strength>
         <SO_strength>1</SO_strength>
-        <precision>60</precision>
-        <rpm>60</rpm>
-        <muzzle_velocity>3000</muzzle_velocity>
+        <precision>70</precision>
+        <rpm>35</rpm>
+        <muzzle_velocity>4000</muzzle_velocity>
         <HP>1</HP>
     </weapon>
 
     <power_plant>
         <power>5</power>
-        <HP>1</HP>
+        <HP>2</HP>
     </power_plant>
 
     <tank>

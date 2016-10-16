@@ -3,11 +3,11 @@
 //
 
 #include <iostream>
-#include "GameObject.h"
-#include "Starship.h"
+#include "game/GameObject.h"
+#include "game/Starship.h"
 
 using namespace spatacs;
-using namespace spatacs::core;
+using namespace spatacs::game;
 
 const length_vec& GameObject::position() const
 {
@@ -59,7 +59,17 @@ void GameObject::setMass(mass_t m)
     mMass = m;
 }
 
-length_t spatacs::core::distance(const GameObject& s1, const GameObject& s2)
+GameObject::GameObject(ObjectType t) : mType(t)
+{
+
+}
+
+ObjectType GameObject::type() const
+{
+    return mType;
+}
+
+length_t spatacs::game::distance(const GameObject& s1, const GameObject& s2)
 {
     return length(s1.position() - s2.position());
 }
