@@ -18,7 +18,7 @@ namespace spatacs {
             UnitSelection(std::uint64_t team);
 
         protected:
-            void init(irr::gui::IGUIEnvironment* guienv) override;
+            void init(irr::gui::IGUIEnvironment* guienv, irr::scene::ISceneManager* smgr) override;
 
         public:
             void onLeftClick(ray_t ray) override;
@@ -32,8 +32,7 @@ namespace spatacs {
             void onKeyPress( irr::EKEY_CODE key ) override;
             void onKeyRelease( irr::EKEY_CODE key ) override;
 
-            void draw(irr::video::IVideoDriver* driver) override;
-
+            void step() override;
         private:
             std::uint64_t mOwnTeam;
             std::shared_ptr<IInputMode> mChildMode;

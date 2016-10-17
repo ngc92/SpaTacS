@@ -17,6 +17,11 @@ namespace irr
     {
         class ShipStatusUI;
     }
+
+    namespace scene
+    {
+        class MultiLineNode;
+    }
 }
 
 namespace spatacs {
@@ -27,14 +32,14 @@ namespace spatacs {
             UnitCommand(std::uint64_t id);
             ~UnitCommand();
 
-            virtual void init(irr::gui::IGUIEnvironment* guienv) override;
+            virtual void init(irr::gui::IGUIEnvironment* guienv, irr::scene::ISceneManager* smgr) override;
 
             void onMouseMove(ray_t ray) override;
             void onRightClick(ray_t ray, const irr::SEvent::SMouseInput& event) override;
             void onWheel(float scroll) override;
             void onKeyPress(irr::EKEY_CODE key) override;
 
-            void draw(irr::video::IVideoDriver* driver) override;
+            void step() override;
 
         private:
             boost::optional<length_vec> aim(const ray_t &ray) const;
@@ -50,6 +55,7 @@ namespace spatacs {
             remove_ptr<irr::gui::ShipStatusUI> mShipInfo;
             remove_ptr<irr::gui::IGUIElement>  mTargetInfo;
             remove_ptr<irr::gui::IGUIElement>  mSpeedInfo;
+            remove_ptr<irr::scene::MultiLineNode> mTrajectoryPlotter;
 
             enum Mode
             {ATTACK, MOVE} mMode = MOVE;

@@ -61,8 +61,34 @@ void UnitSelection::onWheel(float scroll)
     }
 }
 
-void UnitSelection::draw(irr::video::IVideoDriver* driver)
+void UnitSelection::init(irr::gui::IGUIEnvironment* guienv, irr::scene::ISceneManager* smgr)
 {
+    auto txt = guienv->addStaticText(L"Text", irr::core::recti(0, 0, 100, 20));
+    txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
+    mHoverUI = txt;
+}
+
+void UnitSelection::onKeyPress(irr::EKEY_CODE key)
+{
+    mKeysDown.insert(key);
+    if(mChildMode)
+    {
+        mChildMode->onKeyPress(key);
+    }
+}
+
+void UnitSelection::onKeyRelease(irr::EKEY_CODE key)
+{
+    mKeysDown.erase(key);
+    if(mChildMode)
+    {
+        mChildMode->onKeyRelease(key);
+    }
+}
+
+void UnitSelection::step()
+{
+    /// \todo make this FPS independent
     if(mKeysDown.count(irr::KEY_KEY_A))
     {
         getCamera()->setPosition( getCamera()->getPosition() + irr::core::vector3df(0, 0, 1) );
@@ -100,7 +126,8 @@ void UnitSelection::draw(irr::video::IVideoDriver* driver)
     }
 
     if(mChildMode)
-        mChildMode->draw(driver);
+        mChildMode->step();
+
 
     // Pick stuff.
     auto hover = pick(state(), mCurrentRay);
@@ -119,31 +146,5 @@ void UnitSelection::draw(irr::video::IVideoDriver* driver)
         auto status = hover->shield_strength();
         ws << " " << status.current << "/" << hover->hp() << "\n";
         mHoverUI->setText(ws.str().c_str());
-    }
-
-}
-
-void UnitSelection::init(irr::gui::IGUIEnvironment* guienv)
-{
-    auto txt = guienv->addStaticText(L"Text", irr::core::recti(0, 0, 100, 20));
-    txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
-    mHoverUI = txt;
-}
-
-void UnitSelection::onKeyPress(irr::EKEY_CODE key)
-{
-    mKeysDown.insert(key);
-    if(mChildMode)
-    {
-        mChildMode->onKeyPress(key);
-    }
-}
-
-void UnitSelection::onKeyRelease(irr::EKEY_CODE key)
-{
-    mKeysDown.erase(key);
-    if(mChildMode)
-    {
-        mChildMode->onKeyRelease(key);
     }
 }
