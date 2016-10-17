@@ -11,7 +11,7 @@ using namespace game;
 
 FuelTank::FuelTank(const ptree& props) :
     IComponent(props),
-    mFuelCapacity( tonnes(props.get<double>("capacity")) ),
+    mFuelCapacity( props.get<mass_t>("capacity") ),
     mCurrentFuel( mFuelCapacity )
 {
 

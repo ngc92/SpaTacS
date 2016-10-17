@@ -193,6 +193,7 @@ void IrrlichtUI::setState(const std::shared_ptr<const spatacs::core::GameState>&
 
 bool IrrlichtUI::step()
 {
+    mEventReceiver->mInputMode->step();
     try {
         if(mEventReceiver->mInputMode) {
             mEventReceiver->mInputMode->step();

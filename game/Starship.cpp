@@ -22,13 +22,12 @@ using namespace game;
 ShipData::ShipData(std::uint64_t team, std::string name, const boost::property_tree::ptree& data) :
         mTeam(team),
         mName(std::move(name) ),
-        mRadius( meters(data.get<double>("radius")) ),
+        mRadius( data.get<length_t>("radius") ),
         mMaxHitPoints( data.get<double>("hitpoints") ),
         mHitPoints( mMaxHitPoints ),
         mMaxArmour( data.get<double>("armour") ),
         mCurArmour( mMaxArmour )
 {
-
 }
 
 

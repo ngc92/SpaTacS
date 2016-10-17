@@ -7,6 +7,7 @@
 #include <iostream>
 #include "GameState.h"
 #include "UI/StateManager.h"
+#include "SettingsMenu.h"
 
 using namespace spatacs::ui;
 using namespace irr;
@@ -24,7 +25,7 @@ void MainMenu::startGame()
 
 void MainMenu::settings()
 {
-    std::cout << "SETTINGS\n";
+    mNextState = 2;
 }
 
 void MainMenu::exit()
@@ -37,6 +38,9 @@ void MainMenu::step(StateManager& smgr)
     if(mNextState == 1)
     {
         smgr.setState( std::make_unique<GameState>() );
+    } else if(mNextState == 2)
+    {
+        smgr.setState( std::make_unique<SettingsMenu>() );
     }
 }
 

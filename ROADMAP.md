@@ -1,27 +1,22 @@
 ## Version 0.6 (menu update)
   * UI:
-    - [ ] main menu
-      + [ ] start level
-      + [ ] custom combat
+    - [x] main menu
+      + [x] start level
       + [ ] settings
       + [x] exit
-    - [ ] pause menu
-      + [ ] resume
-      + [ ] end game
   * game:
     - [ ] load levels from xml
-    - [ ] custom combat
-    - [ ] add a few ship types
+    - [x] add cruiser ship type
   * code:
     - [x] restructure Irrlicht handling to allow for menus
-
-
-## Version 0.7 (engine update)
-  * UI
-  * code
     - [ ] game entities 
-  * game
+    - [ ] get rid of all render code in tools
   * physics
+    - [ ] runtime unit loading + tests
+
+## Version 0.7 ()
+  * game:
+    - [ ] load level from xml
 
 ## Unspecified
 * optimizations:

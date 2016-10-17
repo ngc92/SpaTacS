@@ -156,7 +156,6 @@ void ui::UnitCommand::step()
 
     // ship info text
     auto& ship = state().getShip(mActiveShipID);
-    auto sp = convert(ship.position());
     {
         std::wstringstream stream;
         stream << std::fixed << std::setprecision(1);
@@ -186,8 +185,6 @@ void ui::UnitCommand::step()
         stream << " shield: " << target.shield_strength().current << "/" << target.shield_strength().max << "\n";
         stream << " hull: "   << target.hull_status().current     << "/" << target.hull_status().max << "\n";
         stream << " hp: "     << target.hp() << "\n";
-        auto dst = distance(ship, target);
-        stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
         mTargetInfo->setText( stream.str().c_str() );
         mTargetInfo->setVisible(true);
     }
@@ -201,10 +198,7 @@ void ui::UnitCommand::step()
     }
 
     if (mCurrentAim) {
-        auto aim = convert(mCurrentAim.get());
-        auto aimbase = aim;
-        aimbase.Y = std::round(getCamera()->getTarget().Y / 10) * 10;
-        irr::core::line3df flightline(sp, aim);
+        irr::core::line3df flightline(convert(ship.position()), convert(mCurrentAim.get()));
 
         std::wstringstream stream;
         stream << std::fixed << std::setprecision(1) << length(ship.position() - mCurrentAim.get()) << "\n";
@@ -218,37 +212,5 @@ void ui::UnitCommand::step()
         auto pos = getScreenPosition( flightline.getMiddle() );
         pos.Y -= 10;
         mDistanceMarker->setRelativePosition( pos );
-
-        if(mMode == MOVE) {
-            mTrajectoryPlotter->addLine(sp, aim, video::SColor(255, 255, 255, 255));
-        } else
-        {
-            mTrajectoryPlotter->addLine(sp, aim, video::SColor(255, 255, 0, 0));
-        }
-        if(mMode == MOVE) {
-            using irr::core::vector3df;
-            mTrajectoryPlotter->addLine(aimbase + vector3df(-1, 0, -1), aimbase + vector3df(1, 0, 1),
-                                        video::SColor(128, 255, 255, 255));
-            mTrajectoryPlotter->addLine(aimbase + vector3df(-1, 0, 1), aimbase + vector3df(1, 0, -1),
-                                        video::SColor(128, 255, 255, 255));
-            mTrajectoryPlotter->addLine(aimbase + vector3df(0, -0.5, 0), aimbase + vector3df(0, 0.5, 0),
-                                        video::SColor(128, 255, 255, 255));
-        }
     }
-
-    auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
-    auto& mv = cmd.move;
-    auto src = sp;
-    for(unsigned i = 0; i < mv.waypoint_count(); ++i) {
-        mTrajectoryPlotter->addLine(src, convert(mv.target(i)), video::SColor(255, 0, 128, 0));
-        src = convert(mv.target(i));
-    }
-    if(cmd.attack)
-    {
-        auto& at = cmd.attack.get();
-        mTrajectoryPlotter->addLine(sp, convert(state().getShip(at.target()).position()),
-                           video::SColor(255, 128, 0, 0));
-    }
-
-
 }
