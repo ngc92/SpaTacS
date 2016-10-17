@@ -127,4 +127,24 @@ void UnitSelection::step()
 
     if(mChildMode)
         mChildMode->step();
+
+
+    // Pick stuff.
+    auto hover = pick(state(), mCurrentRay);
+    if (hover == 0) {
+        mHoverUI->setVisible(false);
+    } else {
+        /// \todo we are using the "actual" 3D position, but should be using the position inside the LocationPlotter3D
+        auto p = convert(hover->position());
+        p.Y += 5;
+        auto screenpos = getScreenPosition(p);
+        mHoverUI->setRelativePosition(screenpos);
+        mHoverUI->setVisible(true);
+        std::wstringstream ws;
+        ws << std::fixed << std::setprecision(1);
+        ws << L"Ship: " << hover->id() << ":\n";
+        auto status = hover->shield_strength();
+        ws << " " << status.current << "/" << hover->hp() << "\n";
+        mHoverUI->setText(ws.str().c_str());
+    }
 }
