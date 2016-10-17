@@ -8,53 +8,45 @@
 #include "game/Starship.h"
 #include "FuelTank.h"
 
-namespace spatacs
+using namespace spatacs;
+using namespace game;
+
+void Engine::onStep(Starship& ship)
 {
-    namespace  game
-    {
-        void Engine::onStep(Starship& ship)
-        {
-            auto mass_diff = mMassRate * 0.1_s;
-            mass_t fuel_demand = mass_diff - mUnusedMass;
-            if(fuel_demand < 0.0_kg)
-                fuel_demand = 0.0_kg;
+    force_t want    = length(mDesiredAcceleration);
+    // if we do not want to accelerate, end here
+    if(want == force_t(0))
+        return;
 
-            mUnusedMass += ship.getTank().requestFuel(fuel_demand * status());
-        }
+    mass_t need_mass  = (want / mPropellantSpeed) * 0.1_s;
+    mass_t max_mass   = mMassRate * 0.1_s * status();
+    if(need_mass > max_mass)
+        need_mass = max_mass;
+    mass_t fuel = ship.getTank().requestFuel( need_mass );
 
-        force_vec Engine::getThrust(const force_vec& accel)
-        {
-            force_t want    = length(accel);
-            if(want == force_t(0))
-                return accel;
+    force_t f = fuel * mPropellantSpeed  / 0.1_s;
+    force_vec force = mDesiredAcceleration * (f / want);
+}
 
-            mass_t need_mass  = (want / mPropellantSpeed) * 0.1_s;
-            if( need_mass > mUnusedMass ) {
-                need_mass = mUnusedMass;
-            }
+Engine* Engine::clone() const
+{
+    return new Engine(*this);
+}
 
-            force_t f = need_mass * mPropellantSpeed / 0.1_s;
-            mUnusedMass -= need_mass;
-            return accel * (f / want);
-        }
+force_t Engine::max_thrust() const
+{
+    return mPropellantSpeed * mMassRate * status();
+}
 
-        Engine* Engine::clone() const
-        {
-            return new Engine(*this);
-        }
+Engine::Engine(const ptree& props):
+    IComponent(props),
+    mPropellantSpeed( kilometers(props.get<float>("propellant_speed")) / 1.0_s ),
+    mMassRate( kilogram(props.get<float>("fuel_consumption")) / 1.0_s )
+{
 
-        force_t Engine::max_thrust() const
-        {
-            return mPropellantSpeed * mMassRate * status();
-        }
+}
 
-        Engine::Engine(const ptree& props):
-            IComponent(props),
-            mPropellantSpeed( kilometers(props.get<float>("propellant_speed")) / 1.0_s ),
-            mMassRate( kilogram(props.get<float>("fuel_consumption")) / 1.0_s )
-        {
-
-        }
-
-    }
+void Engine::setTargetAccel(accel_vec a)
+{
+    mDesiredAcceleration = a;
 }

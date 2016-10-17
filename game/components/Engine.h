@@ -20,8 +20,8 @@ namespace game
 
         void onStep(Starship& ship) override;
 
-        force_vec getThrust(const force_vec& accel);
         force_t max_thrust() const;
+        void setTargetAccel(accel_vec a);
 
         virtual Engine* clone() const override;
 
@@ -31,7 +31,7 @@ namespace game
         rate_t<mass_t> mMassRate = 1.0_kg / 1.0_s;
 
         // engine status
-        mass_t mUnusedMass       = 0.0_kg;
+        accel_vec mDesiredAcceleration;
     };
 }
 }
