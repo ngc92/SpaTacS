@@ -13,7 +13,7 @@ namespace spatacs
     {
         void ShipEvent::apply(EventContext& context) const
         {
-            if(context.state.hasObject(id())) {
+            if(context.state.hasObject(id()) && context.state.getObject(id()).alive()) {
                 applyToShip(context.state.getShip(id()), context);
             }
         }

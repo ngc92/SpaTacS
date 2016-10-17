@@ -10,11 +10,9 @@ using namespace spatacs;
 using namespace game;
 
 FuelTank::FuelTank(const ptree& props) :
-    IComponent(props),
-    mFuelCapacity( props.get<mass_t>("capacity") ),
-    mCurrentFuel( mFuelCapacity )
+    IComponent(props)
 {
-
+    mEntity.add<FuelStorage>( props.get<mass_t>("capacity") );
 }
 
 FuelTank* FuelTank::clone() const
@@ -24,24 +22,24 @@ FuelTank* FuelTank::clone() const
 
 mass_t FuelTank::requestFuel(mass_t req)
 {
-    if(req < mCurrentFuel)
+    if(req < mEntity.get<FuelStorage>().current)
     {
-        mCurrentFuel -= req;
+        mEntity.get<FuelStorage>().current -= req;
         return req;
     } else
     {
-        req = mCurrentFuel;
-        mCurrentFuel = 0.0_kg;
+        req = mEntity.get<FuelStorage>().current;
+        mEntity.get<FuelStorage>().current = 0.0_kg;
         return req;
     }
 }
 
 mass_t FuelTank::fuel() const
 {
-    return mCurrentFuel;
+    return mEntity.get<FuelStorage>().current;
 }
 
 mass_t FuelTank::capacity() const
 {
-    return mFuelCapacity;
+    return mEntity.get<FuelStorage>().capacity;
 }

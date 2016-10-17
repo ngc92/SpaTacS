@@ -41,14 +41,14 @@ SET(CORE_SOURCE_FILES
         core/Game.cpp
         core/GameState.h
         core/GameState.cpp
+        core/Entity.h
+        core/System.h
         game/Starship.cpp
         game/components/Engine.h
         game/components/Engine.cpp
         game/components/IWeapon.h
         game/components/ProjectileWeapon.cpp
         game/components/ProjectileWeapon.h
-        game/components/RayWeapon.h
-        game/components/RayWeapon.cpp
         game/Projectile.h
         game/Projectile.cpp
         game/components/IComponent.h
@@ -69,7 +69,7 @@ SET(CORE_SOURCE_FILES
         game/components/LifeSupport.cpp
         game/components/LifeSupport.h
         game/SubSystems.h
-        game/SubSystems.cpp)
+        game/SubSystems.cpp game/components/comps.h)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h

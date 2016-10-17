@@ -38,6 +38,10 @@ namespace spatacs
             double distributeEnergy(double energy);
 
             double produceEnergy() const;
+
+            accel_vec accelerate(const accel_vec desired);
+
+            void onStep(Starship& ship);
         };
     }
 }

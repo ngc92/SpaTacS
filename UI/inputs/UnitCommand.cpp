@@ -24,6 +24,7 @@
 #include "UI/IrrlichtUI.h"
 #include "UI/cmd/CommandManager.h"
 #include <irrlicht/ISceneManager.h>
+#include <core/System.h>
 #include "UI/gfx/MultiLineNode.h"
 
 using namespace spatacs;
@@ -146,6 +147,47 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
     }
 }
 
+namespace
+{
+
+    class SysInfo : public core::System<game::ComponentEntity, SysInfo, core::Signature<game::Health, game::Name>>
+    {
+    public:
+        SysInfo(irr::gui::ShipStatusUI* ui) : mUI(ui)
+        {
+        }
+
+        void apply(const game::ComponentEntity& ety, const game::Health& h, const game::Name& n)
+        {
+            irr::gui::SystemStatus status{n.name, h.current, h.maximum};
+            mUI->pushSystem( status );
+
+        }
+    private:
+        irr::gui::ShipStatusUI* mUI;
+    };
+
+    class TankInfo : public core::System<game::ComponentEntity, TankInfo, core::Signature<game::FuelStorage>>
+    {
+    public:
+        TankInfo()
+        {
+        }
+
+        void apply(const game::ComponentEntity& ety, const game::FuelStorage& h)
+        {
+            mFuel += h.current;
+            mCapacity  +=  h.capacity;
+        }
+
+        double fuel() const { return mFuel / 1.0_t; }
+        double capacity() const { return mCapacity / 1.0_t; }
+    private:
+        mass_t mFuel;
+        mass_t mCapacity;
+    };
+}
+
 void ui::UnitCommand::step()
 {
     mBaseY = std::round(getCamera()->getTarget().Y / 10.f) * 10.f;
@@ -158,19 +200,19 @@ void ui::UnitCommand::step()
     auto& ship = state().getShip(mActiveShipID);
     auto sp = convert(ship.position());
     {
-        std::wstringstream stream;
-        stream << std::fixed << std::setprecision(1);
-        stream << ship.name().c_str() << ":\n";
-        stream << " egy: " << ship.usedEnergy() / 0.1f << "/" << ship.producedEnergy() / 0.1f << "\n";
-        stream << " mode: " << ship.weapon(0).mode() << "\n";
         mShipInfo->setShipName( ship.name() );
         mShipInfo->clearSystems();
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield generator", ship.shield().hp(), ship.shield().max_hp()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"engine", ship.engine().hp(), ship.engine().max_hp()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield_strength().current, ship.shield_strength().max} );
+        SysInfo si(mShipInfo.get());
+        TankInfo ti;
+        for(auto& cmp : ship.components())
+        {
+            si(cmp->entity());
+            ti(cmp->entity());
+        }
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield(), ship.max_shield()} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ship.tank().fuel().value / 1000, ship.tank().capacity().value / 1000} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ti.fuel(), ti.capacity()} );
         /// \todo power plant
     }
 
@@ -183,7 +225,7 @@ void ui::UnitCommand::step()
         std::wstringstream stream;
         stream << std::fixed << std::setprecision(1);
         stream << target.name().c_str() << ":\n";
-        stream << " shield: " << target.shield_strength().current << "/" << target.shield_strength().max << "\n";
+        stream << " shield: " << target.shield() << "/" << target.max_armour() << "\n";
         stream << " hull: "   << target.hull_status().current     << "/" << target.hull_status().max << "\n";
         stream << " hp: "     << target.hp() << "\n";
         auto dst = distance(ship, target);

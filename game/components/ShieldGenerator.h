@@ -18,25 +18,9 @@ namespace spatacs {
 
             virtual ~ShieldGenerator() = default;
 
-            virtual void onStep(Starship& ship) override;
-
             virtual ShieldGenerator* clone() const override;
 
-            float shield() const;
-            float max_shield() const;
-
-            double recharge_rate() const;
-            ShieldGenerator& setShield( float s );
-
-        private:
-            // properties
-            float mMaximumShieldStrength = 1.5;
-            float mShieldRecharge        = 0.2;
-            rate_t<scalar_t> mDecay;
-            float mEnergyPerShieldPoint  = 5;
-
-            // status
-            float mCurrentShieldStrength = 0;
+            rate_t<scalar_t> recharge_rate() const;
         };
     }
 }

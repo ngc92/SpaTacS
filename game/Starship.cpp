@@ -26,7 +26,9 @@ ShipData::ShipData(std::uint64_t team, std::string name, const boost::property_t
         mMaxHitPoints( data.get<double>("hitpoints") ),
         mHitPoints( mMaxHitPoints ),
         mMaxArmour( data.get<double>("armour") ),
-        mCurArmour( mMaxArmour )
+        mCurArmour( mMaxArmour ),
+        mMaxShield( data.get<double>("shield") ),
+        mCurShield( mMaxShield )
 {
 }
 
@@ -50,21 +52,7 @@ void Starship::onStep()
 {
     mEnergyProduced = mSubSystems->produceEnergy();
     mEnergyUsed     = mSubSystems->distributeEnergy(mEnergyProduced);
-
-    for(auto& c : mSubSystems->mCompPtrs)
-    {
-        c->onStep(*this);
-    }
-}
-
-const Engine& Starship::engine() const
-{
-    return *mSubSystems->mEngine;
-}
-
-Engine& Starship::getEngine()
-{
-    return *mSubSystems->mEngine;
+    mSubSystems->onStep(*this);
 }
 
 std::size_t Starship::weapon_count() const
@@ -101,16 +89,6 @@ Starship& Starship::operator=(const Starship& other)
     return *this;
 }
 
-ShieldGenerator& Starship::getShield()
-{
-    return *mSubSystems->mShield;
-}
-
-const ShieldGenerator& Starship::shield() const
-{
-    return *mSubSystems->mShield;
-}
-
 Starship::Starship(Starship&& o):
     GameObject(o), ShipData(o),
     mSubSystems( std::move(o.mSubSystems) )
@@ -124,11 +102,6 @@ Starship& Starship::operator=( Starship&& o )
     ShipData::operator=( o );
     mSubSystems = std::move(o.mSubSystems);
     return *this;
-}
-
-SystemStatus Starship::shield_strength() const
-{
-    return SystemStatus{ shield().shield(), shield().max_shield() };
 }
 
 SystemStatus Starship::hull_status() const {
@@ -187,11 +160,6 @@ void ShipData::setArmour(double new_value)
     mCurArmour = new_value;
 }
 
-const FuelTank& Starship::tank() const
-{
-    return *mSubSystems->mFuelTank;
-}
-
 FuelTank& Starship::getTank()
 {
     return *mSubSystems->mFuelTank;
@@ -200,6 +168,11 @@ FuelTank& Starship::getTank()
 Starship* Starship::clone() const
 {
     return new Starship(*this);
+}
+
+const std::vector<IComponent*>& Starship::components() const
+{
+    return mSubSystems->mCompPtrs;
 }
 
 void ShipData::setHP(double hp)
@@ -215,4 +188,52 @@ length_t ShipData::radius() const
 void ShipData::setRadius(length_t radius)
 {
     mRadius = radius;
+}
+
+double ShipData::shield() const
+{
+    return mCurShield;
+}
+
+double ShipData::max_shield() const
+{
+    return mMaxShield;
+}
+
+void ShipData::setShield(double new_value)
+{
+    if(new_value < 0)
+        BOOST_THROW_EXCEPTION( std::logic_error("Trying to set negative shield strength") );
+    mCurShield = std::min(new_value, mMaxShield);
+
+}
+
+void ShipData::setDesiredAcceleration(accel_vec a)
+{
+    mDesiredAcceleration = a;
+}
+
+accel_vec ShipData::getProducedAcceleration()
+{
+    return mProducedAcceleration;
+}
+
+accel_vec ShipData::getDesiredAcceleration() const
+{
+    return mDesiredAcceleration;
+}
+
+void ShipData::setProducedAcceleration(accel_vec a)
+{
+    mProducedAcceleration = a;
+}
+
+accel_t ShipData::getMaxAcceleration() const
+{
+    return mMaxAccel;
+}
+
+void ShipData::setMaxAcceleration(accel_t acc)
+{
+    mMaxAccel = acc;
 }

@@ -12,15 +12,15 @@ namespace spatacs
     namespace game
     {
         ProjectileWeapon::ProjectileWeapon(const IComponent::ptree& props):
-                IWeapon(props),
-                mDamage{ props.get<float>("HE_strength"),
-                         props.get<float>("SO_strength"),
-                         props.get<float>("AP_strength") },
-                mPrecision( props.get<float>("precision") ),
-                mRPM( props.get<float>("rpm") ),
-                mMuzzleVelocity( props.get<speed_t>("muzzle_velocity") )
+                IWeapon(props)
         {
-
+            mEntity.add<WeaponAimData>(props.get<speed_t>("muzzle_velocity"), props.get<double>("precision"));
+            auto& pwd = mEntity.add<ProjectileWpnData>();
+            pwd.mDamage = Damage{ props.get<float>("HE_strength"),
+                            props.get<float>("SO_strength"),
+                            props.get<float>("AP_strength") };
+            pwd.mRPM = props.get<float>("rpm");
+            mEntity.add<Timer>();
         }
 
         ProjectileWeapon* ProjectileWeapon::clone() const
@@ -28,28 +28,22 @@ namespace spatacs
             return new ProjectileWeapon(*this);
         }
 
-        float ProjectileWeapon::strength(length_t, area_t) const
-        {
-            return 0;
-        }
-
         void ProjectileWeapon::onStep(Starship& ship)
         {
-            mReload -= 0.1;
         }
 
         bool ProjectileWeapon::ready() const
         {
-            return mReload < 0;
+            return mEntity.get<Timer>().time <= 0;
         }
 
         boost::optional<ShotData> ProjectileWeapon::fire(const length_vec& delta_p, const velocity_vec& delta_v)
         {
-            if(mReload > 0)
+            if(!ready())
                 return boost::none;
 
             // perfect aim
-            speed_t vel = mMuzzleVelocity; // km/s
+            speed_t vel = mEntity.get<WeaponAimData>().muzzle_velocity; // km/s
             auto d = length(delta_p);
             auto aim_pos = delta_p;
 
@@ -78,18 +72,18 @@ namespace spatacs
             aim_pos += miss;
 
             d = length(aim_pos);
-            mReload = 60 / mRPM;
+            mEntity.get<Timer>().time = 60 / mEntity.get<ProjectileWpnData>().mRPM;
 
             Damage dmg;
-            if(mMode == HE_MODE)
+            if(mEntity.get<ProjectileWpnData>().mMode == ProjectileWpnData::HE_MODE)
             {
-                dmg.high_explosive = mDamage.high_explosive;
-            } else if(mMode == AP_MODE)
+                dmg.high_explosive = mEntity.get<ProjectileWpnData>().mDamage.high_explosive;
+            } else if(mEntity.get<ProjectileWpnData>().mMode == ProjectileWpnData::AP_MODE)
             {
-                dmg.armour_piercing = mDamage.armour_piercing;
-            } else if(mMode == SO_MODE)
+                dmg.armour_piercing = mEntity.get<ProjectileWpnData>().mDamage.armour_piercing;
+            } else if(mEntity.get<ProjectileWpnData>().mMode == ProjectileWpnData::SO_MODE)
             {
-                dmg.shield_overload = mDamage.shield_overload;
+                dmg.shield_overload = mEntity.get<ProjectileWpnData>().mDamage.shield_overload;
             }
 
             return ShotData{aim_pos * vel/d, dmg};
@@ -105,19 +99,15 @@ namespace spatacs
 
         double ProjectileWeapon::precision() const
         {
-            return mPrecision * (status() + 1) * .5;
+            return mEntity.get<WeaponAimData>().precision * (status() + 1) * .5;
         }
 
         void ProjectileWeapon::setMode(std::uint64_t mode)
         {
             /// \todo fix that!
             if(mode < 3)
-                mMode = Mode(mode);
+                mEntity.get<ProjectileWpnData>().mMode = ProjectileWpnData::Mode(mode);
         }
 
-        uint64_t ProjectileWeapon::mode() const
-        {
-            return mMode;
-        }
     }
 }

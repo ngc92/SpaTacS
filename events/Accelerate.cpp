@@ -5,8 +5,6 @@
 #include "Accelerate.h"
 #include "game/Starship.h"
 #include <iostream>
-#include "game/components/Engine.h"
-#include "physics/Events.h"
 
 namespace spatacs
 {
@@ -19,17 +17,7 @@ namespace spatacs
 
         void Accelerate::applyToShip(Starship& target, EventContext& context) const
         {
-            // dead ships don't move
-            if(!target.alive())
-                return;
-
-            /// \todo specify the time here!
-            physics::events::ApplyForce af{target.physics_id(),
-                                           target.getEngine().getThrust(mAccel * target.mass()),
-                                           0.0_s
-            };
-
-            context.world.pushEvent(af);
+            target.setDesiredAcceleration(mAccel);
         }
     }
 }

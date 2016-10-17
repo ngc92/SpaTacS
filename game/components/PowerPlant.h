@@ -14,14 +14,9 @@ namespace spatacs {
         public:
             PowerPlant(const ptree& data);
 
-            void onStep(Starship& ship) override;
-
             PowerPlant() = default;
             PowerPlant* clone() const override;
 
-            float power() const;
-        private:
-            float mEnergyProduction = 1;
         };
     }
 }

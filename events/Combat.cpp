@@ -109,14 +109,14 @@ namespace spatacs
             float he = mDamage.high_explosive;
             float ap = mDamage.armour_piercing;
             float kd = mDamage.kinetic;
-            float os = target.shield().shield();
+            float os = target.shield();
 
             // first, apply shield overload
             applyDamage(so, 1.0, os);
             applyDamage(kd, 0.5, os);
             applyDamage(he, 0.5, os);
             applyDamage(ap, 0.33, os);
-            target.getShield().setShield( os );
+            target.setShield( os );
             auto& proj = context.state.getProjectile(mProjectileID);
             if(kd == 0)
             {
@@ -143,14 +143,14 @@ namespace spatacs
             float he = mDamage.high_explosive;
             float ap = mDamage.armour_piercing;
             float kd = mDamage.kinetic;
-            float os = target.shield().shield();
+            float os = target.shield();
 
             // first, apply shield overload
             applyDamage(so, 1.0, os);
             applyDamage(kd, 0.5, os);
             applyDamage(he, 0.5, os);
             applyDamage(ap, 0.33, os);
-            target.getShield().setShield( os );
+            target.setShield( os );
 
             // ---------------------------------------------------------------------------------
 

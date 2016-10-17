@@ -38,7 +38,10 @@ namespace cmd
         }
 
         // and handle the command
-        physics::time_t time_to_brake = length(ship.velocity()) / (ship.engine().max_thrust() / ship.mass());
+        auto max_accel = ship.getMaxAcceleration();
+        if(max_accel.value == 0.0)
+            max_accel.value = 1.0;
+        physics::time_t time_to_brake = length(ship.velocity()) / max_accel;
 
         if( length(target_pos - ship.position()) < 0.5_km && mTargets.size() > 0)
         {

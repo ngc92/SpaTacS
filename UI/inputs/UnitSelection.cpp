@@ -142,9 +142,8 @@ void UnitSelection::step()
         mHoverUI->setVisible(true);
         std::wstringstream ws;
         ws << std::fixed << std::setprecision(1);
-        ws << L"Ship: " << hover->id() << ":\n";
-        auto status = hover->shield_strength();
-        ws << " " << status.current << "/" << hover->hp() << "\n";
+        ws << hover->name().c_str() << ":\n";
+        ws << " " << hover->shield() <<"|" << hover->armour() <<"|" << hover->hp() << "\n";
         mHoverUI->setText(ws.str().c_str());
     }
 }

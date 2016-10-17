@@ -16,13 +16,8 @@ namespace game
     {
     public:
         LifeSupport( const ptree& dat );
-        void onStep(Starship& ship) override;
 
         LifeSupport* clone() const override;
-
-    private:
-        velocity_vec mLastVelocity;
-        /// \todo add oxygen and temperature
     };
 }
 }

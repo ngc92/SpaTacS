@@ -20,6 +20,7 @@ namespace spatacs
         class PowerPlant;
         class FuelTank;
         class SubSystems;
+        class IComponent;
 
         struct SystemStatus
         {
@@ -50,8 +51,20 @@ namespace spatacs
             double max_armour() const;
             void setArmour( double new_value );
 
+            double shield() const;
+            double max_shield() const;
+            void setShield( double new_value );
+
             length_t radius() const;
             void setRadius(length_t radius);
+
+            // propulsion
+            void setDesiredAcceleration(accel_vec);
+            accel_vec getDesiredAcceleration() const;
+            accel_vec getProducedAcceleration();
+            void setProducedAcceleration(accel_vec);
+            accel_t getMaxAcceleration() const;
+            void setMaxAcceleration(accel_t acc);
 
         protected:
             ShipData() = default;
@@ -62,6 +75,10 @@ namespace spatacs
             double mMaxHitPoints = 10;
             double mHitPoints    = 10;
 
+            // shield
+            double mMaxShield = 10;
+            double mCurShield = 10;
+
             // armour
             double mMaxArmour = 10;
             double mCurArmour = 10;
@@ -69,6 +86,11 @@ namespace spatacs
             // Energy management status
             double mEnergyUsed     = 0;
             double mEnergyProduced = 0;
+
+            // propulsion status
+            accel_vec mDesiredAcceleration{.0, .0, .0};
+            accel_vec mProducedAcceleration{.0, .0, .0};
+            accel_t   mMaxAccel;
 
             length_t mRadius;
 
@@ -97,27 +119,18 @@ namespace spatacs
             /// called at the end of a game step.
             void onStep() override;
 
-            /// Subcomponents
-            // engine interface
-            const Engine& engine() const;
-            Engine& getEngine();
-
-            // Shield interface
-            SystemStatus shield_strength() const;
-            const ShieldGenerator& shield() const;
-            ShieldGenerator& getShield();
-
             // hull interface
             SystemStatus hull_status() const;
 
+            /// Subcomponents
             // weapon interface
             std::size_t weapon_count() const;
             const IWeapon& weapon( std::size_t id) const;
             IWeapon& getWeapon( std::size_t id );
 
-            // tank interface
-            const FuelTank& tank() const;
             FuelTank& getTank();
+
+            const std::vector<IComponent*>& components() const;
 
             // damage the ship
             void dealDamage( float dmg );

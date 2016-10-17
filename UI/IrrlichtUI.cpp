@@ -164,8 +164,7 @@ void IrrlichtUI::setState(const std::shared_ptr<const spatacs::core::GameState>&
             video::SColor colors[] = {{255, 0,   200, 0},
                                       {255, 200, 0,   0}};
             shipfx->setColor(colors[ship->team() - 1]);
-            auto ss = ship->shield_strength();
-            shipfx->setShieldStatus(ss.current / ss.max);
+            shipfx->setShieldStatus(ship->shield() / ship->max_shield());
             auto hs = ship->hull_status();
             shipfx->setHullStatus(hs.current / hs.max);
             node = shipfx;
@@ -229,7 +228,7 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
                 }
             } else if (auto h = dynamic_cast<const events::HitShield*>(evt.get())) {
                 auto& ship = mState->getShip(h->id());
-                if(ship.shield_strength().current > 0) {
+                if(ship.shield() > 0) {
                     float s = 5;
                     auto pos = ship.position();
                     auto bb = smgr->addBillboardSceneNode();

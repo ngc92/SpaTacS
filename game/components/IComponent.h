@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <boost/property_tree/ptree_fwd.hpp>
+#include "comps.h"
 
 namespace spatacs
 {
@@ -19,69 +20,29 @@ namespace spatacs
         public:
             virtual ~IComponent() = default;
 
-            virtual void onStep(Starship& ship)
-            { };
-
             // interaction with the energy system
-
-            /// energy step. Returns the energy that remains in the cache and empties it.
-            double getExcessEnergy() const;
-
-            /// gets the amount of energy this system requests.
-            double getEnergyRequest() const;
-
-            /// provide energy to system, put it into the cache
-            void provideEnergy(double offer);
-
-            /// gets the priority for energy supply to this component
-            float energyPriority() const;
-
-            /// gets the temperature
-            double temperature() const;
 
             // hitpoints stuff
             /// get the current hit points
-            float hp() const;
+            double hp() const;
             /// get maximum hit points
-            float max_hp() const;
+            double max_hp() const;
             /// get the health status:
             double status() const;
             /// reduce hp.
             /// \return leftover damage.
-            float dealDamage( float dmg );
-
-            // user interaction
-            /// sets the priority for energy supply to this component.
-            /// If p <= 1, p is set to 1.
-            void setEnergyPriority( float p );
+            double dealDamage(double dmg);
 
             virtual IComponent* clone() const = 0;
+
+            ComponentEntity& entity() { return mEntity; }
 
         protected:
             using ptree = boost::property_tree::ptree;
 
             IComponent( const ptree& data );
 
-            /// request \p amount energy from the cache. Returns
-            /// the amount that can be supplied.
-            double requestEnergy(double amount);
-
-            /// places produced energy into the cache.
-            void produceEnergy(double amount);
-
-            /// call every frame
-            void update_cooldown(double ein);
-        private:
-            // this comes in handy for basically all components, so we put this code here.
-            double mEnergyCache      = 0;
-            double mLastTotalRequest = 0;
-            float mEnergyPriority    = 1;
-
-            // temperature stuff
-            double mTemperatur       = 0;
-
-            float mMaxHitPoints;
-            float mHitPoints;
+            ComponentEntity mEntity;
         };
     }
 }

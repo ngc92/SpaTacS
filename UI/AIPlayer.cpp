@@ -32,7 +32,7 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
             continue;
 
         // if the shield is damaged.
-        float own_shield = own.shield_strength().current;
+        float own_shield = own.shield();
 
         length_t min = 100.0_km;
         // find closest ship to attack
@@ -56,7 +56,7 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
         if(min < 15.0_km)  {
             mCommands->addCommand( own.id(), cmd::Attack(target->id()) );
             uint64_t mode = 1;
-            if( target->shield_strength().current > 2.0 )
+            if( target->shield() > 2.0 )
             {
                 mode = 2;
             } else if(target->hull_status().current > 2.0)
@@ -67,7 +67,7 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
         }
 
         // fly closer if shield is stronger
-        if(own_shield > target->shield_strength().current || own_shield > 2)
+        if(own_shield > target->shield() || own_shield > 2)
         {
             mCommands->addCommand( own.id(), cmd::Move(target->position(), 0.25_kps));
         } else

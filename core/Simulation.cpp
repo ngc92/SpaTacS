@@ -32,6 +32,15 @@ auto Simulation::step(EventVec inEvents) -> EventVec
     mEventCache = move(inEvents);
     eventLoop();
 
+    // get the acceleration of ships and convert to physics events
+    for (auto& ship : mState) {
+        if(ship.type() == ObjectType::STARSHIP)
+        {
+            auto acc = dynamic_cast<game::Starship&>(ship).getProducedAcceleration();
+            mWorld->pushEvent( physics::events::ApplyForce{ship.physics_id(), acc * ship.mass(), 0.0_s} );
+        }
+    }
+
     // let the physics engine generate its events and process them
     /*  Push external physics events
      */

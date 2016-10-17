@@ -3,20 +3,20 @@
     <radius>25m</radius>
     <hitpoints>10</hitpoints>
     <armour>10</armour>
+    <shield>10</shield>
 
     <engine>
-        <fuel_consumption>250 kg/s</fuel_consumption>
-        <propellant_speed>200 km/s</propellant_speed>
+        <fuel_consumption>500 kg/s</fuel_consumption>
+        <propellant_speed>100 km/s</propellant_speed>
         <HP>1</HP>
     </engine>
 
-    <shield>
-        <strength>10.0</strength>
+    <shieldgen>
         <recharge>0.2</recharge>
         <efficiency>0.2</efficiency>
         <dissipation>1</dissipation>
         <HP>1</HP>
-    </shield>
+    </shieldgen>
 
     <weapon>
         <HE_strength>1</HE_strength>
@@ -34,7 +34,7 @@
     </power_plant>
 
     <tank>
-        <capacity>100t</capacity>
+        <capacity>200t</capacity>
         <HP>1</HP>
     </tank>
 

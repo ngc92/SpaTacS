@@ -6,25 +6,17 @@
 #include <boost/property_tree/ptree.hpp>
 
 using namespace spatacs;
+using namespace game;
 
-void game::PowerPlant::onStep(Starship& ship)
-{
-    provideEnergy( 0.1f * power() );
-}
-
-game::PowerPlant* game::PowerPlant::clone() const
+PowerPlant* game::PowerPlant::clone() const
 {
     return new PowerPlant(*this);
 }
 
-game::PowerPlant::PowerPlant(const ptree& data) :
-    IComponent( data ),
-    mEnergyProduction( data.get<float>("power") )
+PowerPlant::PowerPlant(const ptree& data) :
+    IComponent( data )
 {
-
+    mEntity.add<EnergyManagement>();
+    mEntity.add<PowerPlantData>( data.get<double>("power") );
 }
 
-float game::PowerPlant::power() const
-{
-    return mEnergyProduction * status();
-}

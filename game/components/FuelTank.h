@@ -15,16 +15,12 @@ namespace game
     class FuelTank : public IComponent
     {
     public:
-        FuelTank(const ptree& props);
-        void onStep(Starship& ship) override { };
+        FuelTank(const ptree& props);;
         FuelTank* clone() const override;
 
         mass_t requestFuel(mass_t req);
         mass_t fuel() const;
         mass_t capacity() const;
-    private:
-        mass_t mFuelCapacity;
-        mass_t mCurrentFuel;
     };
 }
 }
