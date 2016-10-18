@@ -20,7 +20,7 @@ namespace spatacs
 
             virtual void init() override { }
 
-            virtual void getCommandEvents(std::vector<events::EventPtr>& evts) const override;
+            virtual void getCommandEvents(std::vector<events::EventPtr>& evts) override;
 
             virtual void setState(const std::shared_ptr<const core::GameState>& state) override;
 

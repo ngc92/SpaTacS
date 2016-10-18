@@ -115,6 +115,7 @@ namespace spatacs
             } mMode = HE_MODE;
             Damage mDamage;
             float mRPM;
+            mass_t mCaliber;
 
             Damage damage() const;
         };

@@ -89,6 +89,7 @@ namespace spatacs
                                   data.get<float>("SO_strength"),
                                   data.get<float>("AP_strength") };
             pwd.mRPM = data.get<float>("rpm");
+            pwd.mCaliber = data.get<mass_t>("caliber");
             cmp.add<Timer>();
         }
 

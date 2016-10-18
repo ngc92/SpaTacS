@@ -279,7 +279,7 @@ IrrlichtUI::IrrlichtUI(std::uint64_t team, irr::IrrlichtDevice* device, std::sha
 {
 }
 
-void IrrlichtUI::getCommandEvents(std::vector<events::EventPtr>& evts) const
+void IrrlichtUI::getCommandEvents(std::vector<events::EventPtr>& evts)
 {
 }
 

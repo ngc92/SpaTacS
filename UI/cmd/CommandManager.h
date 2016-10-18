@@ -37,7 +37,7 @@ namespace spatacs
 
             //
             void init() override { };
-            void getCommandEvents(std::vector<events::EventPtr>& evts) const override;
+            void getCommandEvents(std::vector<events::EventPtr>& evts) override;
             void setState(const std::shared_ptr<const core::GameState>& state) override;
             void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) override { }
             bool step() override { return true; }

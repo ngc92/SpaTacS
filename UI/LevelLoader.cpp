@@ -10,10 +10,12 @@ using namespace spatacs;
 using namespace ui;
 using boost::property_tree::ptree;
 
-void LevelLoader::getCommandEvents(std::vector<events::EventPtr>& evts) const
+void LevelLoader::getCommandEvents(std::vector<events::EventPtr>& evts)
 {
     for(auto& ev : mSpawnEvents)
         evts.push_back( std::make_unique<events::SpawnShip>(ev) );
+
+    mSpawnEvents.clear();
 
 }
 
@@ -41,5 +43,4 @@ bool LevelLoader::step()
 
 void LevelLoader::setState(const std::shared_ptr<const core::GameState>& state)
 {
-    mSpawnEvents.clear();
 }

@@ -22,8 +22,8 @@ namespace spatacs
 
         void FireWeapon::applyToShip(Starship& shooter, EventContext& context) const
         {
-            // dead ships don't shoot
-            if(!shooter.alive())
+            // check that the target still exists
+            if(!context.state.hasObject( mTarget ))
                 return;
 
             auto& target = context.state.getShip( mTarget );
@@ -89,7 +89,8 @@ namespace spatacs
             speed_t mMuzzleVel{.0};
         };
 
-        auto FireWeapon::fireWeapon(Starship& shooter, const length_vec& tpos, const velocity_vec& tvel, game::ComponentEntity& weapon) const -> EventPtr
+        auto FireWeapon::fireWeapon(Starship& shooter, const length_vec& tpos,
+                                    const velocity_vec& tvel, game::ComponentEntity& weapon) const -> EventPtr
         {
             if (weapon.get<game::Timer>().time > 0)
                 return nullptr;
@@ -106,7 +107,9 @@ namespace spatacs
 
             auto d = length(aim.aim_pos());
             auto vel = aim.speed() * aim.aim_pos() / d;
-            return EventPtr(new SpawnProjectile(shooter.id(), shooter.position(), vel + shooter.velocity(), 0.2_kg,
+            return EventPtr(new SpawnProjectile(shooter.id(), shooter.position(),
+                                                vel + shooter.velocity(),
+                                                weapon.get<game::ProjectileWpnData>().mCaliber,
                                                 0.0_m, dmg));
         }
         // -------------------------------------------------------------------------------------------------------------

@@ -1,3 +1,14 @@
+## Version 0.6 (menu update)
+  * UI:
+    - main menu
+    - gfx for enemy status
+  * game:
+    - load levels from xml
+    - added cruiser ship type
+    - settings (from file)
+  * physics
+    - runtime unit loading
+
 ## Version 0.5 (player update)
   * UI:
     - waypoints for move command

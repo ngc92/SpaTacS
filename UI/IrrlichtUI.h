@@ -37,7 +37,7 @@ namespace spatacs {
             ~IrrlichtUI();
             void init() override;
 
-            virtual void getCommandEvents(std::vector<events::EventPtr>& evts) const override;
+            virtual void getCommandEvents(std::vector<events::EventPtr>& evts) override;
 
             void setState(const std::shared_ptr<const core::GameState>& state) override;
 

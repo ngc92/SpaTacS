@@ -24,7 +24,7 @@ namespace spatacs
             /// this function gets all the events that this interface wants to transfer
             /// into the simulation.
             /// \param evts Push your events into this vector!
-            virtual void getCommandEvents(std::vector<events::EventPtr>& evts) const = 0;
+            virtual void getCommandEvents(std::vector<events::EventPtr>& evts) = 0;
 
             virtual void setState(const std::shared_ptr<const core::GameState>& state) = 0;
             virtual void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) = 0;

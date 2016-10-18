@@ -1,25 +1,14 @@
-## Version 0.6 (menu update)
-  * UI:
-    - [x] main menu
-      + [x] start level
-      + [x] exit
-    - [x] gfx for enemy status
-    - [x] settings (from file)
-  * game:
-    - [x] load levels from xml
-    - [x] add cruiser ship type
-  * code:
-    - [x] restructure Irrlicht handling to allow for menus
-    - [x] ship component entities 
-    - [x] get rid of all render code in tools
-  * physics
-    - [x] runtime unit loading
-
 ## Version 0.7 ()
+  * UI:
+    - improve enemy status view
   * game:
     - fuel affecting total mass
+    - fuel properties
+    - ammunition
   * code:
     - shield decay as ship property
+    - allow lambdas as systems in component mgr
+    - improve fuel management code
     
 ## Easy projects:
 * Asteroids

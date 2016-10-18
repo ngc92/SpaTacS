@@ -25,6 +25,7 @@
         <precision>70</precision>
         <rpm>35</rpm>
         <muzzle_velocity>4000 m/s</muzzle_velocity>
+        <caliber>0.3 kg</caliber>
         <HP>1</HP>
     </weapon>
 

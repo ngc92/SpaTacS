@@ -1,4 +1,2 @@
 - unify random
-- separate shield and shield generator
-- crash when active ship gets removed and gets a command.
-- make CmdMgr an interface on its own
+- crash when trying to look up command for removed ship

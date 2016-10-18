@@ -63,6 +63,7 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
             {
                 mode = 0;
             }
+
             mCommands->addCommand( own.id(), cmd::SetWpnMode(own.id(), 0, mode) );
         }
 
@@ -109,10 +110,5 @@ bool AIPlayer::step()
 AIPlayer::AIPlayer(std::uint64_t team, std::shared_ptr<cmd::CommandManager> cmd) :
         mOwnTeam( team ),
         mCommands( std::move(cmd) )
-{
-
-}
-
-void AIPlayer::getCommandEvents(std::vector<events::EventPtr>& evts) const
 {
 }

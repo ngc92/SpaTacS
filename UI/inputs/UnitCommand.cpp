@@ -190,8 +190,15 @@ void ui::UnitCommand::step()
 
     mTrajectoryPlotter->clear();
 
+    if(mActiveShipID == 0)
+        return;
+
     // ship info text
     auto& ship = state().getShip(mActiveShipID);
+    if(!ship.alive()) {
+        mActiveShipID = 0;
+        return;
+    }
     auto sp = convert(ship.position());
     {
         mShipInfo->setShipName( ship.name() );
@@ -269,8 +276,13 @@ void ui::UnitCommand::step()
     if(cmd.attack)
     {
         auto& at = cmd.attack.get();
-        mTrajectoryPlotter->addLine(sp, convert(state().getShip(at.target()).position()),
-                                    video::SColor(255, 128, 0, 0));
+        if(state().hasObject(at.target())) {
+            mTrajectoryPlotter->addLine(sp, convert(state().getShip(at.target()).position()),
+                                        video::SColor(255, 128, 0, 0));
+        } else
+        {
+            std::cerr << "Command manager kept invalid command!\n";
+        }
     }
 
 

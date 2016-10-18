@@ -46,7 +46,7 @@ const cmd::CommandSlot& CommandManager::getCommandsOf(std::uint64_t ship) const
     return mCommandSlots.at(ship);
 }
 
-void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events) const
+void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
 {
     for(auto& c : mCommandSlots)
     {
@@ -89,12 +89,13 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events) con
 
         events.push_back(events::EventPtr(new events::SetWeaponMode(ship.id(), s.weapon(), s.mode())));
     }
+
+    mOneShotCommands.clear();
 }
 
 void CommandManager::setState(const std::shared_ptr<const core::GameState>& state)
 {
     mState = state;
-    mOneShotCommands.clear();
     validate();
 }
 
@@ -119,5 +120,15 @@ void CommandManager::validate()
     for( auto it = mCommandSlots.begin(); it != mCommandSlots.end(); ) {
         if( it->second.delflag) it = mCommandSlots.erase(it);
         else ++it;
+    }
+
+    // remove invalid attacks
+    for(auto& cmd : mCommandSlots)
+    {
+        if(cmd.second.attack)
+        {
+            if(!mState->getObject(cmd.second.attack.get().target()).alive())
+                cmd.second.attack = boost::none;
+        }
     }
 }

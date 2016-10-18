@@ -23,7 +23,7 @@ namespace spatacs {
             /// this function gets all the events that this interface wants to transfer
             /// into the simulation.
             /// \param evts Push your events into this vector!
-            void getCommandEvents(std::vector<events::EventPtr>& evts) const override;
+            void getCommandEvents(std::vector<events::EventPtr>& evts) override { }
 
             virtual void setState(const std::shared_ptr<const core::GameState>& state) override;
 
