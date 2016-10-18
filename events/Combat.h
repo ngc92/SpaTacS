@@ -8,7 +8,7 @@
 #include "ShipEvent.h"
 #include "vec.h"
 #include "game/Damage.h"
-#include "game/components/comps.h"
+#include "game/components.h"
 
 namespace spatacs {
 

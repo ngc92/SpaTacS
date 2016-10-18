@@ -4,8 +4,9 @@
 
 #include "Starship.h"
 #include "GameObject.h"
-#include "game/SubSystems.h"
-#include "components/IComponent.h"
+#include "SubSystems.h"
+#include "components.h"
+#include "systems.h"
 #include <boost/property_tree/ptree.hpp>
 #include <iostream>
 #include "core/System.h"
@@ -15,21 +16,6 @@ using namespace game;
 
 namespace
 {
-    class TimerCountdown : public core::System<ComponentEntity, TimerCountdown, core::Signature<Timer>>
-    {
-    public:
-        TimerCountdown(double dt) : mDeltaT(dt) { }
-
-        void apply(const ComponentEntity& ety, Timer& timer) const
-        {
-            timer.time -= mDeltaT;
-        }
-    private:
-        double mDeltaT;
-    };
-
-    // -----------------------------------------------------------------------------------
-
     class GetProvidedEnergy : public core::System<ComponentEntity, GetProvidedEnergy,
                                                   core::Signature<EnergyManagement>>
     {
@@ -38,8 +24,8 @@ namespace
 
         void apply(const ComponentEntity& ety, EnergyManagement& egy)
         {
-            mCollectedEnergy += egy.mEnergyCache;
-            egy.mEnergyCache = 0;
+            mCollectedEnergy += egy.cache;
+            egy.cache = 0;
         }
 
         double energy() const { return mCollectedEnergy; }
@@ -53,8 +39,8 @@ namespace
     public:
         void apply(const ComponentEntity& ety, EnergyManagement& egy)
         {
-            mRequests.push_back( egy.mLastTotalRequest );
-            mPriority.push_back( egy.mEnergyPriority );
+            mRequests.push_back( egy.last_request );
+            mPriority.push_back( egy.priority );
         }
 
         const std::vector<double>& requests() { return mRequests; }
@@ -73,7 +59,7 @@ namespace
 
         void apply(const ComponentEntity& ety, EnergyManagement& egy)
         {
-            egy.mEnergyCache = mSupply.at(i);
+            egy.cache = mSupply.at(i);
             ++i;
         }
 
@@ -83,35 +69,6 @@ namespace
     };
 
     // -----------------------------------------------------------------------------------------------
-    class ShieldManagement : public core::System<ComponentEntity, ShieldManagement,
-            core::Signature<ShieldGeneratorData, EnergyManagement, Health>>
-    {
-    public:
-        ShieldManagement(Starship& s) : ship(s) { }
-
-        void apply(const ComponentEntity& ety, ShieldGeneratorData& sgen, EnergyManagement& egy, const Health& health)
-        {
-            auto dt = 0.1_s;
-            // shield decay
-            double decay = std::exp( sgen.mDecay*dt );
-            auto shield = ship.shield();
-            shield *= decay;
-            if(shield < ship.max_shield())
-            {
-                double difference = ship.max_shield() - ship.shield();
-                double recharge = sgen.mShieldRecharge * dt * health.status();
-                double rec = std::min( recharge, difference );
-                double consumption = rec * sgen.mEnergyPerShieldPoint;
-                if(consumption != 0)
-                    rec *= egy.requestEnergy( consumption ) / consumption;
-                shield += rec;
-            }
-            ship.setShield( shield );
-        }
-    private:
-        Starship& ship;
-    };
-
     class LifeSupportStep : public core::System<ComponentEntity, LifeSupportStep,
             core::Signature<LifeSupportData, EnergyManagement>>
     {
@@ -129,86 +86,6 @@ namespace
     private:
         const Starship& ship;
     };
-
-    class PowerProduction : public core::System<ComponentEntity, PowerProduction,
-            core::Signature<PowerPlantData, EnergyManagement, Health>>
-    {
-    public:
-        void apply(const ComponentEntity& ety, PowerPlantData& pp, EnergyManagement& egy, const Health& health)
-        {
-            egy.mEnergyCache += 0.1f * pp.mEnergyProduction * health.status();;
-        }
-    };
-
-    class RequestFuel : public core::System<ComponentEntity, RequestFuel,
-            core::Signature<FuelStorage>>
-    {
-    public:
-        RequestFuel(const mass_t& request) : mRequest(request)
-        {}
-
-        mass_t provided() const { return mProvide; }
-
-        void apply(const ComponentEntity& ety, FuelStorage& fs)
-        {
-            if(mRequest < fs.current)
-            {
-                fs.current -= mRequest;
-                mProvide += mRequest;
-                mRequest -= mRequest;
-            } else
-            {
-                mProvide += fs.current;
-                mRequest -= fs.current;
-                fs.current -= fs.current;
-            }
-        }
-    private:
-        mass_t mRequest;
-        mass_t mProvide;
-    };
-
-    class Propulsion : public core::System<ComponentEntity, Propulsion,
-            core::Signature<EngineData, Health>>
-    {
-    public:
-        Propulsion(Starship& ship, accel_vec mDesiredAcceleration)
-                : mShip(ship), mDesiredAcceleration(mDesiredAcceleration)
-        {}
-
-        void apply(const ComponentEntity& ce, const EngineData& engine, const Health& health)
-        {
-            auto dt = 0.1_s;
-            force_t want    = length(mDesiredAcceleration) * mShip.mass();
-            // if we do not want to accelerate, end here
-            if(want == force_t(0)) {
-                return;
-            }
-
-            mass_t need_mass  = (want / engine.mPropellantSpeed) * dt;
-            mass_t max_mass   = engine.mMassRate * dt * health.status();
-            if(need_mass > max_mass)
-                need_mass = max_mass;
-
-            // get fuel
-            RequestFuel req(need_mass);
-            mShip.components().apply(req);
-            mass_t fuel = req.provided();
-
-            force_t f = fuel * engine.mPropellantSpeed  / dt;
-            mMaxAcceleration += max_mass * engine.mPropellantSpeed  / dt / mShip.mass();
-            mProducedAcceleration += mDesiredAcceleration * (f / want);
-        }
-
-        const accel_vec& getProduced() const { return mProducedAcceleration; }
-        accel_t getMax() const { return mMaxAcceleration; }
-    private:
-        Starship& mShip;
-        accel_vec mDesiredAcceleration;
-        accel_vec mProducedAcceleration{.0, .0, .0};
-        accel_t   mMaxAcceleration{.0};
-    };
-
 }
 
 // ---------------------------------------------------------------------------------------------------

@@ -47,8 +47,7 @@ SET(CORE_SOURCE_FILES
         game/Starship.cpp
         game/Projectile.h
         game/Projectile.cpp
-        game/components/IComponent.h
-        game/components/IComponent.cpp
+        game/components.cpp
         core/GameThread.cpp
         core/GameThread.h
         game/GameObject.h
@@ -57,7 +56,7 @@ SET(CORE_SOURCE_FILES
         core/Simulation.h
         game/Damage.h
         game/SubSystems.h
-        game/SubSystems.cpp game/components/comps.h)
+        game/SubSystems.cpp game/components.h game/systems.h game/systems.cpp)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h

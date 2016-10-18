@@ -4,19 +4,26 @@
       + [x] start level
       + [ ] settings
       + [x] exit
+    - [ ] gfx for enemy status
   * game:
     - [ ] load levels from xml
     - [x] add cruiser ship type
   * code:
     - [x] restructure Irrlicht handling to allow for menus
-    - [ ] game entities 
-    - [ ] get rid of all render code in tools
+    - [ ] ship component entities 
+    - [x] get rid of all render code in tools
   * physics
     - [ ] runtime unit loading + tests
 
 ## Version 0.7 ()
   * game:
-    - [ ] load level from xml
+    - 
+    
+## Easy projects:
+* Asteroids
+  - passive objects
+  - block shots and cannot be flown through
+  - need some visualization
 
 ## Unspecified
 * optimizations:

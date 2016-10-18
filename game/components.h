@@ -8,6 +8,7 @@
 #include "physics/units.h"
 #include "core/Entity.h"
 #include "game/Damage.h"
+#include <boost/property_tree/ptree_fwd.hpp>
 
 namespace spatacs
 {
@@ -32,22 +33,12 @@ namespace spatacs
 
         struct EnergyManagement
         {
-            double mEnergyCache      = 0;
-            double mLastTotalRequest = 0;
-            double mEnergyPriority   = 1;
+            double cache        = 0;
+            double last_request = 0;
+            double priority     = 1;
 
             // helper functions
-            double requestEnergy(double amount)
-            {
-                mLastTotalRequest += amount;
-                if (amount < mEnergyCache) {
-                    mEnergyCache -= amount;
-                    return amount;
-                }
-                double ret = mEnergyCache;
-                mEnergyCache = 0;
-                return ret;
-            }
+            double requestEnergy(double amount);
         };
 
         struct EngineData
@@ -69,6 +60,8 @@ namespace spatacs
             FuelStorage() = default;
             FuelStorage(mass_t v) : current(v), capacity(v) { }
 
+            mass_t request(mass_t desire);
+
             // data about stored fuel
             mass_t current;
             mass_t capacity;
@@ -77,8 +70,8 @@ namespace spatacs
         struct PowerPlantData
         {
             PowerPlantData() = default;
-            PowerPlantData(double ep) : mEnergyProduction(ep) {}
-            double mEnergyProduction = 0;
+            PowerPlantData(double ep) : energy_production(ep) {}
+            double energy_production = 0;
         };
 
         struct ShieldGeneratorData
@@ -93,7 +86,7 @@ namespace spatacs
 
         struct LifeSupportData
         {
-            velocity_vec mLastVelocity; /// \todo this should probably come from somewhere else!
+            velocity_vec mLastVelocity{.0, .0, .0}; /// \todo this should probably come from somewhere else!
         };
 
         struct WeaponAimData
@@ -123,24 +116,21 @@ namespace spatacs
             Damage mDamage;
             float mRPM;
 
-            Damage damage() const
-            {
-                Damage dmg;
-                if (mMode == HE_MODE) {
-                    dmg.high_explosive = mDamage.high_explosive;
-                } else if (mMode == ProjectileWpnData::AP_MODE) {
-                    dmg.armour_piercing = mDamage.armour_piercing;
-                } else if (mMode == ProjectileWpnData::SO_MODE) {
-                    dmg.shield_overload = mDamage.shield_overload;
-                }
-
-                return dmg;
-            }
+            Damage damage() const;
         };
 
         using ComponentEntity = core::Entity<Health, EnergyManagement, FuelStorage, EngineData,
                 PowerPlantData, ShieldGeneratorData, LifeSupportData, WeaponAimData, ProjectileWpnData,
                         Timer, Name>;
+
+
+        // creation functions
+        void makeEngine(const boost::property_tree::ptree& data, ComponentEntity& cmp);
+        void makeFuelTank(const boost::property_tree::ptree& data, ComponentEntity& cmp);
+        void makeLifeSupport(const boost::property_tree::ptree& data, ComponentEntity& cmp);
+        void makePowerPlant(const boost::property_tree::ptree& data, ComponentEntity& cmp);
+        void makeProjectileWpn(const boost::property_tree::ptree& data, ComponentEntity& cmp);
+        void makeShieldGenerator(const boost::property_tree::ptree& data, ComponentEntity& cmp);
     }
 }
 

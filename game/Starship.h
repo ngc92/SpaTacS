@@ -9,7 +9,7 @@
 #include "vec.h"
 #include "physics/Object.h"
 #include "GameObject.h"
-#include "components/comps.h"
+#include "components.h"
 #include "core/EntityManager.h"
 
 

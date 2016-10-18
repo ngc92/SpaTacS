@@ -7,6 +7,7 @@
 
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/for_each.hpp>
+#include <tuple>
 
 namespace spatacs
 {
