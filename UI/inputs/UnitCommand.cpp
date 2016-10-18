@@ -4,7 +4,6 @@
 
 #include "UI/cmd/Attack.h"
 #include "UI/cmd/Move.h"
-#include <irrlicht/SMaterial.h>
 #include <irrlicht/IVideoDriver.h>
 #include <irrlicht/IGUIEnvironment.h>
 #include <irrlicht/IGUIStaticText.h>
@@ -44,9 +43,8 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::IScene
     auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 10, 100, 130));
     mShipInfo.reset(sstat);
 
-    txt = guienv->addStaticText(L"", irr::core::recti(700, 10, 790, 70));
-    txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
-    mTargetInfo.reset(txt);
+    sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(700, 10, 790, 90));
+    mTargetInfo.reset(sstat);
 
     txt = guienv->addStaticText(L"", irr::core::recti(10, 135, 100, 155));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
@@ -90,7 +88,7 @@ void ui::UnitCommand::onRightClick(ray_t ray, const irr::SEvent::SMouseInput& ev
 void ui::UnitCommand::onMouseMove(ui::IInputMode::ray_t ray)
 {
     auto t = pick(state(), ray);
-    if(t)
+    if(t && t->team() != state().getShip(mActiveShipID).team())
     {
         mCurrentAim = t->position();
         mMode = ATTACK;
@@ -215,14 +213,12 @@ void ui::UnitCommand::step()
     } else
     {
         auto& target = state().getShip(mCurrentAimShip);
-        std::wstringstream stream;
-        stream << std::fixed << std::setprecision(1);
-        stream << target.name().c_str() << ":\n";
-        stream << " shield: " << target.shield() << "/" << target.max_armour() << "\n";
-        stream << " hull: "   << target.hull_status().current     << "/" << target.hull_status().max << "\n";
-        stream << " hp: "     << target.hp() << "\n";
-        mTargetInfo->setText( stream.str().c_str() );
         mTargetInfo->setVisible(true);
+        mTargetInfo->setShipName( target.name() );
+        mTargetInfo->clearSystems();
+        mTargetInfo->pushSystem( irr::gui::SystemStatus{"shield",  target.shield(), target.max_shield()} );
+        mTargetInfo->pushSystem( irr::gui::SystemStatus{"hull",  target.hull_status().current, target.hull_status().max} );
+        mTargetInfo->pushSystem( irr::gui::SystemStatus{"structure", target.hp(), target.max_hp()} );
     }
 
     {

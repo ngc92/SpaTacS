@@ -1,13 +1,13 @@
 <ship>
-    <mass>650t</mass>
+    <mass>1300t</mass>
     <radius>25m</radius>
     <hitpoints>10</hitpoints>
     <armour>10</armour>
     <shield>10</shield>
 
     <engine>
-        <fuel_consumption>500 kg/s</fuel_consumption>
-        <propellant_speed>100 km/s</propellant_speed>
+        <fuel_consumption>1600 kg/s</fuel_consumption>
+        <propellant_speed>60 km/s</propellant_speed>
         <HP>1</HP>
     </engine>
 
@@ -34,7 +34,7 @@
     </power_plant>
 
     <tank>
-        <capacity>200t</capacity>
+        <capacity>800t</capacity>
         <HP>1</HP>
     </tank>
 

@@ -16,6 +16,9 @@ using namespace irr::gui;
 
 void ShipStatusUI::draw()
 {
+    if(!IsVisible)
+        return;
+
     auto p = getAbsolutePosition().UpperLeftCorner;
     auto clip = getAbsoluteClippingRect();
     irr::core::recti rect {p, p + irr::core::vector2di(getAbsolutePosition().getWidth(), 16)};
@@ -30,8 +33,9 @@ void ShipStatusUI::draw()
         if(div == 0) div = 1;
         cp.LowerRightCorner.X = cp.UpperLeftCorner.X + (int)std::round(rect.getWidth() * sys.hp / div);
         Environment->getVideoDriver()->draw2DRectangle(SColor(255, 64, 128, 0), cp, &clip);
-        std::wstringstream stream;        
-        stream << std::fixed << std::setprecision(1);
+        std::wstringstream stream;
+        stream << std::fixed;
+        stream << std::setprecision(sys.max_hp < 500 ? 1 : 0);
         stream << sys.name.c_str() << " " << sys.hp << "/" << sys.max_hp;
         Environment->getBuiltInFont()->draw(stream.str().c_str(), rect + irr::core::vector2di(4, 0), video::SColor(255, 20, 20, 0), false, true, &clip);
         rect += irr::core::vector2di(0, 18);

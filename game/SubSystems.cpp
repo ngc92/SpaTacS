@@ -67,25 +67,6 @@ namespace
         unsigned i = 0;
         std::vector<double>& mSupply;
     };
-
-    // -----------------------------------------------------------------------------------------------
-    class LifeSupportStep : public core::System<ComponentEntity, LifeSupportStep,
-            core::Signature<LifeSupportData, EnergyManagement>>
-    {
-    public:
-        LifeSupportStep(const Starship& s) : ship(s) { }
-
-        void apply(const ComponentEntity& ety, LifeSupportData& sup, EnergyManagement& egy)
-        {
-            auto accel = length(ship.velocity() - sup.mLastVelocity) / 0.1_s + 9.81_m/(1.0_s)/(1.0_s);
-            sup.mLastVelocity = ship.velocity();
-            double ereq = accel.value / 1000.0;
-            /// \todo for now, nothing happens when we do not get the requested energy!
-            egy.requestEnergy( ereq );
-        }
-    private:
-        const Starship& ship;
-    };
 }
 
 // ---------------------------------------------------------------------------------------------------

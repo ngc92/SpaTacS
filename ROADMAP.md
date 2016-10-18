@@ -4,7 +4,7 @@
       + [x] start level
       + [ ] settings
       + [x] exit
-    - [ ] gfx for enemy status
+    - [x] gfx for enemy status
   * game:
     - [ ] load levels from xml
     - [x] add cruiser ship type
@@ -17,7 +17,9 @@
 
 ## Version 0.7 ()
   * game:
-    - 
+    - fuel affecting total mass
+  * code:
+    - shield decay as ship property
     
 ## Easy projects:
 * Asteroids

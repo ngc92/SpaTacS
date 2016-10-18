@@ -53,7 +53,7 @@ namespace spatacs {
 
             remove_ptr<irr::gui::IGUIElement>  mDistanceMarker;
             remove_ptr<irr::gui::ShipStatusUI> mShipInfo;
-            remove_ptr<irr::gui::IGUIElement>  mTargetInfo;
+            remove_ptr<irr::gui::ShipStatusUI>  mTargetInfo;
             remove_ptr<irr::gui::IGUIElement>  mSpeedInfo;
             remove_ptr<irr::scene::MultiLineNode> mTrajectoryPlotter;
 

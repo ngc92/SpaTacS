@@ -52,6 +52,7 @@ auto Simulation::step(EventVec inEvents) -> EventVec
         auto po = mWorld->getObject( ship.physics_id() );
         ship.setPosition( po.position() );
         ship.setVelocity( po.velocity() );
+        ship.setMass( po.mass() );
     }
 
     // step all objects

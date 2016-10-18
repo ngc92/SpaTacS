@@ -105,7 +105,7 @@ SystemStatus Starship::hull_status() const {
 void Starship::dealDamage(double dmg)
 {
     auto dmg_target = rand() % mSubSystems->mComponents.size();
-    auto& cmp = mSubSystems->mComponents.get(dmg_target);
+    auto& cmp = mSubSystems->mComponents.get(dmg_target + 1);
 
     // one shot can only ever destroy half the component
     double d = std::min(dmg, cmp.get<Health>().current / 2);
