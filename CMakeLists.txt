@@ -43,31 +43,19 @@ SET(CORE_SOURCE_FILES
         core/GameState.cpp
         core/Entity.h
         core/System.h
+        core/EntityManager.h
         game/Starship.cpp
-        game/components/Engine.h
-        game/components/Engine.cpp
-        game/components/IWeapon.h
-        game/components/ProjectileWeapon.cpp
-        game/components/ProjectileWeapon.h
         game/Projectile.h
         game/Projectile.cpp
         game/components/IComponent.h
         game/components/IComponent.cpp
-        game/components/ShieldGenerator.cpp
-        game/components/ShieldGenerator.h
         core/GameThread.cpp
         core/GameThread.h
         game/GameObject.h
         game/GameObject.cpp
-        game/components/PowerPlant.cpp
-        game/components/PowerPlant.h
         core/Simulation.cpp
         core/Simulation.h
         game/Damage.h
-        game/components/FuelTank.h
-        game/components/FuelTank.cpp
-        game/components/LifeSupport.cpp
-        game/components/LifeSupport.h
         game/SubSystems.h
         game/SubSystems.cpp game/components/comps.h)
 

@@ -9,18 +9,14 @@
 #include "vec.h"
 #include "physics/Object.h"
 #include "GameObject.h"
+#include "components/comps.h"
+#include "core/EntityManager.h"
 
 
 namespace spatacs
 {
     namespace game {
-        class Engine;
-        class ShieldGenerator;
-        class IWeapon;
-        class PowerPlant;
-        class FuelTank;
         class SubSystems;
-        class IComponent;
 
         struct SystemStatus
         {
@@ -125,15 +121,14 @@ namespace spatacs
             /// Subcomponents
             // weapon interface
             std::size_t weapon_count() const;
-            const IWeapon& weapon( std::size_t id) const;
-            IWeapon& getWeapon( std::size_t id );
+            const ComponentEntity& weapon( std::size_t id) const;
+            ComponentEntity& getWeapon( std::size_t id );
 
-            FuelTank& getTank();
-
-            const std::vector<IComponent*>& components() const;
+            const core::EntityManager<ComponentEntity>& components() const;
+            core::EntityManager<ComponentEntity>& components();
 
             // damage the ship
-            void dealDamage( float dmg );
+            void dealDamage(double dmg);
 
         private:
             // components

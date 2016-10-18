@@ -122,6 +122,20 @@ namespace spatacs
             } mMode = HE_MODE;
             Damage mDamage;
             float mRPM;
+
+            Damage damage() const
+            {
+                Damage dmg;
+                if (mMode == HE_MODE) {
+                    dmg.high_explosive = mDamage.high_explosive;
+                } else if (mMode == ProjectileWpnData::AP_MODE) {
+                    dmg.armour_piercing = mDamage.armour_piercing;
+                } else if (mMode == ProjectileWpnData::SO_MODE) {
+                    dmg.shield_overload = mDamage.shield_overload;
+                }
+
+                return dmg;
+            }
         };
 
         using ComponentEntity = core::Entity<Health, EnergyManagement, FuelStorage, EngineData,

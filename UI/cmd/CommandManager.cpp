@@ -7,7 +7,6 @@
 #include <iostream>
 #include "events/Accelerate.h"
 #include "game/Starship.h"
-#include "game/components/IWeapon.h"
 #include "events/Combat.h"
 
 using namespace spatacs;
@@ -64,8 +63,9 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events) con
                 std::size_t wp_count = ship.weapon_count();
                 for(std::size_t i = 0; i < wp_count; ++i)
                 {
-                    if(ship.weapon(i).ready())
-                        events.push_back( events::EventPtr(new events::FireWeapon(ship.id(), target.id(), i)) );
+                    // send the command even when not ready, otherwise we loose
+                    // one or two steps.
+                    events.push_back( events::EventPtr(new events::FireWeapon(ship.id(), target.id(), i)) );
                 }
             }
         }

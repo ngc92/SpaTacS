@@ -6,15 +6,9 @@
 #include "game/Starship.h"
 #include <cmath>
 #include <algorithm>
-#include "game/components/ProjectileWeapon.h"
-#include "game/components/ShieldGenerator.h"
-#include "game/components/Engine.h"
-#include "game/components/FuelTank.h"
-#include "game/components/LifeSupport.h"
 #include "game/SubSystems.h"
 #include <boost/property_tree/ptree.hpp>
 #include <iostream>
-#include "game/components/PowerPlant.h"
 
 using namespace spatacs;
 using namespace game;
@@ -60,12 +54,12 @@ std::size_t Starship::weapon_count() const
     return mSubSystems->mArmament.size();
 }
 
-const IWeapon& Starship::weapon( std::size_t id ) const
+const ComponentEntity& Starship::weapon( std::size_t id ) const
 {
     return *mSubSystems->mArmament.at(id);
 }
 
-IWeapon& Starship::getWeapon( std::size_t id )
+ComponentEntity& Starship::getWeapon( std::size_t id )
 {
     return *mSubSystems->mArmament.at(id);
 }
@@ -108,11 +102,15 @@ SystemStatus Starship::hull_status() const {
     return SystemStatus{armour(), max_armour()};
 }
 
-void Starship::dealDamage(float dmg)
+void Starship::dealDamage(double dmg)
 {
-    auto dmg_target = rand() % mSubSystems->mCompPtrs.size();
-    auto leftover = mSubSystems->mCompPtrs[dmg_target]->dealDamage( dmg );
-    mHitPoints -= leftover;
+    auto dmg_target = rand() % mSubSystems->mComponents.size();
+    auto& cmp = mSubSystems->mComponents.get(dmg_target);
+
+    // one shot can only ever destroy half the component
+    double d = std::min(dmg, cmp.get<Health>().current / 2);
+    cmp.get<Health>().current -= d;
+    mHitPoints -= dmg - d;
 }
 
 uint64_t ShipData::team() const
@@ -160,19 +158,19 @@ void ShipData::setArmour(double new_value)
     mCurArmour = new_value;
 }
 
-FuelTank& Starship::getTank()
-{
-    return *mSubSystems->mFuelTank;
-}
-
 Starship* Starship::clone() const
 {
     return new Starship(*this);
 }
 
-const std::vector<IComponent*>& Starship::components() const
+const core::EntityManager<ComponentEntity>& Starship::components() const
 {
-    return mSubSystems->mCompPtrs;
+    return mSubSystems->mComponents;
+}
+
+core::EntityManager<ComponentEntity>& Starship::components()
+{
+    return mSubSystems->mComponents;
 }
 
 void ShipData::setHP(double hp)

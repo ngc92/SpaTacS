@@ -12,14 +12,10 @@
 #include <iomanip>
 #include "UnitCommand.h"
 #include "core/GameState.h"
-#include "game/components/IWeapon.h"
 #include <irrlicht/ICameraSceneNode.h>
 #include <iostream>
 #include "UI/gfx/ShipStatusUI.h"
-#include "game/components/ShieldGenerator.h"
-#include "game/components/Engine.h"
 #include "UI/convert.h"
-#include "game/components/FuelTank.h"
 #include "game/Starship.h"
 #include "UI/IrrlichtUI.h"
 #include "UI/cmd/CommandManager.h"
@@ -150,7 +146,7 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
 namespace
 {
 
-    class SysInfo : public core::System<game::ComponentEntity, SysInfo, core::Signature<game::Health, game::Name>>
+    class SysInfo : public core::System<const game::ComponentEntity, SysInfo, core::Signature<game::Health, game::Name>>
     {
     public:
         SysInfo(irr::gui::ShipStatusUI* ui) : mUI(ui)
@@ -167,7 +163,7 @@ namespace
         irr::gui::ShipStatusUI* mUI;
     };
 
-    class TankInfo : public core::System<game::ComponentEntity, TankInfo, core::Signature<game::FuelStorage>>
+    class TankInfo : public core::System<const game::ComponentEntity, TankInfo, core::Signature<game::FuelStorage>>
     {
     public:
         TankInfo()
@@ -204,11 +200,8 @@ void ui::UnitCommand::step()
         mShipInfo->clearSystems();
         SysInfo si(mShipInfo.get());
         TankInfo ti;
-        for(auto& cmp : ship.components())
-        {
-            si(cmp->entity());
-            ti(cmp->entity());
-        }
+        ship.components().apply(si);
+        ship.components().apply(ti);
         mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield(), ship.max_shield()} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
@@ -228,8 +221,6 @@ void ui::UnitCommand::step()
         stream << " shield: " << target.shield() << "/" << target.max_armour() << "\n";
         stream << " hull: "   << target.hull_status().current     << "/" << target.hull_status().max << "\n";
         stream << " hp: "     << target.hp() << "\n";
-        auto dst = distance(ship, target);
-        stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
         mTargetInfo->setText( stream.str().c_str() );
         mTargetInfo->setVisible(true);
     }
@@ -250,12 +241,6 @@ void ui::UnitCommand::step()
 
         std::wstringstream stream;
         stream << std::fixed << std::setprecision(1) << length(ship.position() - mCurrentAim.get()) << "\n";
-        if(mMode == ATTACK)
-        {
-            auto& target = state().getShip(mCurrentAimShip);
-            auto dst = distance(ship, target);
-            stream << " hit: "  << ship.weapon(0).hit_chance(dst, target.radius() * target.radius()) * 100 << "%\n";
-        }
         mDistanceMarker->setText(stream.str().c_str());
         auto pos = getScreenPosition( flightline.getMiddle() );
         pos.Y -= 10;

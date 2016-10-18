@@ -32,7 +32,7 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
             continue;
 
         // if the shield is damaged.
-        float own_shield = own.shield();
+        double own_shield = own.shield();
 
         length_t min = 100.0_km;
         // find closest ship to attack

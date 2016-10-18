@@ -6,16 +6,8 @@
 #define SPATACS_SUBSYSTEMS_H
 
 #include <boost/property_tree/ptree_fwd.hpp>
-
-// include all that stuff in the header, so defaulted
-// constructors work.
-#include "game/components/IWeapon.h"
-#include "game/components/ShieldGenerator.h"
-#include "game/components/Engine.h"
-#include "game/components/FuelTank.h"
-#include "game/components/LifeSupport.h"
-#include "game/components/PowerPlant.h"
 #include "GameObject.h"
+#include "core/EntityManager.h"
 
 namespace spatacs
 {
@@ -26,22 +18,15 @@ namespace spatacs
             SubSystems(const boost::property_tree::ptree& data);
             SubSystems( const SubSystems& other );
 
-            std::unique_ptr<Engine> mEngine;
-            std::unique_ptr<ShieldGenerator> mShield;
-            std::unique_ptr<PowerPlant> mPowerPlant;
-            std::unique_ptr<FuelTank> mFuelTank;
-            std::unique_ptr<LifeSupport> mLifeSupport;
-            std::vector<std::unique_ptr<IWeapon>> mArmament;
-
-            std::vector<IComponent*> mCompPtrs;
+            std::vector<ComponentEntity*> mArmament;
 
             double distributeEnergy(double energy);
 
-            double produceEnergy() const;
-
-            accel_vec accelerate(const accel_vec desired);
+            double produceEnergy();
 
             void onStep(Starship& ship);
+
+            core::EntityManager<ComponentEntity> mComponents;
         };
     }
 }

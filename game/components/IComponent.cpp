@@ -9,34 +9,62 @@ namespace spatacs
 {
     namespace game
     {
+        using boost::property_tree::ptree;
 
-        double IComponent::hp() const
+        void addHealth(ComponentEntity& cmp, const ptree& data)
         {
-            return mEntity.get<Health>().current;
+            cmp.add<Health>( data.get<double>("HP") );
         }
 
-        double IComponent::max_hp() const
+        void makeEngine(const ptree& data, ComponentEntity& cmp)
         {
-            return mEntity.get<Health>().maximum;
+            addHealth(cmp, data);
+            cmp.add<Name>("engine");
+            cmp.add<EngineData>(data.get<speed_t>("propellant_speed"),
+                                data.get<physics::rate_t<mass_t>>("fuel_consumption") );
         }
 
-        IComponent::IComponent(const IComponent::ptree& data) :
-            mEntity(0)
+        void makeFuelTank(const ptree& data, ComponentEntity& cmp)
         {
-            mEntity.add<Health>( data.get<float>("HP") );
+            addHealth(cmp, data);
+            cmp.add<FuelStorage>(data.get<mass_t>("capacity") );
         }
 
-        double IComponent::status() const
+        void makeLifeSupport(const ptree& data, ComponentEntity& cmp)
         {
-            return hp() / max_hp();
+            addHealth(cmp, data);
+            cmp.add<EnergyManagement>();
+            cmp.add<LifeSupportData>();
         }
 
-        double IComponent::dealDamage(double dmg)
+        void makePowerPlant(const ptree& data, ComponentEntity& cmp)
         {
-            // one shot can only ever destroy half the component
-            double d = std::min(dmg, hp() / 2);
-            mEntity.get<Health>().current -= d;
-            return dmg - d;
+            addHealth(cmp, data);
+            cmp.add<EnergyManagement>();
+            cmp.add<PowerPlantData>(data.get<double>("power") );
+        }
+
+        void makeProjectileWpn(const ptree& data, ComponentEntity& cmp)
+        {
+            addHealth(cmp, data);
+            cmp.add<WeaponAimData>(data.get<speed_t>("muzzle_velocity"), data.get<double>("precision"));
+            auto& pwd = cmp.add<ProjectileWpnData>();
+            pwd.mDamage = Damage{ data.get<float>("HE_strength"),
+                                  data.get<float>("SO_strength"),
+                                  data.get<float>("AP_strength") };
+            pwd.mRPM = data.get<float>("rpm");
+            cmp.add<Timer>();
+        }
+
+        void makeShieldGenerator(const ptree& data, ComponentEntity& cmp)
+        {
+            addHealth(cmp, data);
+            cmp.add<Name>("shield generator");
+            cmp.add<EnergyManagement>();
+            auto& sgd = cmp.add<ShieldGeneratorData>();
+            sgd.mShieldRecharge = scalar_t(data.get<float>("recharge")) / 1.0_s;
+            sgd.mDecay =  scalar_t(std::log(1-data.get<float>("dissipation") / 100.f)) / 1.0_s;
+            sgd.mEnergyPerShieldPoint = 1.f / data.get<float>("efficiency");
         }
     }
 }

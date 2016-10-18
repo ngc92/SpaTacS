@@ -7,10 +7,9 @@
 #include "Combat.h"
 #include "Spawn.h"
 #include "core/GameState.h"
-#include "game/components/ShieldGenerator.h"
-#include "game/components/IWeapon.h"
 #include "game/Starship.h"
 #include "game/Projectile.h"
+#include "core/System.h"
 
 namespace spatacs
 {
@@ -34,29 +33,82 @@ namespace spatacs
             auto ev = fireWeapon(shooter, tpos, tvel, wpn);
             if(ev)
                 context.events.push_back( std::move(ev) );
-
          }
 
-        auto FireWeapon::fireWeapon(Starship& shooter, const length_vec& tpos, const velocity_vec& tvel, game::IWeapon& weapon) const -> EventPtr
+        class Aiming : public core::System<game::ComponentEntity, Aiming,
+                core::Signature<game::WeaponAimData, game::Health>>
         {
-            // check that weapon is ready
-            if(!weapon.ready())
+        public:
+            Aiming(length_vec position, velocity_vec velocity) :
+                    mTargetPos(position),
+                    mTargetVel(velocity)
+            {
+            }
+
+            void apply(const game::ComponentEntity& ety, const game::WeaponAimData& aim, const game::Health& health)
+            {
+                // perfect aim
+                speed_t vel = aim.muzzle_velocity; // km/s
+                auto d = length(mTargetPos);
+                auto aim_pos = mTargetPos;
+
+                for(unsigned i = 0; i < 3; ++i) {
+                    aim_pos = mTargetPos + (d / vel) * mTargetVel;
+                    auto old_d = d;
+                    d = length(aim_pos);
+                    //std::cout << "correct: " << i << " " << abs(d - old_d) << "\n";
+                    if( abs(d - old_d) < 10.0_m )
+                        break;
+                }
+
+
+
+                // miss-aim
+                auto precision = aim.precision * (health.status() + 1) * .5;
+                length_t aim_radius = d / precision;
+                auto aim_radius_miss = (rand() % 1001 / 1000.0) * aim_radius;
+
+                auto miss_base = meters(rand() % 1001 - 500.0, rand() % 1001 - 500.0, rand() % 1001 - 500.0);
+                auto miss = perpendicular(miss_base, aim_pos);
+
+                length_t n = length(miss);
+                if( n == 0.0_m ) miss *= 0.0;
+                else miss *= aim_radius_miss / n;
+
+                mAimPos = aim_pos + miss;
+                mMuzzleVel = vel;
+            }
+
+            const length_vec& aim_pos() const { return mAimPos; }
+            const speed_t     speed() const { return mMuzzleVel; }
+        private:
+            length_vec mTargetPos;
+            velocity_vec mTargetVel;
+
+            length_vec mAimPos{.0, .0, .0};
+            speed_t mMuzzleVel{.0};
+        };
+
+        auto FireWeapon::fireWeapon(Starship& shooter, const length_vec& tpos, const velocity_vec& tvel, game::ComponentEntity& weapon) const -> EventPtr
+        {
+            if (weapon.get<game::Timer>().time > 0)
                 return nullptr;
 
-            // let the weapon create a projectile
-            auto oproj = weapon.fire( tpos - shooter.position(), tvel - shooter.velocity() );
+            // reset timer
+            weapon.get<game::Timer>().time = 60 / weapon.get<game::ProjectileWpnData>().mRPM;
 
-            if( oproj) {
-                auto& shot = oproj.get();
+            // determine damage
+            game::Damage dmg = weapon.get<game::ProjectileWpnData>().damage();
 
-                // update position and velocity according to shooter state
-                return EventPtr(new SpawnProjectile(shooter.id(), shooter.position(), shot.vel + shooter.velocity(), 0.2_kg,
-                                                    0.0_m, shot.damage));
-            }
-            // if no hit, return nullptr
-            return nullptr;
+            // aiming
+            Aiming aim(tpos - shooter.position(), tvel - shooter.velocity());
+            aim(weapon);
+
+            auto d = length(aim.aim_pos());
+            auto vel = aim.speed() * aim.aim_pos() / d;
+            return EventPtr(new SpawnProjectile(shooter.id(), shooter.position(), vel + shooter.velocity(), 0.2_kg,
+                                                0.0_m, dmg));
         }
-
         // -------------------------------------------------------------------------------------------------------------
 
         SetWeaponMode::SetWeaponMode( std::uint64_t ship, std::uint64_t wpn, std::uint64_t mode ):
@@ -69,7 +121,9 @@ namespace spatacs
 
         void SetWeaponMode::applyToShip(Starship& ship, EventContext& context) const
         {
-            ship.getWeapon(mWeaponId).setMode( mMode );
+            if(mMode < 3)
+                ship.getWeapon(mWeaponId).get<game::ProjectileWpnData>().mMode = game::ProjectileWpnData::Mode(mMode);
+
         }
 
         // -------------------------------------------------------------------------------------------------------------

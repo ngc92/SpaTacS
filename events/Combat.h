@@ -8,12 +8,12 @@
 #include "ShipEvent.h"
 #include "vec.h"
 #include "game/Damage.h"
+#include "game/components/comps.h"
 
 namespace spatacs {
 
     namespace game
     {
-        class IWeapon;
         class Projectile;
     }
     namespace events {
@@ -26,7 +26,7 @@ namespace spatacs {
         private:
 
             virtual void applyToShip(Starship& shooter, EventContext& context) const override;
-            EventPtr fireWeapon(Starship& shooter, const length_vec& tpos, const velocity_vec& tvel, game::IWeapon& weapon) const;
+            EventPtr fireWeapon(Starship& shooter, const length_vec& tpos, const velocity_vec& tvel, game::ComponentEntity& weapon) const;
 
             std::uint64_t mTarget;
             std::uint64_t mWeaponId;

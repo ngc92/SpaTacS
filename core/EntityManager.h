@@ -17,11 +17,11 @@ namespace spatacs
         class EntityManager
         {
         public:
-            template<class... Args>
-            void apply( System<T, Args...>&& system );
+            template<class Sys>
+            void apply( Sys&& system );
 
-            template<class... Args>
-            void apply( System<T, Args...>&& system ) const;
+            template<class Sys>
+            void apply( Sys&& system ) const;
 
             bool has(std::uint64_t id)
             {
@@ -48,14 +48,19 @@ namespace spatacs
             /// remove all entities that are no longer alive.
             void cleanup();
 
+            std::size_t size() const
+            {
+                return mEntities.size();
+            }
+
         private:
             std::map<uint64_t, T> mEntities;
             std::uint64_t mFreeID = 0;
         };
 
         template<class T>
-        template<class... Args>
-        void EntityManager<T>::apply( System<T, Args...>&& system )
+        template<class Sys>
+        void EntityManager<T>::apply( Sys&& system )
         {
             for(auto& e : mEntities)
             {
@@ -64,8 +69,8 @@ namespace spatacs
         };
 
         template<class T>
-        template<class... Args>
-        void EntityManager<T>::apply( System<T, Args...>&& system ) const
+        template<class Sys>
+        void EntityManager<T>::apply( Sys&& system ) const
         {
             for(auto& e : mEntities)
             {

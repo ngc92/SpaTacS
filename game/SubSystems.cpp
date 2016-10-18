@@ -5,9 +5,9 @@
 #include "Starship.h"
 #include "GameObject.h"
 #include "game/SubSystems.h"
+#include "components/IComponent.h"
 #include <boost/property_tree/ptree.hpp>
 #include <iostream>
-#include "game/components/ProjectileWeapon.h"
 #include "core/System.h"
 
 using namespace spatacs;
@@ -140,6 +140,34 @@ namespace
         }
     };
 
+    class RequestFuel : public core::System<ComponentEntity, RequestFuel,
+            core::Signature<FuelStorage>>
+    {
+    public:
+        RequestFuel(const mass_t& request) : mRequest(request)
+        {}
+
+        mass_t provided() const { return mProvide; }
+
+        void apply(const ComponentEntity& ety, FuelStorage& fs)
+        {
+            if(mRequest < fs.current)
+            {
+                fs.current -= mRequest;
+                mProvide += mRequest;
+                mRequest -= mRequest;
+            } else
+            {
+                mProvide += fs.current;
+                mRequest -= fs.current;
+                fs.current -= fs.current;
+            }
+        }
+    private:
+        mass_t mRequest;
+        mass_t mProvide;
+    };
+
     class Propulsion : public core::System<ComponentEntity, Propulsion,
             core::Signature<EngineData, Health>>
     {
@@ -161,7 +189,11 @@ namespace
             mass_t max_mass   = engine.mMassRate * dt * health.status();
             if(need_mass > max_mass)
                 need_mass = max_mass;
-            mass_t fuel = mShip.getTank().requestFuel( need_mass );
+
+            // get fuel
+            RequestFuel req(need_mass);
+            mShip.components().apply(req);
+            mass_t fuel = req.provided();
 
             force_t f = fuel * engine.mPropellantSpeed  / dt;
             mMaxAcceleration += max_mass * engine.mPropellantSpeed  / dt / mShip.mass();
@@ -181,67 +213,32 @@ namespace
 
 // ---------------------------------------------------------------------------------------------------
 
-SubSystems::SubSystems(const boost::property_tree::ptree& data):
-        mEngine(new Engine(data.get_child("engine"))),
-        mShield(new ShieldGenerator(data.get_child("shieldgen"))),
-        mPowerPlant(new PowerPlant(data.get_child("power_plant"))),
-        mFuelTank(new FuelTank(data.get_child("tank"))),
-        mLifeSupport( new LifeSupport(data.get_child("life_support")) )
+SubSystems::SubSystems(const boost::property_tree::ptree& data)
 {
-    mArmament.push_back(std::make_unique<ProjectileWeapon>(data.get_child("weapon")));
+    makeEngine(data.get_child("engine"), mComponents.addEntity());
+    makeShieldGenerator(data.get_child("shieldgen"), mComponents.addEntity());
+    makePowerPlant(data.get_child("power_plant"), mComponents.addEntity());
+    makeFuelTank(data.get_child("tank"), mComponents.addEntity());
+    makeLifeSupport(data.get_child("life_support"), mComponents.addEntity());
+    makeProjectileWpn(data.get_child("weapon"), mComponents.addEntity());
 
-    mCompPtrs.push_back( mEngine.get() );
-    mCompPtrs.push_back( mShield.get() );
-    mCompPtrs.push_back( mPowerPlant.get() );
-    mCompPtrs.push_back( mLifeSupport.get() );
-    mCompPtrs.push_back( mFuelTank.get() );
-    for(auto& wpn : mArmament)
-        mCompPtrs.push_back( wpn.get() );
-}
-
-namespace {
-    template<class T>
-    std::unique_ptr<T> clone(const std::unique_ptr<T>& original)
-    {
-        return std::unique_ptr<T>(original->clone());
-    }
-
-    template<class T>
-    std::vector<T> clone(const std::vector<T>& original)
-    {
-        std::vector<T> cl;
-        cl.reserve(original.size());
-        std::transform(begin(original), end(original),
-                       std::back_inserter(cl), [](const T& t) { return clone(t); });
-        return std::move(cl);
-    }
+    mComponents.apply([this](game::ComponentEntity& cmp)
+                      { if(cmp.has<WeaponAimData>()){ mArmament.push_back(&cmp);} });
 }
 
 SubSystems::SubSystems( const SubSystems& other ):
-        mEngine( clone(other.mEngine) ),
-        mShield( clone(other.mShield) ),
-        mPowerPlant( clone(other.mPowerPlant) ),
-        mFuelTank( clone(other.mFuelTank) ),
-        mLifeSupport( clone(other.mLifeSupport) ),
-        mArmament( clone(other.mArmament) )
+        mComponents( other.mComponents )
 {
-    mCompPtrs.push_back( mEngine.get() );
-    mCompPtrs.push_back( mShield.get() );
-    mCompPtrs.push_back( mPowerPlant.get() );
-    mCompPtrs.push_back( mLifeSupport.get() );
-    mCompPtrs.push_back( mFuelTank.get() );
-    for(auto& wpn : mArmament)
-        mCompPtrs.push_back( wpn.get() );
+    mComponents.apply([this](game::ComponentEntity& cmp)
+                      { if(cmp.has<WeaponAimData>()){ mArmament.push_back(&cmp);} });
 }
 
 double SubSystems::distributeEnergy(double energy)
 {
     CollectRequests crq;
+    mComponents.apply(crq);
 
     double energy_to_distribute = energy;
-    for(auto& sys : mCompPtrs) {
-        crq(sys->entity());
-    }
 
     auto requests = crq.requests();
     // energy distribution according to demand and priority
@@ -275,21 +272,14 @@ double SubSystems::distributeEnergy(double energy)
 
     ProvideEnergy pv(supply);
     // supply energy to systems
-    for(auto& sys : mCompPtrs) {
-        pv(sys->entity());
-    }
-
+    mComponents.apply(pv);
     return accumulate(begin(supply), end(supply), 0.0);
 }
 
-double SubSystems::produceEnergy() const
+double SubSystems::produceEnergy()
 {
     GetProvidedEnergy gpe;
-    // get excess energy from each component
-    for(auto& sys : mCompPtrs) {
-        gpe(sys->entity());
-    }
-
+    mComponents.apply(gpe);
     return gpe.energy();
 }
 
@@ -300,14 +290,11 @@ void SubSystems::onStep(Starship& ship)
     LifeSupportStep ls(ship);
     PowerProduction pp;
     Propulsion prop(ship, ship.getDesiredAcceleration());
-    for(auto& c : mCompPtrs)
-    {
-        tc(c->entity());
-        smgm(c->entity());
-        ls(c->entity());
-        pp(c->entity());
-        prop(c->entity());
-    }
+    mComponents.apply(tc);
+    mComponents.apply(smgm);
+    mComponents.apply(ls);
+    mComponents.apply(pp);
+    mComponents.apply(prop);
 
     ship.setProducedAcceleration( prop.getProduced() );
     ship.setMaxAcceleration( prop.getMax() );
