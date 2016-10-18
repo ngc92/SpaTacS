@@ -26,7 +26,7 @@ int main()
 
     ui::StateManager statemgr(device);
     statemgr.setState(std::make_unique<ui::MainMenu>());
-
+    
 	while(device->run())
 	{
         statemgr.step();

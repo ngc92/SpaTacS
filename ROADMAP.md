@@ -2,18 +2,18 @@
   * UI:
     - [x] main menu
       + [x] start level
-      + [ ] settings (from file)
       + [x] exit
     - [x] gfx for enemy status
+    - [x] settings (from file)
   * game:
-    - [ ] load levels from xml
+    - [x] load levels from xml
     - [x] add cruiser ship type
   * code:
     - [x] restructure Irrlicht handling to allow for menus
     - [x] ship component entities 
     - [x] get rid of all render code in tools
   * physics
-    - [ ] runtime unit loading + tests
+    - [x] runtime unit loading
 
 ## Version 0.7 ()
   * game:

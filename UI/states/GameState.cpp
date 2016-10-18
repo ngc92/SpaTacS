@@ -4,6 +4,7 @@
 
 #include "UI/AIPlayer.h"
 #include "UI/IrrlichtUI.h"
+#include "UI/LevelLoader.h"
 #include "UI/cmd/CommandManager.h"
 #include "GameState.h"
 #include "core/Game.h"
@@ -15,6 +16,7 @@ GameState::GameState() :
         mCmdMgr( std::make_shared<cmd::CommandManager>() )
 {
     mGame->addInterface( std::make_shared<ui::AIPlayer>(2, mCmdMgr) );
+    mGame->addInterface( std::make_shared<ui::LevelLoader>("level.xml") );
     mGame->addInterface( mCmdMgr );
 }
 

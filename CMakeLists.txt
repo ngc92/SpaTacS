@@ -108,7 +108,7 @@ set(UI_SOURCE_FILES
         UI/StateManager.h 
         UI/StateManager.cpp 
         UI/gfx/MultiLineNode.h 
-        UI/gfx/MultiLineNode.cpp)
+        UI/gfx/MultiLineNode.cpp UI/LevelLoader.h UI/LevelLoader.cpp)
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}
