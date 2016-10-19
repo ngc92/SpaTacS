@@ -25,14 +25,16 @@ LevelLoader::LevelLoader(std::string filename)
     boost::property_tree::xml_parser::read_xml(filename, level);
     for(auto& ship : level.get_child("level"))
     {
-        std::string name  = ship.second.get<std::string>("name");
-        std::string type  = ship.second.get<std::string>("type");
-        std::uint8_t team = ship.second.get<std::uint8_t>("<xmlattr>.team");
-        auto x = ship.second.get<length_t>("position.<xmlattr>.x");
-        auto y = ship.second.get<length_t>("position.<xmlattr>.y");
-        auto z = ship.second.get<length_t>("position.<xmlattr>.z");
+        if(ship.first == "ship") {
+            std::string name = ship.second.get<std::string>("name");
+            std::string type = ship.second.get<std::string>("type");
+            std::uint8_t team = ship.second.get<std::uint8_t>("<xmlattr>.team");
+            auto x = ship.second.get<length_t>("position.<xmlattr>.x");
+            auto y = ship.second.get<length_t>("position.<xmlattr>.y");
+            auto z = ship.second.get<length_t>("position.<xmlattr>.z");
 
-        mSpawnEvents.emplace_back(team, name, type, length_vec{x,y,z});
+            mSpawnEvents.emplace_back(team, name, type, length_vec{x, y, z});
+        }
     }
 }
 
