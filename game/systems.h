@@ -45,33 +45,35 @@ namespace spatacs
         };
 
         class ShieldManagement : public core::System<ComponentEntity, ShieldManagement,
-                core::Signature<ShieldGeneratorData, EnergyManagement, const Health>>
+                core::Signature<ShieldGeneratorData, EnergyRequest, const Health>>
         {
         public:
             ShieldManagement(Starship& s);
             void apply(const ComponentEntity& ety, ShieldGeneratorData& sgen,
-                       EnergyManagement& egy, const Health& health);
+                       EnergyRequest& egy, const Health& health);
         private:
             Starship& ship;
         };
 
-        struct PowerProduction : public core::System<ComponentEntity, PowerProduction,
-                core::Signature<PowerPlantData, EnergyManagement, const Health>>
+        class PowerProduction : public core::System<ComponentEntity, PowerProduction,
+                core::Signature<const PowerPlantData, const Health>>
         {
-            void apply(const ComponentEntity& ety, PowerPlantData& pp,
-                       EnergyManagement& egy, const Health& health) const;
+        public:
+            void apply(const ComponentEntity& ety, const PowerPlantData& pp, const Health& health);
+            double energy() const { return mProducedEnergy; }
+        private:
+            double mProducedEnergy = 0;
         };
 
         class LifeSupportStep : public core::System<ComponentEntity, LifeSupportStep,
-                core::Signature<LifeSupportData, EnergyManagement>>
+                core::Signature<LifeSupportData, EnergyRequest>>
         {
         public:
             LifeSupportStep(const Starship& s);
-            void apply(const ComponentEntity& ety, LifeSupportData& sup, EnergyManagement& egy) const;
+            void apply(const ComponentEntity& ety, LifeSupportData& sup, EnergyRequest& egy) const;
         private:
             const Starship& ship;
         };
-
 
         // Fuel subsystems
         class FuelDistribution : public core::System<game::ComponentEntity, FuelDistribution, core::Signature<game::FuelRequest>>
@@ -103,6 +105,27 @@ namespace spatacs
         private:
             mass_t mFuel     = 0.0_kg;
             mass_t mCapacity = 0.0_kg;
+        };
+
+        // Energy management
+        class GetEnergyRequest : public core::System<game::ComponentEntity, GetEnergyRequest, core::Signature<const game::EnergyRequest>>
+        {
+        public:
+            void apply(const game::ComponentEntity& ety, const game::EnergyRequest& h);
+
+            double request() const     { return mRequested; }
+        private:
+            double mRequested = 0.0;
+        };
+
+        class ProvideEnergy : public core::System<game::ComponentEntity, ProvideEnergy, core::Signature<game::EnergyRequest>>
+        {
+        public:
+            ProvideEnergy(double energy, double throttle);
+            void apply(const game::ComponentEntity& ety, game::EnergyRequest& h);
+        private:
+            double mProvided = 0.0;
+            double mThrottle = 1.0;
         };
     }
 }

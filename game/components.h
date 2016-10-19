@@ -31,16 +31,6 @@ namespace spatacs
             double maximum = 0;
         };
 
-        struct EnergyManagement
-        {
-            double cache        = 0;
-            double last_request = 0;
-            double priority     = 1;
-
-            // helper functions
-            double requestEnergy(double amount);
-        };
-
         template<class data_t, class tag>
         struct Request
         {
@@ -58,7 +48,8 @@ namespace spatacs
             }
         };
 
-        using FuelRequest = Request<mass_t, struct F>;
+        using FuelRequest   = Request<mass_t, struct F>;
+        using EnergyRequest = Request<double, struct E>;
 
         struct EngineData
         {
@@ -138,9 +129,9 @@ namespace spatacs
             Damage damage() const;
         };
 
-        using ComponentEntity = core::Entity<Health, EnergyManagement, FuelStorage, EngineData,
+        using ComponentEntity = core::Entity<Health, FuelStorage, EngineData,
                 PowerPlantData, ShieldGeneratorData, LifeSupportData, WeaponAimData, ProjectileWpnData,
-                        Timer, Name, FuelRequest>;
+                        Timer, Name, FuelRequest, EnergyRequest>;
 
 
         // creation functions
