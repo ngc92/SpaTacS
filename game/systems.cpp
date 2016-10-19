@@ -16,24 +16,14 @@ void TimerCountdown::apply(const ComponentEntity& ety, Timer& timer) const
     timer.time -= mDeltaT;
 }
 
-
-RequestFuel::RequestFuel(const mass_t& request) : mRequest(request) { }
-
-void RequestFuel::apply(const ComponentEntity& ety, FuelStorage& fs)
-{
-    auto got = fs.request(mRequest);
-    mRequest -= got;
-    mProvide += got;
-}
-
-
 // ------------------------------------------------------------------------
 
-Propulsion::Propulsion(Starship& ship, accel_vec mDesiredAcceleration)
+Propulsion::Propulsion(const Starship& ship, accel_vec mDesiredAcceleration)
         : mShip(ship), mDesiredAcceleration(mDesiredAcceleration)
 {}
 
-void Propulsion::apply(const ComponentEntity& ce, const EngineData& engine, const Health& health)
+void Propulsion::apply(const ComponentEntity& ce, const EngineData& engine,
+                       const Health& health, FuelRequest& freq)
 {
     auto dt = 0.1_s;
     force_t want = length(mDesiredAcceleration) * mShip.mass();
@@ -47,11 +37,8 @@ void Propulsion::apply(const ComponentEntity& ce, const EngineData& engine, cons
     if(need_mass > max_mass)
         need_mass = max_mass;
 
-    // get fuel
-    /// \todo figure out how to get fuel!
-    RequestFuel req(need_mass);
-    mShip.components().apply(req);
-    mass_t fuel = req.provided();
+    freq.request = need_mass;
+    mass_t fuel = freq.get(need_mass);
 
     force_t f = fuel * engine.mPropellantSpeed  / dt;
     mMaxAcceleration += max_mass * engine.mPropellantSpeed  / dt / mShip.mass();
@@ -83,6 +70,26 @@ void PowerProduction::apply(const ComponentEntity& ety, PowerPlantData& pp,
                             EnergyManagement& egy, const Health& health) const
 {
     egy.cache += 0.1f * pp.energy_production * health.status();;
+}
+
+FuelDistribution::FuelDistribution(mass_t available) : mFuel(available)
+{
+}
+
+void FuelDistribution::apply(const game::ComponentEntity& ety, game::FuelRequest& h)
+{
+    auto desire = h.request - h.current;
+    desire = std::min(desire, mFuel);
+    mFuel -= desire;
+    h.current += desire;
+}
+
+FuelConsumption::FuelConsumption(mass_t consume) : mConsume(consume)
+{}
+
+void FuelConsumption::apply(const game::ComponentEntity& ety, game::FuelStorage& h)
+{
+    mConsume -= h.request(mConsume);
 }
 
 LifeSupportStep::LifeSupportStep(const Starship& s) : ship(s) { }

@@ -27,7 +27,7 @@ GameState::~GameState()
 void GameState::step(StateManager& smgr)
 {
     mGame->setPause(mIrrUI->pause());
-    mGame->run(); /// \todo get this out of the gfx loop!
+    mGame->run();
 }
 
 void GameState::init(irr::IrrlichtDevice* dev)

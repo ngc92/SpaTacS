@@ -58,6 +58,7 @@ namespace spatacs
             cmp.add<Name>("engine");
             cmp.add<EngineData>(data.get<speed_t>("propellant_speed"),
                                 data.get<physics::rate_t<mass_t>>("fuel_consumption") );
+            cmp.add<FuelRequest>();
         }
 
         void makeFuelTank(const ptree& data, ComponentEntity& cmp)

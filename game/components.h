@@ -41,6 +41,25 @@ namespace spatacs
             double requestEnergy(double amount);
         };
 
+        template<class data_t, class tag>
+        struct Request
+        {
+            data_t request{0};     /// the amount that is currently requested.
+            data_t current{0};     /// the amount that is currently available to the component.
+
+            /// takes \p amount from \p current. If not enough available, returns \provide.
+            /// This decreases the amount in current.
+            /// \return the actual amount that could be provided.
+            data_t get(data_t amount)
+            {
+                amount = std::min(amount, current);
+                current -= amount;
+                return amount;
+            }
+        };
+
+        using FuelRequest = Request<mass_t, struct F>;
+
         struct EngineData
         {
             EngineData() = default;
@@ -121,7 +140,7 @@ namespace spatacs
 
         using ComponentEntity = core::Entity<Health, EnergyManagement, FuelStorage, EngineData,
                 PowerPlantData, ShieldGeneratorData, LifeSupportData, WeaponAimData, ProjectileWpnData,
-                        Timer, Name>;
+                        Timer, Name, FuelRequest>;
 
 
         // creation functions

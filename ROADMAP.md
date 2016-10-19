@@ -9,10 +9,11 @@
     - [ ] redefined damage model
     - [ ] multiple wpn per ship
   * code:
-    - [ ] shield decay as ship property
+    - [x] shield decay as ship property
     - [ ] allow lambdas as systems in component mgr
     - [ ] improve fuel management code, unify with energy mgm
     
+
 ## Easy projects:
 * Skybox:
   - just load and display a skybox
@@ -23,6 +24,9 @@
   - passive objects
   - block shots and cannot be flown through
   - need some visualization
+
+* Ship view:
+  - a menu page that shows the stats of different ships
 
 
 
