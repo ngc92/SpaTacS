@@ -31,15 +31,25 @@ namespace spatacs
             double maximum = 0;
         };
 
-        struct EnergyManagement
+        template<class data_t, class tag>
+        struct Request
         {
-            double cache        = 0;
-            double last_request = 0;
-            double priority     = 1;
+            data_t request{0};     /// the amount that is currently requested.
+            data_t current{0};     /// the amount that is currently available to the component.
 
-            // helper functions
-            double requestEnergy(double amount);
+            /// takes \p amount from \p current. If not enough available, returns \provide.
+            /// This decreases the amount in current.
+            /// \return the actual amount that could be provided.
+            data_t get(data_t amount)
+            {
+                amount = std::min(amount, current);
+                current -= amount;
+                return amount;
+            }
         };
+
+        using FuelRequest   = Request<mass_t, struct F>;
+        using EnergyRequest = Request<double, struct E>;
 
         struct EngineData
         {
@@ -80,7 +90,6 @@ namespace spatacs
 
             // properties
             rate_t<scalar_t> mShieldRecharge{0.0};
-            rate_t<scalar_t> mDecay{0.0};
             float mEnergyPerShieldPoint  = 5;
         };
 
@@ -120,9 +129,9 @@ namespace spatacs
             Damage damage() const;
         };
 
-        using ComponentEntity = core::Entity<Health, EnergyManagement, FuelStorage, EngineData,
+        using ComponentEntity = core::Entity<Health, FuelStorage, EngineData,
                 PowerPlantData, ShieldGeneratorData, LifeSupportData, WeaponAimData, ProjectileWpnData,
-                        Timer, Name>;
+                        Timer, Name, FuelRequest, EnergyRequest>;
 
 
         // creation functions

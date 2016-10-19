@@ -145,6 +145,14 @@ void PhysicsWorld::handleEvent(const events::ApplyForce& f)
     target.acceleration += f.force * time_remaining / target.object.mass();
 }
 
+
+void PhysicsWorld::handleEvent(const events::SetMass& e)
+{
+    auto& target = getObjectRec(e.target);
+    target.object.setMass( e.mass );
+}
+
+
 const PhysicsWorld::ObjectRecord& PhysicsWorld::getObjectRec(std::uint64_t id) const
 {
     return mObjects.at(id);

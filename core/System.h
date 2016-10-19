@@ -76,6 +76,24 @@ namespace spatacs
                 return (bits & reference) == reference;
             }
         };
+
+        template<class Entity, class... Components, class Lambda>
+        auto make_system(Lambda&& l)
+        {
+            class Sys : public System<Entity, Sys, Signature<Components...>>
+            {
+            public:
+                Sys(Lambda func) : mLambda(std::move(func)) { }
+                void apply(Entity& ety, Components&... comps)
+                {
+                    mLambda(ety, comps...);
+                }
+            private:
+                Lambda mLambda;
+            };
+
+            return Sys(std::move(l));
+        };
     }
 }
 

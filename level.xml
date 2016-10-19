@@ -4,7 +4,7 @@
         <type>cruiser</type>
         <position x="0km" y="0km" z="0.4km" />
     </ship>
-   
+   <!--
     <ship team="1">
         <name>SF Fearless</name>
         <type>destroyer</type>
@@ -26,4 +26,5 @@
         <type>destroyer</type>
         <position x="15km" y="2km" z="3km" />
     </ship>
+    -->
 </level>

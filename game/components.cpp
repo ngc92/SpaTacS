@@ -3,6 +3,7 @@
 //
 
 #include "components.h"
+#include "systems.h"
 #include <boost/property_tree/ptree.hpp>
 
 namespace spatacs
@@ -10,20 +11,6 @@ namespace spatacs
     namespace game
     {
         using boost::property_tree::ptree;
-
-        //
-        // helper functions
-        double EnergyManagement::requestEnergy(double amount)
-        {
-            last_request += amount;
-            if (amount < cache) {
-                cache -= amount;
-                return amount;
-            }
-            double ret = cache;
-            cache = 0;
-            return ret;
-        }
 
         Damage ProjectileWpnData::damage() const
         {
@@ -58,6 +45,7 @@ namespace spatacs
             cmp.add<Name>("engine");
             cmp.add<EngineData>(data.get<speed_t>("propellant_speed"),
                                 data.get<physics::rate_t<mass_t>>("fuel_consumption") );
+            cmp.add<FuelRequest>();
         }
 
         void makeFuelTank(const ptree& data, ComponentEntity& cmp)
@@ -69,14 +57,13 @@ namespace spatacs
         void makeLifeSupport(const ptree& data, ComponentEntity& cmp)
         {
             addHealth(cmp, data);
-            cmp.add<EnergyManagement>();
+            cmp.add<EnergyRequest>();
             cmp.add<LifeSupportData>();
         }
 
         void makePowerPlant(const ptree& data, ComponentEntity& cmp)
         {
             addHealth(cmp, data);
-            cmp.add<EnergyManagement>();
             cmp.add<PowerPlantData>(data.get<double>("power") );
         }
 
@@ -97,10 +84,9 @@ namespace spatacs
         {
             addHealth(cmp, data);
             cmp.add<Name>("shield generator");
-            cmp.add<EnergyManagement>();
+            cmp.add<EnergyRequest>();
             auto& sgd = cmp.add<ShieldGeneratorData>();
             sgd.mShieldRecharge = scalar_t(data.get<float>("recharge")) / 1.0_s;
-            sgd.mDecay =  scalar_t(std::log(1-data.get<float>("dissipation") / 100.f)) / 1.0_s;
             sgd.mEnergyPerShieldPoint = 1.f / data.get<float>("efficiency");
         }
     }

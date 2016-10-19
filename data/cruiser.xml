@@ -1,12 +1,13 @@
 <ship>
-    <mass>2200t</mass>
+    <mass>2500t</mass>
     <radius>30m</radius>
     <hitpoints>15</hitpoints>
     <armour>10</armour>
-    <shield>15</shield>
+    <shield>17</shield>
+    <shield_dissipation>1</shield_dissipation>
 
     <engine>
-        <fuel_consumption>4000 kg/s</fuel_consumption>
+        <fuel_consumption>6000 kg/s</fuel_consumption>
         <propellant_speed>60 km/s</propellant_speed>
         <HP>2</HP>
     </engine>
@@ -14,7 +15,6 @@
     <shieldgen>
         <recharge>0.4</recharge>
         <efficiency>0.2</efficiency>
-        <dissipation>1</dissipation>
         <HP>2</HP>
     </shieldgen>
 
@@ -35,7 +35,7 @@
     </power_plant>
 
     <tank>
-        <capacity>2000t</capacity>
+        <capacity>3000t</capacity>
         <HP>1</HP>
     </tank>
 

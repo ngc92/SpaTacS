@@ -22,7 +22,9 @@ ShipData::ShipData(std::uint64_t team, std::string name, const boost::property_t
         mMaxArmour( data.get<double>("armour") ),
         mCurArmour( mMaxArmour ),
         mMaxShield( data.get<double>("shield") ),
-        mCurShield( mMaxShield )
+        mCurShield( mMaxShield ),
+        mEmptyMass( data.get<mass_t>("mass") ),
+        mShieldDecay( scalar_t(std::log(1-data.get<float>("shield_dissipation") / 100.f)) / 1.0_s )
 {
 }
 
@@ -44,6 +46,9 @@ Starship::~Starship() {
 
 void Starship::onStep()
 {
+    double decay = std::exp( mShieldDecay*0.1_s );
+    mCurShield *= decay;
+
     mEnergyProduced = mSubSystems->produceEnergy();
     mEnergyUsed     = mSubSystems->distributeEnergy(mEnergyProduced);
     mSubSystems->onStep(*this);
@@ -234,4 +239,14 @@ accel_t ShipData::getMaxAcceleration() const
 void ShipData::setMaxAcceleration(accel_t acc)
 {
     mMaxAccel = acc;
+}
+
+mass_t ShipData::getTotalMass() const
+{
+    return mEmptyMass + mFuelMass;
+}
+
+void ShipData::setFuelMass(mass_t mass)
+{
+    mFuelMass = mass;
 }
