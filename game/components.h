@@ -31,37 +31,20 @@ namespace spatacs
             double maximum = 0;
         };
 
-        template<class data_t, class tag>
-        struct Request
-        {
-            data_t request{0};     /// the amount that is currently requested.
-            data_t current{0};     /// the amount that is currently available to the component.
-
-            /// takes \p amount from \p current. If not enough available, returns \provide.
-            /// This decreases the amount in current.
-            /// \return the actual amount that could be provided.
-            data_t get(data_t amount)
-            {
-                amount = std::min(amount, current);
-                current -= amount;
-                return amount;
-            }
-        };
-
-        using FuelRequest   = Request<mass_t, struct F>;
-
         struct EngineData
         {
             EngineData() = default;
             EngineData(speed_t s, rate_t<mass_t> r) :
-                mPropellantSpeed(s), mMassRate(r)
+                propellant_speed(s), mass_rate(r)
             {
 
             }
 
             // engine config
-            speed_t mPropellantSpeed = 0.0_kps;
-            rate_t<mass_t> mMassRate = 1.0_kg / 1.0_s;
+            speed_t propellant_speed = 0.0_kps;
+            rate_t<mass_t> mass_rate = 1.0_kg / 1.0_s;
+
+            std::uint64_t fuel_source;
         };
 
         struct FuelStorage
@@ -130,7 +113,7 @@ namespace spatacs
 
         using ComponentEntity = core::Entity<Health, FuelStorage, EngineData,
                 PowerPlantData, ShieldGeneratorData, LifeSupportData, WeaponAimData, ProjectileWpnData,
-                        Timer, Name, FuelRequest>;
+                        Timer, Name>;
 
 
         // creation functions

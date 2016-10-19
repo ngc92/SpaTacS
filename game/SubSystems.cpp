@@ -65,11 +65,6 @@ void SubSystems::onStep(Starship& ship)
     mComponents.apply(prop);
     mComponents.apply(tank);
 
-    FuelDistribution fd(tank.fuel());
-    mComponents.apply(fd);
-    FuelConsumption fc(tank.fuel() - fd.fuel());
-    mComponents.apply(fc);
-
     ship.setProducedAcceleration( prop.getProduced() );
     ship.setMaxAcceleration( prop.getMax() );
     ship.setFuelMass(tank.fuel());
