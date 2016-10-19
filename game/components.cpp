@@ -57,7 +57,6 @@ namespace spatacs
         void makeLifeSupport(const ptree& data, ComponentEntity& cmp)
         {
             addHealth(cmp, data);
-            cmp.add<EnergyRequest>();
             cmp.add<LifeSupportData>();
         }
 
@@ -84,7 +83,6 @@ namespace spatacs
         {
             addHealth(cmp, data);
             cmp.add<Name>("shield generator");
-            cmp.add<EnergyRequest>();
             auto& sgd = cmp.add<ShieldGeneratorData>();
             sgd.mShieldRecharge = scalar_t(data.get<float>("recharge")) / 1.0_s;
             sgd.mEnergyPerShieldPoint = 1.f / data.get<float>("efficiency");

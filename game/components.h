@@ -49,7 +49,6 @@ namespace spatacs
         };
 
         using FuelRequest   = Request<mass_t, struct F>;
-        using EnergyRequest = Request<double, struct E>;
 
         struct EngineData
         {
@@ -131,7 +130,7 @@ namespace spatacs
 
         using ComponentEntity = core::Entity<Health, FuelStorage, EngineData,
                 PowerPlantData, ShieldGeneratorData, LifeSupportData, WeaponAimData, ProjectileWpnData,
-                        Timer, Name, FuelRequest, EnergyRequest>;
+                        Timer, Name, FuelRequest>;
 
 
         // creation functions

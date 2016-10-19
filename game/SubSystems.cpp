@@ -39,12 +39,7 @@ SubSystems::SubSystems( const SubSystems& other ):
 double SubSystems::distributeEnergy(double energy)
 {
     double request = 0;
-    mComponents.apply( core::make_system<ComponentEntity, const EnergyRequest>(
-            [&request](const ComponentEntity&, const EnergyRequest& egy){ request += egy.request; }) );
     double f = std::min(1.0, energy / request);
-    ProvideEnergy provide(energy, f);
-    mComponents.apply(provide);
-
 }
 
 double SubSystems::produceEnergy()
@@ -56,17 +51,17 @@ double SubSystems::produceEnergy()
 
 void SubSystems::onStep(Starship& ship)
 {
+    mEnergyMgr.process(mComponents);
+
     TimerCountdown tc(0.1);
-    ShieldManagement smgm(ship);
-    LifeSupportStep ls(ship);
-    PowerProduction pp;
+    ShieldManagement smgm(ship, mEnergyMgr);
+    LifeSupportStep ls(ship, mEnergyMgr);
     Propulsion prop(ship, ship.getDesiredAcceleration());
     TankInfo tank;
 
     mComponents.apply(tc);
     mComponents.apply(smgm);
     mComponents.apply(ls);
-    mComponents.apply(pp);
     mComponents.apply(prop);
     mComponents.apply(tank);
 
@@ -78,4 +73,28 @@ void SubSystems::onStep(Starship& ship)
     ship.setProducedAcceleration( prop.getProduced() );
     ship.setMaxAcceleration( prop.getMax() );
     ship.setFuelMass(tank.fuel());
+}
+
+
+void EnergyManager::process(core::EntityManager<ComponentEntity>& comps)
+{
+    PowerProduction gpe;
+    comps.apply(gpe);
+    mTotal = gpe.energy();
+
+    if(mRequested == 0)
+        mRequested = 1;
+    mSupplyFactor = std::min(1.0, mTotal / mRequested);
+
+    mPowerLeft = mTotal;
+    mRequested = 0;
+}
+
+double EnergyManager::requestPower(double amount)
+{
+    mRequested += amount;
+    double scaled = amount * mSupplyFactor;
+    double real = std::min(mPowerLeft, scaled);
+    mPowerLeft -= real;
+    return real;
 }
