@@ -22,7 +22,8 @@ ShipData::ShipData(std::uint64_t team, std::string name, const boost::property_t
         mMaxArmour( data.get<double>("armour") ),
         mCurArmour( mMaxArmour ),
         mMaxShield( data.get<double>("shield") ),
-        mCurShield( mMaxShield )
+        mCurShield( mMaxShield ),
+        mEmptyMass( data.get<mass_t>("mass") )
 {
 }
 
@@ -234,4 +235,14 @@ accel_t ShipData::getMaxAcceleration() const
 void ShipData::setMaxAcceleration(accel_t acc)
 {
     mMaxAccel = acc;
+}
+
+mass_t ShipData::getTotalMass() const
+{
+    return mEmptyMass + mFuelMass;
+}
+
+void ShipData::setFuelMass(mass_t mass)
+{
+    mFuelMass = mass;
 }

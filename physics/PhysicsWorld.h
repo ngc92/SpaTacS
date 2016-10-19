@@ -71,6 +71,7 @@ namespace physics
         void handleEvent(const events::ApplyForce&);
         void handleEvent(const events::Despawn&);
         void handleEvent(const events::Collision&);
+        void handleEvent(const events::SetMass&);
 
         // Objects
         ///! This struct saves the objects, and

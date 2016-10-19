@@ -62,6 +62,9 @@ namespace spatacs
             accel_t getMaxAcceleration() const;
             void setMaxAcceleration(accel_t acc);
 
+            mass_t getTotalMass() const;
+            void setFuelMass(mass_t mass);
+
         protected:
             ShipData() = default;
             ShipData(std::uint64_t team, std::string name, const boost::property_tree::ptree& data);
@@ -82,6 +85,10 @@ namespace spatacs
             // Energy management status
             double mEnergyUsed     = 0;
             double mEnergyProduced = 0;
+
+            // empty mass
+            mass_t mEmptyMass = 0.0_kg;
+            mass_t mFuelMass  = 0.0_kg;
 
             // propulsion status
             accel_vec mDesiredAcceleration{.0, .0, .0};

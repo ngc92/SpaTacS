@@ -19,7 +19,7 @@
 #include "UI/IrrlichtUI.h"
 #include "UI/cmd/CommandManager.h"
 #include <irrlicht/ISceneManager.h>
-#include <core/System.h>
+#include "game/systems.h"
 #include "UI/gfx/MultiLineNode.h"
 
 using namespace spatacs;
@@ -160,26 +160,6 @@ namespace
     private:
         irr::gui::ShipStatusUI* mUI;
     };
-
-    class TankInfo : public core::System<const game::ComponentEntity, TankInfo, core::Signature<game::FuelStorage>>
-    {
-    public:
-        TankInfo()
-        {
-        }
-
-        void apply(const game::ComponentEntity& ety, const game::FuelStorage& h)
-        {
-            mFuel += h.current;
-            mCapacity  +=  h.capacity;
-        }
-
-        double fuel() const { return mFuel / 1.0_t; }
-        double capacity() const { return mCapacity / 1.0_t; }
-    private:
-        mass_t mFuel;
-        mass_t mCapacity;
-    };
 }
 
 void ui::UnitCommand::step()
@@ -204,13 +184,13 @@ void ui::UnitCommand::step()
         mShipInfo->setShipName( ship.name() );
         mShipInfo->clearSystems();
         SysInfo si(mShipInfo.get());
-        TankInfo ti;
+        game::TankInfo ti;
         ship.components().apply(si);
         ship.components().apply(ti);
         mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield(), ship.max_shield()} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ti.fuel(), ti.capacity()} );
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ti.fuel() / 1.0_t, ti.capacity() / 1.0_t} );
         /// \todo power plant
     }
 

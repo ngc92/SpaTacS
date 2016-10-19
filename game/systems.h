@@ -83,6 +83,18 @@ namespace spatacs
         private:
             const Starship& ship;
         };
+
+        class TankInfo : public core::System<const game::ComponentEntity, TankInfo, core::Signature<game::FuelStorage>>
+        {
+        public:
+            TankInfo() = default;
+            void apply(const game::ComponentEntity& ety, const game::FuelStorage& h);
+            mass_t fuel() const     { return mFuel; }
+            mass_t capacity() const { return mCapacity; }
+        private:
+            mass_t mFuel     = 0.0_kg;
+            mass_t mCapacity = 0.0_kg;
+        };
     }
 }
 

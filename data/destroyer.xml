@@ -6,7 +6,7 @@
     <shield>10</shield>
 
     <engine>
-        <fuel_consumption>1600 kg/s</fuel_consumption>
+        <fuel_consumption>2750 kg/s</fuel_consumption>
         <propellant_speed>60 km/s</propellant_speed>
         <HP>1</HP>
     </engine>
@@ -35,7 +35,7 @@
     </power_plant>
 
     <tank>
-        <capacity>800t</capacity>
+        <capacity>1250t</capacity>
         <HP>1</HP>
     </tank>
 

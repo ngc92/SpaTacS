@@ -2,8 +2,8 @@
 // Created by erik on 9/27/16.
 //
 
-#ifndef SOI_EVENTS_H
-#define SOI_EVENTS_H
+#ifndef SPATACS_PHYSICS_EVENTS_H
+#define SPATACS_PHYSICS_EVENTS_H
 
 #include <cstdint>
 #include "physics/units.h"
@@ -27,7 +27,14 @@ namespace spatacs
             struct ApplyForce
             {
                 std::uint64_t target;
-                force_vec force;          // kg km/s² = 1000 kg m/s² = kN
+                force_vec force;
+                time_t time;
+            };
+
+            struct SetMass
+            {
+                std::uint64_t target;
+                mass_t mass;
                 time_t time;
             };
 
@@ -40,7 +47,7 @@ namespace spatacs
                 time_t time;
             };
 
-            using Event = boost::variant<Despawn, ApplyForce, Collision>;
+            using Event = boost::variant<Despawn, ApplyForce, Collision, SetMass>;
 
             // some helper functions
             //! \brief Checks whether the Event refers to an object with given \p id.
@@ -56,4 +63,4 @@ namespace spatacs
     }
 }
 
-#endif //SOI_EVENTS_H
+#endif //SPATACS_PHYSICS_EVENTS_H

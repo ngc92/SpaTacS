@@ -36,8 +36,10 @@ auto Simulation::step(EventVec inEvents) -> EventVec
     for (auto& ship : mState) {
         if(ship.type() == ObjectType::STARSHIP)
         {
-            auto acc = dynamic_cast<game::Starship&>(ship).getProducedAcceleration();
+            auto& conv = dynamic_cast<game::Starship&>(ship);
+            auto acc = conv.getProducedAcceleration();
             mWorld->pushEvent( physics::events::ApplyForce{ship.physics_id(), acc * ship.mass(), 0.0_s} );
+            mWorld->pushEvent( physics::events::SetMass{ship.physics_id(), conv.getTotalMass(), 0.0_s} );
         }
     }
 

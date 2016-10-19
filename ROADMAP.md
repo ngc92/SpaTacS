@@ -1,14 +1,14 @@
 ## Version 0.7 ()
   * UI:
-    - improve enemy status view
+    - [ ] improve enemy status view
   * game:
-    - fuel affecting total mass
-    - fuel properties
-    - ammunition
+    - [x] fuel affecting total mass
+    - [ ] fuel properties
+    - [ ] ammunition
   * code:
-    - shield decay as ship property
-    - allow lambdas as systems in component mgr
-    - improve fuel management code
+    - [ ] shield decay as ship property
+    - [ ] allow lambdas as systems in component mgr
+    - [ ] improve fuel management code
     
 ## Easy projects:
 * Asteroids

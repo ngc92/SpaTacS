@@ -97,3 +97,9 @@ void LifeSupportStep::apply(const ComponentEntity& ety, LifeSupportData& sup, En
     /// \todo for now, nothing happens when we do not get the requested energy!
     egy.requestEnergy( ereq );
 }
+
+void TankInfo::apply(const game::ComponentEntity& ety, const game::FuelStorage& h)
+{
+    mFuel     += h.current;
+    mCapacity += h.capacity;
+}

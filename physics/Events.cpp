@@ -22,6 +22,7 @@ namespace
         bool operator()(const Despawn& d) const { return d.target == id; }
         bool operator()(const ApplyForce& d) const { return d.target == id; }
         bool operator()(const Collision& d) const { return d.A == id || d.B == id; }
+        bool operator()(const SetMass& d) const { return d.target == id; }
     };
 
     struct GetTime : public boost::static_visitor<spatacs::physics::time_t>

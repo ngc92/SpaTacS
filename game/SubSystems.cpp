@@ -148,12 +148,16 @@ void SubSystems::onStep(Starship& ship)
     LifeSupportStep ls(ship);
     PowerProduction pp;
     Propulsion prop(ship, ship.getDesiredAcceleration());
+    TankInfo tank;
+
     mComponents.apply(tc);
     mComponents.apply(smgm);
     mComponents.apply(ls);
     mComponents.apply(pp);
     mComponents.apply(prop);
+    mComponents.apply(tank);
 
     ship.setProducedAcceleration( prop.getProduced() );
     ship.setMaxAcceleration( prop.getMax() );
+    ship.setFuelMass(tank.fuel());
 }
