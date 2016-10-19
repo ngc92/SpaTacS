@@ -8,17 +8,12 @@
 using namespace spatacs;
 using namespace cmd;
 
-SetWpnMode::SetWpnMode(std::uint64_t object, std::uint64_t wp_id, std::uint64_t mode):
+SetWpnMode::SetWpnMode(std::uint64_t object, std::uint64_t wp_id, std::string ammo):
     mObject(object),
-    mMode(mode),
+    mAmmo(ammo),
     mWeapon(wp_id)
 {
 
-}
-
-SetWpnMode::SetWpnMode(std::istream& in)
-{
-    in >> mObject >> mWeapon >> mMode;
 }
 
 std::uint64_t SetWpnMode::object() const
@@ -26,9 +21,9 @@ std::uint64_t SetWpnMode::object() const
     return mObject;
 }
 
-std::uint64_t SetWpnMode::mode() const
+const std::string& SetWpnMode::ammo() const
 {
-    return mMode;
+    return mAmmo;
 }
 
 std::uint64_t SetWpnMode::weapon() const
@@ -38,5 +33,5 @@ std::uint64_t SetWpnMode::weapon() const
 
 std::ostream& ::spatacs::cmd::operator<<(std::ostream& out, const SetWpnMode& move)
 {
-    return out << "SetWpnMode("<<move.object() << ", " << move.weapon() << " " << move.mode() << ")";
+    return out << "SetWpnMode("<<move.object() << ", " << move.weapon() << " " << move.ammo() << ")";
 }

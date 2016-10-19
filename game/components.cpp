@@ -12,25 +12,28 @@ namespace spatacs
     {
         using boost::property_tree::ptree;
 
-        Damage ProjectileWpnData::damage() const
-        {
-            Damage dmg;
-            if (mMode == HE_MODE) {
-                dmg.high_explosive = mDamage.high_explosive;
-            } else if (mMode == ProjectileWpnData::AP_MODE) {
-                dmg.armour_piercing = mDamage.armour_piercing;
-            } else if (mMode == ProjectileWpnData::SO_MODE) {
-                dmg.shield_overload = mDamage.shield_overload;
-            }
-
-            return dmg;
-        }
-
         mass_t FuelStorage::request(mass_t desire)
         {
             desire = std::min(desire, current);
             current -= desire;
             return desire;
+        }
+
+        void AmmoStorage::addAmmo(Ammo a)
+        {
+            ammo.push_back(a);
+        }
+
+        AmmoStorage::Ammo& AmmoStorage::getAmmo(const std::string& type)
+        {
+            static Ammo empty;
+            empty.amount = 0;
+            for(auto& a : ammo)
+            {
+                if(a.name == type)
+                    return a;
+            }
+            return empty;
         }
 
         // creation functions
@@ -49,7 +52,6 @@ namespace spatacs
 
         void makeFuelTank(const ptree& data, ComponentEntity& cmp)
         {
-            addHealth(cmp, data);
             cmp.add<FuelStorage>(data.get<mass_t>("capacity") );
         }
 
@@ -68,13 +70,10 @@ namespace spatacs
         void makeProjectileWpn(const ptree& data, ComponentEntity& cmp)
         {
             addHealth(cmp, data);
-            cmp.add<WeaponAimData>(data.get<speed_t>("muzzle_velocity"), data.get<double>("precision"));
+            cmp.add<WeaponAimData>(1.0_km / 1.0_s, data.get<double>("precision"));
             auto& pwd = cmp.add<ProjectileWpnData>();
-            pwd.mDamage = Damage{ data.get<float>("HE_strength"),
-                                  data.get<float>("SO_strength"),
-                                  data.get<float>("AP_strength") };
             pwd.mRPM = data.get<float>("rpm");
-            pwd.mCaliber = data.get<mass_t>("caliber");
+            pwd.mAmmo = "SO";
             cmp.add<Timer>();
         }
 
@@ -85,6 +84,24 @@ namespace spatacs
             auto& sgd = cmp.add<ShieldGeneratorData>();
             sgd.mShieldRecharge = scalar_t(data.get<float>("recharge")) / 1.0_s;
             sgd.mEnergyPerShieldPoint = 1.f / data.get<float>("efficiency");
+        }
+
+        void makeAmmoStorage(const boost::property_tree::ptree& data, ComponentEntity& cmp)
+        {
+            auto& as = cmp.add<AmmoStorage>();
+            for(auto am : data)
+            {
+                std::string name  = am.first;
+                std::size_t amount = am.second.get<std::size_t>("amount");
+                mass_t        mass = am.second.get<mass_t>("mass");
+                energy_t    energy = am.second.get<energy_t>("energy");
+                Damage dmg;
+                dmg.armour_piercing = am.second.get<double>("AP", 0.0);
+                dmg.high_explosive  = am.second.get<double>("HE", 0.0);
+                dmg.shield_overload = am.second.get<double>("SO", 0.0);
+                AmmoStorage::AmmoData ad{mass, energy, dmg};
+                as.addAmmo( AmmoStorage::Ammo{name, amount, ad} );
+            }
         }
     }
 }

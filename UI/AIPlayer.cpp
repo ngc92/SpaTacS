@@ -55,13 +55,13 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
         // if found, do attack
         if(min < 15.0_km)  {
             mCommands->addCommand( own.id(), cmd::Attack(target->id()) );
-            uint64_t mode = 1;
+            std::string mode = "HE";
             if( target->shield() > 2.0 )
             {
-                mode = 2;
+                mode = "SO";
             } else if(target->hull_status().current > 2.0)
             {
-                mode = 0;
+                mode = "AP";
             }
 
             mCommands->addCommand( own.id(), cmd::SetWpnMode(own.id(), 0, mode) );

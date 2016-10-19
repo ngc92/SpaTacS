@@ -9,6 +9,7 @@
 #include "core/Entity.h"
 #include "game/Damage.h"
 #include <boost/property_tree/ptree_fwd.hpp>
+#include <vector>
 
 namespace spatacs
 {
@@ -59,6 +60,27 @@ namespace spatacs
             mass_t capacity;
         };
 
+        struct AmmoStorage
+        {
+            struct AmmoData
+            {
+                mass_t      mass;
+                energy_t    charge;
+                Damage      damage;
+            };
+
+            struct Ammo
+            {
+                std::string name;
+                std::size_t amount;
+                AmmoData    data;
+            };
+
+            void addAmmo(Ammo a);
+            Ammo& getAmmo(const std::string& type);
+            std::vector<Ammo> ammo;
+        };
+
         struct PowerPlantData
         {
             PowerPlantData() = default;
@@ -98,22 +120,13 @@ namespace spatacs
 
         struct ProjectileWpnData
         {
-            enum Mode
-            {
-                AP_MODE,
-                HE_MODE,
-                SO_MODE
-            } mMode = HE_MODE;
-            Damage mDamage;
+            std::string mAmmo;
             float mRPM;
-            mass_t mCaliber;
-
-            Damage damage() const;
         };
 
         using ComponentEntity = core::Entity<Health, FuelStorage, EngineData,
                 PowerPlantData, ShieldGeneratorData, LifeSupportData, WeaponAimData, ProjectileWpnData,
-                        Timer, Name>;
+                        Timer, Name, AmmoStorage>;
 
 
         // creation functions
@@ -123,6 +136,7 @@ namespace spatacs
         void makePowerPlant(const boost::property_tree::ptree& data, ComponentEntity& cmp);
         void makeProjectileWpn(const boost::property_tree::ptree& data, ComponentEntity& cmp);
         void makeShieldGenerator(const boost::property_tree::ptree& data, ComponentEntity& cmp);
+        void makeAmmoStorage(const boost::property_tree::ptree& data, ComponentEntity& cmp);
     }
 }
 

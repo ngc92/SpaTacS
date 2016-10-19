@@ -32,17 +32,17 @@ namespace spatacs {
             std::uint64_t mWeaponId;
         };
 
-        class SetWeaponMode : public ShipEvent
+        class SetWeaponAmmo : public ShipEvent
         {
         public:
-            SetWeaponMode( std::uint64_t ship, std::uint64_t wpn, std::uint64_t mode );
+            SetWeaponAmmo(std::uint64_t ship, std::uint64_t wpn, std::string ammo);
 
-            std::uint64_t mode() const { return mMode; }
+            const std::string& ammo() const { return mAmmo; }
         private:
 
             void applyToShip(Starship& shooter, EventContext& context) const override;
 
-            std::uint64_t mMode;
+            std::string   mAmmo;
             std::uint64_t mWeaponId;
         };
 
