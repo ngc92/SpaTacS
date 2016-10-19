@@ -34,10 +34,6 @@ namespace spatacs
             uint64_t team() const;
             const std::string& name() const;
 
-            /// energy
-            double producedEnergy() const;
-            double usedEnergy() const;
-
             // hitpoints
             double hp() const;
             double max_hp() const;
@@ -82,10 +78,6 @@ namespace spatacs
             // armour
             double mMaxArmour = 10;
             double mCurArmour = 10;
-
-            // Energy management status
-            double mEnergyUsed     = 0;
-            double mEnergyProduced = 0;
 
             // empty mass
             mass_t mEmptyMass = 0.0_kg;
