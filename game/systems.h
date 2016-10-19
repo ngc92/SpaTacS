@@ -108,16 +108,6 @@ namespace spatacs
         };
 
         // Energy management
-        class GetEnergyRequest : public core::System<game::ComponentEntity, GetEnergyRequest, core::Signature<const game::EnergyRequest>>
-        {
-        public:
-            void apply(const game::ComponentEntity& ety, const game::EnergyRequest& h);
-
-            double request() const     { return mRequested; }
-        private:
-            double mRequested = 0.0;
-        };
-
         class ProvideEnergy : public core::System<game::ComponentEntity, ProvideEnergy, core::Signature<game::EnergyRequest>>
         {
         public:

@@ -38,9 +38,10 @@ SubSystems::SubSystems( const SubSystems& other ):
 
 double SubSystems::distributeEnergy(double energy)
 {
-    GetEnergyRequest rq;
-    mComponents.apply(rq);
-    double f = std::min(1.0, energy / rq.request());
+    double request = 0;
+    mComponents.apply( core::make_system<ComponentEntity, const EnergyRequest>(
+            [&request](const ComponentEntity&, const EnergyRequest& egy){ request += egy.request; }) );
+    double f = std::min(1.0, energy / request);
     ProvideEnergy provide(energy, f);
     mComponents.apply(provide);
 

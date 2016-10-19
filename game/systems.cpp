@@ -113,11 +113,11 @@ void TankInfo::apply(const game::ComponentEntity& ety, const game::FuelStorage& 
     mCapacity += h.capacity;
 }
 
-void GetEnergyRequest::apply(const game::ComponentEntity& ety, const game::EnergyRequest& h)
+/*void GetEnergyRequest::apply(const game::ComponentEntity& ety, const game::EnergyRequest& h)
 {
     mRequested += std::max(0.0, h.request - h.current);
 }
-
+*/
 ProvideEnergy::ProvideEnergy(double energy, double throttle) :
         mProvided(energy), mThrottle(throttle)
 {

@@ -10,8 +10,8 @@
     - [ ] multiple wpn per ship
   * code:
     - [x] shield decay as ship property
-    - [ ] allow lambdas as systems in component mgr
-    - [ ] improve fuel management code, unify with energy mgm
+    - [x] allow lambdas as systems in component mgr
+    - [x] improve fuel management code, unify with energy mgm
     
 
 ## Easy projects:
