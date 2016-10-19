@@ -65,9 +65,7 @@ void ShieldManagement::apply(const ComponentEntity& ety, ShieldGeneratorData& sg
 {
     auto dt = 0.1_s;
     // shield decay
-    double decay = std::exp( sgen.mDecay*dt );
     auto shield = ship.shield();
-    shield *= decay;
     if(shield < ship.max_shield())
     {
         double difference = ship.max_shield() - ship.shield();

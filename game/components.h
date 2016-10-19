@@ -80,7 +80,6 @@ namespace spatacs
 
             // properties
             rate_t<scalar_t> mShieldRecharge{0.0};
-            rate_t<scalar_t> mDecay{0.0};
             float mEnergyPerShieldPoint  = 5;
         };
 

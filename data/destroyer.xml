@@ -3,7 +3,8 @@
     <radius>25m</radius>
     <hitpoints>10</hitpoints>
     <armour>10</armour>
-    <shield>10</shield>
+    <shield>11</shield>
+    <shield_dissipation>1</shield_dissipation>
 
     <engine>
         <fuel_consumption>2750 kg/s</fuel_consumption>
@@ -14,7 +15,6 @@
     <shieldgen>
         <recharge>0.2</recharge>
         <efficiency>0.2</efficiency>
-        <dissipation>1</dissipation>
         <HP>1</HP>
     </shieldgen>
 

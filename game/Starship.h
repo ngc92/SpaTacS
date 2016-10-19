@@ -77,6 +77,7 @@ namespace spatacs
             // shield
             double mMaxShield = 10;
             double mCurShield = 10;
+            rate_t<scalar_t> mShieldDecay{0.0};
 
             // armour
             double mMaxArmour = 10;

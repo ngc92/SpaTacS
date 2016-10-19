@@ -100,7 +100,6 @@ namespace spatacs
             cmp.add<EnergyManagement>();
             auto& sgd = cmp.add<ShieldGeneratorData>();
             sgd.mShieldRecharge = scalar_t(data.get<float>("recharge")) / 1.0_s;
-            sgd.mDecay =  scalar_t(std::log(1-data.get<float>("dissipation") / 100.f)) / 1.0_s;
             sgd.mEnergyPerShieldPoint = 1.f / data.get<float>("efficiency");
         }
     }
