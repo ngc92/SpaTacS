@@ -5,7 +5,8 @@
 #ifndef SOI_HITTESTS_H
 #define SOI_HITTESTS_H
 
-#include <boost/optional/optional_fwd.hpp>
+/// can't use optional_fwd.hpp here because some boost versions won't compile
+#include <boost/optional.hpp>
 #include "vec.h"
 #include "units.h"
 
