@@ -24,8 +24,6 @@
         <SO_strength>1</SO_strength>
         <precision>60</precision>
         <rpm>60</rpm>
-        <muzzle_velocity>3000 m/s</muzzle_velocity>
-        <caliber>0.2 kg</caliber>
         <HP>1</HP>
     </weapon>
 
@@ -43,4 +41,26 @@
     <life_support>
         <HP>1</HP>
     </life_support>
+
+    <ammo_storage>
+        <capacity>300</capacity>
+        <HE>
+            <amount>100</amount>
+            <mass>0.2 kg</mass>
+            <energy>700 kJ</energy>
+            <HE>1</HE>
+        </HE>
+        <AP>
+            <amount>100</amount>
+            <mass>0.2 kg</mass>
+            <energy>1200 kJ</energy>
+            <AP>1</AP>
+        </AP>
+        <SO>
+            <amount>100</amount>
+            <mass>0.2 kg</mass>
+            <energy>900 kJ</energy>
+            <SO>1</SO>
+        </SO>
+    </ammo_storage>
 </ship>

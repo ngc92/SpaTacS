@@ -32,6 +32,8 @@ SubSystems::SubSystems(const boost::property_tree::ptree& data)
             makeShieldGenerator(child.second, mComponents.addEntity());
         if(child.first == "engine")
             makeEngine(child.second, mComponents.addEntity());
+        if(child.first == "ammo_storage")
+            makeAmmoStorage(child.second, mComponents.addEntity());
     }
 
     mComponents.apply([this](game::ComponentEntity& cmp)
@@ -43,19 +45,6 @@ SubSystems::SubSystems( const SubSystems& other ):
 {
     mComponents.apply([this](game::ComponentEntity& cmp)
                       { if(cmp.has<WeaponAimData>()){ mArmament.push_back(&cmp);} });
-}
-
-double SubSystems::distributeEnergy(double energy)
-{
-    double request = 0;
-    double f = std::min(1.0, energy / request);
-}
-
-double SubSystems::produceEnergy()
-{
-    PowerProduction gpe;
-    mComponents.apply(gpe);
-    return gpe.energy();
 }
 
 void SubSystems::onStep(Starship& ship)

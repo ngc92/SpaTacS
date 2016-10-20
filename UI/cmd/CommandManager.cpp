@@ -87,7 +87,7 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
             continue;
         }
 
-        events.push_back(events::EventPtr(new events::SetWeaponMode(ship.id(), s.weapon(), s.mode())));
+        events.push_back(events::EventPtr(new events::SetWeaponAmmo(ship.id(), s.weapon(), s.ammo())));
     }
 
     mOneShotCommands.clear();

@@ -40,13 +40,13 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::IScene
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mDistanceMarker.reset(txt);
 
-    auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 10, 100, 130));
+    auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 10, 100, 150));
     mShipInfo.reset(sstat);
 
     sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(700, 10, 790, 90));
     mTargetInfo.reset(sstat);
 
-    txt = guienv->addStaticText(L"", irr::core::recti(10, 135, 100, 155));
+    txt = guienv->addStaticText(L"", irr::core::recti(10, 155, 100, 175));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mSpeedInfo.reset(txt);
 
@@ -124,11 +124,11 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
 {
     if(mActiveShipID != 0) {
         if (key == irr::KEY_KEY_1) {
-            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, 0) );
+            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, "AP") );
         } else if (key == irr::KEY_KEY_2) {
-            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, 1) );
+            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, "HE") );
         } else if (key == irr::KEY_KEY_3) {
-            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, 2) );
+            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, "SO") );
         } else if( key == irr::KEY_PLUS )
         {
             mTargetSpeed += 0.05_kps;
@@ -187,10 +187,16 @@ void ui::UnitCommand::step()
         game::TankInfo ti;
         ship.components().apply(si);
         ship.components().apply(ti);
+        game::ListAmmunition la;
+        ship.components().apply(la);
         mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield(), ship.max_shield()} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ti.fuel() / 1.0_t, ti.capacity() / 1.0_t} );
+        std::size_t acount = 0;
+        for(auto& a : la)
+            acount += a.second;
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"ammo", acount, la.capacity()} );
         /// \todo power plant
     }
 

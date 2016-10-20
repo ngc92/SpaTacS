@@ -12,25 +12,47 @@ namespace spatacs
     {
         using boost::property_tree::ptree;
 
-        Damage ProjectileWpnData::damage() const
-        {
-            Damage dmg;
-            if (mMode == HE_MODE) {
-                dmg.high_explosive = mDamage.high_explosive;
-            } else if (mMode == ProjectileWpnData::AP_MODE) {
-                dmg.armour_piercing = mDamage.armour_piercing;
-            } else if (mMode == ProjectileWpnData::SO_MODE) {
-                dmg.shield_overload = mDamage.shield_overload;
-            }
-
-            return dmg;
-        }
-
         mass_t FuelStorage::request(mass_t desire)
         {
             desire = std::min(desire, current);
             current -= desire;
             return desire;
+        }
+
+        AmmoStorage::AmmoStorage(std::size_t cap) : capacity(cap)
+        {
+
+        }
+
+        void AmmoStorage::addAmmo(Ammo& a)
+        {
+            std::size_t used = 0;
+            for(auto& am : ammo)
+                used += am.amount;
+            if(used > capacity)
+                return;
+            if(capacity - used > a.amount) {
+                ammo.push_back(a);
+                a.amount = 0;
+            } else
+            {
+                ammo.push_back(a);
+                ammo.back().amount = capacity - used;
+                a.amount -= ammo.back().amount;
+            }
+
+        }
+
+        AmmoStorage::Ammo& AmmoStorage::getAmmo(const std::string& type)
+        {
+            static Ammo empty;
+            empty.amount = 0;
+            for(auto& a : ammo)
+            {
+                if(a.name == type)
+                    return a;
+            }
+            return empty;
         }
 
         // creation functions
@@ -49,7 +71,6 @@ namespace spatacs
 
         void makeFuelTank(const ptree& data, ComponentEntity& cmp)
         {
-            addHealth(cmp, data);
             cmp.add<FuelStorage>(data.get<mass_t>("capacity") );
         }
 
@@ -68,13 +89,10 @@ namespace spatacs
         void makeProjectileWpn(const ptree& data, ComponentEntity& cmp)
         {
             addHealth(cmp, data);
-            cmp.add<WeaponAimData>(data.get<speed_t>("muzzle_velocity"), data.get<double>("precision"));
+            cmp.add<WeaponAimData>(1.0_km / 1.0_s, data.get<double>("precision"));
             auto& pwd = cmp.add<ProjectileWpnData>();
-            pwd.mDamage = Damage{ data.get<float>("HE_strength"),
-                                  data.get<float>("SO_strength"),
-                                  data.get<float>("AP_strength") };
             pwd.mRPM = data.get<float>("rpm");
-            pwd.mCaliber = data.get<mass_t>("caliber");
+            pwd.mAmmo = "SO";
             cmp.add<Timer>();
         }
 
@@ -85,6 +103,28 @@ namespace spatacs
             auto& sgd = cmp.add<ShieldGeneratorData>();
             sgd.mShieldRecharge = scalar_t(data.get<float>("recharge")) / 1.0_s;
             sgd.mEnergyPerShieldPoint = 1.f / data.get<float>("efficiency");
+        }
+
+        void makeAmmoStorage(const boost::property_tree::ptree& data, ComponentEntity& cmp)
+        {
+            std::size_t cap = data.get<std::size_t>("capacity");
+            auto& as = cmp.add<AmmoStorage>(cap);
+            for(auto am : data)
+            {
+                if(am.second.count("amount") != 0) {
+                    std::string name = am.first;
+                    std::size_t amount = am.second.get<std::size_t>("amount");
+                    mass_t mass = am.second.get<mass_t>("mass");
+                    energy_t energy = am.second.get<energy_t>("energy");
+                    Damage dmg;
+                    dmg.armour_piercing = am.second.get<double>("AP", 0.0);
+                    dmg.high_explosive = am.second.get<double>("HE", 0.0);
+                    dmg.shield_overload = am.second.get<double>("SO", 0.0);
+                    AmmoStorage::AmmoData ad{mass, energy, dmg};
+                    AmmoStorage::Ammo st{name, amount, ad};
+                    as.addAmmo(st);
+                }
+            }
         }
     }
 }
