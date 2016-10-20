@@ -5,6 +5,7 @@
 #ifndef SPATACS_SYSTEMS_H
 #define SPATACS_SYSTEMS_H
 
+#include <map>
 #include "core/System.h"
 #include "components.h"
 
@@ -77,16 +78,46 @@ namespace spatacs
             EnergyManager& emgr;
         };
 
-        class TankInfo : public core::System<const game::ComponentEntity, TankInfo, core::Signature<game::FuelStorage>>
+        class TankInfo : public core::System<const ComponentEntity, TankInfo, core::Signature<FuelStorage>>
         {
         public:
             TankInfo() = default;
-            void apply(const game::ComponentEntity& ety, const game::FuelStorage& h);
+            void apply(const ComponentEntity& ety, const FuelStorage& h);
             mass_t fuel() const     { return mFuel; }
             mass_t capacity() const { return mCapacity; }
         private:
             mass_t mFuel     = 0.0_kg;
             mass_t mCapacity = 0.0_kg;
+        };
+
+        class ListAmmunition : public core::System<const ComponentEntity, ListAmmunition,
+                core::Signature<const AmmoStorage>>
+        {
+        public:
+            void apply(const ComponentEntity& ety, const AmmoStorage& as);
+
+            auto begin() const { return mCounts.begin();}
+            auto end()   const { return mCounts.end(); }
+        private:
+            std::map<std::string, std::size_t> mCounts;
+        };
+
+        class Aiming : public core::System<ComponentEntity, Aiming,
+                core::Signature<const WeaponAimData, const Health>>
+        {
+        public:
+            Aiming(length_vec position, velocity_vec velocity);
+            void apply(const game::ComponentEntity& ety, const game::WeaponAimData& aim,
+                       const game::Health& health);
+
+            const length_vec& aim_pos() const { return mAimPos; }
+            const speed_t     speed() const { return mMuzzleVel; }
+        private:
+            length_vec mTargetPos;
+            velocity_vec mTargetVel;
+
+            length_vec mAimPos{.0, .0, .0};
+            speed_t mMuzzleVel{.0};
         };
     }
 }
