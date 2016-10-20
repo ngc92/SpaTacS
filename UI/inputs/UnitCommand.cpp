@@ -40,13 +40,13 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::IScene
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mDistanceMarker.reset(txt);
 
-    auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 10, 100, 130));
+    auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 10, 100, 150));
     mShipInfo.reset(sstat);
 
     sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(700, 10, 790, 90));
     mTargetInfo.reset(sstat);
 
-    txt = guienv->addStaticText(L"", irr::core::recti(10, 135, 100, 155));
+    txt = guienv->addStaticText(L"", irr::core::recti(10, 155, 100, 175));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mSpeedInfo.reset(txt);
 
@@ -187,10 +187,16 @@ void ui::UnitCommand::step()
         game::TankInfo ti;
         ship.components().apply(si);
         ship.components().apply(ti);
+        game::ListAmmunition la;
+        ship.components().apply(la);
         mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield(), ship.max_shield()} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
         mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ti.fuel() / 1.0_t, ti.capacity() / 1.0_t} );
+        std::size_t acount = 0;
+        for(auto& a : la)
+            acount += a.second;
+        mShipInfo->pushSystem( irr::gui::SystemStatus{"ammo", acount, la.capacity()} );
         /// \todo power plant
     }
 
@@ -199,13 +205,16 @@ void ui::UnitCommand::step()
         mTargetInfo->setVisible(false);
     } else
     {
-        auto& target = state().getShip(mCurrentAimShip);
-        mTargetInfo->setVisible(true);
-        mTargetInfo->setShipName( target.name() );
-        mTargetInfo->clearSystems();
-        mTargetInfo->pushSystem( irr::gui::SystemStatus{"shield",  target.shield(), target.max_shield()} );
-        mTargetInfo->pushSystem( irr::gui::SystemStatus{"hull",  target.hull_status().current, target.hull_status().max} );
-        mTargetInfo->pushSystem( irr::gui::SystemStatus{"structure", target.hp(), target.max_hp()} );
+        if(state().hasObject(mCurrentAimShip)) {
+            auto& target = state().getShip(mCurrentAimShip);
+            mTargetInfo->setVisible(true);
+            mTargetInfo->setShipName(target.name());
+            mTargetInfo->clearSystems();
+            mTargetInfo->pushSystem(irr::gui::SystemStatus{"shield", target.shield(), target.max_shield()});
+            mTargetInfo->pushSystem(
+                    irr::gui::SystemStatus{"hull", target.hull_status().current, target.hull_status().max});
+            mTargetInfo->pushSystem(irr::gui::SystemStatus{"structure", target.hp(), target.max_hp()});
+        }
     }
 
     {

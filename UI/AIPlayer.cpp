@@ -54,6 +54,7 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
 
         // if found, do attack
         if(min < 15.0_km)  {
+            /// \todo need to react when out of ammo!
             mCommands->addCommand( own.id(), cmd::Attack(target->id()) );
             std::string mode = "HE";
             if( target->shield() > 2.0 )

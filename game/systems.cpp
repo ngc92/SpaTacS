@@ -155,6 +155,7 @@ void Aiming::apply(const ComponentEntity& ety, const WeaponAimData& aim,
 
 void ListAmmunition::apply(const ComponentEntity& ety, const AmmoStorage& as)
 {
+    mCapacity += as.capacity;
     for(auto& ammo : as.ammo)
     {
         auto counter = mCounts.find(ammo.name);

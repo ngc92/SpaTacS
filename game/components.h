@@ -62,6 +62,8 @@ namespace spatacs
 
         struct AmmoStorage
         {
+            AmmoStorage(std::size_t cap = 0);
+
             struct AmmoData
             {
                 mass_t      mass;
@@ -76,9 +78,12 @@ namespace spatacs
                 AmmoData    data;
             };
 
-            void addAmmo(Ammo a);
+            /// changes the ammount of \p a by the amount added.
+            void addAmmo(Ammo& a);
             Ammo& getAmmo(const std::string& type);
+
             std::vector<Ammo> ammo;
+            std::size_t capacity = 0;
         };
 
         struct PowerPlantData

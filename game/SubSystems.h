@@ -34,10 +34,6 @@ namespace spatacs
 
             std::vector<ComponentEntity*> mArmament;
 
-            double distributeEnergy(double energy);
-
-            double produceEnergy();
-
             void onStep(Starship& ship);
 
             core::EntityManager<ComponentEntity> mComponents;

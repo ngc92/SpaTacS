@@ -19,9 +19,28 @@ namespace spatacs
             return desire;
         }
 
-        void AmmoStorage::addAmmo(Ammo a)
+        AmmoStorage::AmmoStorage(std::size_t cap) : capacity(cap)
         {
-            ammo.push_back(a);
+
+        }
+
+        void AmmoStorage::addAmmo(Ammo& a)
+        {
+            std::size_t used = 0;
+            for(auto& am : ammo)
+                used += am.amount;
+            if(used > capacity)
+                return;
+            if(capacity - used > a.amount) {
+                ammo.push_back(a);
+                a.amount = 0;
+            } else
+            {
+                ammo.push_back(a);
+                ammo.back().amount = capacity - used;
+                a.amount -= ammo.back().amount;
+            }
+
         }
 
         AmmoStorage::Ammo& AmmoStorage::getAmmo(const std::string& type)
@@ -88,19 +107,23 @@ namespace spatacs
 
         void makeAmmoStorage(const boost::property_tree::ptree& data, ComponentEntity& cmp)
         {
-            auto& as = cmp.add<AmmoStorage>();
+            std::size_t cap = data.get<std::size_t>("capacity");
+            auto& as = cmp.add<AmmoStorage>(cap);
             for(auto am : data)
             {
-                std::string name  = am.first;
-                std::size_t amount = am.second.get<std::size_t>("amount");
-                mass_t        mass = am.second.get<mass_t>("mass");
-                energy_t    energy = am.second.get<energy_t>("energy");
-                Damage dmg;
-                dmg.armour_piercing = am.second.get<double>("AP", 0.0);
-                dmg.high_explosive  = am.second.get<double>("HE", 0.0);
-                dmg.shield_overload = am.second.get<double>("SO", 0.0);
-                AmmoStorage::AmmoData ad{mass, energy, dmg};
-                as.addAmmo( AmmoStorage::Ammo{name, amount, ad} );
+                if(am.second.count("amount") != 0) {
+                    std::string name = am.first;
+                    std::size_t amount = am.second.get<std::size_t>("amount");
+                    mass_t mass = am.second.get<mass_t>("mass");
+                    energy_t energy = am.second.get<energy_t>("energy");
+                    Damage dmg;
+                    dmg.armour_pierce   = am.second.get<double>("AP", 0.0);
+                    dmg.high_explosive  = am.second.get<double>("HE", 0.0);
+                    dmg.shield_overload = am.second.get<double>("SO", 0.0);
+                    AmmoStorage::AmmoData ad{mass, energy, dmg};
+                    AmmoStorage::Ammo st{name, amount, ad};
+                    as.addAmmo(st);
+                }
             }
         }
     }

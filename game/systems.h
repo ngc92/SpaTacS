@@ -96,9 +96,11 @@ namespace spatacs
         public:
             void apply(const ComponentEntity& ety, const AmmoStorage& as);
 
+            std::size_t capacity() const { return mCapacity; }
             auto begin() const { return mCounts.begin();}
             auto end()   const { return mCounts.end(); }
         private:
+            std::size_t mCapacity = 0;
             std::map<std::string, std::size_t> mCounts;
         };
 

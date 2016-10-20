@@ -212,7 +212,7 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
         try {
             if (auto h = dynamic_cast<const events::Damage*>(evt.get())) {
                 uint64_t ship = h->id();
-                float dmg = h->damage().high_explosive + h->damage().kinetic + h->damage().armour_piercing
+                float dmg = h->damage().high_explosive + h->damage().kinetic
                             + h->damage().shield_overload;
                 if (dmg > 0.1) {
                     float s = 5 * dmg + 1;

@@ -241,7 +241,7 @@ namespace physics
             if(unit == "t/s")
                 val *= 1000;
         }
-        else if( unit == "J" || unit == "kJ" )
+        else if( unit == "J" || unit == "kJ" || unit == "MJ" )
         {
             if( !dimensions::dimensions_equal<U, dimensions::energy_t>() )
             {
@@ -249,6 +249,8 @@ namespace physics
             }
             if(unit == "kJ")
                 val *= 1000;
+            if(unit == "MJ")
+                val *= 1000000;
         }
         else
         {
@@ -300,6 +302,7 @@ namespace physics
 
         constexpr auto joules(base_t v) { return energy_t(v); }
         constexpr auto kilojoules(base_t v) { return energy_t(v * 1000); }
+        constexpr auto megajoules(base_t v) { return energy_t(v * 1000 * 1000); }
 
         inline constexpr length_t operator ""_m(long double f) { return meters(f); }
         inline constexpr length_t operator ""_km(long double f) { return kilometers(f); }
@@ -309,6 +312,7 @@ namespace physics
 
         inline constexpr energy_t operator ""_J(long double f) { return joules(f); }
         inline constexpr energy_t operator ""_kJ(long double f) { return kilojoules(f); }
+        inline constexpr energy_t operator ""_MJ(long double f) { return megajoules(f); }
 
         inline constexpr time_t operator ""_s(long double f) { return time_t(f); }
         inline constexpr speed_t operator ""_kps(long double f) { return kilometers(f) / 1.0_s; }
