@@ -46,7 +46,7 @@ namespace spatacs {
 
             std::uint64_t mActiveShipID;
             boost::optional<length_vec> mCurrentAim;
-            std::uint64_t mCurrentAimShip;
+            std::uint64_t mCurrentAimShip = 0;
             length_t mTargetY     = 0.0_km;
             speed_t  mTargetSpeed = 0.75_kps;
             float mBaseY      = 0.f;

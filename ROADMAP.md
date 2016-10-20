@@ -1,22 +1,54 @@
-## Version 0.7 (ammunition update)
+## Version 0.8 (UI upgrade)
   * UI:
-    - [ ] improve enemy status view
+    - multiple levels
+    - enable/disable detailed status view
+      - show everything with hitpoints
+      - show energy production/consumption
+      - show activity degree
+    - show current ammo data
+    - allow setting system activity
+    - set ammo type for all weapons simultaneously
+    - ingame menu
+      + main menu
+      + continue
+    - mark currently selected ships
+  * AI:
+    - detect when out of ammo type
   * game:
-    - [x] fuel affecting total mass
-    - [x] ammunition
-    - [x] armour penetration
-    - [x] redefined damage model
-    - [x] multiple weapons per ship
-    - [x] minute variations in projectile speed
-  * code:
-    - [x] shield decay as ship property
-    - [x] allow lambdas as systems in component mgr
-    - [x] improve fuel management code, unify with energy mgm
-    - [x] allow systems without Entity parameter
-
-## Version 0.8
+    - engine efficiency
+    - define weapon loadout/fuel in level file
+    - turn on/off systems
+    - add a few levels
+    - win game when no enemies present
   * code:
     - remove need for physics events, simplify physics code
+    - clean up UI code. 
+    - power units for energy management
+
+
+## Version 0.9 (commands update)
+  * UI:
+    - new flight commands:
+      + hold distance
+      + evade
+    - optimize waypoints (do not brake too much)
+    - allow management of multiple weapons
+  * code:
+    - clean separation between in and out events of game simulation
+    
+
+## Version 1.0
+The plan is to add nothing "major" until this version, 
+but significantly improve what is there now, and flesh out 
+the content a bit. Also, a lot of code cleanup has to happen.
+
+Major changes that are planned for after 1.0 are
+ * orientation: give ships an orientation, and add firing 
+    angles etc.
+ * AI unit cooperation 
+ * sound
+ * networking
+
 
 ## Easy projects:
 * Skybox:
@@ -31,4 +63,5 @@
 
 * Ship view:
   - a menu page that shows the stats of different ships
+  - include useful secondary information
 

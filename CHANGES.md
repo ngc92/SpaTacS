@@ -1,3 +1,14 @@
+## Version 0.7 (ammunition update)
+  * UI:
+    - improved enemy status view
+  * game:
+    - fuel affects total mass
+    - ammunition
+    - armour penetration
+    - redefined damage model
+    - multiple weapons per ship
+    - minute variations in projectile speed
+
 ## Version 0.6 (menu update)
   * UI:
     - main menu

@@ -200,21 +200,46 @@ void ui::UnitCommand::step()
         /// \todo power plant
     }
 
+    std::uint64_t enemy_ship = 0;
+
+    auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
+    auto& mv = cmd.move;
+    auto src = sp;
+    for(unsigned i = 0; i < mv.waypoint_count(); ++i) {
+        mTrajectoryPlotter->addLine(src, convert(mv.target(i)), video::SColor(255, 0, 128, 0));
+        src = convert(mv.target(i));
+    }
+    if(cmd.attack)
+    {
+        auto& at = cmd.attack.get();
+        if(state().hasObject(at.target())) {
+            enemy_ship = at.target();
+            mTrajectoryPlotter->addLine(sp, convert(state().getShip(at.target()).position()),
+                                        video::SColor(255, 128, 0, 0));
+        } else
+        {
+            std::cerr << "Command manager kept invalid command!\n";
+        }
+    }
+
+
     if(mMode == MOVE)
     {
         mTargetInfo->setVisible(false);
     } else
     {
-        if(state().hasObject(mCurrentAimShip)) {
-            auto& target = state().getShip(mCurrentAimShip);
-            mTargetInfo->setVisible(true);
-            mTargetInfo->setShipName(target.name());
-            mTargetInfo->clearSystems();
-            mTargetInfo->pushSystem(irr::gui::SystemStatus{"shield", target.shield(), target.max_shield()});
-            mTargetInfo->pushSystem(
-                    irr::gui::SystemStatus{"hull", target.hull_status().current, target.hull_status().max});
-            mTargetInfo->pushSystem(irr::gui::SystemStatus{"structure", target.hp(), target.max_hp()});
-        }
+        enemy_ship = mCurrentAimShip;
+    }
+
+    if(state().hasObject(enemy_ship)) {
+        auto& target = state().getShip(enemy_ship);
+        mTargetInfo->setVisible(true);
+        mTargetInfo->setShipName(target.name());
+        mTargetInfo->clearSystems();
+        mTargetInfo->pushSystem(irr::gui::SystemStatus{"shield", target.shield(), target.max_shield()});
+        mTargetInfo->pushSystem(
+                irr::gui::SystemStatus{"hull", target.hull_status().current, target.hull_status().max});
+        mTargetInfo->pushSystem(irr::gui::SystemStatus{"structure", target.hp(), target.max_hp()});
     }
 
     {
@@ -254,25 +279,5 @@ void ui::UnitCommand::step()
                                         video::SColor(128, 255, 255, 255));
         }
     }
-
-    auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
-    auto& mv = cmd.move;
-    auto src = sp;
-    for(unsigned i = 0; i < mv.waypoint_count(); ++i) {
-        mTrajectoryPlotter->addLine(src, convert(mv.target(i)), video::SColor(255, 0, 128, 0));
-        src = convert(mv.target(i));
-    }
-    if(cmd.attack)
-    {
-        auto& at = cmd.attack.get();
-        if(state().hasObject(at.target())) {
-            mTrajectoryPlotter->addLine(sp, convert(state().getShip(at.target()).position()),
-                                        video::SColor(255, 128, 0, 0));
-        } else
-        {
-            std::cerr << "Command manager kept invalid command!\n";
-        }
-    }
-
 
 }
