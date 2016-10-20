@@ -124,11 +124,11 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
 {
     if(mActiveShipID != 0) {
         if (key == irr::KEY_KEY_1) {
-            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, 0) );
+            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, "AP") );
         } else if (key == irr::KEY_KEY_2) {
-            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, 1) );
+            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, "HE") );
         } else if (key == irr::KEY_KEY_3) {
-            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, 2) );
+            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, "SO") );
         } else if( key == irr::KEY_PLUS )
         {
             mTargetSpeed += 0.05_kps;

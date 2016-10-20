@@ -5,9 +5,13 @@
     - [x] fuel affecting total mass
     - [ ] fuel properties
     - [ ] ammunition
+      + [ ] ammo storage
+      + [ ] define standard ammo types
+      + [ ] currently loaded ammo level dependend
     - [ ] armour penetration
     - [ ] redefined damage model
     - [ ] multiple wpn per ship
+    - [ ] minute variations in projectile speed
   * code:
     - [x] shield decay as ship property
     - [x] allow lambdas as systems in component mgr

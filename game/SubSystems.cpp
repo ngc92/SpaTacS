@@ -24,6 +24,7 @@ SubSystems::SubSystems(const boost::property_tree::ptree& data)
     makeFuelTank(data.get_child("tank"), mComponents.addEntity());
     makeLifeSupport(data.get_child("life_support"), mComponents.addEntity());
     makeProjectileWpn(data.get_child("weapon"), mComponents.addEntity());
+    makeAmmoStorage(data.get_child("ammo_storage"), mComponents.addEntity());
 
     mComponents.apply([this](game::ComponentEntity& cmp)
                       { if(cmp.has<WeaponAimData>()){ mArmament.push_back(&cmp);} });
@@ -77,7 +78,7 @@ void EnergyManager::process(core::EntityManager<ComponentEntity>& comps)
     comps.apply(gpe);
     mTotal = gpe.energy();
 
-    if(mRequested == 0)
+    if(mRequested < 1)
         mRequested = 1;
     mSupplyFactor = std::min(1.0, mTotal / mRequested);
 

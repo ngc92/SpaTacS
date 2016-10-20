@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <iosfwd>
+#include <string>
 
 namespace spatacs
 {
@@ -15,15 +16,14 @@ namespace cmd
 	class SetWpnMode
 	{
 	public:
-        SetWpnMode( std::uint64_t object, std::uint64_t wp_id, std::uint64_t mode );
-        SetWpnMode( std::istream& in );
+        SetWpnMode(std::uint64_t object, std::uint64_t wp_id, std::string ammo);
 
 		std::uint64_t object() const;
-		std::uint64_t mode() const;
+		const std::string& ammo() const;
 		std::uint64_t weapon() const;
 	private:
 		std::uint64_t mObject;
-		std::uint64_t mMode;
+		std::string   mAmmo;
         std::uint64_t mWeapon;
 	};
 

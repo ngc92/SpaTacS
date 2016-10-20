@@ -110,9 +110,12 @@ void Starship::dealDamage(double dmg)
     auto& cmp = mSubSystems->mComponents.get(dmg_target + 1);
 
     // one shot can only ever destroy half the component
-    double d = std::min(dmg, cmp.get<Health>().current / 2);
-    cmp.get<Health>().current -= d;
-    mHitPoints -= dmg - d;
+    if(cmp.has<Health>()) {
+        double d = std::min(dmg, cmp.get<Health>().current / 2);
+        cmp.get<Health>().current -= d;
+        dmg -= d;
+    }
+    mHitPoints -= dmg;
 }
 
 uint64_t ShipData::team() const
