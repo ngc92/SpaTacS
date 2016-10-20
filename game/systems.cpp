@@ -4,6 +4,7 @@
 
 #include "systems.h"
 #include "Starship.h"
+#include "SubSystems.h"
 
 using namespace spatacs;
 using namespace game;
@@ -18,12 +19,12 @@ void TimerCountdown::apply(const ComponentEntity& ety, Timer& timer) const
 
 // ------------------------------------------------------------------------
 
-Propulsion::Propulsion(const Starship& ship, accel_vec mDesiredAcceleration)
+Propulsion::Propulsion(Starship& ship, accel_vec mDesiredAcceleration)
         : mShip(ship), mDesiredAcceleration(mDesiredAcceleration)
 {}
 
-void Propulsion::apply(const ComponentEntity& ce, const EngineData& engine,
-                       const Health& health, FuelRequest& freq)
+void Propulsion::apply(const ComponentEntity& ce, EngineData& engine,
+                       const Health& health)
 {
     auto dt = 0.1_s;
     force_t want = length(mDesiredAcceleration) * mShip.mass();
@@ -32,38 +33,57 @@ void Propulsion::apply(const ComponentEntity& ce, const EngineData& engine,
         return;
     }
 
-    mass_t need_mass  = (want / engine.mPropellantSpeed) * dt;
-    mass_t max_mass   = engine.mMassRate * dt * health.status();
+    mass_t need_mass  = (want / engine.propellant_speed) * dt;
+    mass_t max_mass   = engine.mass_rate * dt * health.status();
     if(need_mass > max_mass)
         need_mass = max_mass;
 
-    freq.request = need_mass;
-    mass_t fuel = freq.get(need_mass);
+    /// \todo once we have more than one system that requires fuel, it might be
+    /// smart to pack this code into another component/system combination!
+    mass_t fuel = 0.0_kg;
+    if(mShip.components().has(engine.fuel_source))
+    {
+        auto& fs = mShip.components().get(engine.fuel_source);
+        if(fs.has<FuelStorage>())
+        {
+            fuel = fs.get<FuelStorage>().request(need_mass);
+            if(fuel < 0.1_kg)
+                engine.fuel_source = 0;
+        } else
+        {
+            engine.fuel_source = 0;
+        }
+    } else
+    {
+        std::uint64_t id = 0;
+        mShip.components().apply([&](const ComponentEntity& ety){
+            if(ety.has<FuelStorage>() && ety.get<FuelStorage>().current > 0.0_kg)
+                id = ety.id();
+        });
+        engine.fuel_source = id;
+    }
 
-    force_t f = fuel * engine.mPropellantSpeed  / dt;
-    mMaxAcceleration += max_mass * engine.mPropellantSpeed  / dt / mShip.mass();
+    force_t f = fuel * engine.propellant_speed  / dt;
+    mMaxAcceleration += max_mass * engine.propellant_speed  / dt / mShip.mass();
     mProducedAcceleration += mDesiredAcceleration * (f / want);
 }
 
 
-ShieldManagement::ShieldManagement(Starship& s) : ship(s) { }
+ShieldManagement::ShieldManagement(Starship& s, EnergyManager& e) : ship(s), emgr(e) { }
 void ShieldManagement::apply(const ComponentEntity& ety, ShieldGeneratorData& sgen,
-                             EnergyRequest& egy, const Health& health)
+                             const Health& health)
 {
     auto dt = 0.1_s;
     // shield decay
     auto shield = ship.shield();
     if(shield < ship.max_shield())
     {
-        // set energy request to maximum energy we are going to need.
-        egy.request = sgen.mShieldRecharge * dt * sgen.mEnergyPerShieldPoint;
-
         double difference = ship.max_shield() - ship.shield();
         double recharge = sgen.mShieldRecharge * dt * health.status();
         double rec = std::min( recharge, difference );
         double consumption = rec * sgen.mEnergyPerShieldPoint;
         if(consumption != 0) {
-            rec *= egy.get(consumption) / consumption;
+            rec *= emgr.requestPower(consumption) / consumption;
         }
         shield += rec;
     }
@@ -75,59 +95,19 @@ void PowerProduction::apply(const ComponentEntity& ety, const PowerPlantData& pp
     mProducedEnergy += 0.1f * pp.energy_production * health.status();;
 }
 
-LifeSupportStep::LifeSupportStep(const Starship& s) : ship(s) { }
+LifeSupportStep::LifeSupportStep(const Starship& s, EnergyManager& e) : ship(s), emgr(e) { }
 
-void LifeSupportStep::apply(const ComponentEntity& ety, LifeSupportData& sup, EnergyRequest& egy) const
+void LifeSupportStep::apply(const ComponentEntity& ety, LifeSupportData& sup) const
 {
     auto accel = length(ship.velocity() - sup.mLastVelocity) / 0.1_s + 9.81_m/(1.0_s)/(1.0_s);
     sup.mLastVelocity = ship.velocity();
     double ereq = accel.value / 1000.0;
     /// \todo for now, nothing happens when we do not get the requested energy!
-    egy.request = ereq;
-    egy.get(ereq);
-}
-
-FuelDistribution::FuelDistribution(mass_t available) : mFuel(available)
-{
-}
-
-void FuelDistribution::apply(const game::ComponentEntity& ety, game::FuelRequest& h)
-{
-    auto desire = std::max(0.0_kg, h.request - h.current);
-    desire = std::min(desire, mFuel);
-    mFuel -= desire;
-    h.current += desire;
-}
-
-FuelConsumption::FuelConsumption(mass_t consume) : mConsume(consume)
-{}
-
-void FuelConsumption::apply(const game::ComponentEntity& ety, game::FuelStorage& h)
-{
-    mConsume -= h.request(mConsume);
+    emgr.requestPower(ereq);
 }
 
 void TankInfo::apply(const game::ComponentEntity& ety, const game::FuelStorage& h)
 {
     mFuel     += h.current;
     mCapacity += h.capacity;
-}
-
-/*void GetEnergyRequest::apply(const game::ComponentEntity& ety, const game::EnergyRequest& h)
-{
-    mRequested += std::max(0.0, h.request - h.current);
-}
-*/
-ProvideEnergy::ProvideEnergy(double energy, double throttle) :
-        mProvided(energy), mThrottle(throttle)
-{
-
-}
-
-void ProvideEnergy::apply(const game::ComponentEntity& ety, game::EnergyRequest& h)
-{
-    auto desire = std::max(0.0, h.request - h.current) * mThrottle;
-    desire = std::min(desire, mProvided);
-    mProvided -= desire;
-    h.current += desire;
 }

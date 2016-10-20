@@ -13,6 +13,7 @@ namespace spatacs
     namespace game
     {
         class Starship;
+        class EnergyManager;
 
         // General purpose components
         class TimerCountdown : public core::System<ComponentEntity, TimerCountdown, core::Signature<Timer>>
@@ -28,31 +29,31 @@ namespace spatacs
         //                                  Ship System handling
         // -------------------------------------------------------------------------------------------
         class Propulsion : public core::System<ComponentEntity, Propulsion,
-                core::Signature<const EngineData, const Health, FuelRequest>>
+                core::Signature<EngineData, const Health>>
         {
         public:
-            Propulsion(const Starship& ship, accel_vec mDesiredAcceleration);
-            void apply(const ComponentEntity& ce, const EngineData& engine, const Health& health, FuelRequest&);
+            Propulsion(Starship& ship, accel_vec mDesiredAcceleration);
+            void apply(const ComponentEntity& ce, EngineData& engine, const Health& health);
 
             const accel_vec& getProduced() const { return mProducedAcceleration; }
             accel_t getMax() const { return mMaxAcceleration; }
 
         private:
-            const Starship& mShip;
+            Starship& mShip;
             accel_vec mDesiredAcceleration;
             accel_vec mProducedAcceleration{.0, .0, .0};
             accel_t   mMaxAcceleration{.0};
         };
 
         class ShieldManagement : public core::System<ComponentEntity, ShieldManagement,
-                core::Signature<ShieldGeneratorData, EnergyRequest, const Health>>
+                core::Signature<ShieldGeneratorData, const Health>>
         {
         public:
-            ShieldManagement(Starship& s);
-            void apply(const ComponentEntity& ety, ShieldGeneratorData& sgen,
-                       EnergyRequest& egy, const Health& health);
+            ShieldManagement(Starship& s, EnergyManager& emgr);
+            void apply(const ComponentEntity& ety, ShieldGeneratorData& sgen, const Health& health);
         private:
             Starship& ship;
+            EnergyManager& emgr;
         };
 
         class PowerProduction : public core::System<ComponentEntity, PowerProduction,
@@ -66,33 +67,14 @@ namespace spatacs
         };
 
         class LifeSupportStep : public core::System<ComponentEntity, LifeSupportStep,
-                core::Signature<LifeSupportData, EnergyRequest>>
+                core::Signature<LifeSupportData>>
         {
         public:
-            LifeSupportStep(const Starship& s);
-            void apply(const ComponentEntity& ety, LifeSupportData& sup, EnergyRequest& egy) const;
+            LifeSupportStep(const Starship& s, EnergyManager& e);
+            void apply(const ComponentEntity& ety, LifeSupportData& sup) const;
         private:
             const Starship& ship;
-        };
-
-        // Fuel subsystems
-        class FuelDistribution : public core::System<game::ComponentEntity, FuelDistribution, core::Signature<game::FuelRequest>>
-        {
-        public:
-            FuelDistribution(mass_t available);
-            void apply(const game::ComponentEntity& ety, game::FuelRequest& h);
-            mass_t fuel() const     { return mFuel; }
-        private:
-            mass_t mFuel     = 0.0_kg;
-        };
-
-        class FuelConsumption : public core::System<game::ComponentEntity, FuelConsumption, core::Signature<game::FuelStorage>>
-        {
-        public:
-            FuelConsumption(mass_t consume);
-            void apply(const game::ComponentEntity& ety, game::FuelStorage& h);
-        private:
-            mass_t mConsume = 0.0_kg;
+            EnergyManager& emgr;
         };
 
         class TankInfo : public core::System<const game::ComponentEntity, TankInfo, core::Signature<game::FuelStorage>>
@@ -105,17 +87,6 @@ namespace spatacs
         private:
             mass_t mFuel     = 0.0_kg;
             mass_t mCapacity = 0.0_kg;
-        };
-
-        // Energy management
-        class ProvideEnergy : public core::System<game::ComponentEntity, ProvideEnergy, core::Signature<game::EnergyRequest>>
-        {
-        public:
-            ProvideEnergy(double energy, double throttle);
-            void apply(const game::ComponentEntity& ety, game::EnergyRequest& h);
-        private:
-            double mProvided = 0.0;
-            double mThrottle = 1.0;
         };
     }
 }

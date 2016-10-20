@@ -48,9 +48,6 @@ void Starship::onStep()
 {
     double decay = std::exp( mShieldDecay*0.1_s );
     mCurShield *= decay;
-
-    mEnergyProduced = mSubSystems->produceEnergy();
-    mEnergyUsed     = mSubSystems->distributeEnergy(mEnergyProduced);
     mSubSystems->onStep(*this);
 }
 
@@ -131,16 +128,6 @@ const std::string& ShipData::name() const
 double ShipData::max_hp() const
 {
     return mMaxHitPoints;
-}
-
-double ShipData::producedEnergy() const
-{
-    return mEnergyProduced;
-}
-
-double ShipData::usedEnergy() const
-{
-    return mEnergyUsed;
 }
 
 double ShipData::hp() const

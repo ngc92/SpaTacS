@@ -13,6 +13,20 @@ namespace spatacs
 {
     namespace game
     {
+        class EnergyManager
+        {
+        public:
+            void process(core::EntityManager <ComponentEntity>& mgr);
+
+            double requestPower(double amount);
+        private:
+            double mPowerLeft;
+            double mSupplyFactor;
+
+            double mRequested;
+            double mTotal;
+        };
+
         struct SubSystems
         {
             SubSystems(const boost::property_tree::ptree& data);
@@ -27,6 +41,7 @@ namespace spatacs
             void onStep(Starship& ship);
 
             core::EntityManager<ComponentEntity> mComponents;
+            EnergyManager mEnergyMgr;
         };
     }
 }

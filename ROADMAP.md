@@ -12,6 +12,7 @@
     - [x] shield decay as ship property
     - [x] allow lambdas as systems in component mgr
     - [x] improve fuel management code, unify with energy mgm
+    - [ ] allow systems without Entity parameter
     
 
 ## Easy projects:
