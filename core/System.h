@@ -57,6 +57,14 @@ namespace spatacs
             template<class... SigTypes>
             void apply_matching(Entity& entity, Signature<SigTypes...>&& s)
             {
+                imp().apply( entity.template get<SigTypes>()... );
+            }
+
+            // overload in case the first thing in the signature is the entity.
+            /// \todo maybe we can generalize this a bit later on.
+            template<class... SigTypes>
+            void apply_matching(Entity& entity, Signature<Entity&, SigTypes...>&& s)
+            {
                 imp().apply( entity, entity.template get<SigTypes>()... );
             }
 
@@ -84,9 +92,9 @@ namespace spatacs
             {
             public:
                 Sys(Lambda func) : mLambda(std::move(func)) { }
-                void apply(Entity& ety, Components&... comps)
+                void apply(Components&... comps)
                 {
-                    mLambda(ety, comps...);
+                    mLambda(comps...);
                 }
             private:
                 Lambda mLambda;

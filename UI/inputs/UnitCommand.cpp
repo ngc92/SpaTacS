@@ -151,7 +151,7 @@ namespace
         {
         }
 
-        void apply(const game::ComponentEntity& ety, const game::Health& h, const game::Name& n)
+        void apply(const game::Health& h, const game::Name& n)
         {
             irr::gui::SystemStatus status{n.name, h.current, h.maximum};
             mUI->pushSystem( status );

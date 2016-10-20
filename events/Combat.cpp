@@ -48,7 +48,7 @@ namespace spatacs
             game::AmmoStorage::Ammo* ammo = nullptr;
             shooter.components().apply(
                     core::make_system<game::ComponentEntity, game::AmmoStorage>(
-                            [&](const game::ComponentEntity& ety, game::AmmoStorage& as) mutable
+                            [&](game::AmmoStorage& as) mutable
                     {
                         auto aptr = &as.getAmmo(weapon.get<game::ProjectileWpnData>().mAmmo);
                         if(aptr->amount > 0)

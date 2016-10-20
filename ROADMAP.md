@@ -7,12 +7,12 @@
     - [x] armour penetration
     - [x] redefined damage model
     - [x] multiple weapons per ship
-    - [ ] minute variations in projectile speed
+    - [x] minute variations in projectile speed
   * code:
     - [x] shield decay as ship property
     - [x] allow lambdas as systems in component mgr
     - [x] improve fuel management code, unify with energy mgm
-    - [ ] allow systems without Entity parameter
+    - [x] allow systems without Entity parameter
 
 ## Version 0.8
   * code:

@@ -12,7 +12,7 @@ using namespace game;
 // General purpose components
 TimerCountdown::TimerCountdown(double dt) : mDeltaT(dt) { }
 
-void TimerCountdown::apply(const ComponentEntity& ety, Timer& timer) const
+void TimerCountdown::apply(Timer& timer) const
 {
     timer.time -= mDeltaT;
 }
@@ -23,8 +23,7 @@ Propulsion::Propulsion(Starship& ship, accel_vec mDesiredAcceleration)
         : mShip(ship), mDesiredAcceleration(mDesiredAcceleration)
 {}
 
-void Propulsion::apply(const ComponentEntity& ce, EngineData& engine,
-                       const Health& health)
+void Propulsion::apply(EngineData& engine, const Health& health)
 {
     auto dt = 0.1_s;
     force_t want = length(mDesiredAcceleration) * mShip.mass();
@@ -70,8 +69,7 @@ void Propulsion::apply(const ComponentEntity& ce, EngineData& engine,
 
 
 ShieldManagement::ShieldManagement(Starship& s, EnergyManager& e) : ship(s), emgr(e) { }
-void ShieldManagement::apply(const ComponentEntity& ety, ShieldGeneratorData& sgen,
-                             const Health& health)
+void ShieldManagement::apply(ShieldGeneratorData& sgen, const Health& health)
 {
     auto dt = 0.1_s;
     // shield decay
@@ -90,14 +88,14 @@ void ShieldManagement::apply(const ComponentEntity& ety, ShieldGeneratorData& sg
     ship.setShield( shield );
 }
 
-void PowerProduction::apply(const ComponentEntity& ety, const PowerPlantData& pp, const Health& health)
+void PowerProduction::apply(const PowerPlantData& pp, const Health& health)
 {
     mProducedEnergy += 0.1f * pp.energy_production * health.status();;
 }
 
 LifeSupportStep::LifeSupportStep(const Starship& s, EnergyManager& e) : ship(s), emgr(e) { }
 
-void LifeSupportStep::apply(const ComponentEntity& ety, LifeSupportData& sup) const
+void LifeSupportStep::apply(LifeSupportData& sup) const
 {
     auto accel = length(ship.velocity() - sup.mLastVelocity) / 0.1_s + 9.81_m/(1.0_s)/(1.0_s);
     sup.mLastVelocity = ship.velocity();
@@ -106,7 +104,7 @@ void LifeSupportStep::apply(const ComponentEntity& ety, LifeSupportData& sup) co
     emgr.requestPower(ereq);
 }
 
-void TankInfo::apply(const game::ComponentEntity& ety, const game::FuelStorage& h)
+void TankInfo::apply(const FuelStorage& h)
 {
     mFuel     += h.current;
     mCapacity += h.capacity;
@@ -118,8 +116,7 @@ Aiming::Aiming(length_vec position, velocity_vec velocity) :
 {
 }
 
-void Aiming::apply(const ComponentEntity& ety, const WeaponAimData& aim,
-           const Health& health)
+void Aiming::apply(const game::WeaponAimData& aim, const game::Health& health)
 {
     // perfect aim
     speed_t vel = aim.muzzle_velocity; // km/s
@@ -153,7 +150,7 @@ void Aiming::apply(const ComponentEntity& ety, const WeaponAimData& aim,
     mMuzzleVel = vel;
 }
 
-void ListAmmunition::apply(const ComponentEntity& ety, const AmmoStorage& as)
+void ListAmmunition::apply(const AmmoStorage& as)
 {
     mCapacity += as.capacity;
     for(auto& ammo : as.ammo)

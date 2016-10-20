@@ -21,7 +21,7 @@ namespace spatacs
         {
         public:
             TimerCountdown(double dt);
-            void apply(const ComponentEntity& ety, Timer& timer) const;
+            void apply(Timer& timer) const;
         private:
             double mDeltaT;
         };
@@ -34,7 +34,7 @@ namespace spatacs
         {
         public:
             Propulsion(Starship& ship, accel_vec mDesiredAcceleration);
-            void apply(const ComponentEntity& ce, EngineData& engine, const Health& health);
+            void apply(EngineData& engine, const Health& health);
 
             const accel_vec& getProduced() const { return mProducedAcceleration; }
             accel_t getMax() const { return mMaxAcceleration; }
@@ -51,7 +51,7 @@ namespace spatacs
         {
         public:
             ShieldManagement(Starship& s, EnergyManager& emgr);
-            void apply(const ComponentEntity& ety, ShieldGeneratorData& sgen, const Health& health);
+            void apply(ShieldGeneratorData& sgen, const Health& health);
         private:
             Starship& ship;
             EnergyManager& emgr;
@@ -61,7 +61,7 @@ namespace spatacs
                 core::Signature<const PowerPlantData, const Health>>
         {
         public:
-            void apply(const ComponentEntity& ety, const PowerPlantData& pp, const Health& health);
+            void apply(const PowerPlantData& pp, const Health& health);
             double energy() const { return mProducedEnergy; }
         private:
             double mProducedEnergy = 0;
@@ -72,7 +72,7 @@ namespace spatacs
         {
         public:
             LifeSupportStep(const Starship& s, EnergyManager& e);
-            void apply(const ComponentEntity& ety, LifeSupportData& sup) const;
+            void apply(LifeSupportData& sup) const;
         private:
             const Starship& ship;
             EnergyManager& emgr;
@@ -82,7 +82,7 @@ namespace spatacs
         {
         public:
             TankInfo() = default;
-            void apply(const ComponentEntity& ety, const FuelStorage& h);
+            void apply(const FuelStorage& h);
             mass_t fuel() const     { return mFuel; }
             mass_t capacity() const { return mCapacity; }
         private:
@@ -94,7 +94,7 @@ namespace spatacs
                 core::Signature<const AmmoStorage>>
         {
         public:
-            void apply(const ComponentEntity& ety, const AmmoStorage& as);
+            void apply(const AmmoStorage& as);
 
             std::size_t capacity() const { return mCapacity; }
             auto begin() const { return mCounts.begin();}
@@ -109,8 +109,7 @@ namespace spatacs
         {
         public:
             Aiming(length_vec position, velocity_vec velocity);
-            void apply(const game::ComponentEntity& ety, const game::WeaponAimData& aim,
-                       const game::Health& health);
+            void apply(const game::WeaponAimData& aim, const game::Health& health);
 
             const length_vec& aim_pos() const { return mAimPos; }
             const speed_t     speed() const { return mMuzzleVel; }
