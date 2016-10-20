@@ -56,10 +56,10 @@
             <amount>100</amount>
             <mass>2 kg</mass>
             <energy>15000 kJ</energy>
-            <AP>2</AP>
+            <AP>0.5</AP>
         </AP>
         <SO>
-            <amount>100</amount>
+            <amount>200</amount>
             <mass>1 kg</mass>
             <energy>9000 kJ</energy>
             <SO>1</SO>

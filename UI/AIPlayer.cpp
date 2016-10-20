@@ -53,7 +53,7 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
             continue;
 
         // if found, do attack
-        if(min < 15.0_km)  {
+        if(min < 20.0_km)  {
             /// \todo need to react when out of ammo!
             mCommands->addCommand( own.id(), cmd::Attack(target->id()) );
             std::string mode = "HE";
@@ -71,7 +71,7 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
         // fly closer if shield is stronger
         if(own_shield > target->shield() || own_shield > 2)
         {
-            mCommands->addCommand( own.id(), cmd::Move(target->position(), 0.25_kps));
+            mCommands->addCommand( own.id(), cmd::Move(target->position(), 0.3_kps));
         } else
         {
             auto delta = own.position() - target->position();

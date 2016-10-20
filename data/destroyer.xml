@@ -40,7 +40,7 @@
     </life_support>
 
     <ammo_storage>
-        <capacity>300</capacity>
+        <capacity>400</capacity>
         <HE>
             <amount>100</amount>
             <mass>1 kg</mass>
@@ -51,10 +51,10 @@
             <amount>100</amount>
             <mass>2 kg</mass>
             <energy>12000 kJ</energy>
-            <AP>1</AP>
+            <AP>0.5</AP>
         </AP>
         <SO>
-            <amount>100</amount>
+            <amount>200</amount>
             <mass>2 kg</mass>
             <energy>9000 kJ</energy>
             <SO>1</SO>
