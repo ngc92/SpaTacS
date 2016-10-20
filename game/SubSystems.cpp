@@ -18,12 +18,21 @@ using namespace game;
 
 SubSystems::SubSystems(const boost::property_tree::ptree& data)
 {
-    makeEngine(data.get_child("engine"), mComponents.addEntity());
-    makeShieldGenerator(data.get_child("shieldgen"), mComponents.addEntity());
-    makePowerPlant(data.get_child("power_plant"), mComponents.addEntity());
-    makeFuelTank(data.get_child("tank"), mComponents.addEntity());
-    makeLifeSupport(data.get_child("life_support"), mComponents.addEntity());
-    makeProjectileWpn(data.get_child("weapon"), mComponents.addEntity());
+    for(auto& child : data)
+    {
+        if(child.first == "weapon")
+            makeProjectileWpn(child.second, mComponents.addEntity());
+        if(child.first == "tank")
+            makeFuelTank(child.second, mComponents.addEntity());
+        if(child.first == "life_support")
+            makeLifeSupport(child.second, mComponents.addEntity());
+        if(child.first == "power_plant")
+            makePowerPlant(child.second, mComponents.addEntity());
+        if(child.first == "shieldgen")
+            makeShieldGenerator(child.second, mComponents.addEntity());
+        if(child.first == "engine")
+            makeEngine(child.second, mComponents.addEntity());
+    }
 
     mComponents.apply([this](game::ComponentEntity& cmp)
                       { if(cmp.has<WeaponAimData>()){ mArmament.push_back(&cmp);} });
@@ -77,8 +86,8 @@ void EnergyManager::process(core::EntityManager<ComponentEntity>& comps)
     comps.apply(gpe);
     mTotal = gpe.energy();
 
-    if(mRequested == 0)
-        mRequested = 1;
+    if(mRequested < 0.1)
+        mRequested = 0.1;
     mSupplyFactor = std::min(1.0, mTotal / mRequested);
 
     mPowerLeft = mTotal;
