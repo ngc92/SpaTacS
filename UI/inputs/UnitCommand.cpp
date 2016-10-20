@@ -205,13 +205,16 @@ void ui::UnitCommand::step()
         mTargetInfo->setVisible(false);
     } else
     {
-        auto& target = state().getShip(mCurrentAimShip);
-        mTargetInfo->setVisible(true);
-        mTargetInfo->setShipName( target.name() );
-        mTargetInfo->clearSystems();
-        mTargetInfo->pushSystem( irr::gui::SystemStatus{"shield",  target.shield(), target.max_shield()} );
-        mTargetInfo->pushSystem( irr::gui::SystemStatus{"hull",  target.hull_status().current, target.hull_status().max} );
-        mTargetInfo->pushSystem( irr::gui::SystemStatus{"structure", target.hp(), target.max_hp()} );
+        if(state().hasObject(mCurrentAimShip)) {
+            auto& target = state().getShip(mCurrentAimShip);
+            mTargetInfo->setVisible(true);
+            mTargetInfo->setShipName(target.name());
+            mTargetInfo->clearSystems();
+            mTargetInfo->pushSystem(irr::gui::SystemStatus{"shield", target.shield(), target.max_shield()});
+            mTargetInfo->pushSystem(
+                    irr::gui::SystemStatus{"hull", target.hull_status().current, target.hull_status().max});
+            mTargetInfo->pushSystem(irr::gui::SystemStatus{"structure", target.hp(), target.max_hp()});
+        }
     }
 
     {

@@ -3,11 +3,10 @@
     - [ ] improve enemy status view
   * game:
     - [x] fuel affecting total mass
-    - [ ] fuel properties
     - [x] ammunition
-    - [ ] armour penetration
-    - [ ] redefined damage model
-    - [ ] multiple wpn per ship
+    - [x] armour penetration
+    - [x] redefined damage model
+    - [x] multiple weapons per ship
     - [ ] minute variations in projectile speed
   * code:
     - [x] shield decay as ship property

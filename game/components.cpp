@@ -117,8 +117,8 @@ namespace spatacs
                     mass_t mass = am.second.get<mass_t>("mass");
                     energy_t energy = am.second.get<energy_t>("energy");
                     Damage dmg;
-                    dmg.armour_piercing = am.second.get<double>("AP", 0.0);
-                    dmg.high_explosive = am.second.get<double>("HE", 0.0);
+                    dmg.armour_pierce   = am.second.get<double>("AP", 0.0);
+                    dmg.high_explosive  = am.second.get<double>("HE", 0.0);
                     dmg.shield_overload = am.second.get<double>("SO", 0.0);
                     AmmoStorage::AmmoData ad{mass, energy, dmg};
                     AmmoStorage::Ammo st{name, amount, ad};
