@@ -5,9 +5,9 @@
 #include "UI/states/MainMenu.h"
 #include <irrlicht/irrlicht.h>
 #include <iostream>
-#include "GameState.h"
 #include "UI/StateManager.h"
 #include "SettingsMenu.h"
+#include "LevelSelection.h"
 
 using namespace spatacs::ui;
 using namespace irr;
@@ -37,7 +37,7 @@ void MainMenu::step(StateManager& smgr)
 {
     if(mNextState == 1)
     {
-        smgr.setState( std::make_unique<GameState>() );
+        smgr.setState( std::make_unique<LevelSelection>() );
     } else if(mNextState == 2)
     {
         smgr.setState( std::make_unique<SettingsMenu>() );

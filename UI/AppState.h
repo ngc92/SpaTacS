@@ -9,6 +9,10 @@ namespace irr
 {
     class IrrlichtDevice;
     class SEvent;
+    namespace gui
+    {
+        class IGUIElement;
+    }
 }
 
 namespace spatacs

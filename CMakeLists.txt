@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 14)
 add_compile_options(-Wall)
 
-find_package(Boost 1.58 REQUIRED)
+find_package(Boost 1.58 REQUIRED COMPONENTS filesystem)
 find_library(Irrlicht_LIB Irrlicht)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(.
@@ -106,7 +106,7 @@ set(UI_SOURCE_FILES
         UI/StateManager.h 
         UI/StateManager.cpp 
         UI/gfx/MultiLineNode.h 
-        UI/gfx/MultiLineNode.cpp UI/LevelLoader.h UI/LevelLoader.cpp)
+        UI/gfx/MultiLineNode.cpp UI/LevelLoader.h UI/LevelLoader.cpp UI/states/LevelSelection.h UI/states/LevelSelection.cpp)
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}
@@ -121,7 +121,7 @@ set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp)
 
 add_executable(SpaTacS ${SOURCE_FILES})
 add_executable(tests ${TEST_SOURCE_FILES} physics/HitTests.cpp)
-target_link_libraries(SpaTacS ${Irrlicht_LIB} pthread)
+target_link_libraries(SpaTacS ${Irrlicht_LIB} ${Boost_FILESYSTEM_LIBRARY_DEBUG} ${Boost_SYSTEM_LIBRARY_DEBUG} pthread)
 
 ## data files ##
 set(DATA_SHEETS data/destroyer.xml)

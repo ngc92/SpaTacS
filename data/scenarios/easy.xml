@@ -1,0 +1,25 @@
+<level>
+    <ship team="1">
+        <name>SF Predator</name>
+        <type>cruiser</type>
+        <position x="0km" y="0km" z="0.4km" />
+    </ship>
+
+    <ship team="1">
+        <name>SF Fearless</name>
+        <type>destroyer</type>
+        <position x="0km" y="0.2km" z="-0.4km" />
+    </ship>
+
+    <ship team="2">
+        <name>ES Lion</name>
+        <type>destroyer</type>
+        <position x="22km" y="4km" z="2km" />
+    </ship>
+
+    <ship team="2">
+        <name>ES Tiger</name>
+        <type>destroyer</type>
+        <position x="15km" y="2km" z="3km" />
+    </ship>
+</level>

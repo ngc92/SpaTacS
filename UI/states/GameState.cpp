@@ -11,12 +11,12 @@
 
 using namespace spatacs::ui;
 
-GameState::GameState() :
+GameState::GameState(const std::string& filename) :
         mGame( std::make_unique<spatacs::core::Game>() ),
         mCmdMgr( std::make_shared<cmd::CommandManager>() )
 {
     mGame->addInterface( std::make_shared<ui::AIPlayer>(2, mCmdMgr) );
-    mGame->addInterface( std::make_shared<ui::LevelLoader>("level.xml") );
+    mGame->addInterface( std::make_shared<ui::LevelLoader>(filename) );
     mGame->addInterface( mCmdMgr );
 }
 

@@ -1,6 +1,6 @@
 ## Version 0.8 (UI upgrade)
   * UI:
-    - [ ] multiple levels
+    - [x] multiple levels
     - [ ] enable/disable detailed status view
       - [ ] show everything with hitpoints
       - [ ] show energy production/consumption

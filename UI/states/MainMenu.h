@@ -8,15 +8,6 @@
 #include "UI/AppState.h"
 #include "UI/IrrRAII.h"
 
-namespace irr
-{
-    class IrrlichtDevice;
-    namespace gui
-    {
-        class IGUIElement;
-    }
-}
-
 namespace spatacs
 {
     namespace ui
