@@ -9,6 +9,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include "game/Starship.h"
 #include "game/Projectile.h"
+#include "physics/PhysicsWorld.h"
 
 using namespace spatacs;
 using namespace events;

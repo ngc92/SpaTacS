@@ -24,7 +24,7 @@ namespace
     };
 }
 
-void PhysicsWorld::pushEvent(events::Event evt)
+void PhysicsWorld::pushEvent(Collision evt)
 {
     mEventQueue.push( std::move(evt) );
 }
@@ -39,20 +39,6 @@ void PhysicsWorld::setCollisionCallback(PhysicsWorld::collision_callback_fn cb)
     mCollisionCallback = std::move(cb);
 }
 
-struct PhysicsWorld::HandleEvent : public boost::static_visitor<void>
-{
-    HandleEvent(PhysicsWorld* world) : world(world)
-    {}
-
-    PhysicsWorld* world;
-    template<class T>
-    void operator()(const T& t) const
-    {
-        world->handleEvent(t);
-    }
-};
-
-
 void PhysicsWorld::simulate(time_t dt)
 {
     // detect all collisions
@@ -64,7 +50,12 @@ void PhysicsWorld::simulate(time_t dt)
     {
         auto ev = std::move(mEventQueue.top());
         mEventQueue.pop();
-        boost::apply_visitor( HandleEvent{this}, ev );
+
+        ImpactInfo info;
+        info.time = ev.time;
+        info.fixture_A = ev.fA;
+        info.fixture_B = ev.fB;
+        mCollisionCallback( *this, getObject(ev.A), getObject(ev.B), info );
     }
 
     // update positions
@@ -94,7 +85,7 @@ void PhysicsWorld::detectCollisionsOf(std::uint64_t id, time_t max_dt, bool all)
                 if (hit) {
                     time_t time = hit.get();
                     if (time >= 0.0_s && time < max_dt) {
-                        pushEvent(events::Collision{id, target.first, fixa.userdata(), fix.userdata(), time});
+                        pushEvent(Collision{id, target.first, fixa.userdata(), fix.userdata(), time});
                     }
                 }
             }
@@ -102,54 +93,15 @@ void PhysicsWorld::detectCollisionsOf(std::uint64_t id, time_t max_dt, bool all)
     }
 }
 
-void PhysicsWorld::handleEvent(const events::Collision& c)
-{
-    ImpactInfo info;
-    info.time = c.time;
-    info.fixture_A = c.fA;
-    info.fixture_B = c.fB;
-    mCollisionCallback( *this, getObject(c.A), getObject(c.B), info );
-}
-
-void PhysicsWorld::handleEvent(const events::Despawn& d)
-{
-    auto e = mObjects.erase(d.target);
-    if( e != 1 )
-    {
-        BOOST_THROW_EXCEPTION( std::logic_error("Invalid despawn event") );
-    }
-
-    /// \todo this still leaves other events which might affect the despawned
-    /// object in the queue.
-    filterCollisions(d.target);
-}
-
 void PhysicsWorld::filterCollisions(std::uint64_t id)
 {
-    std::vector<events::Event> container = std::move(((GetUnderlyingContainer<decltype(mEventQueue)>&)(mEventQueue)).container());
-    auto nend = std::remove_if(begin(container), end(container), [id](auto& e){ return events::has_target_id(id, e);});
+    std::vector<Collision> container = std::move(((GetUnderlyingContainer<decltype(mEventQueue)>&)(mEventQueue)).container());
+    auto nend = std::remove_if(begin(container), end(container), [id](auto& e){ return e.A == id || e.B == id;});
     container.resize( std::distance(begin(container), nend) );
 
     // construct a new queue, because I don't know whether we might hav destroyed some invariants in
     // the process above.
     mEventQueue = queue_t(Compare(), std::move(container));
-}
-
-void PhysicsWorld::handleEvent(const events::ApplyForce& f)
-{
-    /// \todo this is a fixed end time! Change!
-    time_t end_time = 0.1_s;
-    time_t time_remaining = end_time - f.time;
-    auto& target = getObjectRec(f.target);
-    /// \todo specify units and mass handling!
-    target.acceleration += f.force * time_remaining / target.object.mass();
-}
-
-
-void PhysicsWorld::handleEvent(const events::SetMass& e)
-{
-    auto& target = getObjectRec(e.target);
-    target.object.setMass( e.mass );
 }
 
 
@@ -176,7 +128,34 @@ std::uint64_t PhysicsWorld::spawn(const Object& object)
     /// \todo trigger calculation of collision events.
 }
 
-bool PhysicsWorld::Compare::operator()(const events::Event& a, const events::Event& b) const
+bool PhysicsWorld::despawn(std::uint64_t id)
 {
-    return get_time(a) > get_time(b);
+    auto e = mObjects.erase(id);
+    if( e != 1 )
+    {
+        return false;
+    }
+
+    filterCollisions(id);
+    return true;
+}
+
+void PhysicsWorld::applyForce(std::uint64_t id, force_vec force)
+{
+    /// \todo this is a fixed end time! Change!
+    time_t application_time = 0.1_s;
+    auto& target = getObjectRec(id);
+    /// \todo specify units and mass handling!
+    target.acceleration += force * application_time / target.object.mass();
+}
+
+void PhysicsWorld::setMass(std::uint64_t id, mass_t mass)
+{
+    auto& target = getObjectRec(id);
+    target.object.setMass( mass );
+}
+
+bool PhysicsWorld::Compare::operator()(const Collision& a, const Collision& b) const
+{
+    return a.time > b.time;
 }

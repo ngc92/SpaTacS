@@ -7,6 +7,7 @@
 
 #include <events/IEvent.h>
 #include "GameState.h"
+#include "physics/PhysicsWorld.h"
 
 namespace spatacs
 {

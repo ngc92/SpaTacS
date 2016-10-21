@@ -33,6 +33,10 @@
       + evade
     - optimize waypoints (do not brake too much)
     - allow management of multiple weapons
+  * physics:
+    - allow applying impulse during callback
+    - write tests for unit io
+    - write test  for advanced collision handling
   * code:
     - clean separation between in and out events of game simulation
     

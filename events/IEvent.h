@@ -7,7 +7,7 @@
 
 #include <memory>
 #include <vector>
-#include <physics/PhysicsWorld.h>
+#include "physics/units.h"
 
 namespace spatacs
 {
@@ -15,6 +15,12 @@ namespace spatacs
     {
         class GameState;
     }
+
+    namespace physics
+    {
+        class PhysicsWorld;
+    }
+
     namespace events
     {
         class IEvent;

@@ -62,9 +62,7 @@ SET(PHYSICS_SOURCE_FILES
         vec.h
         physics/units.h
         physics/PhysicsWorld.h
-        physics/Events.h
         physics/PhysicsWorld.cpp
-        physics/Events.cpp
         physics/units.h
         physics/dimensions.h
         physics/HitTests.h

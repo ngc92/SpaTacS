@@ -23,7 +23,7 @@ auto Simulation::step(EventVec inEvents) -> EventVec
     for(auto& s : mState)
     {
         if(!s.alive())
-            mWorld->pushEvent( physics::events::Despawn{s.physics_id(), 0.0_s } );
+            mWorld->despawn( s.physics_id() );
     }
 
     mState.cleanup();
@@ -38,8 +38,8 @@ auto Simulation::step(EventVec inEvents) -> EventVec
         {
             auto& conv = dynamic_cast<game::Starship&>(ship);
             auto acc = conv.getProducedAcceleration();
-            mWorld->pushEvent( physics::events::ApplyForce{ship.physics_id(), acc * ship.mass(), 0.0_s} );
-            mWorld->pushEvent( physics::events::SetMass{ship.physics_id(), conv.getTotalMass(), 0.0_s} );
+            mWorld->applyForce( ship.physics_id(), acc * ship.mass());
+            mWorld->setMass( ship.physics_id(), conv.getTotalMass());
         }
     }
 

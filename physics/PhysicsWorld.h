@@ -9,8 +9,6 @@
 #include <queue>
 #include <map>
 #include <functional>
-#include <boost/variant/variant.hpp>
-#include "Events.h"
 #include "Object.h"
 #include "units.h"
 
@@ -23,6 +21,16 @@ namespace physics
         std::uint64_t fixture_A;  //!< Userdata of the fixture of the first object.
         std::uint64_t fixture_B;  //!< Userdata of the fixture of the second object;
         length_vec touch_point;
+        time_t time;
+    };
+
+
+    struct Collision
+    {
+        std::uint64_t A;        //!< ID of object A
+        std::uint64_t B;        //!< ID of object B
+        std::uint64_t fA;       //!< Userdata of fixture A
+        std::uint64_t fB;       //!< Userdata of fixture B
         time_t time;
     };
 
@@ -50,28 +58,36 @@ namespace physics
                                                          const Object& B, ImpactInfo info)>;
 
         const Object& getObject( std::uint64_t id ) const;
-        void pushEvent( events::Event evt );
         void setCollisionCallback( collision_callback_fn cb );
 
         /// spawn a new physics object.
         /// \return the ID that was assigned to the new object.
         std::uint64_t spawn(const Object& object);
 
+        /// \return whether \p id existed and was despawned.
+        bool despawn( std::uint64_t id );
+
+        /// apply a force to the object with the given id.
+        /// \attention note that the actual change in velocity
+        /// can currently only happen at the end of a time step.
+        void applyForce(std::uint64_t id, force_vec force);
+
+        /// changes the mass of an object.
+        /// Will affect only subsequent addForce calls.
+        void setMass(std::uint64_t id, mass_t mass);
+
         void simulate(time_t dt);
+
     private:
+        void pushEvent(Collision evt);
 
         // Event queue
         struct Compare
         {
-            bool operator()(const events::Event& a, const events::Event& b) const;
+            bool operator()(const Collision& a, const Collision& b) const;
         };
-        using queue_t = std::priority_queue<events::Event, std::vector<events::Event>, Compare>;
+        using queue_t = std::priority_queue<Collision, std::vector<Collision>, Compare>;
         queue_t mEventQueue;
-        struct HandleEvent;
-        void handleEvent(const events::ApplyForce&);
-        void handleEvent(const events::Despawn&);
-        void handleEvent(const events::Collision&);
-        void handleEvent(const events::SetMass&);
 
         // Objects
         ///! This struct saves the objects, and
