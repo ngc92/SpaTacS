@@ -9,6 +9,7 @@
 #include "dimensions.h"
 #include <iosfwd>
 #include <iostream>
+#include "parse_unit.h"
 
 namespace spatacs
 {
@@ -200,64 +201,17 @@ namespace physics
         stream >> val;
         stream >> unit;
 
-        // generate this at compile time!
-        if( unit == "m" || unit == "km" )
+        auto result = parse_unit::parse(unit);
+        if(result.valid &&
+           result.dim.meters  == typename U::length{} &&
+           result.dim.kgrams  == typename U::mass{} &&
+           result.dim.seconds == typename U::time{})
         {
-            if( !dimensions::dimensions_equal<U, dimensions::length_t>() )
-            {
-                stream.setstate( stream.failbit );
-            }
-            if(unit == "km")
-                val *= 1000;
-        }
-         else if( unit == "mps" || unit == "m/s" || unit == "ms^-1")
-        {
-            if( !dimensions::dimensions_equal<U, dimensions::velocity_t>() )
-            {
-                stream.setstate( stream.failbit );
-            }
-        } else if( unit == "kps" || unit == "km/s" || unit == "kms^-1")
-        {
-            if( !dimensions::dimensions_equal<U, dimensions::velocity_t>() )
-            {
-                stream.setstate( stream.failbit );
-            }
-            val *= 1000;
-        } else if( unit == "kg" || unit == "t" )
-        {
-            if( !dimensions::dimensions_equal<U, dimensions::mass_t>() )
-            {
-                stream.setstate( stream.failbit );
-            }
-            if(unit == "t")
-                val *= 1000;
-        }
-        else if( unit == "kg/s" || unit == "t/s" )
-        {
-            if( !dimensions::dimensions_equal<U, dimensions::rate_dim_t<dimensions::mass_t>>() )
-            {
-                stream.setstate( stream.failbit );
-            }
-            if(unit == "t/s")
-                val *= 1000;
-        }
-        else if( unit == "J" || unit == "kJ" || unit == "MJ" )
-        {
-            if( !dimensions::dimensions_equal<U, dimensions::energy_t>() )
-            {
-                stream.setstate( stream.failbit );
-            }
-            if(unit == "kJ")
-                val *= 1000;
-            if(unit == "MJ")
-                val *= 1000000;
-        }
-        else
+            val *= result.factor;
+        } else
         {
             stream.setstate( stream.failbit );
         }
-
-
 
         u.value = val;
         return stream;

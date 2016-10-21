@@ -76,6 +76,7 @@ namespace spatacs
             using force_t        = mul_t<acceleration_t, mass_t>;
             using area_t         = mul_t<length_t, length_t>;
             using energy_t       = mul_t<force_t, length_t>;
+            using power_t        = rate_dim_t<energy_t>;
 
             template<class O>
             struct unit_symbols;
