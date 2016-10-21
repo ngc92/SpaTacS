@@ -21,7 +21,7 @@
     - [ ] add a few levels
     - [ ] win game when no enemies present
   * code:
-    - [ ] remove need for physics events, simplify physics code
+    - [x] remove need for physics events, simplify physics code
     - [ ] clean up UI code. 
     - [x] power units for energy management
 
