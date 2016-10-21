@@ -62,9 +62,9 @@ namespace spatacs
         {
         public:
             void apply(const PowerPlantData& pp, const Health& health);
-            double energy() const { return mProducedEnergy; }
+            energy_t energy() const { return mProducedEnergy; }
         private:
-            double mProducedEnergy = 0;
+            energy_t mProducedEnergy = 0.0_J;
         };
 
         class LifeSupportStep : public core::System<ComponentEntity, LifeSupportStep,

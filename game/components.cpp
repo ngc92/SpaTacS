@@ -83,7 +83,7 @@ namespace spatacs
         void makePowerPlant(const ptree& data, ComponentEntity& cmp)
         {
             addHealth(cmp, data);
-            cmp.add<PowerPlantData>(data.get<double>("power") );
+            cmp.add<PowerPlantData>(data.get<power_t>("power") );
         }
 
         void makeProjectileWpn(const ptree& data, ComponentEntity& cmp)
@@ -101,8 +101,8 @@ namespace spatacs
             addHealth(cmp, data);
             cmp.add<Name>("shield generator");
             auto& sgd = cmp.add<ShieldGeneratorData>();
-            sgd.mShieldRecharge = scalar_t(data.get<float>("recharge")) / 1.0_s;
-            sgd.mEnergyPerShieldPoint = 1.f / data.get<float>("efficiency");
+            sgd.mShieldRecharge = data.get<rate_t<scalar_t>>("recharge");
+            sgd.mEnergyPerShieldPoint = data.get<energy_t>("consumption");
         }
 
         void makeAmmoStorage(const boost::property_tree::ptree& data, ComponentEntity& cmp)

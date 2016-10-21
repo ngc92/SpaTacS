@@ -18,13 +18,13 @@ namespace spatacs
         public:
             void process(core::EntityManager <ComponentEntity>& mgr);
 
-            double requestPower(double amount);
+            energy_t requestPower(energy_t amount);
         private:
-            double mPowerLeft;
+            energy_t mPowerLeft;
             double mSupplyFactor;
 
-            double mRequested;
-            double mTotal;
+            energy_t mRequested;
+            energy_t mTotal;
         };
 
         struct SubSystems

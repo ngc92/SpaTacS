@@ -89,8 +89,8 @@ namespace spatacs
         struct PowerPlantData
         {
             PowerPlantData() = default;
-            PowerPlantData(double ep) : energy_production(ep) {}
-            double energy_production = 0;
+            PowerPlantData(power_t ep) : energy_production(ep) {}
+            power_t energy_production = 0.0_W;
         };
 
         struct ShieldGeneratorData
@@ -99,7 +99,7 @@ namespace spatacs
 
             // properties
             rate_t<scalar_t> mShieldRecharge{0.0};
-            float mEnergyPerShieldPoint  = 5;
+            energy_t         mEnergyPerShieldPoint{1.0};
         };
 
         struct LifeSupportData

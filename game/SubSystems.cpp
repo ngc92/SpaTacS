@@ -75,19 +75,19 @@ void EnergyManager::process(core::EntityManager<ComponentEntity>& comps)
     comps.apply(gpe);
     mTotal = gpe.energy();
 
-    if(mRequested < 0.1)
-        mRequested = 0.1;
-    mSupplyFactor = std::min(1.0, mTotal / mRequested);
+    if(mRequested < 0.1_J)
+        mRequested = 0.1_J;
+    mSupplyFactor = std::min(1.0, (double)(mTotal / mRequested));
 
     mPowerLeft = mTotal;
-    mRequested = 0;
+    mRequested = 0.0_J;
 }
 
-double EnergyManager::requestPower(double amount)
+energy_t EnergyManager::requestPower(energy_t amount)
 {
     mRequested += amount;
-    double scaled = amount * mSupplyFactor;
-    double real = std::min(mPowerLeft, scaled);
+    energy_t scaled = amount * mSupplyFactor;
+    energy_t real = std::min(mPowerLeft, scaled);
     mPowerLeft -= real;
     return real;
 }

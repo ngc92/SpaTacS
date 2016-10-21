@@ -188,8 +188,10 @@ namespace physics
     {
         if(u.value < 2000)
             return stream << u.value << U{};
+        else if(u.value < 2000000)
+        return stream << u.value / 1000. << U{};
         else
-            return stream << u.value / 1000. << O('k') << U{};
+            return stream << u.value / 1000000. << O('M') << U{};
     }
 
     template<class I, class T, class U>
@@ -230,9 +232,13 @@ namespace physics
         using force_t   = UnitWrapper<base_t, dimensions::force_t>;
         using area_t    = UnitWrapper<base_t, dimensions::area_t>;
         using energy_t  = UnitWrapper<base_t, dimensions::energy_t>;
+        using power_t   = UnitWrapper<base_t, dimensions::power_t>;
 
         template<class T>
         using rate_t    = UnitWrapper<base_t, dimensions::rate_dim_t<typename T::dimension_t>>;
+
+        template<class T>
+        using inverse_t = UnitWrapper<base_t, dimensions::inverse_dim_t<typename T::dimension_t>>;
 
         using length_vec   = Vec3<length_t>;
         using velocity_vec = Vec3<speed_t>;
@@ -258,6 +264,10 @@ namespace physics
         constexpr auto kilojoules(base_t v) { return energy_t(v * 1000); }
         constexpr auto megajoules(base_t v) { return energy_t(v * 1000 * 1000); }
 
+        constexpr auto watts(base_t v) { return power_t(v); }
+        constexpr auto kilowatts(base_t v) { return power_t(v * 1000); }
+        constexpr auto megawatts(base_t v) { return power_t(v * 1000 * 1000); }
+
         inline constexpr length_t operator ""_m(long double f) { return meters(f); }
         inline constexpr length_t operator ""_km(long double f) { return kilometers(f); }
 
@@ -267,6 +277,10 @@ namespace physics
         inline constexpr energy_t operator ""_J(long double f) { return joules(f); }
         inline constexpr energy_t operator ""_kJ(long double f) { return kilojoules(f); }
         inline constexpr energy_t operator ""_MJ(long double f) { return megajoules(f); }
+
+        inline constexpr power_t operator ""_W(long double f) { return watts(f); }
+        inline constexpr power_t operator ""_kW(long double f) { return kilowatts(f); }
+        inline constexpr power_t operator ""_MW(long double f) { return megawatts(f); }
 
         inline constexpr time_t operator ""_s(long double f) { return time_t(f); }
         inline constexpr speed_t operator ""_kps(long double f) { return kilometers(f) / 1.0_s; }

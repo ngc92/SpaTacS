@@ -13,8 +13,8 @@
     </engine>
 
     <shieldgen>
-        <recharge>0.4</recharge>
-        <efficiency>0.2</efficiency>
+        <recharge>0.4 s^-1</recharge>
+        <consumption>100 MJ</consumption>
         <HP>2</HP>
     </shieldgen>
 
@@ -30,7 +30,7 @@
     </weapon>
 
     <power_plant>
-        <power>5</power>
+        <power>45 MW</power>
         <HP>2</HP>
     </power_plant>
 

@@ -1,29 +1,29 @@
 ## Version 0.8 (UI upgrade)
   * UI:
-    - multiple levels
-    - enable/disable detailed status view
-      - show everything with hitpoints
-      - show energy production/consumption
-      - show activity degree
-    - show current ammo data
-    - allow setting system activity
-    - set ammo type for all weapons simultaneously
-    - ingame menu
-      + main menu
-      + continue
-    - mark currently selected ships
+    - [ ] multiple levels
+    - [ ] enable/disable detailed status view
+      - [ ] show everything with hitpoints
+      - [ ] show energy production/consumption
+      - [ ] show activity degree
+    - [ ] show current ammo data
+    - [ ] allow setting system activity
+    - [ ] set ammo type for all weapons simultaneously
+    - [ ] ingame menu
+      + [ ] main menu
+      + [ ] continue
+    - [ ] mark currently selected ships
   * AI:
-    - detect when out of ammo type
+    - [ ] detect when out of ammo type
   * game:
-    - engine efficiency
-    - define weapon loadout/fuel in level file
-    - turn on/off systems
-    - add a few levels
-    - win game when no enemies present
+    - [ ] engine efficiency
+    - [ ] define weapon loadout/fuel in level file
+    - [ ] turn on/off systems
+    - [ ] add a few levels
+    - [ ] win game when no enemies present
   * code:
-    - remove need for physics events, simplify physics code
-    - clean up UI code. 
-    - power units for energy management
+    - [ ] remove need for physics events, simplify physics code
+    - [ ] clean up UI code. 
+    - [x] power units for energy management
 
 
 ## Version 0.9 (commands update)

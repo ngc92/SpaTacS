@@ -79,8 +79,8 @@ void ShieldManagement::apply(ShieldGeneratorData& sgen, const Health& health)
         double difference = ship.max_shield() - ship.shield();
         double recharge = sgen.mShieldRecharge * dt * health.status();
         double rec = std::min( recharge, difference );
-        double consumption = rec * sgen.mEnergyPerShieldPoint;
-        if(consumption != 0) {
+        energy_t consumption = rec * sgen.mEnergyPerShieldPoint;
+        if(!(consumption == 0.0_J)) {
             rec *= emgr.requestPower(consumption) / consumption;
         }
         shield += rec;
@@ -90,7 +90,7 @@ void ShieldManagement::apply(ShieldGeneratorData& sgen, const Health& health)
 
 void PowerProduction::apply(const PowerPlantData& pp, const Health& health)
 {
-    mProducedEnergy += 0.1f * pp.energy_production * health.status();;
+    mProducedEnergy += 0.1_s * pp.energy_production * health.status();;
 }
 
 LifeSupportStep::LifeSupportStep(const Starship& s, EnergyManager& e) : ship(s), emgr(e) { }
@@ -99,7 +99,8 @@ void LifeSupportStep::apply(LifeSupportData& sup) const
 {
     auto accel = length(ship.velocity() - sup.mLastVelocity) / 0.1_s + 9.81_m/(1.0_s)/(1.0_s);
     sup.mLastVelocity = ship.velocity();
-    double ereq = accel.value / 1000.0;
+    energy_t ereq = accel * 100.0_kg * 100.0_m;
+    /// \todo just faking the units here
     /// \todo for now, nothing happens when we do not get the requested energy!
     emgr.requestPower(ereq);
 }

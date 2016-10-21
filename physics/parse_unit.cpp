@@ -49,7 +49,7 @@ namespace {
     rtunit parse_single_factor(std::string& unit)
     {
         std::smatch m;
-        std::regex e(R"(([kMG]?)([gmstJ])(\^(-?[[:d:]]+)(\/([[:d:]]+))?)?)");
+        std::regex e(R"(([kMG]?)([gmstJW])(\^(-?[[:d:]]+)(\/([[:d:]]+))?)?)");
         if (std::regex_search(unit, m, e, std::regex_constants::match_continuous)) {
             double factor = 1;
             rtdim dims{};
@@ -70,6 +70,9 @@ namespace {
                     first = false;
                     continue;
                 }
+                if(x.length() == 0)
+                    continue;
+
                 if (x == "k") { factor = 1000; }
                 if (x == "M") { factor = 1000000; }
                 if (x == "G") { factor = 1000000000; }
@@ -88,6 +91,11 @@ namespace {
                     dims.kgrams.num = 1;
                     dims.meters.num = 2;
                     dims.seconds.num = -2;
+                }
+                if (x == "W") {
+                    dims.kgrams.num = 1;
+                    dims.meters.num = 2;
+                    dims.seconds.num = -3;
                 }
 
                 if (state == EXP) { exponent.num = std::stoi(x); }
