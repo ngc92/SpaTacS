@@ -30,11 +30,11 @@ namespace spatacs
         //                                  Ship System handling
         // -------------------------------------------------------------------------------------------
         class Propulsion : public core::System<ComponentEntity, Propulsion,
-                core::Signature<EngineData, const Health>>
+                core::Signature<EngineData, const Health, const Activity>>
         {
         public:
             Propulsion(Starship& ship, accel_vec mDesiredAcceleration);
-            void apply(EngineData& engine, const Health& health);
+            void apply(EngineData& engine, const Health& health, const Activity& acc);
 
             const accel_vec& getProduced() const { return mProducedAcceleration; }
             accel_t getMax() const { return mMaxAcceleration; }
@@ -47,21 +47,21 @@ namespace spatacs
         };
 
         class ShieldManagement : public core::System<ComponentEntity, ShieldManagement,
-                core::Signature<ShieldGeneratorData, const Health>>
+                core::Signature<ShieldGeneratorData, const Health, const Activity>>
         {
         public:
             ShieldManagement(Starship& s, EnergyManager& emgr);
-            void apply(ShieldGeneratorData& sgen, const Health& health);
+            void apply(ShieldGeneratorData& sgen, const Health& health, const Activity& acc);
         private:
             Starship& ship;
             EnergyManager& emgr;
         };
 
         class PowerProduction : public core::System<ComponentEntity, PowerProduction,
-                core::Signature<const PowerPlantData, const Health>>
+                core::Signature<const PowerPlantData, const Health, const Activity>>
         {
         public:
-            void apply(const PowerPlantData& pp, const Health& health);
+            void apply(const PowerPlantData& pp, const Health& health, const Activity& acc);
             energy_t energy() const { return mProducedEnergy; }
         private:
             energy_t mProducedEnergy = 0.0_J;

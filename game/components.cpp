@@ -55,6 +55,20 @@ namespace spatacs
             return empty;
         }
 
+        Activity::Activity(double a) : mActivity(a)
+        {
+
+        }
+
+        double Activity::get() const
+        {
+            return mActivity;
+        }
+        void Activity::set(double a)
+        {
+            mActivity= std::max(0.0, std::min(1.0, a));
+        }
+
         // creation functions
         void addHealth(ComponentEntity& cmp, const ptree& data)
         {
@@ -67,6 +81,7 @@ namespace spatacs
             cmp.add<Name>("engine");
             cmp.add<EngineData>(data.get<speed_t>("propellant_speed"),
                                 data.get<physics::rate_t<mass_t>>("fuel_consumption") );
+            cmp.add<Activity>();
         }
 
         void makeFuelTank(const ptree& data, ComponentEntity& cmp)
@@ -84,6 +99,7 @@ namespace spatacs
         {
             addHealth(cmp, data);
             cmp.add<PowerPlantData>(data.get<power_t>("power") );
+            cmp.add<Activity>();
         }
 
         void makeProjectileWpn(const ptree& data, ComponentEntity& cmp)
@@ -103,6 +119,7 @@ namespace spatacs
             auto& sgd = cmp.add<ShieldGeneratorData>();
             sgd.mShieldRecharge = data.get<rate_t<scalar_t>>("recharge");
             sgd.mEnergyPerShieldPoint = data.get<energy_t>("consumption");
+            cmp.add<Activity>();
         }
 
         void makeAmmoStorage(const boost::property_tree::ptree& data, ComponentEntity& cmp)

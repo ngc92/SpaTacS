@@ -4,6 +4,7 @@
   - Spatial data structure to speed up hit tests
   - Reduce dynamic allocs
   - disable projectile/projectile collision tests in physics
+  - limit render thread fps
 * code
   - inheritance instead of variant for commands
   - collision handling: use current positions.

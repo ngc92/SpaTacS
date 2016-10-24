@@ -129,9 +129,20 @@ namespace spatacs
             float mRPM;
         };
 
+        class Activity
+        {
+        public:
+            Activity(double a = 1);
+
+            double get() const;
+            void set(double a);
+        private:
+            double mActivity;
+        };
+
         using ComponentEntity = core::Entity<Health, FuelStorage, EngineData,
                 PowerPlantData, ShieldGeneratorData, LifeSupportData, WeaponAimData, ProjectileWpnData,
-                        Timer, Name, AmmoStorage>;
+                        Timer, Name, AmmoStorage, Activity>;
 
 
         // creation functions

@@ -39,7 +39,7 @@
     - write test  for advanced collision handling
   * code:
     - clean separation between in and out events of game simulation
-    
+    - opaque typedefs for IDs
 
 ## Version 1.0
 The plan is to add nothing "major" until this version, 

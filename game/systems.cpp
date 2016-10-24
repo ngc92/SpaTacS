@@ -23,7 +23,7 @@ Propulsion::Propulsion(Starship& ship, accel_vec mDesiredAcceleration)
         : mShip(ship), mDesiredAcceleration(mDesiredAcceleration)
 {}
 
-void Propulsion::apply(EngineData& engine, const Health& health)
+void Propulsion::apply(EngineData& engine, const Health& health, const Activity& acc)
 {
     auto dt = 0.1_s;
     force_t want = length(mDesiredAcceleration) * mShip.mass();
@@ -33,7 +33,7 @@ void Propulsion::apply(EngineData& engine, const Health& health)
     }
 
     mass_t need_mass  = (want / engine.propellant_speed) * dt;
-    mass_t max_mass   = engine.mass_rate * dt * health.status();
+    mass_t max_mass   = engine.mass_rate * dt * health.status() * acc.get();
     if(need_mass > max_mass)
         need_mass = max_mass;
 
@@ -69,7 +69,7 @@ void Propulsion::apply(EngineData& engine, const Health& health)
 
 
 ShieldManagement::ShieldManagement(Starship& s, EnergyManager& e) : ship(s), emgr(e) { }
-void ShieldManagement::apply(ShieldGeneratorData& sgen, const Health& health)
+void ShieldManagement::apply(ShieldGeneratorData& sgen, const Health& health, const Activity& acc)
 {
     auto dt = 0.1_s;
     // shield decay
@@ -77,7 +77,7 @@ void ShieldManagement::apply(ShieldGeneratorData& sgen, const Health& health)
     if(shield < ship.max_shield())
     {
         double difference = ship.max_shield() - ship.shield();
-        double recharge = sgen.mShieldRecharge * dt * health.status();
+        double recharge = sgen.mShieldRecharge * dt * health.status() * acc.get();
         double rec = std::min( recharge, difference );
         energy_t consumption = rec * sgen.mEnergyPerShieldPoint;
         if(!(consumption == 0.0_J)) {
@@ -88,9 +88,9 @@ void ShieldManagement::apply(ShieldGeneratorData& sgen, const Health& health)
     ship.setShield( shield );
 }
 
-void PowerProduction::apply(const PowerPlantData& pp, const Health& health)
+void PowerProduction::apply(const PowerPlantData& pp, const Health& health, const Activity& acc)
 {
-    mProducedEnergy += 0.1_s * pp.energy_production * health.status();;
+    mProducedEnergy += 0.1_s * pp.energy_production * health.status() * acc.get();
 }
 
 LifeSupportStep::LifeSupportStep(const Starship& s, EnergyManager& e) : ship(s), emgr(e) { }
