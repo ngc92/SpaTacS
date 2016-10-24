@@ -56,13 +56,13 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
         if(min < 20.0_km)  {
             /// \todo need to react when out of ammo!
             mCommands->addCommand( own.id(), cmd::Attack(target->id()) );
-            std::string mode = "HE";
+            std::string mode = "HE-light";
             if( target->shield() > 2.0 )
             {
-                mode = "SO";
+                mode = "SO-light";
             } else if(target->hull_status().current > 2.0)
             {
-                mode = "AP";
+                mode = "AP-light";
             }
 
             mCommands->addCommand( own.id(), cmd::SetWpnMode(own.id(), 0, mode) );

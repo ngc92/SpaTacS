@@ -166,3 +166,8 @@ void ListAmmunition::apply(const AmmoStorage& as)
         }
     }
 }
+
+void AddAmmunition::apply(AmmoStorage& as)
+{
+    as.addAmmo(mAmmo);
+}

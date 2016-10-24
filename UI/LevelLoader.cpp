@@ -34,6 +34,17 @@ LevelLoader::LevelLoader(std::string filename)
             auto z = ship.second.get<length_t>("position.<xmlattr>.z");
 
             mSpawnEvents.emplace_back(team, name, type, length_vec{x, y, z});
+
+            for(auto& sub : ship.second)
+            {
+                if(sub.first == "ammo")
+                {
+                    mSpawnEvents.back().addAmmunition(sub.second.get<std::string>("type"),
+                                                      sub.second.get<std::size_t>("amount"));
+                }
+            }
+
+
         }
     }
 }

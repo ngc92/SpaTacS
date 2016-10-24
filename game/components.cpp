@@ -108,7 +108,7 @@ namespace spatacs
             cmp.add<WeaponAimData>(1.0_km / 1.0_s, data.get<double>("precision"));
             auto& pwd = cmp.add<ProjectileWpnData>();
             pwd.mRPM = data.get<float>("rpm");
-            pwd.mAmmo = "SO";
+            pwd.mAmmo = "SO-light";
             cmp.add<Timer>();
         }
 
@@ -125,23 +125,7 @@ namespace spatacs
         void makeAmmoStorage(const boost::property_tree::ptree& data, ComponentEntity& cmp)
         {
             std::size_t cap = data.get<std::size_t>("capacity");
-            auto& as = cmp.add<AmmoStorage>(cap);
-            for(auto am : data)
-            {
-                if(am.second.count("amount") != 0) {
-                    std::string name = am.first;
-                    std::size_t amount = am.second.get<std::size_t>("amount");
-                    mass_t mass = am.second.get<mass_t>("mass");
-                    energy_t energy = am.second.get<energy_t>("energy");
-                    Damage dmg;
-                    dmg.armour_pierce   = am.second.get<double>("AP", 0.0);
-                    dmg.high_explosive  = am.second.get<double>("HE", 0.0);
-                    dmg.shield_overload = am.second.get<double>("SO", 0.0);
-                    AmmoStorage::AmmoData ad{mass, energy, dmg};
-                    AmmoStorage::Ammo st{name, amount, ad};
-                    as.addAmmo(st);
-                }
-            }
+            cmp.add<AmmoStorage>(cap);
         }
     }
 }

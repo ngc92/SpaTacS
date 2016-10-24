@@ -104,6 +104,16 @@ namespace spatacs
             std::map<std::string, std::size_t> mCounts;
         };
 
+        class AddAmmunition : public core::System<ComponentEntity, AddAmmunition,
+                core::Signature<AmmoStorage>>
+        {
+        public:
+            AddAmmunition(AmmoStorage::Ammo a) : mAmmo(a) { };
+            void apply(AmmoStorage& as);
+        private:
+            AmmoStorage::Ammo mAmmo;
+        };
+
         class Aiming : public core::System<ComponentEntity, Aiming,
                 core::Signature<const WeaponAimData, const Health>>
         {

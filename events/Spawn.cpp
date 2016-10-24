@@ -9,6 +9,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include "game/Starship.h"
 #include "game/Projectile.h"
+#include "game/systems.h"
 #include "physics/PhysicsWorld.h"
 
 using namespace spatacs;
@@ -54,6 +55,24 @@ SpawnShip::SpawnShip(std::uint64_t team, std::string name, std::string type, con
 
 }
 
+namespace
+{
+    game::AmmoStorage::AmmoData getAmmoData(const std::string& type)
+    {
+        boost::property_tree::ptree tree;
+        boost::property_tree::xml_parser::read_xml("data/ammunition.xml", tree);
+        auto& source = tree.get_child("ammunition." + type);
+
+        game::AmmoStorage::AmmoData data;
+        data.mass   = source.get<mass_t>("mass");
+        data.charge = source.get<energy_t>("energy");
+        data.damage.armour_pierce   = source.get<double>("AP", 0.0);
+        data.damage.high_explosive  = source.get<double>("HE", 0.0);
+        data.damage.shield_overload = source.get<double>("SO", 0.0);
+        return data;
+    }
+}
+
 void SpawnShip::apply(EventContext& context) const
 {
     boost::property_tree::ptree tree;
@@ -75,5 +94,23 @@ void SpawnShip::apply(EventContext& context) const
     auto pid = context.world.spawn(obj);
     ship->setPhysicsID( pid );
 
+    // now add the ammo
+    for(auto& ammo : mAmmo)
+    {
+        game::AmmoStorage::Ammo adata;
+        adata.amount = ammo.amount;
+        adata.name   = ammo.type;
+        adata.data   = getAmmoData(ammo.type);
+        ship->components().apply( game::AddAmmunition(adata) );
+    }
+
     context.state.add(std::move(ship));
 }
+
+void SpawnShip::addAmmunition(std::string name, std::size_t amount)
+{
+    mAmmo.emplace_back( std::move(name), amount);
+}
+
+SpawnShip::AmmoData::AmmoData(const std::string& type, size_t amount) : type(type), amount(amount)
+{}

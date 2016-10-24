@@ -16,7 +16,8 @@
     - [ ] detect when out of ammo type
   * game:
     - [ ] engine efficiency
-    - [ ] define weapon loadout/fuel in level file
+    - [x] set weapon loadout in level file
+    - [ ] set fuel in level file
     - [ ] turn on/off systems
     - [ ] add a few levels
     - [ ] win game when no enemies present

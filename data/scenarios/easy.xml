@@ -3,23 +3,71 @@
         <name>SF Predator</name>
         <type>cruiser</type>
         <position x="0km" y="0km" z="0.4km" />
+        <ammo>
+            <type>HE-light</type>
+            <amount>100</amount>
+        </ammo>
+        <ammo>
+            <type>AP-light</type>
+            <amount>100</amount>
+        </ammo>
+        <ammo>
+            <type>SO-light</type>
+            <amount>200</amount>
+        </ammo>
     </ship>
 
     <ship team="1">
         <name>SF Fearless</name>
         <type>destroyer</type>
         <position x="0km" y="0.2km" z="-0.4km" />
+        <ammo>
+            <type>HE-light</type>
+            <amount>100</amount>
+        </ammo>
+        <ammo>
+            <type>AP-light</type>
+            <amount>100</amount>
+        </ammo>
+        <ammo>
+            <type>SO-light</type>
+            <amount>200</amount>
+        </ammo>
     </ship>
 
     <ship team="2">
         <name>ES Lion</name>
         <type>destroyer</type>
         <position x="22km" y="4km" z="2km" />
+        <ammo>
+            <type>HE-light</type>
+            <amount>100</amount>
+        </ammo>
+        <ammo>
+            <type>AP-light</type>
+            <amount>100</amount>
+        </ammo>
+        <ammo>
+            <type>SO-light</type>
+            <amount>200</amount>
+        </ammo>
     </ship>
 
     <ship team="2">
         <name>ES Tiger</name>
         <type>destroyer</type>
         <position x="15km" y="2km" z="3km" />
+        <ammo>
+            <type>HE-light</type>
+            <amount>100</amount>
+        </ammo>
+        <ammo>
+            <type>AP-light</type>
+            <amount>100</amount>
+        </ammo>
+        <ammo>
+            <type>SO-light</type>
+            <amount>200</amount>
+        </ammo>
     </ship>
 </level>
