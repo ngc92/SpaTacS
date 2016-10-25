@@ -123,13 +123,17 @@ void ui::UnitCommand::onWheel(float scroll)
 void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
 {
     if(mActiveShipID != 0) {
-        if (key == irr::KEY_KEY_1) {
-            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, "AP-light") );
-        } else if (key == irr::KEY_KEY_2) {
-            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, "HE-light") );
-        } else if (key == irr::KEY_KEY_3) {
-            getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, 0, "SO-light") );
-        } else if( key == irr::KEY_PLUS )
+        for(unsigned i = 0; i < state().getShip(mActiveShipID).weapon_count(); ++i) {
+            if (key == irr::KEY_KEY_1) {
+                getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, i, "AP-light"));
+            } else if (key == irr::KEY_KEY_2) {
+                getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, i, "HE-light"));
+            } else if (key == irr::KEY_KEY_3) {
+                getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, i, "SO-light"));
+            }
+        }
+
+        if( key == irr::KEY_PLUS )
         {
             mTargetSpeed += 0.05_kps;
         } else if( key == irr::KEY_MINUS )

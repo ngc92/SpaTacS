@@ -18,6 +18,7 @@
   - Crew "component"
     + organisation
     + health
+  - win game when no enemies present
 * UI
   - rotatable camera
   - ship icons

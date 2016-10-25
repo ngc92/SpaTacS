@@ -7,7 +7,7 @@
       - [ ] show activity degree
     - [ ] show current ammo data
     - [ ] allow setting system activity
-    - [ ] set ammo type for all weapons simultaneously
+    - [x] set ammo type for all weapons simultaneously
     - [ ] ingame menu
       + [ ] main menu
       + [ ] continue
@@ -20,7 +20,6 @@
     - [ ] set fuel in level file
     - [ ] turn on/off systems
     - [ ] add a few levels
-    - [ ] win game when no enemies present
   * code:
     - [x] remove need for physics events, simplify physics code
     - [ ] clean up UI code. 

@@ -65,7 +65,9 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
                 mode = "AP-light";
             }
 
-            mCommands->addCommand( own.id(), cmd::SetWpnMode(own.id(), 0, mode) );
+            for(unsigned i = 0; i < own.weapon_count(); ++i) {
+                mCommands->addCommand(own.id(), cmd::SetWpnMode(own.id(), i, mode));
+            }
         }
 
         // fly closer if shield is stronger
