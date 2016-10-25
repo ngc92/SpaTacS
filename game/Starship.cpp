@@ -168,6 +168,16 @@ core::EntityManager<ComponentEntity>& Starship::components()
     return mSubSystems->mComponents;
 }
 
+energy_t Starship::getProducedEnergy() const
+{
+    return mSubSystems->mEnergyMgr.total();
+}
+
+energy_t Starship::getUsedEnergy() const
+{
+    return mSubSystems->mEnergyMgr.requested();
+}
+
 void ShipData::setHP(double hp)
 {
     mHitPoints = hp;

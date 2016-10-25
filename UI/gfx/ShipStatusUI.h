@@ -26,9 +26,7 @@ namespace irr
             ShipStatusUI(IGUIEnvironment* environment, IGUIElement* parent, s32 id, const core::rect <s32>& rectangle);
 
             virtual void draw() override;
-
             virtual void OnPostRender(u32 timeMs) override;
-
             virtual bool OnEvent(const SEvent& event) override;
 
             void clearSystems();

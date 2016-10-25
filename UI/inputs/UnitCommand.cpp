@@ -14,6 +14,7 @@
 #include <irrlicht/ICameraSceneNode.h>
 #include <iostream>
 #include "UI/gfx/ShipStatusUI.h"
+#include "UI/gfx/WeaponStatusUI.h"
 #include "UI/convert.h"
 #include "game/Starship.h"
 #include "UI/IrrlichtUI.h"
@@ -21,6 +22,7 @@
 #include <irrlicht/ISceneManager.h>
 #include "game/systems.h"
 #include "UI/gfx/MultiLineNode.h"
+#include "ShipStatus.h"
 
 using namespace spatacs;
 
@@ -40,13 +42,27 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::IScene
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mDistanceMarker.reset(txt);
 
-    auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 10, 100, 150));
-    mShipInfo.reset(sstat);
+    auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1,
+                                            irr::core::recti(10, 10, 100, 170));
+    mShipStatus = std::make_unique<ShipStatusUI>(sstat);
 
-    sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(700, 10, 790, 90));
-    mTargetInfo.reset(sstat);
+    auto wstat = new irr::gui::WeaponStatusUI(guienv, guienv->getRootGUIElement(), -1,
+                                              irr::core::recti(110, 10, 200, 50));
+    mShipStatus->addWeaponStatus( wstat );
+    wstat = new irr::gui::WeaponStatusUI(guienv, guienv->getRootGUIElement(), -1,
+                                              irr::core::recti(210, 10, 300, 50));
+    mShipStatus->addWeaponStatus( wstat );
 
-    txt = guienv->addStaticText(L"", irr::core::recti(10, 155, 100, 175));
+    sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1,
+                                       irr::core::recti(700, 10, 790, 90));
+    mTargetStatus = std::make_unique<ShipStatusUI>(sstat);
+    mTargetStatus->setShowSystemHealth(false);
+    mTargetStatus->setShowFuel(false);
+    mTargetStatus->setShowAmmunition(false);
+    mTargetStatus->setShowWeapons(false);
+    mTargetStatus->setShowPower(false);
+
+    txt = guienv->addStaticText(L"", irr::core::recti(10, 175, 100, 195));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mSpeedInfo.reset(txt);
 
@@ -145,27 +161,6 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
     }
 }
 
-namespace
-{
-
-    class SysInfo : public core::System<const game::ComponentEntity, SysInfo, core::Signature<game::Health, game::Name>>
-    {
-    public:
-        SysInfo(irr::gui::ShipStatusUI* ui) : mUI(ui)
-        {
-        }
-
-        void apply(const game::Health& h, const game::Name& n)
-        {
-            irr::gui::SystemStatus status{n.name, h.current, h.maximum};
-            mUI->pushSystem( status );
-
-        }
-    private:
-        irr::gui::ShipStatusUI* mUI;
-    };
-}
-
 void ui::UnitCommand::step()
 {
     mBaseY = std::round(getCamera()->getTarget().Y / 10.f) * 10.f;
@@ -185,23 +180,7 @@ void ui::UnitCommand::step()
     }
     auto sp = convert(ship.position());
     {
-        mShipInfo->setShipName( ship.name() );
-        mShipInfo->clearSystems();
-        SysInfo si(mShipInfo.get());
-        game::TankInfo ti;
-        ship.components().apply(si);
-        ship.components().apply(ti);
-        game::ListAmmunition la;
-        ship.components().apply(la);
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"shield",  ship.shield(), ship.max_shield()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"hull",  ship.hull_status().current, ship.hull_status().max} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()} );
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"fuel", ti.fuel() / 1.0_t, ti.capacity() / 1.0_t} );
-        std::size_t acount = 0;
-        for(auto& a : la)
-            acount += a.second;
-        mShipInfo->pushSystem( irr::gui::SystemStatus{"ammo", acount, la.capacity()} );
-        /// \todo power plant
+        mShipStatus->update(ship);
     }
 
     std::uint64_t enemy_ship = 0;
@@ -229,7 +208,7 @@ void ui::UnitCommand::step()
 
     if(mMode == MOVE)
     {
-        mTargetInfo->setVisible(false);
+        mTargetStatus->setVisible(false);
     } else
     {
         enemy_ship = mCurrentAimShip;
@@ -237,13 +216,8 @@ void ui::UnitCommand::step()
 
     if(state().hasObject(enemy_ship)) {
         auto& target = state().getShip(enemy_ship);
-        mTargetInfo->setVisible(true);
-        mTargetInfo->setShipName(target.name());
-        mTargetInfo->clearSystems();
-        mTargetInfo->pushSystem(irr::gui::SystemStatus{"shield", target.shield(), target.max_shield()});
-        mTargetInfo->pushSystem(
-                irr::gui::SystemStatus{"hull", target.hull_status().current, target.hull_status().max});
-        mTargetInfo->pushSystem(irr::gui::SystemStatus{"structure", target.hp(), target.max_hp()});
+        mTargetStatus->setVisible(true);
+        mTargetStatus->update(target);
     }
 
     {

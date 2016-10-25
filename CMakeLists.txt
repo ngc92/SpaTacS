@@ -115,7 +115,11 @@ set(UI_SOURCE_FILES
         UI/LevelLoader.h
         UI/LevelLoader.cpp
         UI/states/LevelSelection.h
-        UI/states/LevelSelection.cpp)
+        UI/states/LevelSelection.cpp
+        UI/inputs/ShipStatus.h
+        UI/inputs/ShipStatus.cpp
+        UI/gfx/WeaponStatusUI.h
+        UI/gfx/WeaponStatusUI.cpp)
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}

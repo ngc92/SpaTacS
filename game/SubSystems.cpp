@@ -41,7 +41,8 @@ SubSystems::SubSystems(const boost::property_tree::ptree& data)
 }
 
 SubSystems::SubSystems( const SubSystems& other ):
-        mComponents( other.mComponents )
+        mComponents( other.mComponents ),
+        mEnergyMgr( other.mEnergyMgr )
 {
     mComponents.apply([this](game::ComponentEntity& cmp)
                       { if(cmp.has<WeaponAimData>()){ mArmament.push_back(&cmp);} });

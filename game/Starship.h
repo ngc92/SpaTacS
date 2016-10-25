@@ -130,6 +130,10 @@ namespace spatacs
             // damage the ship
             void dealDamage(double dmg);
 
+            // energy state
+            energy_t getProducedEnergy() const;
+            energy_t getUsedEnergy() const;
+
         private:
             // components
             std::unique_ptr<SubSystems> mSubSystems;

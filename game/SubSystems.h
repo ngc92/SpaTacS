@@ -19,6 +19,9 @@ namespace spatacs
             void process(core::EntityManager <ComponentEntity>& mgr);
 
             energy_t requestPower(energy_t amount);
+
+            energy_t total() const { return mTotal; }
+            energy_t requested() const { return mRequested; }
         private:
             energy_t mPowerLeft;
             double mSupplyFactor;

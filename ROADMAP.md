@@ -3,7 +3,7 @@
     - [x] multiple levels
     - [ ] enable/disable detailed status view
       - [ ] show everything with hitpoints
-      - [ ] show energy production/consumption
+      - [x] show energy production/consumption
       - [ ] show activity degree
     - [ ] show current ammo data
     - [ ] allow setting system activity
@@ -22,7 +22,7 @@
     - [ ] add a few levels
   * code:
     - [x] remove need for physics events, simplify physics code
-    - [ ] clean up UI code. 
+    - [ ] clean up UI code a bit. 
     - [x] power units for energy management
 
 
