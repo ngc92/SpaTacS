@@ -56,7 +56,10 @@ SET(CORE_SOURCE_FILES
         core/Simulation.h
         game/Damage.h
         game/SubSystems.h
-        game/SubSystems.cpp game/components.h game/systems.h game/systems.cpp)
+        game/SubSystems.cpp
+        game/components.h
+        game/systems.h
+        game/systems.cpp)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h
@@ -70,7 +73,9 @@ SET(PHYSICS_SOURCE_FILES
         physics/Object.h
         physics/Object.cpp
         physics/Fixture.h
-        physics/Fixture.cpp physics/parse_unit.h)
+        physics/Fixture.cpp
+        physics/parse_unit.h
+        physics/parse_unit.cpp)
 
 set(UI_SOURCE_FILES
         UI/IUI.h
@@ -106,7 +111,11 @@ set(UI_SOURCE_FILES
         UI/StateManager.h 
         UI/StateManager.cpp 
         UI/gfx/MultiLineNode.h 
-        UI/gfx/MultiLineNode.cpp UI/LevelLoader.h UI/LevelLoader.cpp UI/states/LevelSelection.h UI/states/LevelSelection.cpp)
+        UI/gfx/MultiLineNode.cpp
+        UI/LevelLoader.h
+        UI/LevelLoader.cpp
+        UI/states/LevelSelection.h
+        UI/states/LevelSelection.cpp)
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}
@@ -114,8 +123,7 @@ set(SOURCE_FILES
         ${CORE_SOURCE_FILES}
         ${PHYSICS_SOURCE_FILES}
         ${UI_SOURCE_FILES}
-    main.cpp
-        physics/parse_unit.cpp)
+        main.cpp)
 
 set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp)
 
