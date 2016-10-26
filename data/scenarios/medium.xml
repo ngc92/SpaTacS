@@ -9,11 +9,11 @@
         </ammo>
         <ammo>
             <type>AP-light</type>
-            <amount>200</amount>
+            <amount>150</amount>
         </ammo>
         <ammo>
             <type>SO-light</type>
-            <amount>100</amount>
+            <amount>150</amount>
         </ammo>
     </ship>
 
@@ -27,47 +27,29 @@
         </ammo>
         <ammo>
             <type>AP-light</type>
-            <amount>100</amount>
-        </ammo>
-        <ammo>
-            <type>SO-light</type>
-            <amount>300</amount>
-        </ammo>
-    </ship>
-
-    <ship team="1">
-        <name>SF Valiant</name>
-        <type>destroyer</type>
-        <position x="0.2km" y="0.4km" z="0.8km" />
-        <ammo>
-            <type>HE-light</type>
-            <amount>100</amount>
-        </ammo>
-        <ammo>
-            <type>AP-light</type>
             <amount>200</amount>
         </ammo>
         <ammo>
             <type>SO-light</type>
-            <amount>100</amount>
+            <amount>200</amount>
         </ammo>
     </ship>
 
     <ship team="2">
         <name>ES Lion</name>
         <type>destroyer</type>
-        <position x="22km" y="4km" z="2km" />
+        <position x="30km" y="4km" z="2km" />
         <ammo>
             <type>HE-light</type>
             <amount>100</amount>
         </ammo>
         <ammo>
             <type>AP-light</type>
-            <amount>100</amount>
+            <amount>150</amount>
         </ammo>
         <ammo>
             <type>SO-light</type>
-            <amount>200</amount>
+            <amount>150</amount>
         </ammo>
     </ship>
 
@@ -81,11 +63,11 @@
         </ammo>
         <ammo>
             <type>AP-light</type>
-            <amount>100</amount>
+            <amount>150</amount>
         </ammo>
         <ammo>
             <type>SO-light</type>
-            <amount>200</amount>
+            <amount>150</amount>
         </ammo>
     </ship>
     <ship team="2">
@@ -98,28 +80,11 @@
         </ammo>
         <ammo>
             <type>AP-light</type>
-            <amount>100</amount>
+            <amount>150</amount>
         </ammo>
         <ammo>
             <type>SO-light</type>
-            <amount>200</amount>
-        </ammo>
-    </ship>
-    <ship team="2">
-        <name>ES Hyena</name>
-        <type>destroyer</type>
-        <position x="19km" y="4km" z="4km" />
-        <ammo>
-            <type>HE-light</type>
-            <amount>100</amount>
-        </ammo>
-        <ammo>
-            <type>AP-light</type>
-            <amount>100</amount>
-        </ammo>
-        <ammo>
-            <type>SO-light</type>
-            <amount>200</amount>
+            <amount>150</amount>
         </ammo>
     </ship>
 </level>

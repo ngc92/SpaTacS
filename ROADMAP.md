@@ -19,7 +19,7 @@
     - [x] set weapon loadout in level file
     - [ ] set fuel in level file
     - [ ] turn on/off systems
-    - [ ] add a few levels
+    - [x] add a few levels
   * code:
     - [x] remove need for physics events, simplify physics code
     - [ ] clean up UI code a bit. 
