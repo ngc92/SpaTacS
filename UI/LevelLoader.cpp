@@ -41,6 +41,9 @@ LevelLoader::LevelLoader(std::string filename)
                 {
                     mSpawnEvents.back().addAmmunition(sub.second.get<std::string>("type"),
                                                       sub.second.get<std::size_t>("amount"));
+                } else if (sub.first == "fuel")
+                {
+                    mSpawnEvents.back().setFuel(sub.second.get_value<mass_t>());
                 }
             }
 

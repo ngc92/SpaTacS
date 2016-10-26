@@ -12,6 +12,8 @@ namespace spatacs
     {
         using boost::property_tree::ptree;
 
+        FuelStorage::FuelStorage(mass_t v) : current(0.0_kg), capacity(v) { }
+
         mass_t FuelStorage::request(mass_t desire)
         {
             desire = std::min(desire, current);

@@ -15,6 +15,7 @@
             <type>SO-light</type>
             <amount>150</amount>
         </ammo>
+        <fuel>2500t</fuel>
     </ship>
 
     <ship team="1">
@@ -33,6 +34,7 @@
             <type>SO-light</type>
             <amount>200</amount>
         </ammo>
+        <fuel>1250t</fuel>
     </ship>
 
     <ship team="2">
@@ -51,6 +53,7 @@
             <type>SO-light</type>
             <amount>150</amount>
         </ammo>
+        <fuel>1000t</fuel>
     </ship>
 
     <ship team="2">
@@ -69,6 +72,7 @@
             <type>SO-light</type>
             <amount>150</amount>
         </ammo>
+        <fuel>1000t</fuel>
     </ship>
     <ship team="2">
         <name>ES Tiger</name>
@@ -86,5 +90,6 @@
             <type>SO-light</type>
             <amount>150</amount>
         </ammo>
+        <fuel>1000t</fuel>
     </ship>
 </level>

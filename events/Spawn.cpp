@@ -104,12 +104,27 @@ void SpawnShip::apply(EventContext& context) const
         ship->components().apply( game::AddAmmunition(adata) );
     }
 
+    auto add_fuel = core::make_system<game::ComponentEntity, game::FuelStorage>(
+            [this](game::FuelStorage& fs)
+            {
+                fs.current = mFuel;
+                /// \todo this does not take into accout capacity
+                ///        and multiple tanks
+            }
+    );
+    ship->components().apply(add_fuel);
+
     context.state.add(std::move(ship));
 }
 
 void SpawnShip::addAmmunition(std::string name, std::size_t amount)
 {
     mAmmo.emplace_back( std::move(name), amount);
+}
+
+void SpawnShip::setFuel(mass_t f)
+{
+    mFuel = f;
 }
 
 SpawnShip::AmmoData::AmmoData(const std::string& type, size_t amount) : type(type), amount(amount)

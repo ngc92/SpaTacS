@@ -2,8 +2,8 @@
 // Created by erik on 9/21/16.
 //
 
-#ifndef SOI_SPAWN_H
-#define SOI_SPAWN_H
+#ifndef SPATACS_SPAWN_H
+#define SPATACS_SPAWN_H
 
 #include "IEvent.h"
 #include <memory>
@@ -35,18 +35,22 @@ namespace events
         SpawnShip(std::uint64_t team, std::string name, std::string type, const length_vec& position);
         virtual void apply(EventContext& context) const override;
         void addAmmunition(std::string name, std::size_t amount);
+        void setFuel(mass_t f);
     private:
         std::uint64_t mTeam;
         std::string mName;
         std::string mType;
         length_vec mPosition;
-        struct AmmoData{
-            AmmoData(const std::string& type, size_t amount);
 
-            std::string type; std::size_t amount; };
+        mass_t mFuel = 0.0_kg;
+        struct AmmoData
+        {
+            AmmoData(const std::string& type, size_t amount);
+            std::string type; std::size_t amount;
+        };
         std::vector<AmmoData> mAmmo; /// \todo this is surely not a good way to pass that information
     };
 }
 }
 
-#endif //SOI_SPAWN_H
+#endif //SPATACS_SPAWN_H

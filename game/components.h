@@ -51,7 +51,7 @@ namespace spatacs
         struct FuelStorage
         {
             FuelStorage() = default;
-            FuelStorage(mass_t v) : current(v), capacity(v) { }
+            FuelStorage(mass_t v);
 
             mass_t request(mass_t desire);
 

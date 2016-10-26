@@ -17,7 +17,7 @@
   * game:
     - [ ] engine efficiency
     - [x] set weapon loadout in level file
-    - [ ] set fuel in level file
+    - [x] set fuel in level file
     - [ ] turn on/off systems
     - [x] add a few levels
   * code:
