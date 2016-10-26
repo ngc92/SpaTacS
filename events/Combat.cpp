@@ -91,6 +91,22 @@ namespace spatacs
             ship.getWeapon(mWeaponId).get<game::ProjectileWpnData>().mAmmo = mAmmo;
         }
 
+        SetSystemActivity::SetSystemActivity(std::uint64_t ship, std::uint64_t system, double activity)
+                : ShipEvent(ship), mSystem(system), mActivity(activity)
+        {}
+
+        void SetSystemActivity::applyToShip(ShipEvent::Starship& ship, EventContext& context) const
+        {
+            if(ship.components().has(mSystem)) {
+                auto& sys = ship.components().get(mSystem);
+                if(sys.has<game::Activity>())
+                {
+                    sys.get<game::Activity>().set(mActivity);
+                }
+            }
+        }
+
+
         // -------------------------------------------------------------------------------------------------------------
 
         Hit::Hit(const Starship& ship, const game::Projectile& proj) :

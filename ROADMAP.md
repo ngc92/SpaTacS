@@ -4,9 +4,8 @@
     - [ ] enable/disable detailed status view
       - [ ] show everything with hitpoints
       - [x] show energy production/consumption
-      - [ ] show activity degree
+      - [ ] show activity
     - [ ] show current ammo data
-    - [ ] allow setting system activity
     - [x] set ammo type for all weapons simultaneously
     - [ ] ingame menu
       + [ ] main menu
@@ -17,7 +16,7 @@
   * game:
     - [x] set weapon loadout in level file
     - [x] set fuel in level file
-    - [ ] turn on/off systems
+    - [x] turn on/off systems
     - [x] add a few levels
   * code:
     - [x] remove need for physics events, simplify physics code
@@ -32,6 +31,7 @@
       + evade
     - optimize waypoints (do not brake too much)
     - allow management of multiple weapons
+    - allow setting system activity
   * physics:
     - allow applying impulse during callback
     - write tests for unit io

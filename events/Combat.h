@@ -2,8 +2,8 @@
 // Created by erik on 9/19/16.
 //
 
-#ifndef SOI_COMBAT_H_INCLUDED
-#define SOI_COMBAT_H_INCLUDED
+#ifndef SPATACS_COMBAT_H_INCLUDED
+#define SPATACS_COMBAT_H_INCLUDED
 
 #include "ShipEvent.h"
 #include "vec.h"
@@ -46,6 +46,17 @@ namespace spatacs {
             std::uint64_t mWeaponId;
         };
 
+        class SetSystemActivity : public ShipEvent
+        {
+        public:
+            SetSystemActivity(std::uint64_t ship, std::uint64_t system, double activity);
+        private:
+
+            void applyToShip(Starship& shooter, EventContext& context) const override;
+            std::uint64_t mSystem;
+            double mActivity;
+        };
+
         class HitShield : public ShipEvent
         {
         public:
@@ -80,4 +91,4 @@ namespace spatacs {
         };
     }
 }
-#endif //SOI_COMBAT_H_INCLUDED
+#endif //SPATACS_COMBAT_H_INCLUDED
