@@ -23,6 +23,7 @@
 #include "game/systems.h"
 #include "UI/gfx/MultiLineNode.h"
 #include "ShipStatus.h"
+#include <irrlicht/IBillboardSceneNode.h>
 
 using namespace spatacs;
 
@@ -67,6 +68,12 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::IScene
     mSpeedInfo.reset(txt);
 
     mTrajectoryPlotter.reset( new irr::scene::MultiLineNode(smgr->getRootSceneNode(), smgr) );
+
+    auto bb = smgr->addBillboardSceneNode(0, irr::core::dimension2df(30, 30));
+    bb->setMaterialTexture(0, smgr->getVideoDriver()->getTexture("data/crosshairs/crosshair8.png"));
+    bb->setMaterialType(irr::video::EMT_TRANSPARENT_ALPHA_CHANNEL);
+    bb->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+    mCrossHair.reset( bb );
 }
 
 
@@ -179,9 +186,8 @@ void ui::UnitCommand::step()
         return;
     }
     auto sp = convert(ship.position());
-    {
-        mShipStatus->update(ship);
-    }
+    mCrossHair->setPosition(sp);
+    mShipStatus->update(ship);
 
     std::uint64_t enemy_ship = 0;
 

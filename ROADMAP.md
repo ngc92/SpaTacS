@@ -11,11 +11,10 @@
     - [ ] ingame menu
       + [ ] main menu
       + [ ] continue
-    - [ ] mark currently selected ships
+    - [x] mark currently selected ships
   * AI:
     - [ ] detect when out of ammo type
   * game:
-    - [ ] engine efficiency
     - [x] set weapon loadout in level file
     - [x] set fuel in level file
     - [ ] turn on/off systems
