@@ -189,7 +189,7 @@ namespace physics
         if(u.value < 2000)
             return stream << u.value << U{};
         else if(u.value < 2000000)
-        return stream << u.value / 1000. << U{};
+        return stream << u.value / 1000. << O('k') << U{};
         else
             return stream << u.value / 1000000. << O('M') << U{};
     }

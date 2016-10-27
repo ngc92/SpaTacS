@@ -4,11 +4,12 @@
 
 #include "game/systems.h"
 #include "UI/gfx/ShipStatusUI.h"
-#include "UI/gfx/WeaponStatusUI.h"
 #include "ShipStatus.h"
 #include "game/Starship.h"
 #include <irrlicht/IGUIEnvironment.h>
 #include <algorithm>
+#include <sstream>
+#include <iomanip>
 
 using namespace spatacs;
 using namespace ui;
@@ -53,7 +54,7 @@ void ShipStatusUI::update(const game::Starship& ship)
         ship.components().apply(la);
         std::size_t amm = 0;
         for (auto& a : la) {
-            amm += a.second;
+            amm += a.amount;
         }
         mGUIElement->pushSystem(irr::gui::SystemStatus{"ammo", amm, la.capacity()});
     }
@@ -75,16 +76,23 @@ void ShipStatusUI::update(const game::Starship& ship)
         for(unsigned i = 0; i < wc && viewer != mWpnStatusView.end(); ++i, ++viewer)
         {
             const auto& wpn = ship.weapon(i);
-            (*viewer)->setWeaponName( "weapon " + std::to_string(i+1) );
             const auto& ammo_type = wpn.get<game::ProjectileWpnData>();
             std::size_t ammo = 0;
+            game::AmmoData dat;
             for (auto& a : la) {
-                if(a.first == ammo_type.mAmmo) {
-                    ammo += a.second;
+                if(a.data.name == ammo_type.mAmmo) {
+                    ammo += a.amount;
+                    dat = a.data;
                 }
             }
-            (*viewer)->setAmmoAmount(ammo);
-            (*viewer)->setAmmoType(ammo_type.mAmmo);
+            std::wstringstream str;
+            str << std::setprecision(2);
+            str << L"weapon " << (i+1) << L"\n";
+            str << L" " << ammo_type.mAmmo.c_str() << L" (" << ammo << L")\n";
+            str << L" " << dat.mass << " @ " << sqrt(2.0*dat.charge / dat.mass) << "\n";
+            str << L" " << dat.damage.shield_overload << L" | " << dat.damage.high_explosive <<
+                " | " << dat.damage.armour_pierce << L"\n";
+            (*viewer)->setText(str.str().c_str());
             (*viewer)->setVisible(true);
         }
 
@@ -119,9 +127,10 @@ void ShipStatusUI::setShowAmmunition(bool sa)
     mShowAmmunition = sa;
 }
 
-void ShipStatusUI::addWeaponStatus(irr::gui::WeaponStatusUI* wsui)
+void ShipStatusUI::addWeaponStatus(irr::gui::IGUIStaticText* wsui)
 {
-    mWpnStatusView.push_back( remove_ptr<irr::gui::WeaponStatusUI>(wsui) );
+    wsui->setOverrideColor( irr::video::SColor(255, 255, 255, 255));
+    mWpnStatusView.push_back( remove_ptr<irr::gui::IGUIElement>(wsui) );
 }
 
 void ShipStatusUI::setShowPower(bool sp)

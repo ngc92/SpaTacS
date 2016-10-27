@@ -97,21 +97,23 @@ namespace spatacs
             void apply(const AmmoStorage& as);
 
             std::size_t capacity() const { return mCapacity; }
-            auto begin() const { return mCounts.begin();}
-            auto end()   const { return mCounts.end(); }
+            auto begin() const { return mAmmos.begin();}
+            auto end()   const { return mAmmos.end(); }
+            const std::vector<AmmoStorage::Ammo>& getAmmos() const { return mAmmos; }
         private:
             std::size_t mCapacity = 0;
-            std::map<std::string, std::size_t> mCounts;
+            std::vector<AmmoStorage::Ammo> mAmmos;
         };
 
         class AddAmmunition : public core::System<ComponentEntity, AddAmmunition,
                 core::Signature<AmmoStorage>>
         {
         public:
-            AddAmmunition(AmmoStorage::Ammo a) : mAmmo(a) { };
+            AddAmmunition(const AmmoData& a, std::size_t amount) : mData(a), mAmount(amount) { };
             void apply(AmmoStorage& as);
         private:
-            AmmoStorage::Ammo mAmmo;
+            AmmoData mData;
+            std::size_t mAmount;
         };
 
         class Aiming : public core::System<ComponentEntity, Aiming,

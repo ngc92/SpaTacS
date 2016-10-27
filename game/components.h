@@ -60,26 +60,26 @@ namespace spatacs
             mass_t capacity;
         };
 
+        struct AmmoData
+        {
+            std::string name;
+            mass_t   mass;
+            energy_t charge;
+            Damage   damage;
+        };
+
         struct AmmoStorage
         {
             AmmoStorage(std::size_t cap = 0);
 
-            struct AmmoData
-            {
-                mass_t      mass;
-                energy_t    charge;
-                Damage      damage;
-            };
-
             struct Ammo
             {
-                std::string name;
                 std::size_t amount;
                 AmmoData    data;
             };
 
             /// changes the ammount of \p a by the amount added.
-            void addAmmo(Ammo& a);
+            void addAmmo(const AmmoData& data, std::size_t& amount);
             Ammo& getAmmo(const std::string& type);
 
             std::vector<Ammo> ammo;

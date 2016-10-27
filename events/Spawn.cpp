@@ -57,15 +57,16 @@ SpawnShip::SpawnShip(std::uint64_t team, std::string name, std::string type, con
 
 namespace
 {
-    game::AmmoStorage::AmmoData getAmmoData(const std::string& type)
+    game::AmmoData getAmmoData(const std::string& type)
     {
         boost::property_tree::ptree tree;
         boost::property_tree::xml_parser::read_xml("data/ammunition.xml", tree);
         auto& source = tree.get_child("ammunition." + type);
 
-        game::AmmoStorage::AmmoData data;
+        game::AmmoData data;
         data.mass   = source.get<mass_t>("mass");
         data.charge = source.get<energy_t>("energy");
+        data.name   = type;
         data.damage.armour_pierce   = source.get<double>("AP", 0.0);
         data.damage.high_explosive  = source.get<double>("HE", 0.0);
         data.damage.shield_overload = source.get<double>("SO", 0.0);
@@ -97,11 +98,7 @@ void SpawnShip::apply(EventContext& context) const
     // now add the ammo
     for(auto& ammo : mAmmo)
     {
-        game::AmmoStorage::Ammo adata;
-        adata.amount = ammo.amount;
-        adata.name   = ammo.type;
-        adata.data   = getAmmoData(ammo.type);
-        ship->components().apply( game::AddAmmunition(adata) );
+        ship->components().apply( game::AddAmmunition(getAmmoData(ammo.type), ammo.amount) );
     }
 
     auto add_fuel = core::make_system<game::ComponentEntity, game::FuelStorage>(

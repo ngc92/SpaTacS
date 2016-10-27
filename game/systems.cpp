@@ -156,18 +156,11 @@ void ListAmmunition::apply(const AmmoStorage& as)
     mCapacity += as.capacity;
     for(auto& ammo : as.ammo)
     {
-        auto counter = mCounts.find(ammo.name);
-        if(counter == mCounts.end())
-        {
-            mCounts.emplace(ammo.name, ammo.amount);
-        } else
-        {
-            counter->second += ammo.amount;
-        }
+        mAmmos.push_back(ammo);
     }
 }
 
 void AddAmmunition::apply(AmmoStorage& as)
 {
-    as.addAmmo(mAmmo);
+    as.addAmmo(mData, mAmount);
 }

@@ -22,6 +22,9 @@
 * UI
   - rotatable camera
   - ship icons
+  - ingame menu
+    +  main menu
+    + continue
 * AI    
 * other
   - Ship Editor

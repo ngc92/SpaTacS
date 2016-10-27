@@ -7,6 +7,7 @@
 
 #include "UI/IrrRAII.h"
 #include <irrlicht/rect.h>
+#include <irrlicht/IGUIStaticText.h>
 
 namespace irr
 {
@@ -32,7 +33,7 @@ namespace spatacs
             ShipStatusUI(irr::gui::ShipStatusUI* rp);
             void update(const game::Starship& ship);
 
-            void addWeaponStatus(irr::gui::WeaponStatusUI* wsui);
+            void addWeaponStatus(irr::gui::IGUIStaticText* wsui);
 
             void setShowFuel( bool sf );
             void setShowShipStatus( bool ss );
@@ -45,7 +46,7 @@ namespace spatacs
         private:
             remove_ptr<irr::gui::ShipStatusUI> mGUIElement;
 
-            std::vector<remove_ptr<irr::gui::WeaponStatusUI>> mWpnStatusView;
+            std::vector<remove_ptr<irr::gui::IGUIElement>> mWpnStatusView;
 
             // configuration
             bool mShowFuel         = true;

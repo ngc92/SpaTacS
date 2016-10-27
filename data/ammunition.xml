@@ -7,7 +7,7 @@
     <HE-medium>
         <mass>2 kg</mass>
         <energy>7000 kJ</energy>
-        <HE>1-25</HE>
+        <HE>1.25</HE>
     </HE-medium>
     <HE-heavy>
         <mass>4 kg</mass>
@@ -18,17 +18,17 @@
     <AP-light>
         <mass>2 kg</mass>
         <energy>12000 kJ</energy>
-        <AP>0-4</AP>
+        <AP>0.4</AP>
     </AP-light>
     <AP-medium>
         <mass>2 kg</mass>
         <energy>15000 kJ</energy>
-        <AP>0-5</AP>
+        <AP>0.5</AP>
     </AP-medium>
     <AP-heavy>
         <mass>3 kg</mass>
         <energy>20000 kJ</energy>
-        <AP>0-5</AP>
+        <AP>0.5</AP>
     </AP-heavy>
 
 

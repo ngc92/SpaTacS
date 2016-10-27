@@ -26,21 +26,22 @@ namespace spatacs
 
         }
 
-        void AmmoStorage::addAmmo(Ammo& a)
+        void AmmoStorage::addAmmo(const AmmoData& data, std::size_t& amount)
         {
             std::size_t used = 0;
             for(auto& am : ammo)
                 used += am.amount;
             if(used > capacity)
                 return;
-            if(capacity - used > a.amount) {
-                ammo.push_back(a);
-                a.amount = 0;
+
+            if(capacity - used > amount) {
+                ammo.push_back(Ammo{amount, data});
+                amount = 0;
             } else
             {
-                ammo.push_back(a);
+                ammo.push_back(Ammo{amount, data});
                 ammo.back().amount = capacity - used;
-                a.amount -= ammo.back().amount;
+                amount -= ammo.back().amount;
             }
 
         }
@@ -51,7 +52,7 @@ namespace spatacs
             empty.amount = 0;
             for(auto& a : ammo)
             {
-                if(a.name == type)
+                if(a.data.name == type)
                     return a;
             }
             return empty;

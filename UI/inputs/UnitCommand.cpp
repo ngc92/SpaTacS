@@ -14,7 +14,6 @@
 #include <irrlicht/ICameraSceneNode.h>
 #include <iostream>
 #include "UI/gfx/ShipStatusUI.h"
-#include "UI/gfx/WeaponStatusUI.h"
 #include "UI/convert.h"
 #include "game/Starship.h"
 #include "UI/IrrlichtUI.h"
@@ -47,12 +46,8 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::IScene
                                             irr::core::recti(10, 10, 100, 170));
     mShipStatus = std::make_unique<ShipStatusUI>(sstat);
 
-    auto wstat = new irr::gui::WeaponStatusUI(guienv, guienv->getRootGUIElement(), -1,
-                                              irr::core::recti(110, 10, 200, 50));
-    mShipStatus->addWeaponStatus( wstat );
-    wstat = new irr::gui::WeaponStatusUI(guienv, guienv->getRootGUIElement(), -1,
-                                              irr::core::recti(210, 10, 300, 50));
-    mShipStatus->addWeaponStatus( wstat );
+    mShipStatus->addWeaponStatus( guienv->addStaticText(L"", irr::core::recti(110, 10, 200, 50)) );
+    mShipStatus->addWeaponStatus( guienv->addStaticText(L"", irr::core::recti(210, 10, 300, 50)) );
 
     sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1,
                                        irr::core::recti(700, 10, 790, 90));
@@ -68,12 +63,6 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::IScene
     mSpeedInfo.reset(txt);
 
     mTrajectoryPlotter.reset( new irr::scene::MultiLineNode(smgr->getRootSceneNode(), smgr) );
-
-    auto bb = smgr->addBillboardSceneNode(0, irr::core::dimension2df(30, 30));
-    bb->setMaterialTexture(0, smgr->getVideoDriver()->getTexture("data/crosshairs/crosshair8.png"));
-    bb->setMaterialType(irr::video::EMT_TRANSPARENT_ALPHA_CHANNEL);
-    bb->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-    mCrossHair.reset( bb );
 }
 
 
@@ -146,14 +135,27 @@ void ui::UnitCommand::onWheel(float scroll)
 void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
 {
     if(mActiveShipID != 0) {
-        for(unsigned i = 0; i < state().getShip(mActiveShipID).weapon_count(); ++i) {
+        const auto& ship = state().getShip(mActiveShipID);
+        for(unsigned i = 0; i < ship.weapon_count(); ++i) {
+            std::size_t ammo_id = std::size_t(-1);
             if (key == irr::KEY_KEY_1) {
-                getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, i, "AP-light"));
+                ammo_id = 0;
             } else if (key == irr::KEY_KEY_2) {
-                getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, i, "HE-light"));
+                ammo_id = 1;
             } else if (key == irr::KEY_KEY_3) {
-                getCmdMgr().addCommand(mActiveShipID, cmd::SetWpnMode(mActiveShipID, i, "SO-light"));
+                ammo_id = 2;
             }
+
+            if(ammo_id != -1)
+            {
+                game::ListAmmunition la;
+                ship.components().apply(la);
+                if(ammo_id < la.getAmmos().size()) {
+                    getCmdMgr().addCommand(mActiveShipID,
+                                           cmd::SetWpnMode(mActiveShipID, i, la.getAmmos().at(ammo_id).data.name));
+                }
+            }
+
         }
 
         if( key == irr::KEY_PLUS )
@@ -186,7 +188,6 @@ void ui::UnitCommand::step()
         return;
     }
     auto sp = convert(ship.position());
-    mCrossHair->setPosition(sp);
     mShipStatus->update(ship);
 
     std::uint64_t enemy_ship = 0;

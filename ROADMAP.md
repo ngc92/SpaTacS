@@ -5,14 +5,9 @@
       - [ ] show everything with hitpoints
       - [x] show energy production/consumption
       - [ ] show activity
-    - [ ] show current ammo data
+    - [x] show current ammo data
     - [x] set ammo type for all weapons simultaneously
-    - [ ] ingame menu
-      + [ ] main menu
-      + [ ] continue
     - [x] mark currently selected ships
-  * AI:
-    - [ ] detect when out of ammo type
   * game:
     - [x] set weapon loadout in level file
     - [x] set fuel in level file
@@ -32,6 +27,9 @@
     - optimize waypoints (do not brake too much)
     - allow management of multiple weapons
     - allow setting system activity
+    - select multiple ships
+  * AI:
+    - smart selection of ammunition (use for player too)
   * physics:
     - allow applying impulse during callback
     - write tests for unit io

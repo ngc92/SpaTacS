@@ -58,7 +58,6 @@ namespace spatacs {
             std::unique_ptr<ShipStatusUI>      mTargetStatus;
             remove_ptr<irr::gui::IGUIElement>  mSpeedInfo;
             remove_ptr<irr::scene::MultiLineNode> mTrajectoryPlotter;
-            remove_ptr<irr::scene::ISceneNode> mCrossHair;
 
             enum Mode
             {ATTACK, MOVE} mMode = MOVE;
