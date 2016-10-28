@@ -22,6 +22,7 @@
 * UI
   - rotatable camera
   - ship icons
+  - panels
   - ingame menu
     +  main menu
     + continue

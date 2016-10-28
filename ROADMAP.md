@@ -1,24 +1,3 @@
-## Version 0.8 (UI upgrade)
-  * UI:
-    - [x] multiple levels
-    - [ ] enable/disable detailed status view
-      - [ ] show everything with hitpoints
-      - [x] show energy production/consumption
-      - [ ] show activity
-    - [x] show current ammo data
-    - [x] set ammo type for all weapons simultaneously
-    - [x] mark currently selected ships
-  * game:
-    - [x] set weapon loadout in level file
-    - [x] set fuel in level file
-    - [x] turn on/off systems
-    - [x] add a few levels
-  * code:
-    - [x] remove need for physics events, simplify physics code
-    - [ ] clean up UI code a bit. 
-    - [x] power units for energy management
-
-
 ## Version 0.9 (commands update)
   * UI:
     - new flight commands:

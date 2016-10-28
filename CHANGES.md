@@ -1,3 +1,13 @@
+## Version 0.8 (UI upgrade)
+  * UI:
+    - multiple levels
+    - show energy production/consumption
+    - show current ammo data
+    - set ammo type for all weapons simultaneously
+  * game:
+    - set weapon loadout and fuel in level file
+    - add a few levels
+
 ## Version 0.7 (ammunition update)
   * UI:
     - improved enemy status view
