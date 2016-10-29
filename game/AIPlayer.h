@@ -5,15 +5,15 @@
 #ifndef SOI_AIPLAYER_H
 #define SOI_AIPLAYER_H
 
-#include "IUI.h"
+#include "core/GameInterface.h"
 
 namespace spatacs {
     namespace cmd
     {
         class CommandManager;
     }
-    namespace ui {
-        class AIPlayer : public IUI
+    namespace game {
+        class AIPlayer : public core::GameInterface
         {
         public:
             AIPlayer(std::uint64_t team, std::shared_ptr<cmd::CommandManager> cmd);

@@ -2,9 +2,9 @@
 // Created by erik on 10/15/16.
 //
 
-#include "UI/AIPlayer.h"
+#include "game/AIPlayer.h"
 #include "UI/IrrlichtUI.h"
-#include "UI/LevelLoader.h"
+#include "game/LevelLoader.h"
 #include "UI/cmd/CommandManager.h"
 #include "GameState.h"
 #include "core/Game.h"
@@ -15,8 +15,8 @@ GameState::GameState(const std::string& filename) :
         mGame( std::make_unique<spatacs::core::Game>() ),
         mCmdMgr( std::make_shared<cmd::CommandManager>() )
 {
-    mGame->addInterface( std::make_shared<ui::AIPlayer>(2, mCmdMgr) );
-    mGame->addInterface( std::make_shared<ui::LevelLoader>(filename) );
+    mGame->addInterface( std::make_shared<game::AIPlayer>(2, mCmdMgr) );
+    mGame->addInterface( std::make_shared<game::LevelLoader>(filename) );
     mGame->addInterface( mCmdMgr );
 }
 

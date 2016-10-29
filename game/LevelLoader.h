@@ -5,15 +5,15 @@
 #ifndef SPATACS_LEVELLOADER_H
 #define SPATACS_LEVELLOADER_H
 
-#include "IUI.h"
+#include "core/GameInterface.h"
 #include <string>
 #include "events/Spawn.h"
 
 namespace spatacs
 {
-    namespace ui ///\todo this is not really the correct namespace
+    namespace game
     {
-        class LevelLoader : public IUI
+        class LevelLoader : public core::GameInterface
         {
         public:
             LevelLoader(std::string filename);

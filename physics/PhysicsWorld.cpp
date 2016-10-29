@@ -145,7 +145,6 @@ void PhysicsWorld::applyForce(std::uint64_t id, force_vec force)
     /// \todo this is a fixed end time! Change!
     time_t application_time = 0.1_s;
     auto& target = getObjectRec(id);
-    /// \todo specify units and mass handling!
     target.acceleration += force * application_time / target.object.mass();
 }
 

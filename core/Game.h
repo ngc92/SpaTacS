@@ -7,9 +7,9 @@
 
 namespace spatacs
 {
-    namespace ui
+    namespace core
     {
-        class IUI;
+        class GameInterface;
     }
     namespace events
     {
@@ -26,7 +26,7 @@ namespace spatacs
             ~Game();
 
             void run();
-            void addInterface( std::shared_ptr<ui::IUI> ui );
+            void addInterface( std::shared_ptr<core::GameInterface> ui );
             void setPause(bool p);
 
         private:
@@ -39,7 +39,7 @@ namespace spatacs
             std::vector<EventPtr>      mEvents;
 
             // interfaces
-            std::vector<std::shared_ptr<ui::IUI>> mUIs;
+            std::vector<std::shared_ptr<core::GameInterface>> mUIs;
         };
     }
 }

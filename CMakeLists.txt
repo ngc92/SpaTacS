@@ -78,7 +78,7 @@ SET(PHYSICS_SOURCE_FILES
         physics/parse_unit.cpp)
 
 set(UI_SOURCE_FILES
-        UI/IUI.h
+        core/GameInterface.h
         UI/gfx/GridNode.h
         UI/gfx/GridNode.cpp
         UI/gfx/ShipUI.h
@@ -90,8 +90,8 @@ set(UI_SOURCE_FILES
         UI/IInputMode.cpp
         UI/inputs/UnitCommand.cpp
         UI/inputs/UnitCommand.h
-        UI/AIPlayer.cpp
-        UI/AIPlayer.h
+        game/AIPlayer.cpp
+        game/AIPlayer.h
         UI/inputs/UnitSelection.cpp
         UI/inputs/UnitSelection.h
         UI/gfx/ShipStatusUI.cpp
@@ -112,8 +112,8 @@ set(UI_SOURCE_FILES
         UI/StateManager.cpp 
         UI/gfx/MultiLineNode.h 
         UI/gfx/MultiLineNode.cpp
-        UI/LevelLoader.h
-        UI/LevelLoader.cpp
+        game/LevelLoader.h
+        game/LevelLoader.cpp
         UI/states/LevelSelection.h
         UI/states/LevelSelection.cpp
         UI/inputs/ShipStatus.h

@@ -7,7 +7,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 using namespace spatacs;
-using namespace ui;
+using namespace game;
 using boost::property_tree::ptree;
 
 void LevelLoader::getCommandEvents(std::vector<events::EventPtr>& evts)

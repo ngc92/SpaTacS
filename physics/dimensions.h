@@ -64,8 +64,8 @@ namespace spatacs
 
             // pre defined useful dimensions
             using dimless_t = Dimension_t<Zero, Zero, Zero>;
-            using length_t  = Dimension_t<One, Zero, Zero>;
-            using time_t    = Dimension_t<Zero, One, Zero>;
+            using length_t  = Dimension_t<One,  Zero, Zero>;
+            using time_t    = Dimension_t<Zero, One,  Zero>;
             using mass_t    = Dimension_t<Zero, Zero, One>;
 
             template<class T>

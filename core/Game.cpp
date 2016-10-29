@@ -1,6 +1,6 @@
 #include "Game.h"
 #include "GameState.h"
-#include "UI/IUI.h"
+#include "GameInterface.h"
 #include <chrono>
 #include <algorithm>
 #include "GameThread.h"
@@ -57,7 +57,7 @@ void Game::run()
     }
 }
 
-void Game::addInterface(std::shared_ptr<ui::IUI> ui)
+void Game::addInterface(std::shared_ptr<core::GameInterface> ui)
 {
     ui->init();
     mUIs.push_back( std::move(ui) );

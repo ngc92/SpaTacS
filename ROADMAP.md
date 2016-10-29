@@ -1,21 +1,23 @@
 ## Version 0.9 (commands update)
   * UI:
-    - new flight commands:
-      + hold distance
-      + evade
-    - optimize waypoints (do not brake too much)
-    - allow management of multiple weapons
-    - allow setting system activity
-    - select multiple ships
+    - [ ] new flight commands:
+      + [ ] hold distance
+      + [ ] evade
+    - [ ] optimize waypoints (do not brake too much)
+    - [ ] allow management of multiple weapons
+    - [ ] allow setting system activity
+    - [ ] UI panels
+    - [ ] select multiple ships
   * AI:
-    - smart selection of ammunition (use for player too)
+    - [ ] smart selection of ammunition (use for player too)
   * physics:
-    - allow applying impulse during callback
-    - write tests for unit io
-    - write test  for advanced collision handling
+    - [ ] allow applying impulse during callback
+    - [ ] write tests for unit io
+    - [ ] write test  for advanced collision handling
   * code:
-    - clean separation between in and out events of game simulation
-    - opaque typedefs for IDs
+    - [ ] clean separation between in and out events of game simulation
+    - [ ] remove non UI code from UI
+    - [ ] opaque typedefs for IDs
 
 ## Version 1.0
 The plan is to add nothing "major" until this version, 

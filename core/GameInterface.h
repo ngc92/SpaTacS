@@ -6,7 +6,7 @@
 #define SOI_IUI_H
 
 #include <vector>
-#include "cmd/Commands.h"
+#include "UI/cmd/Commands.h"
 #include "events/IEvent.h"
 
 namespace spatacs
@@ -15,9 +15,9 @@ namespace spatacs
     {
         class IEvent;
     }
-    namespace ui
+    namespace core
     {
-        class IUI
+        class GameInterface
         {
         public:
             virtual void init() = 0;

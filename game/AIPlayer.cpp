@@ -11,7 +11,7 @@
 #include "UI/cmd/CommandManager.h"
 
 using namespace spatacs;
-using namespace ui;
+using namespace game;
 
 void AIPlayer::init()
 {

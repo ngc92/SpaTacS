@@ -5,7 +5,7 @@
 #ifndef SOI_IRRLICHTUI_H
 #define SOI_IRRLICHTUI_H
 
-#include "IUI.h"
+#include "core/GameInterface.h"
 #include "IrrRAII.h"
 #include "core/GameState.h"
 
@@ -30,7 +30,7 @@ namespace spatacs {
     };
 
     namespace ui {
-        class IrrlichtUI : public IUI
+        class IrrlichtUI : public core::GameInterface
         {
         public:
             IrrlichtUI(std::uint64_t team, irr::IrrlichtDevice* device, std::shared_ptr<cmd::CommandManager> cmd);

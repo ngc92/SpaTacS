@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <boost/optional.hpp>
 #include <events/IEvent.h>
-#include "UI/IUI.h"
+#include "core/GameInterface.h"
 
 namespace spatacs
 {
@@ -27,7 +27,7 @@ namespace spatacs
             bool delflag;
         };
 
-        class CommandManager : public ui::IUI
+        class CommandManager : public core::GameInterface
         {
         public:
             void addCommand( std::uint64_t target, Command cmd );
