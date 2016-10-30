@@ -9,7 +9,7 @@
     - [ ] UI panels
     - [ ] select multiple ships
   * AI:
-    - [ ] smart selection of ammunition (use for player too)
+    - [x] smart selection of ammunition
   * physics:
     - [ ] allow applying impulse during callback
     - [ ] write tests for unit io
@@ -18,6 +18,9 @@
     - [ ] clean separation between in and out events of game simulation
     - [ ] remove non UI code from UI
     - [ ] opaque typedefs for IDs
+    
+## Version 0.10
+
 
 ## Version 1.0
 The plan is to add nothing "major" until this version, 

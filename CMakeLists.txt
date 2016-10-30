@@ -59,7 +59,7 @@ SET(CORE_SOURCE_FILES
         game/SubSystems.cpp
         game/components.h
         game/systems.h
-        game/systems.cpp)
+        game/systems.cpp game/Damage.cpp)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h

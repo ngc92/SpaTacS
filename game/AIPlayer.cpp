@@ -9,6 +9,7 @@
 #include "game/Starship.h"
 #include "core/GameState.h"
 #include "UI/cmd/CommandManager.h"
+#include "systems.h"
 
 using namespace spatacs;
 using namespace game;
@@ -56,13 +57,27 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
         if(min < 20.0_km)  {
             /// \todo need to react when out of ammo!
             mCommands->addCommand( own.id(), cmd::Attack(target->id()) );
-            std::string mode = "HE-light";
-            if( target->shield() > 2.0 )
+
+            game::ListAmmunition la;
+            own.components().apply(la);
+
+            double best = 0.0;
+            std::string mode = "";
+            for(auto& ammo : la)
             {
-                mode = "SO-light";
-            } else if(target->hull_status().current > 2.0)
-            {
-                mode = "AP-light";
+                if(ammo.amount < 1)
+                    continue;
+
+                game::Damage estimated = ammo.data.damage;
+                estimated.kinetic      = ammo.data.charge / 20000.0_kJ;  /// \todo magic constant here
+                auto sd = getShieldDamage(estimated, target->shield());
+                auto ad = getArmourDamage(sd.remaining, target->armour(), target->radius());
+                // give only 20% weight to damaging shield and 0.75% for damaging armour
+                double total = 0.20 * sd.applied + 0.75 * ad.applied + ad.remaining.kinetic + ad.remaining.high_explosive;
+                if( total > best ) {
+                    best = total;
+                    mode = ammo.data.name;
+                }
             }
 
             for(unsigned i = 0; i < own.weapon_count(); ++i) {

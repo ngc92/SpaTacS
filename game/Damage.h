@@ -2,8 +2,10 @@
 // Created by erik on 10/1/16.
 //
 
-#ifndef SOI_DAMAGE_H
-#define SOI_DAMAGE_H
+#ifndef SPATACS_DAMAGE_H
+#define SPATACS_DAMAGE_H
+
+#include "physics/units.h"
 
 namespace spatacs
 {
@@ -29,7 +31,20 @@ namespace spatacs
             double kinetic         = 0;
             double armour_pierce   = 0;
         };
+
+        void applyDamage(double& damage, double factor, double& target);
+
+        // damage estimators
+        struct DamageEffect
+        {
+            Damage remaining;
+            double applied;
+        };
+
+        DamageEffect getShieldDamage(const Damage& d, double shield);
+        double getPierceProbability(double AP, double armour, length_t radius);
+        DamageEffect getArmourDamage(const Damage& d, double armour, length_t target_radius);
     }
 }
 
-#endif //SOI_DAMAGE_H
+#endif //SPATACS_DAMAGE_H

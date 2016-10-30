@@ -114,7 +114,7 @@ namespace spatacs
         {
             auto relvel = length(ship.velocity() - proj.velocity());
             auto dmg = 0.5 * relvel * relvel * proj.mass();
-            double dval = dmg / 20000.0_kJ;
+            double dval = dmg / 20000.0_kJ; /// \todo magic constant here
             mDamage = proj.damage();
             mDamage.kinetic += dval;
         }
@@ -137,28 +137,15 @@ namespace spatacs
             mProjectileID = proj.id();
         }
 
-        void applyDamage(double& damage, double factor, double& target);
+        using game::applyDamage;
 
         void HitShield::applyToShip(Starship& target, EventContext& context) const
         {
-            // next, let shield stop the HE part. HE only does 50% damage against shield
-            double so = mDamage.shield_overload;
-            double he = mDamage.high_explosive;
-            double kd = mDamage.kinetic;
-            double os = target.shield();
-
-           // first, apply shield overload. This affects the whole shield
-            applyDamage(so, 1.0, os);
-
-            // only a portion of the shield can block at any given time
-            /// \todo make this radius dependent?
-            double block = os * 0.2;
-            os -= block;
-            applyDamage(kd, 0.5, block);
-            applyDamage(he, 0.5, block);
-            target.setShield( os + block );
+            auto effect = game::getShieldDamage(mDamage, target.shield());
+            // mDamage = effect.remaining;
+            target.setShield( target.shield() - effect.applied );
             auto& proj = context.state.getProjectile(mProjectileID);
-            if(kd == 0)
+            if(effect.remaining.kinetic == 0)
             {
                 proj.expire();
             } else
@@ -178,51 +165,13 @@ namespace spatacs
 
         void Damage::applyToShip(Starship& target, EventContext& context) const
         {
-            double he = mDamage.high_explosive;
-            double kd = mDamage.kinetic;
-            assert(mDamage.armour_pierce <= 1.0);
-            double ap = mDamage.kinetic * mDamage.armour_pierce;
-
-            // ---------------------------------------------------------------------------------
-            double oh = target.armour();
-            auto area = 4 * 3.1415 * target.radius() * target.radius();
-            auto armour_density = scalar_t(oh) / area;
-            double rel_strength = scalar_t(ap + 0.2) / (armour_density * 65.0_m * 65.0_m);
-            if(rel_strength > 1)
-                rel_strength = 1.0;
-
-            int pierce_prob = int(100 * rel_strength);
-            std::cout << pierce_prob << "\n";
-
-            if(rand() % 100 < pierce_prob)
-            {
-                // in the piercing case, only 50% of the AP
-                // damage damage the armour, and the remaining KD
-                // goes to structure
-                ap *= 0.5;
-                double old_ap = ap;
-                applyDamage(ap, 1.0, oh);
-                kd -= old_ap - ap;
-            } else {
-                double old_ap = ap;
-                applyDamage(ap, 1.0, oh);
-                kd -= old_ap - ap;
-                applyDamage(kd, 0.33, oh);
-            }
-            applyDamage(he, 0.20, oh);
-            target.setArmour(oh);
-
-            // ---------------------------------------------------------------------------------
+            // damage armour
+            auto armour_dmg = game::getArmourDamage(mDamage, target.armour(), target.radius());
+            target.setArmour( target.armour() - armour_dmg.applied );
 
             // Ok, now all that remains goes towards the ship structure
-            double damage = he + kd;
+            double damage = armour_dmg.remaining.high_explosive + armour_dmg.remaining.kinetic;
             target.dealDamage( damage );
-        }
-
-        void applyDamage(double& damage, double factor, double& target) {
-            double dmg = std::min(target, damage*factor);
-            damage -= dmg / factor;
-            target -= dmg;
         }
     }
 }
