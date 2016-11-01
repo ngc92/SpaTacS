@@ -12,35 +12,6 @@
 using namespace spatacs;
 using cmd::CommandManager;
 
-/// \todo currently, this is basically variant to tuple conversion.
-struct UpdateVisitor : public boost::static_visitor<void>
-{
-    UpdateVisitor(cmd::CommandSlot& slot, std::vector<cmd::SetWpnMode>& os) : slot(slot),
-                                                                              oneshots(os)
-    {}
-
-    cmd::CommandSlot& slot;
-    std::vector<cmd::SetWpnMode>& oneshots;
-    void operator()(const cmd::SetWpnMode& m) const
-    {
-        oneshots.push_back(m);
-    }
-    void operator()(const cmd::Move& m) const
-    {
-        slot.move = m;
-    }
-    void operator()(const cmd::Attack& m) const
-    {
-        slot.attack = m;
-    }
-};
-
-void CommandManager::addCommand( std::uint64_t target, cmd::Command c)
-{
-    auto& commands = mCommandSlots[target];
-    boost::apply_visitor( UpdateVisitor{commands, mOneShotCommands}, c );
-}
-
 const cmd::CommandSlot& CommandManager::getCommandsOf(std::uint64_t ship) const
 {
     return mCommandSlots.at(ship);
@@ -131,4 +102,19 @@ void CommandManager::validate()
                 cmd.second.attack = boost::none;
         }
     }
+}
+
+void CommandManager::addCommand(std::uint64_t target, cmd::Move cmd)
+{
+    mCommandSlots[target].move = std::move(cmd);
+}
+
+void CommandManager::addCommand(std::uint64_t target, cmd::Attack cmd)
+{
+    mCommandSlots[target].attack = std::move(cmd);
+}
+
+void CommandManager::addCommand(std::uint64_t target, cmd::SetWpnMode cmd)
+{
+    mOneShotCommands.push_back(std::move(cmd));
 }

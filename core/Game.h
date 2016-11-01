@@ -1,7 +1,6 @@
 #ifndef GAMECORE_H_INCLUDED
 #define GAMECORE_H_INCLUDED
 
-#include "UI/cmd/Commands.h"
 #include <random>
 #include <memory>
 

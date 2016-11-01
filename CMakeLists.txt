@@ -24,7 +24,6 @@ set(EVENT_SOURCE_FILES
         events/Spawn.cpp)
 
 set(COMMAND_SOURCE_FILES
-        UI/cmd/Commands.h
         UI/cmd/Attack.h
         UI/cmd/Attack.cpp
         UI/cmd/Move.h

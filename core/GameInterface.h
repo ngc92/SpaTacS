@@ -6,7 +6,6 @@
 #define SOI_IUI_H
 
 #include <vector>
-#include "UI/cmd/Commands.h"
 #include "events/IEvent.h"
 
 namespace spatacs

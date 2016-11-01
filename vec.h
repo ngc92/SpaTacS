@@ -114,6 +114,11 @@ namespace spatacs
         {
             auto s = dot(reference, reference);
             auto f = dot(source, reference);
+            if(s == S(0) * S(0))
+            {
+                // everything is parallel to the null vector
+                return source;
+            }
 
             return (f / s) * reference;
         }
@@ -121,6 +126,9 @@ namespace spatacs
         template<class T, class S>
         auto perpendicular(const Vec3<T>& source, const Vec3<S>& reference)
         {
+            if(reference == Vec3<S>{0,0,0})
+                return source;
+
             return source - parallel(source, reference);
         }
 

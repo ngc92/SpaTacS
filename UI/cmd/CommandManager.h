@@ -5,12 +5,14 @@
 #ifndef SPATACS_COMMANDMANAGER_H_H
 #define SPATACS_COMMANDMANAGER_H_H
 
-#include "Commands.h"
 #include <vector>
 #include <unordered_map>
 #include <boost/optional.hpp>
 #include <events/IEvent.h>
 #include "core/GameInterface.h"
+#include "Move.h"
+#include "Attack.h"
+#include "SetMode.h"
 
 namespace spatacs
 {
@@ -30,10 +32,11 @@ namespace spatacs
         class CommandManager : public core::GameInterface
         {
         public:
-            void addCommand( std::uint64_t target, Command cmd );
+            void addCommand( std::uint64_t target, Move cmd );
+            void addCommand( std::uint64_t target, Attack cmd );
+            void addCommand( std::uint64_t target, SetWpnMode cmd );
 
             const CommandSlot& getCommandsOf( std::uint64_t ship ) const;
-
 
             //
             void init() override { };
