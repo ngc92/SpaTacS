@@ -97,7 +97,7 @@ void ui::UnitCommand::onRightClick(ray_t ray, const irr::SEvent::SMouseInput& ev
     }
 }
 
-void ui::UnitCommand::onMouseMove(ui::IInputMode::ray_t ray)
+void ui::UnitCommand::onMouseMove(ui::IInputMode::ray_t ray, const irr::SEvent::SMouseInput& event)
 {
     auto t = pick(state(), ray);
     if(t && t->team() != state().getShip(mActiveShipID).team())

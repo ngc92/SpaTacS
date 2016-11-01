@@ -7,6 +7,7 @@
 #include <irrlicht/IGUIStaticText.h>
 #include <iomanip>
 #include <sstream>
+#include "core/GameState.h"
 #include "game/Starship.h"
 #include "UnitSelection.h"
 #include "UnitCommand.h"
@@ -24,24 +25,23 @@ UnitSelection::UnitSelection(std::uint64_t team) :
 
 }
 
-void UnitSelection::onLeftClick(IInputMode::ray_t ray)
+void UnitSelection::onLeftClick(ray_t ray, const irr::SEvent::SMouseInput& event)
 {
-    auto sel = pick(state(), ray);
-    if(sel && sel->team() == mOwnTeam)
-    {
-        mChildMode = std::make_shared<UnitCommand>( sel->id() );
-        mChildMode->setMainUI( getMainUI() );
-    } else
-    {
-        mChildMode.reset();
-    }
+    mDragStart = irr::core::vector2di(event.X, event.Y);
+    mSelectBox->setRelativePosition(irr::core::recti(mDragStart, mDragStart));
+    mSelectBox->setVisible(true);
 }
 
-void UnitSelection::onMouseMove(IInputMode::ray_t ray)
+void UnitSelection::onMouseMove(IInputMode::ray_t ray, const irr::SEvent::SMouseInput& event)
 {
     mCurrentRay = ray;
+
+    irr::core::recti ps{mDragStart, irr::core::position2di(event.X, event.Y)};
+    ps.repair();
+    mSelectBox->setRelativePosition(ps);
+
     if(mChildMode)
-        mChildMode->onMouseMove(ray);
+        mChildMode->onMouseMove(ray, event);
 }
 
 void UnitSelection::onRightClick(ray_t ray, const irr::SEvent::SMouseInput& event)
@@ -65,7 +65,10 @@ void UnitSelection::init(irr::gui::IGUIEnvironment* guienv, irr::scene::ISceneMa
 {
     auto txt = guienv->addStaticText(L"Text", irr::core::recti(0, 0, 100, 20));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
-    mHoverUI = txt;
+    mHoverUI.reset(txt);
+    txt = guienv->addStaticText(L"", irr::core::recti(0, 0, 100, 20), true);
+    txt->setVisible(false);
+    mSelectBox.reset(txt);
 }
 
 void UnitSelection::onKeyPress(irr::EKEY_CODE key)
@@ -146,4 +149,31 @@ void UnitSelection::step()
         ws << " " << hover->shield() <<"|" << hover->armour() <<"|" << hover->hp() << "\n";
         mHoverUI->setText(ws.str().c_str());
     }
+}
+
+void UnitSelection::onLeftMouseUp(ray_t ray, const irr::SEvent::SMouseInput& event)
+{
+    auto rect = irr::core::recti(mDragStart, irr::core::position2di(event.X, event.Y));
+    rect.repair();
+    rect.UpperLeftCorner  -= irr::core::vector2di(10, 10);
+    rect.LowerRightCorner += irr::core::vector2di(10, 10);
+    mSelectBox->setVisible(false);
+    for(auto& obj : state())
+    {
+        auto ship = dynamic_cast<const spatacs::game::Starship*>(&obj);
+        if(!ship)
+            continue;
+        if(!ship->alive() || ship->team() != mOwnTeam)
+            continue;
+
+        auto sp   = getScreenPosition(convert(ship->position()));
+        if(rect.isPointInside(sp))
+        {
+            mChildMode = std::make_shared<UnitCommand>( ship->id() );
+            mChildMode->setMainUI( getMainUI() );
+            return;
+        }
+    }
+
+    mChildMode.reset();
 }

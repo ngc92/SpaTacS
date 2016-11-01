@@ -9,6 +9,7 @@
 #include <irrlicht/IGUIElement.h>
 #include "UI/IInputMode.h"
 #include <set>
+#include "UI/IrrRAII.h"
 
 namespace spatacs {
     namespace ui {
@@ -21,13 +22,11 @@ namespace spatacs {
             void init(irr::gui::IGUIEnvironment* guienv, irr::scene::ISceneManager* smgr) override;
 
         public:
-            void onLeftClick(ray_t ray) override;
-
-            void onMouseMove(ray_t ray) override;
-
+            void onLeftClick(ray_t ray, const irr::SEvent::SMouseInput& event) override;
+            void onMouseMove(ray_t ray, const irr::SEvent::SMouseInput& event) override;
             void onRightClick(ray_t ray, const irr::SEvent::SMouseInput& event) override;
-
             void onWheel(float scroll) override;
+            void onLeftMouseUp(ray_t ray, const irr::SEvent::SMouseInput& event) override;
 
             void onKeyPress( irr::EKEY_CODE key ) override;
             void onKeyRelease( irr::EKEY_CODE key ) override;
@@ -36,8 +35,11 @@ namespace spatacs {
         private:
             std::uint64_t mOwnTeam;
             std::shared_ptr<IInputMode> mChildMode;
-            irr::gui::IGUIElement* mHoverUI = nullptr;
+            remove_ptr<irr::gui::IGUIElement> mHoverUI   = nullptr;
+            remove_ptr<irr::gui::IGUIElement> mSelectBox = nullptr;
             ray_t mCurrentRay;
+
+            irr::core::vector2di mDragStart;
 
             std::set<irr::EKEY_CODE> mKeysDown;
         };

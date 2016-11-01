@@ -79,19 +79,22 @@ private:
     bool handleMouseEvent( const SEvent::SMouseInput& mouse )
     {
         mPickLine = getMouseRay(mouse);
+        if(!mInputMode)
+            return false;
+
         switch(mouse.Event)
         {
             case EMIE_LMOUSE_PRESSED_DOWN:
-                if(mInputMode)
-                    mInputMode->onLeftClick(mPickLine);
+                mInputMode->onLeftClick(mPickLine, mouse);
                 break;
             case EMIE_RMOUSE_PRESSED_DOWN:
-                if(mInputMode)
-                    mInputMode->onRightClick(mPickLine, mouse);
+                mInputMode->onRightClick(mPickLine, mouse);
+                break;
+            case EMIE_LMOUSE_LEFT_UP:
+                mInputMode->onLeftMouseUp(mPickLine, mouse);
                 break;
             case EMIE_MOUSE_MOVED:
-                if(mInputMode)
-                    mInputMode->onMouseMove(mPickLine);
+                mInputMode->onMouseMove(mPickLine, mouse);
                 break;
             case EMIE_MOUSE_WHEEL:
                 mInputMode->onWheel(mouse.Wheel);
