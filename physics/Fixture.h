@@ -6,6 +6,7 @@
 #define SPATACS_FIXTURE_H
 
 #include "units.h"
+#include "ObjectID.h"
 
 namespace spatacs
 {
@@ -14,7 +15,7 @@ namespace physics
     class Fixture
     {
     public:
-        Fixture(std::uint64_t parent, length_t rad);
+        Fixture(ObjectID parent, length_t rad);
 
         // shape data
         length_t radius() const;
@@ -25,12 +26,12 @@ namespace physics
         void setUserdata(std::uint64_t value);
 
         // parent
-        std::uint64_t parent() const;
-        void setParent( std::uint64_t );
+        ObjectID parent() const;
+        void setParent( ObjectID parent );
 
     private:
         length_t mRadius{0.01f};
-        std::uint64_t mParent; // parent object
+        ObjectID mParent; // parent object
         std::uint64_t mUserData;
     };
 }

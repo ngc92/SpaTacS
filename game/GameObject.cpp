@@ -24,7 +24,7 @@ std::uint64_t GameObject::id() const
     return mID;
 }
 
-std::uint64_t GameObject::physics_id() const
+physics::ObjectID GameObject::physics_id() const
 {
     return mPhysicsID;
 }
@@ -49,7 +49,7 @@ void GameObject::setVelocity(const velocity_vec& vel)
     mVelocity = vel;
 }
 
-void GameObject::setPhysicsID(std::uint64_t id)
+void GameObject::setPhysicsID(physics::ObjectID id)
 {
     mPhysicsID = id;
 }

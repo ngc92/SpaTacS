@@ -34,10 +34,10 @@ namespace spatacs
             void setMass(mass_t m);
 
             std::uint64_t id() const;
-            std::uint64_t physics_id() const;
+            physics::ObjectID physics_id() const;
 
             void setID(std::uint64_t id);
-            void setPhysicsID(std::uint64_t id);
+            void setPhysicsID(physics::ObjectID id);
 
             virtual bool alive() const = 0;
             virtual void onStep() = 0;
@@ -48,7 +48,7 @@ namespace spatacs
         protected:
             ObjectType    mType;
             std::uint64_t mID        = 0;
-            std::uint64_t mPhysicsID = 0;
+            physics::ObjectID mPhysicsID;
             mass_t mMass;
 
             length_vec   mPosition;

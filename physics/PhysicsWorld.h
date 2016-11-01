@@ -27,8 +27,8 @@ namespace physics
 
     struct Collision
     {
-        std::uint64_t A;        //!< ID of object A
-        std::uint64_t B;        //!< ID of object B
+        ObjectID A;        //!< ID of object A
+        ObjectID B;        //!< ID of object B
         std::uint64_t fA;       //!< Userdata of fixture A
         std::uint64_t fB;       //!< Userdata of fixture B
         time_t time;
@@ -57,24 +57,24 @@ namespace physics
         using collision_callback_fn = std::function<void(PhysicsWorld& world, const Object& A,
                                                          const Object& B, ImpactInfo info)>;
 
-        const Object& getObject( std::uint64_t id ) const;
+        const Object& getObject(ObjectID id) const;
         void setCollisionCallback( collision_callback_fn cb );
 
         /// spawn a new physics object.
         /// \return the ID that was assigned to the new object.
-        std::uint64_t spawn(const Object& object);
+        ObjectID spawn(const Object& object);
 
         /// \return whether \p id existed and was despawned.
-        bool despawn( std::uint64_t id );
+        bool despawn(ObjectID id);
 
         /// apply a force to the object with the given id.
         /// \attention note that the actual change in velocity
         /// can currently only happen at the end of a time step.
-        void applyForce(std::uint64_t id, force_vec force);
+        void applyForce(ObjectID id, force_vec force);
 
         /// changes the mass of an object.
         /// Will affect only subsequent addForce calls.
-        void setMass(std::uint64_t id, mass_t mass);
+        void setMass(ObjectID id, mass_t mass);
 
         void simulate(time_t dt);
 
@@ -97,16 +97,16 @@ namespace physics
             Object       object;
             velocity_vec acceleration; // this is premultiplied with the correct dt
         };
-        std::map<std::uint64_t, ObjectRecord> mObjects;
+        std::map<ObjectID, ObjectRecord> mObjects;
         std::uint64_t mFreeID = 1;
 
-        const ObjectRecord& getObjectRec( std::uint64_t id ) const;
-        ObjectRecord& getObjectRec( std::uint64_t id );
+        const ObjectRecord& getObjectRec(ObjectID id) const;
+        ObjectRecord& getObjectRec(ObjectID id);
 
         // Collision management
         collision_callback_fn mCollisionCallback;
-        void detectCollisionsOf(std::uint64_t id, time_t max_dt, bool all = false);
-        void filterCollisions( std::uint64_t id );
+        void detectCollisionsOf(ObjectID id, time_t max_dt, bool all = false);
+        void filterCollisions(ObjectID id);
     };
 }
 }

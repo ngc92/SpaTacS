@@ -74,7 +74,7 @@ SET(PHYSICS_SOURCE_FILES
         physics/Fixture.h
         physics/Fixture.cpp
         physics/parse_unit.h
-        physics/parse_unit.cpp)
+        physics/parse_unit.cpp physics/ObjectID.h)
 
 set(UI_SOURCE_FILES
         core/GameInterface.h
@@ -125,7 +125,7 @@ set(SOURCE_FILES
         ${CORE_SOURCE_FILES}
         ${PHYSICS_SOURCE_FILES}
         ${UI_SOURCE_FILES}
-        main.cpp)
+        main.cpp id.h)
 
 set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp)
 

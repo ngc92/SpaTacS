@@ -52,12 +52,12 @@ void Object::setUserdata(std::uint64_t value)
     mUserData = value;
 }
 
-std::uint64_t Object::id() const
+ObjectID Object::id() const
 {
     return mID;
 }
 
-void Object::setID(std::uint64_t id)
+void Object::setID(ObjectID id)
 {
     mID = id;
     for(auto& fix : mFixtures)

@@ -8,7 +8,7 @@
 
 using namespace spatacs::physics;
 
-Fixture::Fixture(std::uint64_t parent, length_t rad) :
+Fixture::Fixture(ObjectID parent, length_t rad) :
         mRadius(rad),
         mParent(parent)
 {
@@ -38,12 +38,12 @@ void Fixture::setUserdata(std::uint64_t value)
     mUserData = value;
 }
 
-void Fixture::setParent(std::uint64_t p)
+void Fixture::setParent(ObjectID p)
 {
     mParent = p;
 }
 
-std::uint64_t Fixture::parent() const
+ObjectID Fixture::parent() const
 {
     return mParent;
 }

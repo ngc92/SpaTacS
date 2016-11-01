@@ -8,6 +8,7 @@
 #include "units.h"
 #include "Fixture.h"
 #include <vector>
+#include "ObjectID.h"
 
 namespace spatacs {
     namespace physics {
@@ -22,9 +23,9 @@ namespace spatacs {
             void setUserdata(std::uint64_t value);
 
             // ID
-            std::uint64_t id() const;
+            ObjectID id() const;
             /// \note this should be called only once, when the object is added to the world
-            void setID(std::uint64_t id);
+            void setID(ObjectID id);
 
             // current step base data
             const length_vec& position() const;
@@ -49,7 +50,7 @@ namespace spatacs {
             Fixture& addFixture(length_t radius);
 
         private:
-            std::uint64_t mID = 0;
+            ObjectID mID{0};
             length_vec mPosition{0.0_m, 0.0_m, 0.0_m};
             velocity_vec mVelocity{0.0_kps, 0.0_kps, 0.0_kps};
             mass_t mMass = 1.0_kg;

@@ -29,7 +29,7 @@ void PhysicsWorld::pushEvent(Collision evt)
     mEventQueue.push( std::move(evt) );
 }
 
-const Object& PhysicsWorld::getObject(std::uint64_t id) const
+const Object& PhysicsWorld::getObject(ObjectID id) const
 {
     return getObjectRec(id).object;
 }
@@ -67,7 +67,7 @@ void PhysicsWorld::simulate(time_t dt)
     }
 }
 
-void PhysicsWorld::detectCollisionsOf(std::uint64_t id, time_t max_dt, bool all)
+void PhysicsWorld::detectCollisionsOf(ObjectID id, time_t max_dt, bool all)
 {
     auto& obj = getObject(id);
     for(auto& fixa : obj) {
@@ -93,7 +93,7 @@ void PhysicsWorld::detectCollisionsOf(std::uint64_t id, time_t max_dt, bool all)
     }
 }
 
-void PhysicsWorld::filterCollisions(std::uint64_t id)
+void PhysicsWorld::filterCollisions(ObjectID id)
 {
     std::vector<Collision> container = std::move(((GetUnderlyingContainer<decltype(mEventQueue)>&)(mEventQueue)).container());
     auto nend = std::remove_if(begin(container), end(container), [id](auto& e){ return e.A == id || e.B == id;});
@@ -105,30 +105,30 @@ void PhysicsWorld::filterCollisions(std::uint64_t id)
 }
 
 
-const PhysicsWorld::ObjectRecord& PhysicsWorld::getObjectRec(std::uint64_t id) const
+const PhysicsWorld::ObjectRecord& PhysicsWorld::getObjectRec(ObjectID id) const
 {
     return mObjects.at(id);
 }
 
-PhysicsWorld::ObjectRecord& PhysicsWorld::getObjectRec(std::uint64_t id)
+PhysicsWorld::ObjectRecord& PhysicsWorld::getObjectRec(ObjectID id)
 {
     return mObjects.at(id);
 }
 
-std::uint64_t PhysicsWorld::spawn(const Object& object)
+ObjectID PhysicsWorld::spawn(const Object& object)
 {
     ObjectRecord new_rec;
     new_rec.object = object;
-    new_rec.object.setID(mFreeID);
+    ObjectID id{mFreeID};
+    new_rec.object.setID( id );
     new_rec.acceleration = velocity_vec(Vec{0, 0, 0});
-    mObjects[mFreeID] = std::move(new_rec);
-    std::uint64_t id = mFreeID;
+    mObjects[id] = std::move(new_rec);
     ++mFreeID;
     return id;
     /// \todo trigger calculation of collision events.
 }
 
-bool PhysicsWorld::despawn(std::uint64_t id)
+bool PhysicsWorld::despawn(ObjectID id)
 {
     auto e = mObjects.erase(id);
     if( e != 1 )
@@ -140,7 +140,7 @@ bool PhysicsWorld::despawn(std::uint64_t id)
     return true;
 }
 
-void PhysicsWorld::applyForce(std::uint64_t id, force_vec force)
+void PhysicsWorld::applyForce(ObjectID id, force_vec force)
 {
     /// \todo this is a fixed end time! Change!
     time_t application_time = 0.1_s;
@@ -148,7 +148,7 @@ void PhysicsWorld::applyForce(std::uint64_t id, force_vec force)
     target.acceleration += force * application_time / target.object.mass();
 }
 
-void PhysicsWorld::setMass(std::uint64_t id, mass_t mass)
+void PhysicsWorld::setMass(ObjectID id, mass_t mass)
 {
     auto& target = getObjectRec(id);
     target.object.setMass( mass );
