@@ -194,6 +194,40 @@ namespace physics
             return stream << u.value / 1000000. << O('M') << U{};
     }
 
+    // specialisations
+    template<class O, class T>
+    std::basic_ostream<O>& operator<<(std::basic_ostream<O>& stream, const UnitWrapper<T, dimensions::mass_t>& u)
+    {
+        if(u.value < 2000)
+            return stream << u.value << "kg";
+        else if(u.value < 2000000)
+            return stream << u.value / 1000. << O('t');
+        else
+            return stream << u.value / 1000000. << "kt";
+    }
+
+    template<class O, class T>
+    std::basic_ostream<O>& operator<<(std::basic_ostream<O>& stream, const UnitWrapper<T, dimensions::force_t>& u)
+    {
+        if(u.value < 2000)
+            return stream << u.value << "N";
+        else if(u.value < 2000000)
+            return stream << u.value / 1000. << "kN";
+        else
+            return stream << u.value / 1000000. << "MN";
+    }
+
+    template<class O, class T>
+    std::basic_ostream<O>& operator<<(std::basic_ostream<O>& stream, const UnitWrapper<T, dimensions::energy_t>& u)
+    {
+        if(u.value < 2000)
+            return stream << u.value << "J";
+        else if(u.value < 2000000)
+            return stream << u.value / 1000. << "kJ";
+        else
+            return stream << u.value / 1000000. << "MJ";
+    }
+
     template<class I, class T, class U>
     std::basic_istream<I>& operator>>(std::basic_istream<I>& stream, UnitWrapper<T, U>& u)
     {
@@ -257,8 +291,8 @@ namespace physics
         constexpr auto kilogram(base_t v) { return mass_t(v); }
         constexpr auto tonnes(base_t v) { return mass_t(v * 1000); }
 
-        constexpr auto newton(base_t v) { return force_t(v); }
-        constexpr auto kilonewton(base_t v) { return force_t(v * 1000); }
+        constexpr auto newtons(base_t v) { return force_t(v); }
+        constexpr auto kilonewtons(base_t v) { return force_t(v * 1000); }
 
         constexpr auto joules(base_t v) { return energy_t(v); }
         constexpr auto kilojoules(base_t v) { return energy_t(v * 1000); }

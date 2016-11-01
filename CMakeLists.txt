@@ -127,7 +127,7 @@ set(SOURCE_FILES
         ${UI_SOURCE_FILES}
         main.cpp id.h)
 
-set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp)
+set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp test/units_test.cpp)
 
 add_executable(SpaTacS ${SOURCE_FILES})
 add_executable(tests ${TEST_SOURCE_FILES} physics/HitTests.cpp)
