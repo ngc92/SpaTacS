@@ -19,6 +19,7 @@
     + organisation
     + health
   - win game when no enemies present
+  - strong impacts on shield affect shield generator
 * UI
   - rotatable camera
   - ship icons

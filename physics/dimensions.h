@@ -75,6 +75,7 @@ namespace spatacs
             using inverse_dim_t = div_t<dimless_t, T>;
 
             using velocity_t     = rate_dim_t<length_t>;
+            using impulse_t      = mul_t<velocity_t, mass_t>;
             using acceleration_t = rate_dim_t<velocity_t>;
             using force_t        = mul_t<acceleration_t, mass_t>;
             using area_t         = mul_t<length_t, length_t>;

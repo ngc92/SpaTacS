@@ -262,6 +262,7 @@ namespace physics
         using mass_t    = UnitWrapper<base_t, dimensions::mass_t>;
         using time_t    = UnitWrapper<base_t, dimensions::time_t>;
         using speed_t   = UnitWrapper<base_t, dimensions::velocity_t>;
+        using impulse_t = UnitWrapper<base_t, dimensions::impulse_t>;
         using accel_t   = UnitWrapper<base_t, dimensions::acceleration_t>;
         using force_t   = UnitWrapper<base_t, dimensions::force_t>;
         using area_t    = UnitWrapper<base_t, dimensions::area_t>;
@@ -278,6 +279,7 @@ namespace physics
         using velocity_vec = Vec3<speed_t>;
         using accel_vec    = Vec3<accel_t>;
         using force_vec    = Vec3<force_t>;
+        using impulse_vec  = Vec3<impulse_t>;
 
         // creation functions
         inline constexpr auto meters(base_t v) { return length_t(v); }

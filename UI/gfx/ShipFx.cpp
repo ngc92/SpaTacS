@@ -41,7 +41,7 @@ void ShipFx::render()
 
     auto baseY = std::round(camera->getTarget().Y / 10) * 10;
 
-    float f = 1; /// \todo depend on radius
+    float f = 0.75f; /// \todo depend on radius
 
     auto& col = mColor;
 
@@ -58,8 +58,8 @@ void ShipFx::render()
 
     u16 indices[] = {0, 1, 2, 0, 2, 3};
     driver->drawIndexedTriangleList(&vertices[0], 4, &indices[0], 2);
-    drawCircle(view, h, v, 2, mShieldStatus, video::SColor(128, 0, 0, 128));
-    drawCircle(view, h, v, 1.8, mHullStatus, video::SColor(255, 64, 64, 64));
+    drawCircle(view, h, v, 2.25, mShieldStatus, video::SColor(128, 32, 32, 200));
+    drawCircle(view, h, v, 1.9, mHullStatus, video::SColor(255, 80, 80, 80));
 
 }
 
