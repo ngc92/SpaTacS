@@ -24,15 +24,15 @@ set(EVENT_SOURCE_FILES
         events/Spawn.cpp)
 
 set(COMMAND_SOURCE_FILES
-        UI/cmd/Attack.h
-        UI/cmd/Attack.cpp
-        UI/cmd/Move.h
-        UI/cmd/Move.cpp
-        UI/cmd/ICommand.h
-        UI/cmd/CommandManager.h
-        UI/cmd/CommandManager.cpp
-        UI/cmd/SetMode.h
-        UI/cmd/SetMode.cpp)
+        cmd/Attack.h
+        cmd/Attack.cpp
+        cmd/Move.h
+        cmd/Move.cpp
+        cmd/ICommand.h
+        cmd/CommandManager.h
+        cmd/CommandManager.cpp
+        cmd/SetMode.h
+        cmd/SetMode.cpp)
 
 SET(CORE_SOURCE_FILES
         game/Starship.h

@@ -2,8 +2,8 @@
 // Created by erik on 9/22/16.
 //
 
-#include "UI/cmd/Attack.h"
-#include "UI/cmd/Move.h"
+#include "cmd/Attack.h"
+#include "cmd/Move.h"
 #include <irrlicht/IVideoDriver.h>
 #include <irrlicht/IGUIEnvironment.h>
 #include <irrlicht/IGUIStaticText.h>
@@ -17,7 +17,7 @@
 #include "UI/convert.h"
 #include "game/Starship.h"
 #include "UI/IrrlichtUI.h"
-#include "UI/cmd/CommandManager.h"
+#include "cmd/CommandManager.h"
 #include <irrlicht/ISceneManager.h>
 #include "game/systems.h"
 #include "UI/gfx/MultiLineNode.h"

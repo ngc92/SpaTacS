@@ -16,7 +16,7 @@
     - [ ] write test  for advanced collision handling
   * code:
     - [ ] clean separation between in and out events of game simulation
-    - [ ] remove non UI code from UI
+    - [x] remove non UI code from UI
     - [ ] opaque typedefs for IDs
     
 ## Version 0.10

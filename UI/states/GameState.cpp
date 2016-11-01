@@ -5,7 +5,7 @@
 #include "game/AIPlayer.h"
 #include "UI/IrrlichtUI.h"
 #include "game/LevelLoader.h"
-#include "UI/cmd/CommandManager.h"
+#include "cmd/CommandManager.h"
 #include "GameState.h"
 #include "core/Game.h"
 

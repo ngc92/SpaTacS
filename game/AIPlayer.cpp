@@ -8,7 +8,7 @@
 #include <iostream>
 #include "game/Starship.h"
 #include "core/GameState.h"
-#include "UI/cmd/CommandManager.h"
+#include "cmd/CommandManager.h"
 #include "systems.h"
 
 using namespace spatacs;
