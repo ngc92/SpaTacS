@@ -8,6 +8,8 @@
     - [ ] allow setting system activity
     - [ ] UI panels
     - [ ] select multiple ships
+  * game:
+    - [ ] powerplant requires fuel
   * AI:
     - [x] smart selection of ammunition
   * physics:
@@ -17,7 +19,7 @@
   * code:
     - [ ] clean separation between in and out events of game simulation
     - [x] remove non UI code from UI
-    - [ ] opaque typedefs for IDs
+    - [x] opaque typedefs for IDs
     
 ## Version 0.10
 

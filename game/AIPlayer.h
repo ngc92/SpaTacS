@@ -7,6 +7,7 @@
 
 #include "core/GameInterface.h"
 #include "ObjectID.h"
+#include "Starship.h"
 
 namespace spatacs {
     namespace cmd
@@ -38,6 +39,13 @@ namespace spatacs {
 
             std::shared_ptr<const core::GameState> mState;
             std::vector<ObjectID> mHits;
+
+            struct BestAmmo
+            {
+                std::string ammo;
+                double score;
+            };
+            BestAmmo getBestAmmo(const spatacs::game::Starship& own, const Starship& target) const;
         };
     }
 }

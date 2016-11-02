@@ -56,31 +56,10 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
         // if found, do attack
         if(min < 20.0_km)  {
             mCommands->addCommand( own.id(), cmd::Attack(target->id()) );
-
-            game::ListAmmunition la;
-            own.components().apply(la);
-
-            double best = 0.0;
-            std::string mode = "";
-            for(auto& ammo : la)
-            {
-                if(ammo.amount < 1)
-                    continue;
-
-                game::Damage estimated = ammo.data.damage;
-                estimated.kinetic      = ammo.data.charge / 20000.0_kJ;  /// \todo magic constant here
-                auto sd = getShieldDamage(estimated, target->shield());
-                auto ad = getArmourDamage(sd.remaining, target->armour(), target->radius());
-                // give only 20% weight to damaging shield and 0.75% for damaging armour
-                double total = 0.20 * sd.applied + 0.75 * ad.applied + ad.remaining.kinetic + ad.remaining.high_explosive;
-                if( total > best ) {
-                    best = total;
-                    mode = ammo.data.name;
-                }
-            }
+            auto best = getBestAmmo(own, *target);
 
             for(unsigned i = 0; i < own.weapon_count(); ++i) {
-                mCommands->addCommand(own.id(), cmd::SetWpnMode(own.id(), i, mode));
+                mCommands->addCommand(own.id(), cmd::SetWpnMode(own.id(), i, best.ammo));
             }
         }
 
@@ -97,6 +76,32 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
     }
 
     mState = state;
+}
+
+auto AIPlayer::getBestAmmo(const Starship& own, const Starship& target) const -> BestAmmo
+{
+    ListAmmunition la;
+    own.components().apply(la);
+
+    double best = 0.0;
+    std::string mode = "";
+    for(auto& ammo : la)
+    {
+        if(ammo.amount < 1)
+            continue;
+
+        Damage estimated = ammo.data.damage;
+        estimated.kinetic      = ammo.data.charge / 20000.0_kJ;  /// \todo magic constant here
+        auto sd = getShieldDamage(estimated, target.shield());
+        auto ad = getArmourDamage(sd.remaining, target.armour(), target.radius());
+        // give only 20% weight to damaging shield and 0.75% for damaging armour
+        double total = 0.20 * sd.applied + 0.75 * ad.applied + ad.remaining.kinetic + ad.remaining.high_explosive;
+        if( total > best ) {
+            best = total;
+            mode = ammo.data.name;
+        }
+    }
+    return {mode, best};
 }
 
 void AIPlayer::notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events)

@@ -6,7 +6,6 @@
   - disable projectile/projectile collision tests in physics
   - limit render thread fps
 * code
-  - inheritance instead of variant for commands
   - collision handling: use current positions.
   - CEGUI?
   - unify random
@@ -20,12 +19,13 @@
     + health
   - win game when no enemies present
   - strong impacts on shield affect shield generator
+  - afterburners
 * UI
   - rotatable camera
   - ship icons
   - panels
   - ingame menu
-    +  main menu
+    + main menu
     + continue
 * AI    
 * other
