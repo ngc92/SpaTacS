@@ -11,7 +11,7 @@ namespace events
     class Accelerate: public ShipEvent
     {
     public:
-        Accelerate( std::uint64_t object, const accel_vec& delta );
+        Accelerate(game::ObjectID object, const accel_vec& delta);
 
     private:
         virtual void applyToShip(Starship& target, EventContext& state) const override;

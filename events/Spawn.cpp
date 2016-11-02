@@ -15,7 +15,7 @@
 using namespace spatacs;
 using namespace events;
 
-SpawnProjectile::SpawnProjectile(std::uint64_t shooter, length_vec pos, velocity_vec vel, mass_t mass, length_t rad,
+SpawnProjectile::SpawnProjectile(game::ObjectID shooter, length_vec pos, velocity_vec vel, mass_t mass, length_t rad,
                                  game::Damage dmg) :
     mShooter(shooter),
     mPosition(pos),
@@ -31,7 +31,7 @@ void SpawnProjectile::apply(EventContext& context) const
 {
     auto new_id = context.state.getNextFreeID();
 
-    auto proj = std::make_unique<game::Projectile>(new_id, mShooter, mDamage);
+    auto proj = std::make_unique<game::Projectile>(game::ObjectID(new_id), mShooter, mDamage);
     proj->setPosition( mPosition );
     proj->setVelocity( mVelocity );
     proj->setMass( mMass );
@@ -80,7 +80,7 @@ void SpawnShip::apply(EventContext& context) const
     boost::property_tree::xml_parser::read_xml("data/"+mType+".xml", tree);
     auto data = tree.get_child("ship");
     auto mass = data.get<mass_t>("mass");
-    auto id = context.state.getNextFreeID();
+    game::ObjectID id{context.state.getNextFreeID()};
 
     auto ship = std::make_unique<game::Starship>(mTeam, mName, data);
 
@@ -89,7 +89,7 @@ void SpawnShip::apply(EventContext& context) const
     ship->setVelocity( velocity_vec{0, 0, 0} );
     ship->setID(id);
 
-    physics::Object obj(mPosition, velocity_vec{0,0,0}, mass, id);
+    physics::Object obj(mPosition, velocity_vec{0,0,0}, mass, id.getID());
     obj.addFixture( ship->radius() ).setUserdata(0); // ship
     obj.addFixture( ship->radius() + 25.0_m ).setUserdata(1); // shield
     auto pid = context.world.spawn(obj);

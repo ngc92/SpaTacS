@@ -1,7 +1,7 @@
 #ifndef EVENTS_SHIP_EVENT_H_INCLUDED
 #define EVENTS_SHIP_EVENT_H_INCLUDED
 
-#include <cstdint>
+#include "game/ObjectID.h"
 #include "IEvent.h"
 
 namespace spatacs
@@ -18,9 +18,9 @@ namespace events
     public:
         using Starship  = game::Starship;
 
-        ShipEvent( std::uint64_t target ) : mObject( target ) { }
+        ShipEvent(game::ObjectID target) : mObject(target ) { }
 
-        std::uint64_t id() const;
+        game::ObjectID id() const;
 
         /// applies this event to the target.
         /// The actual application is handled through the
@@ -30,7 +30,7 @@ namespace events
 
         virtual void applyToShip(Starship& target, EventContext& context) const = 0;
 
-        std::uint64_t mObject;
+        game::ObjectID mObject;
     };
 }
 }

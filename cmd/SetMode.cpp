@@ -4,11 +4,12 @@
 
 #include "SetMode.h"
 #include <iostream>
+#include <game/ObjectID.h>
 
 using namespace spatacs;
 using namespace cmd;
 
-SetWpnMode::SetWpnMode(std::uint64_t object, std::uint64_t wp_id, std::string ammo):
+SetWpnMode::SetWpnMode(game::ObjectID object, std::uint64_t wp_id, std::string ammo):
     mObject(object),
     mAmmo(ammo),
     mWeapon(wp_id)
@@ -16,7 +17,7 @@ SetWpnMode::SetWpnMode(std::uint64_t object, std::uint64_t wp_id, std::string am
 
 }
 
-std::uint64_t SetWpnMode::object() const
+game::ObjectID SetWpnMode::object() const
 {
     return mObject;
 }

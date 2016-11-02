@@ -18,7 +18,7 @@ namespace spatacs
             }
         }
 
-        std::uint64_t ShipEvent::id() const
+        game::ObjectID ShipEvent::id() const
         {
             return mObject;
         }

@@ -64,7 +64,7 @@ SET(CORE_SOURCE_FILES
         game/LevelLoader.h
         game/LevelLoader.cpp
         game/AIPlayer.cpp
-        game/AIPlayer.h)
+        game/AIPlayer.h game/ObjectID.h)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h

@@ -6,6 +6,7 @@
 #define SOI_AIPLAYER_H
 
 #include "core/GameInterface.h"
+#include "ObjectID.h"
 
 namespace spatacs {
     namespace cmd
@@ -36,7 +37,7 @@ namespace spatacs {
             std::shared_ptr<cmd::CommandManager> mCommands;
 
             std::shared_ptr<const core::GameState> mState;
-            std::vector<std::uint64_t> mHits;
+            std::vector<ObjectID> mHits;
         };
     }
 }

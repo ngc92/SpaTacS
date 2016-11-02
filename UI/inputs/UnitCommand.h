@@ -31,7 +31,7 @@ namespace spatacs {
         class UnitCommand : public IInputMode
         {
         public:
-            UnitCommand(std::uint64_t id);
+            UnitCommand(game::ObjectID id);
             ~UnitCommand();
 
             virtual void init(irr::gui::IGUIEnvironment* guienv, irr::scene::ISceneManager* smgr) override;
@@ -46,9 +46,9 @@ namespace spatacs {
         private:
             boost::optional<length_vec> aim(const ray_t &ray) const;
 
-            std::uint64_t mActiveShipID;
+            game::ObjectID mActiveShipID{};
             boost::optional<length_vec> mCurrentAim;
-            std::uint64_t mCurrentAimShip = 0;
+            game::ObjectID mCurrentAimShip{};
             length_t mTargetY     = 0.0_km;
             speed_t  mTargetSpeed = 0.75_kps;
             float mBaseY      = 0.f;

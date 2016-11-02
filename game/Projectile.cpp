@@ -9,7 +9,7 @@
 using namespace spatacs::game;
 using spatacs::Vec;
 
-Projectile::Projectile(std::uint64_t id, std::uint64_t shooter, Damage damage) :
+Projectile::Projectile(ObjectID id, ObjectID shooter, Damage damage) :
     GameObject(ObjectType::PROJECTILE),
     mDamage( damage ), mShooterId(shooter)
 {
@@ -26,7 +26,7 @@ float Projectile::age() const
     return mAge;
 }
 
-std::uint64_t Projectile::shooter() const
+ObjectID Projectile::shooter() const
 {
     return mShooterId;
 }

@@ -7,17 +7,12 @@
 
 #include <cstdint>
 #include "physics/Object.h"
+#include "game/ObjectID.h"
 
 namespace spatacs
 {
     namespace game
     {
-        enum class ObjectType
-        {
-            STARSHIP,
-            PROJECTILE
-        };
-
         class GameObject
         {
         public:
@@ -33,10 +28,10 @@ namespace spatacs
             mass_t mass() const;
             void setMass(mass_t m);
 
-            std::uint64_t id() const;
+            ObjectID id() const;
             physics::ObjectID physics_id() const;
 
-            void setID(std::uint64_t id);
+            void setID(ObjectID id);
             void setPhysicsID(physics::ObjectID id);
 
             virtual bool alive() const = 0;
@@ -47,7 +42,7 @@ namespace spatacs
 
         protected:
             ObjectType    mType;
-            std::uint64_t mID        = 0;
+            ObjectID      mID;
             physics::ObjectID mPhysicsID;
             mass_t mMass;
 

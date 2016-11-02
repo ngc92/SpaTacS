@@ -6,7 +6,7 @@
 #define SPATACS_FIXTURE_H
 
 #include "units.h"
-#include "ObjectID.h"
+#include "physics/ObjectID.h"
 
 namespace spatacs
 {

@@ -7,6 +7,7 @@
 
 #include "IEvent.h"
 #include <memory>
+#include "game/ObjectID.h"
 #include "game/Damage.h"
 
 namespace spatacs
@@ -16,12 +17,13 @@ namespace events
     class SpawnProjectile : public IEvent
     {
     public:
-        SpawnProjectile(std::uint64_t shooter, length_vec pos, velocity_vec vel, mass_t mass, length_t rad,
-                                game::Damage dmg);
+        SpawnProjectile(game::ObjectID shooter, length_vec pos,
+                        velocity_vec vel, mass_t mass, length_t rad,
+                        game::Damage dmg);
 
         virtual void apply(EventContext& context) const override;
     private:
-        std::uint64_t mShooter;
+        game::ObjectID mShooter;
         length_vec    mPosition;
         velocity_vec  mVelocity;
         mass_t        mMass;

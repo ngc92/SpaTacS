@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <iosfwd>
+#include <game/ObjectID.h>
 
 namespace spatacs
 {
@@ -11,12 +12,10 @@ namespace cmd
 	class Attack
 	{
 	public:
-		Attack( std::uint64_t target );
-		Attack( std::istream& in );
-
-		std::uint64_t target() const;
+		Attack(game::ObjectID target);
+		game::ObjectID target() const;
 	private:
-		std::uint64_t mTarget;
+		game::ObjectID mTarget;
 	};
 	
 	std::ostream& operator<<( std::ostream& out, const Attack& move );

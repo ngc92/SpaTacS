@@ -29,7 +29,7 @@ using namespace spatacs;
 /// \todo this is copy paste, improve that!
 const game::Starship* pick(const core::GameState& world, irr::core::line3df ray);
 
-ui::UnitCommand::UnitCommand(std::uint64_t id) :
+ui::UnitCommand::UnitCommand(game::ObjectID id) :
         mActiveShipID(id)
 {
 
@@ -134,7 +134,8 @@ void ui::UnitCommand::onWheel(float scroll)
 
 void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
 {
-    if(mActiveShipID != 0) {
+    if(mActiveShipID)
+    {
         const auto& ship = state().getShip(mActiveShipID);
         for(unsigned i = 0; i < ship.weapon_count(); ++i) {
             std::size_t ammo_id = std::size_t(-1);
@@ -178,19 +179,19 @@ void ui::UnitCommand::step()
 
     mTrajectoryPlotter->clear();
 
-    if(mActiveShipID == 0)
+    if(!mActiveShipID)
         return;
 
     // ship info text
     auto& ship = state().getShip(mActiveShipID);
     if(!ship.alive()) {
-        mActiveShipID = 0;
+        mActiveShipID.reset();
         return;
     }
     auto sp = convert(ship.position());
     mShipStatus->update(ship);
 
-    std::uint64_t enemy_ship = 0;
+    game::ObjectID enemy_ship{};
 
     auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
     auto& mv = cmd.move;

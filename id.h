@@ -13,10 +13,11 @@ namespace spatacs
     class TaggedID
     {
     public:
-        TaggedID() = default;
-        explicit TaggedID(Int i) : mValue(i) {};
-        Int getID() const { return mValue; }
-        explicit operator bool() const { return mValue != 0; }
+        constexpr TaggedID() = default;
+        constexpr explicit TaggedID(Int i) : mValue(i) {};
+        constexpr Int getID() const { return mValue; }
+        constexpr explicit operator bool() const { return mValue != 0; }
+        constexpr void reset() { mValue = 0; }
     private:
         Int mValue{0};
     };
@@ -43,6 +44,21 @@ namespace spatacs
     bool operator<(TaggedID<I, T> a, TaggedID<I, T> b)
     {
         return a.getID() < b.getID();
+    };
+}
+
+namespace std
+{
+    template<class T>
+    struct hash;
+
+    template <class I, class T>
+    struct hash<spatacs::TaggedID<I, T>>
+    {
+        size_t operator()(const spatacs::TaggedID<I, T>& x) const
+        {
+            return hash<I>{}( x.getID() );
+        }
     };
 
 }

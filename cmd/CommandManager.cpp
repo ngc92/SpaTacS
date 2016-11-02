@@ -12,7 +12,7 @@
 using namespace spatacs;
 using cmd::CommandManager;
 
-const cmd::CommandSlot& CommandManager::getCommandsOf(std::uint64_t ship) const
+const cmd::CommandSlot& CommandManager::getCommandsOf(game::ObjectID ship) const
 {
     return mCommandSlots.at(ship);
 }
@@ -104,17 +104,17 @@ void CommandManager::validate()
     }
 }
 
-void CommandManager::addCommand(std::uint64_t target, cmd::Move cmd)
+void CommandManager::addCommand(game::ObjectID target, cmd::Move cmd)
 {
     mCommandSlots[target].move = std::move(cmd);
 }
 
-void CommandManager::addCommand(std::uint64_t target, cmd::Attack cmd)
+void CommandManager::addCommand(game::ObjectID target, cmd::Attack cmd)
 {
     mCommandSlots[target].attack = std::move(cmd);
 }
 
-void CommandManager::addCommand(std::uint64_t target, cmd::SetWpnMode cmd)
+void CommandManager::addCommand(game::ObjectID target, cmd::SetWpnMode cmd)
 {
     mOneShotCommands.push_back(std::move(cmd));
 }

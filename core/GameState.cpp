@@ -23,11 +23,11 @@ GameState::~GameState()
 
 }
 
-Starship& GameState::getShip(const std::uint64_t id) {
+Starship& GameState::getShip(ObjectID id) {
     return dynamic_cast<Starship&>( getObject(id) );
 }
 
-const Starship& GameState::getShip(const std::uint64_t id) const
+const Starship& GameState::getShip(ObjectID id) const
 {
     return dynamic_cast<const Starship&>( getObject(id) );
 }
@@ -43,17 +43,17 @@ void GameState::add(std::unique_ptr<Projectile> proj)
     mObjects.push_back( proj.release() );
 }
 
-Projectile& GameState::getProjectile(std::uint64_t id)
+Projectile& GameState::getProjectile(ObjectID id)
 {
     return dynamic_cast<Projectile&>( getObject(id) );
 }
 
-const Projectile& GameState::getProjectile(std::uint64_t id) const
+const Projectile& GameState::getProjectile(ObjectID id) const
 {
     return dynamic_cast<const Projectile&>( getObject(id) );
 }
 
-GameObject& GameState::getObject(std::uint64_t id)
+GameObject& GameState::getObject(ObjectID id)
 {
     for(auto& p : mObjects)
         if(p.id() == id)
@@ -62,7 +62,7 @@ GameObject& GameState::getObject(std::uint64_t id)
     BOOST_THROW_EXCEPTION(std::logic_error("Could not find Object"));
 }
 
-const GameObject& GameState::getObject(std::uint64_t id) const
+const GameObject& GameState::getObject(ObjectID id) const
 {
     for(auto& p : mObjects)
         if(p.id() == id)
@@ -81,7 +81,7 @@ void GameState::cleanup()
     mObjects.erase_if( [](const GameObject& s) { return !s.alive(); });
 }
 
-const bool GameState::hasObject(std::uint64_t id) const
+const bool GameState::hasObject(ObjectID id) const
 {
     for (auto& p : mObjects)
         if (p.id() == id)

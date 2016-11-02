@@ -16,7 +16,7 @@ namespace spatacs
 {
     namespace events
     {
-        FireWeapon::FireWeapon(std::uint64_t shooter, std::uint64_t target, std::uint64_t weapon) :
+        FireWeapon::FireWeapon(game::ObjectID shooter, game::ObjectID target, std::uint64_t weapon) :
                 ShipEvent( shooter ), mTarget( target ), mWeaponId(weapon)
         {
         }
@@ -79,7 +79,7 @@ namespace spatacs
         }
         // -------------------------------------------------------------------------------------------------------------
 
-        SetWeaponAmmo::SetWeaponAmmo(std::uint64_t ship, std::uint64_t wpn, std::string ammo):
+        SetWeaponAmmo::SetWeaponAmmo(game::ObjectID ship, std::uint64_t wpn, std::string ammo):
             ShipEvent(ship),
             mAmmo(ammo),
             mWeaponId(wpn)
@@ -92,7 +92,7 @@ namespace spatacs
             ship.getWeapon(mWeaponId).get<game::ProjectileWpnData>().mAmmo = mAmmo;
         }
 
-        SetSystemActivity::SetSystemActivity(std::uint64_t ship, std::uint64_t system, double activity)
+        SetSystemActivity::SetSystemActivity(game::ObjectID ship, std::uint64_t system, double activity)
                 : ShipEvent(ship), mSystem(system), mActivity(activity)
         {}
 
@@ -166,7 +166,7 @@ namespace spatacs
 
         // -------------------------------------------------------------------------------------------------------------
 
-        Damage::Damage(std::uint64_t ship, const game::Damage& damage) :
+        Damage::Damage(game::ObjectID ship, const game::Damage& damage) :
                 ShipEvent( ship ), mDamage( damage )
         {
         }

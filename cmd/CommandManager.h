@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <boost/optional.hpp>
 #include <events/IEvent.h>
+#include "game/ObjectID.h"
 #include "core/GameInterface.h"
 #include "Move.h"
 #include "Attack.h"
@@ -32,11 +33,11 @@ namespace spatacs
         class CommandManager : public core::GameInterface
         {
         public:
-            void addCommand( std::uint64_t target, Move cmd );
-            void addCommand( std::uint64_t target, Attack cmd );
-            void addCommand( std::uint64_t target, SetWpnMode cmd );
+            void addCommand(game::ObjectID target, Move cmd);
+            void addCommand(game::ObjectID target, Attack cmd);
+            void addCommand(game::ObjectID target, SetWpnMode cmd);
 
-            const CommandSlot& getCommandsOf( std::uint64_t ship ) const;
+            const CommandSlot& getCommandsOf(game::ObjectID ship) const;
 
             //
             void init() override { };
@@ -48,7 +49,7 @@ namespace spatacs
         private:
             void validate( );
 
-            std::unordered_map<std::uint64_t, CommandSlot> mCommandSlots;
+            std::unordered_map<game::ObjectID, CommandSlot> mCommandSlots;
             std::vector<SetWpnMode> mOneShotCommands;
             std::shared_ptr<const core::GameState> mState;
         };

@@ -10,8 +10,8 @@ namespace spatacs
 {
     namespace events
     {
-        Accelerate::Accelerate(std::uint64_t object, const accel_vec& accel) : ShipEvent( object ),
-                                                             mAccel( accel )
+        Accelerate::Accelerate(game::ObjectID object, const accel_vec& accel) : ShipEvent(object ),
+                                                                                mAccel( accel )
         {
         }
 

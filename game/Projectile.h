@@ -19,13 +19,13 @@ namespace game
     {
     public:
         Projectile() = default;
-        Projectile(std::uint64_t id, std::uint64_t shooter, Damage damage);
+        Projectile(ObjectID id, ObjectID shooter, Damage damage);
         void onStep() override;
 
         float age() const;
         const Damage& damage() const;
 
-        std::uint64_t shooter() const;
+        ObjectID shooter() const;
 
         void expire();
         bool alive() const override;
@@ -35,7 +35,7 @@ namespace game
         float mAge = 0;
 
         // save shooter to prevent self-hits in the first frame
-        std::uint64_t mShooterId;
+        ObjectID mShooterId;
 
         // damage info
         Damage mDamage;

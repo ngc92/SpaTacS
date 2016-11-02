@@ -2,8 +2,8 @@
 // Created by erik on 11/1/16.
 //
 
-#ifndef SPATACS_OBJECTID_H
-#define SPATACS_OBJECTID_H
+#ifndef SPATACS_PHYSICS_OBJECTID_H
+#define SPATACS_PHYSICS_OBJECTID_H
 
 #include "id.h"
 #include <cstdint>

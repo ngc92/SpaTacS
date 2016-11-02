@@ -38,19 +38,19 @@ namespace core
         GameState& operator=(const GameState&) = default;
 
         // Ships
-        Starship& getShip( const std::uint64_t id );
-        const Starship& getShip( const std::uint64_t id ) const;
+        Starship& getShip(game::ObjectID id);
+        const Starship& getShip(game::ObjectID id) const;
         void add(std::unique_ptr<Starship> ship);
 
         // Projectiles
         void add(std::unique_ptr<Projectile> proj);
-        Projectile& getProjectile(std::uint64_t id);
-        const Projectile& getProjectile( std::uint64_t id ) const;
+        Projectile& getProjectile(game::ObjectID id);
+        const Projectile& getProjectile(game::ObjectID id) const;
 
         // Objccts
-        GameObject& getObject( std::uint64_t id );
-        const GameObject& getObject( std::uint64_t id ) const;
-        const bool hasObject( std::uint64_t id ) const;
+        GameObject& getObject(game::ObjectID id);
+        const GameObject& getObject(game::ObjectID id) const;
+        const bool hasObject(game::ObjectID id) const;
 
         auto begin() { return mObjects.begin(); };
         auto begin() const { return mObjects.begin(); };

@@ -94,8 +94,8 @@ void Simulation::physics_callback(physics::PhysicsWorld& world, const physics::O
     uint64_t id_b = B.userdata();
 
     // get objects associated with A and B.
-    auto* ob_A = &mState.getObject( id_a );
-    auto* ob_B = &mState.getObject( id_b );
+    auto* ob_A = &mState.getObject( game::ObjectID(id_a) );
+    auto* ob_B = &mState.getObject( game::ObjectID(id_b) );
 
     // check if A is a ship
     Starship* aship = dynamic_cast<Starship*>(ob_A);
