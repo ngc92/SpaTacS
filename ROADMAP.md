@@ -11,7 +11,7 @@
   * AI:
     - [x] smart selection of ammunition
   * physics:
-    - [ ] allow applying impulse during callback
+    - [x] allow applying impulse during callback
     - [ ] write tests for unit io
     - [ ] write test  for advanced collision handling
   * code:

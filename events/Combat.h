@@ -66,6 +66,7 @@ namespace spatacs {
 
             game::Damage mDamage;
             std::uint64_t mProjectileID;
+            velocity_vec mShipVel;
         };
 
         class Hit : public ShipEvent

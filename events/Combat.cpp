@@ -10,6 +10,7 @@
 #include "game/Starship.h"
 #include "game/Projectile.h"
 #include "game/systems.h"
+#include "physics/PhysicsWorld.h"
 
 namespace spatacs
 {
@@ -129,6 +130,7 @@ namespace spatacs
         HitShield::HitShield(const Starship& ship, const game::Projectile& proj) :
                 ShipEvent( ship.id() )
         {
+            mShipVel = ship.velocity();
             auto relvel = length(ship.velocity() - proj.velocity());
             auto dmg = 0.5 * relvel * relvel * proj.mass();
             double dval = dmg / 20000.0_kJ;
@@ -150,8 +152,14 @@ namespace spatacs
                 proj.expire();
             } else
             {
-                /// \todo currently, we cannot change anything in physics code, so
-                /// it is impossible to make the projectile change course.
+                auto pid = proj.physics_id();
+                auto ksp = sqrt(2 * effect.remaining.kinetic * 20000.0_kJ / proj.mass());
+                auto relvel = proj.velocity() - mShipVel;
+                relvel *= ksp / length(relvel);
+                relvel += mShipVel;
+                context.world.applyImpulse(pid, (relvel - proj.velocity()) * proj.mass());
+
+                /// \todo the shield should apply force (at least in part) radially, i think.
             }
         }
 

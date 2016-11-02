@@ -48,7 +48,7 @@ namespace events
             AmmoData(const std::string& type, size_t amount);
             std::string type; std::size_t amount;
         };
-        std::vector<AmmoData> mAmmo; /// \todo this is surely not a good way to pass that information
+        std::vector<AmmoData> mAmmo;
     };
 }
 }

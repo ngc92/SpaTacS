@@ -35,6 +35,7 @@ set(COMMAND_SOURCE_FILES
         cmd/SetMode.cpp)
 
 SET(CORE_SOURCE_FILES
+        id.h
         game/Starship.h
         core/Game.h
         core/Game.cpp
@@ -58,7 +59,12 @@ SET(CORE_SOURCE_FILES
         game/SubSystems.cpp
         game/components.h
         game/systems.h
-        game/systems.cpp game/Damage.cpp)
+        game/systems.cpp
+        game/Damage.cpp
+        game/LevelLoader.h
+        game/LevelLoader.cpp
+        game/AIPlayer.cpp
+        game/AIPlayer.h)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h
@@ -74,10 +80,11 @@ SET(PHYSICS_SOURCE_FILES
         physics/Fixture.h
         physics/Fixture.cpp
         physics/parse_unit.h
-        physics/parse_unit.cpp physics/ObjectID.h)
+        physics/parse_unit.cpp
+        physics/ObjectID.h
+        core/GameInterface.h)
 
 set(UI_SOURCE_FILES
-        core/GameInterface.h
         UI/gfx/GridNode.h
         UI/gfx/GridNode.cpp
         UI/gfx/ShipUI.h
@@ -89,8 +96,6 @@ set(UI_SOURCE_FILES
         UI/IInputMode.cpp
         UI/inputs/UnitCommand.cpp
         UI/inputs/UnitCommand.h
-        game/AIPlayer.cpp
-        game/AIPlayer.h
         UI/inputs/UnitSelection.cpp
         UI/inputs/UnitSelection.h
         UI/gfx/ShipStatusUI.cpp
@@ -111,8 +116,6 @@ set(UI_SOURCE_FILES
         UI/StateManager.cpp 
         UI/gfx/MultiLineNode.h 
         UI/gfx/MultiLineNode.cpp
-        game/LevelLoader.h
-        game/LevelLoader.cpp
         UI/states/LevelSelection.h
         UI/states/LevelSelection.cpp
         UI/inputs/ShipStatus.h
@@ -125,12 +128,12 @@ set(SOURCE_FILES
         ${CORE_SOURCE_FILES}
         ${PHYSICS_SOURCE_FILES}
         ${UI_SOURCE_FILES}
-        main.cpp id.h)
+        main.cpp)
 
-set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp test/units_test.cpp)
+set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp test/units_test.cpp test/PhysicsWorld.cpp)
 
 add_executable(SpaTacS ${SOURCE_FILES})
-add_executable(tests ${TEST_SOURCE_FILES} physics/HitTests.cpp)
+add_executable(tests ${TEST_SOURCE_FILES} ${PHYSICS_SOURCE_FILES})
 target_link_libraries(SpaTacS ${Irrlicht_LIB} ${Boost_FILESYSTEM_LIBRARY_DEBUG} ${Boost_SYSTEM_LIBRARY_DEBUG} pthread)
 
 ## data files ##

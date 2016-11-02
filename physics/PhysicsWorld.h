@@ -72,11 +72,16 @@ namespace physics
         /// can currently only happen at the end of a time step.
         void applyForce(ObjectID id, force_vec force);
 
+        /// apply an impulse to the object with the given id.
+        /// \note This changes the objects velocity immediately
+        /// and causes collisions to be recalculated.
+        void applyImpulse(ObjectID id, impulse_vec impulse);
+
         /// changes the mass of an object.
         /// Will affect only subsequent addForce calls.
         void setMass(ObjectID id, mass_t mass);
 
-        void simulate(time_t dt);
+        void simulate(time_t time_step);
 
     private:
         void pushEvent(Collision evt);
@@ -96,6 +101,7 @@ namespace physics
         {
             Object       object;
             velocity_vec acceleration; // this is premultiplied with the correct dt
+            time_t       update;
         };
         std::map<ObjectID, ObjectRecord> mObjects;
         std::uint64_t mFreeID = 1;
@@ -107,6 +113,8 @@ namespace physics
         collision_callback_fn mCollisionCallback;
         void detectCollisionsOf(ObjectID id, time_t max_dt, bool all = false);
         void filterCollisions(ObjectID id);
+
+        time_t mNow = 0.0_s;
     };
 }
 }

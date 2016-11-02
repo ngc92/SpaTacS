@@ -39,11 +39,13 @@ void PhysicsWorld::setCollisionCallback(PhysicsWorld::collision_callback_fn cb)
     mCollisionCallback = std::move(cb);
 }
 
-void PhysicsWorld::simulate(time_t dt)
+void PhysicsWorld::simulate(time_t time_step)
 {
+    mNow = 0.0_s;
+
     // detect all collisions
     for(auto& obj : mObjects)
-        detectCollisionsOf(obj.first, dt);
+        detectCollisionsOf(obj.first, time_step);
 
     // now handle all events
     while( !mEventQueue.empty() )
@@ -55,23 +57,33 @@ void PhysicsWorld::simulate(time_t dt)
         info.time = ev.time;
         info.fixture_A = ev.fA;
         info.fixture_B = ev.fB;
-        mCollisionCallback( *this, getObject(ev.A), getObject(ev.B), info );
+        mNow = ev.time;
+        if(ev.time <= time_step) {
+            /// \todo maybe we should update A and B here to the ev.time state
+            mCollisionCallback(*this, getObject(ev.A), getObject(ev.B), info);
+        }
     }
+
+    mNow = time_step;
 
     // update positions
     for(auto& obr : mObjects)
     {
+        auto dt = mNow - obr.second.update;
         obr.second.object.setPosition( obr.second.object.position() + dt * obr.second.object.velocity());
         obr.second.object.setVelocity( obr.second.object.velocity() + obr.second.acceleration );
         obr.second.acceleration = velocity_vec{Vec{0, 0, 0}};
+        obr.second.update = 0.0_s;
     }
 }
 
 void PhysicsWorld::detectCollisionsOf(ObjectID id, time_t max_dt, bool all)
 {
-    auto& obj = getObject(id);
+    auto& orec = getObjectRec(id);
+    auto& obj = orec.object;
     for(auto& fixa : obj) {
-        MovingSphere ppath = {obj.position(), obj.velocity(), fixa.radius(), speed_t(0)};
+        length_vec original_position = obj.position() - orec.update * obj.velocity();
+        MovingSphere ppath = {original_position, obj.velocity(), fixa.radius(), speed_t(0)};
         // check ship impact
         for (auto& target : mObjects) {
             // no self-intersection, check each pair only once
@@ -79,12 +91,14 @@ void PhysicsWorld::detectCollisionsOf(ObjectID id, time_t max_dt, bool all)
                 continue;
             /// \todo disable projectile-projectile hit tests
             Object& tobj = target.second.object;
-            for (auto& fix : tobj) {
-                MovingSphere tpath = {tobj.position(), tobj.velocity(), fix.radius(), speed_t(0)};
+            for (auto& fix : tobj)
+            {
+                auto opos = tobj.position() - target.second.update * tobj.velocity();
+                MovingSphere tpath = {opos, tobj.velocity(), fix.radius(), speed_t(0)};
                 auto hit = intersect(tpath, ppath);
                 if (hit) {
                     time_t time = hit.get();
-                    if (time >= 0.0_s && time < max_dt) {
+                    if (time >= mNow && time < max_dt) {
                         pushEvent(Collision{id, target.first, fixa.userdata(), fix.userdata(), time});
                     }
                 }
@@ -152,6 +166,23 @@ void PhysicsWorld::setMass(ObjectID id, mass_t mass)
 {
     auto& target = getObjectRec(id);
     target.object.setMass( mass );
+}
+
+void PhysicsWorld::applyImpulse(ObjectID id, impulse_vec impulse)
+{
+    auto& target = getObjectRec(id);
+    auto vel_old = target.object.velocity();
+    target.object.setVelocity( vel_old + impulse / target.object.mass() );
+
+    // perform part of the integration now
+    auto dt = mNow - target.update;
+    target.object.setPosition( target.object.position() + dt * vel_old);
+    target.update = mNow;
+
+    // now we can update the collision tests
+    // remove old collisions of id
+    filterCollisions(id);
+    detectCollisionsOf( id, 1.0_s, true );
 }
 
 bool PhysicsWorld::Compare::operator()(const Collision& a, const Collision& b) const
