@@ -155,9 +155,12 @@ namespace spatacs
                 auto pid = proj.physics_id();
                 auto ksp = sqrt(2 * effect.remaining.kinetic * 20000.0_kJ / proj.mass());
                 auto relvel = proj.velocity() - mShipVel;
-                relvel *= ksp / length(relvel);
-                relvel += mShipVel;
-                context.world.applyImpulse(pid, (relvel - proj.velocity()) * proj.mass());
+                double factor = ksp / length(relvel);
+                if(factor != 1) {
+                    relvel *= factor;
+                    relvel += mShipVel;
+                    context.world.applyImpulse(pid, (relvel - proj.velocity()) * proj.mass());
+                }
 
                 /// \todo the shield should apply force (at least in part) radially, i think.
             }

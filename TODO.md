@@ -1,4 +1,6 @@
 * stability:
+  - physics problem when applying impulse 0: Add testcase, 
+    and fix the problem
   - crash when trying to look up command for removed ship
 * optimizations:
   - Spatial data structure to speed up hit tests
