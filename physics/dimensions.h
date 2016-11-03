@@ -10,7 +10,7 @@
 
 namespace std
 {
-    template<class O, long N, long D>
+    template<class O, intmax_t N, intmax_t D>
     basic_ostream<O>& operator<<( basic_ostream<O>& stream, ratio<N, D> ratio );
 }
 
@@ -143,7 +143,7 @@ namespace spatacs
     }
 }
 
-template<class O, long N, long D>
+template<class O, intmax_t N, intmax_t D>
 std::basic_ostream<O>& std::operator<<( std::basic_ostream<O>& stream, std::ratio<N, D> ratio )
 {
     using ratio_t = std::ratio<N, D>;
