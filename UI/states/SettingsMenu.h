@@ -29,7 +29,7 @@ namespace spatacs
             void init(irr::IrrlichtDevice* dev) override;
             bool OnEvent(const irr::SEvent& event) override;
         private:
-            bool mBackClicked;
+            bool mBackClicked = false;
             remove_ptr<irr::gui::IGUIElement> mBackBtn;
         };
     }

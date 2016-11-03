@@ -29,7 +29,7 @@ namespace spatacs
         class GameState : public AppState
         {
         public:
-            GameState(const std::string& filename);
+            explicit GameState(const std::string& filename);
             ~GameState();
             void step(StateManager& smgr) override;
             void init(irr::IrrlichtDevice* dev) override;

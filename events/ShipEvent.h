@@ -18,7 +18,7 @@ namespace events
     public:
         using Starship  = game::Starship;
 
-        ShipEvent(game::ObjectID target) : mObject(target ) { }
+        explicit ShipEvent(game::ObjectID target) : mObject(target ) { }
 
         game::ObjectID id() const;
 

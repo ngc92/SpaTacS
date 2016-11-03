@@ -16,7 +16,7 @@ namespace spatacs
         class GameObject
         {
         public:
-            GameObject(ObjectType t);
+            explicit GameObject(ObjectType t);
             virtual ~GameObject() = default;
 
             const length_vec& position() const;

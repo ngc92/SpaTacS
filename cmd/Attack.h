@@ -12,7 +12,7 @@ namespace cmd
 	class Attack
 	{
 	public:
-		Attack(game::ObjectID target);
+		explicit Attack(game::ObjectID target);
 		game::ObjectID target() const;
 	private:
 		game::ObjectID mTarget;

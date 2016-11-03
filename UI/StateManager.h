@@ -22,7 +22,7 @@ namespace spatacs
         class StateManager
         {
         public:
-            StateManager(irr::IrrlichtDevice* dev);
+            explicit StateManager(irr::IrrlichtDevice* dev);
             ~StateManager();
             void setState(std::unique_ptr<AppState> st);
             void step();

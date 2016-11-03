@@ -16,7 +16,7 @@ namespace spatacs
         class LevelLoader : public core::GameInterface
         {
         public:
-            LevelLoader(std::string filename);
+            explicit LevelLoader(std::string filename);
 
             virtual void init() override { }
 

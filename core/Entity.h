@@ -39,7 +39,7 @@ namespace spatacs
             using bits_t = std::bitset<comp_count+1>;
 
 
-            Entity(std::uint64_t id) : mID( id ) { }
+            explicit Entity(std::uint64_t id) : mID( id ) { }
 
             std::uint64_t id() const { return mID; }
 

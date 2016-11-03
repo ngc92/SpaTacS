@@ -17,14 +17,14 @@ namespace spatacs
     {
         struct Name
         {
-            Name(std::string n = "") : name(n) { }
+            explicit Name(std::string n = "") : name(n) { }
             std::string name = "";
         };
 
         struct Health
         {
             Health() = default;
-            Health(double v) : current(v), maximum(v) { }
+            explicit Health(double v) : current(v), maximum(v) { }
 
             double status() const { return current / maximum; }
 
@@ -51,7 +51,7 @@ namespace spatacs
         struct FuelStorage
         {
             FuelStorage() = default;
-            FuelStorage(mass_t v);
+            explicit FuelStorage(mass_t v);
 
             mass_t request(mass_t desire);
 
@@ -70,7 +70,7 @@ namespace spatacs
 
         struct AmmoStorage
         {
-            AmmoStorage(std::size_t cap = 0);
+            explicit AmmoStorage(std::size_t cap = 0);
 
             struct Ammo
             {
@@ -89,7 +89,7 @@ namespace spatacs
         struct PowerPlantData
         {
             PowerPlantData() = default;
-            PowerPlantData(power_t ep) : energy_production(ep) {}
+            explicit PowerPlantData(power_t ep) : energy_production(ep) {}
             power_t energy_production = 0.0_W;
         };
 
@@ -132,7 +132,7 @@ namespace spatacs
         class Activity
         {
         public:
-            Activity(double a = 1);
+            explicit Activity(double a = 1);
 
             double get() const;
             void set(double a);

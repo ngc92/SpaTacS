@@ -116,7 +116,6 @@ namespace {
 
     rtunit parse_imp(std::string unit_s)
     {
-        std::string copy = unit_s;
         rtunit u{};
         u.factor = 1.0;
         rtunit parsed = parse_single_factor(unit_s);
