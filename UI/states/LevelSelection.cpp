@@ -47,7 +47,7 @@ void LevelSelection::init(irr::IrrlichtDevice* dev)
         y += 50;
         i += 1;
         mLvlBtns.push_back( remove_ptr<irr::gui::IGUIElement>(new_btn) );
-        mLevelFiles.push_back( f.path().native().c_str() );
+        mLevelFiles.push_back( f.path().string() );
     }
     irr::core::recti bpos(300, 100 + y, 500, 140 + y);
     irr::gui::IGUIElement* new_btn = dev->getGUIEnvironment()->addButton(bpos, 0, -1, L"Back");
