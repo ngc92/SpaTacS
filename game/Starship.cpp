@@ -14,17 +14,17 @@ using namespace spatacs;
 using namespace game;
 
 ShipData::ShipData(std::uint64_t team, std::string name, const boost::property_tree::ptree& data) :
-        mTeam(team),
-        mName(std::move(name) ),
-        mRadius( data.get<length_t>("radius") ),
         mMaxHitPoints( data.get<double>("hitpoints") ),
         mHitPoints( mMaxHitPoints ),
-        mMaxArmour( data.get<double>("armour") ),
-        mCurArmour( mMaxArmour ),
         mMaxShield( data.get<double>("shield") ),
         mCurShield( mMaxShield ),
+        mShieldDecay( scalar_t(std::log(1-data.get<float>("shield_dissipation") / 100.f)) / 1.0_s ),
+        mMaxArmour( data.get<double>("armour") ),
+        mCurArmour( mMaxArmour ),
         mEmptyMass( data.get<mass_t>("mass") ),
-        mShieldDecay( scalar_t(std::log(1-data.get<float>("shield_dissipation") / 100.f)) / 1.0_s )
+        mRadius( data.get<length_t>("radius") ),
+        mTeam(team),
+        mName(std::move(name) )
 {
 }
 

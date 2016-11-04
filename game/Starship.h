@@ -20,8 +20,8 @@ namespace spatacs
 
         struct SystemStatus
         {
-            float current;
-            float max;
+            double current;
+            double max;
         };
 
         /// the purpose of this class is the ability to add members to

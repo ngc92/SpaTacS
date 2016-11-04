@@ -11,7 +11,8 @@ using spatacs::Vec;
 
 Projectile::Projectile(ObjectID id, ObjectID shooter, Damage damage) :
     GameObject(ObjectType::PROJECTILE),
-    mDamage( damage ), mShooterId(shooter)
+    mShooterId(shooter),
+    mDamage( damage )
 {
     setID(id);
 }
