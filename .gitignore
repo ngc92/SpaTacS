@@ -28,6 +28,10 @@
 *.out
 *.app
 
+# SpaTacS executable and test dirs
+SpaTacS
+tests
+
 # Cmake files
 CMakeCache.txt
 CMakeFiles/*
