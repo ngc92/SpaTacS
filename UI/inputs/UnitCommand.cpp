@@ -23,6 +23,7 @@
 #include "UI/gfx/MultiLineNode.h"
 #include "ShipStatus.h"
 #include <irrlicht/IBillboardSceneNode.h>
+#include "UI/panels/DamageReport.h"
 
 using namespace spatacs;
 
@@ -63,6 +64,8 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::IScene
     mSpeedInfo.reset(txt);
 
     mTrajectoryPlotter.reset( new irr::scene::MultiLineNode(smgr->getRootSceneNode(), smgr) );
+
+    mDamageReport.reset(new ui::DamageReport(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 500, 110, 600)));
 }
 
 
@@ -80,7 +83,7 @@ void ui::UnitCommand::onRightClick(ray_t ray, const irr::SEvent::SMouseInput& ev
         {
             getCmdMgr().addCommand(mActiveShipID, cmd::Attack(t->id()));
         }
-    }else {
+    } else {
         auto target = aim(ray);
         if(target) {
             auto vec = target.get();
@@ -190,6 +193,7 @@ void ui::UnitCommand::step()
     }
     auto sp = convert(ship.position());
     mShipStatus->update(ship);
+    mDamageReport->update(ship);
 
     game::ObjectID enemy_ship{};
 

@@ -28,6 +28,8 @@ namespace irr
 namespace spatacs {
     namespace ui {
         class ShipStatusUI;
+        class DamageReport;
+
         class UnitCommand : public IInputMode
         {
         public:
@@ -58,6 +60,7 @@ namespace spatacs {
             std::unique_ptr<ShipStatusUI>      mTargetStatus;
             remove_ptr<irr::gui::IGUIElement>  mSpeedInfo;
             remove_ptr<irr::scene::MultiLineNode> mTrajectoryPlotter;
+            remove_ptr<DamageReport>           mDamageReport;
 
             enum Mode
             {ATTACK, MOVE} mMode = MOVE;

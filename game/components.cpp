@@ -101,6 +101,7 @@ namespace spatacs
         void makePowerPlant(const ptree& data, ComponentEntity& cmp)
         {
             addHealth(cmp, data);
+            cmp.add<Name>("power plant");
             cmp.add<PowerPlantData>(data.get<power_t>("power") );
             cmp.add<Activity>();
         }
