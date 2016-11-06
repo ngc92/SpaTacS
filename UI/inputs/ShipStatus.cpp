@@ -26,18 +26,6 @@ void ShipStatusUI::update(const game::Starship& ship)
     mGUIElement->setShipName( ship.name() );
     mGUIElement->clearSystems();
 
-    if(mShowSystemHealth) {
-        auto sys = core::make_system<const game::ComponentEntity, const game::Health, const game::Name>
-        (
-                [this](const game::Health& h, const game::Name& n) mutable
-                {
-                    irr::gui::SystemStatus status{n.name, h.current, h.maximum};
-                    mGUIElement->pushSystem( status );
-                }
-        );
-        ship.components().apply(sys);
-    }
-
     if(mShowShipStatus) {
         mGUIElement->pushSystem(irr::gui::SystemStatus{"shield", ship.shield(), ship.max_shield()});
         mGUIElement->pushSystem(irr::gui::SystemStatus{"hull", ship.hull_status().current, ship.hull_status().max});

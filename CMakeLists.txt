@@ -64,7 +64,8 @@ SET(CORE_SOURCE_FILES
         game/LevelLoader.h
         game/LevelLoader.cpp
         game/AIPlayer.cpp
-        game/AIPlayer.h game/ObjectID.h)
+        game/AIPlayer.h
+        game/ObjectID.h)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h
@@ -120,7 +121,10 @@ set(UI_SOURCE_FILES
         UI/states/LevelSelection.cpp
         UI/inputs/ShipStatus.h
         UI/inputs/ShipStatus.cpp
-        )
+        UI/panels/DamageReport.h
+        UI/panels/DamageReport.cpp
+        UI/gfx/HealthBar.h
+        UI/gfx/HealthBar.cpp)
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}

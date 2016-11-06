@@ -18,6 +18,7 @@ namespace spatacs
             bool OnEvent(const irr::SEvent& event) override
             {
                 state->OnEvent(event);
+                return false;
             }
         };
     }
@@ -38,7 +39,8 @@ void StateManager::setState(std::unique_ptr<AppState> st)
 }
 
 StateManager::StateManager(irr::IrrlichtDevice* dev) :
-    mDevice(dev), mEventDispatch( std::make_unique<EventDispatch>() )
+    mEventDispatch( std::make_unique<EventDispatch>() ),
+    mDevice(dev)
 {
     mDevice->setEventReceiver( mEventDispatch.get() );
 }

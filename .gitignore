@@ -27,3 +27,13 @@
 *.exe
 *.out
 *.app
+
+# SpaTacS executable and test dirs
+SpaTacS
+tests
+
+# Cmake files
+CMakeCache.txt
+CMakeFiles/*
+Makefile
+cmake_install.cmake

@@ -18,8 +18,9 @@ using chrono::steady_clock;
 
 GameThread::GameThread() : mSimulation( std::make_unique<Simulation>() ),
                            mLastStep( steady_clock::now() ),
-                           mProfileStats( boost::accumulators::tag::rolling_window::window_size = 100 ),
-                           mPause( false ), mRunThread(true)
+                           mPause( false ),
+                           mRunThread(true),
+                           mProfileStats( boost::accumulators::tag::rolling_window::window_size = 100 )
 {
     mThread = std::thread([this](){ this->thread_run(); });
 }

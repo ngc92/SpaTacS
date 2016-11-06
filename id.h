@@ -9,15 +9,28 @@
 
 namespace spatacs
 {
+    /*! \brief A class for IDs, that provides an additional template parameter as a tag.
+     *  \details This allows to define several distinct IDs that cannot be intermixed.
+     *  IDs are expected to be of integral type, but do not provide most of the usual integer
+     *  operators. Supported are:
+     *    stream output
+     *    equality comparison
+     *    less than comparison (so they can be used in ordered containers)
+     *    std::hast (so they can be used in unordered containers).
+     *  A value of 0 indicates a non-assigned ID.
+     *  Most operations are declared constexpr, so this class could even be used for compile time IDs.
+     */
     template<class Int, class Tag>
     class TaggedID
     {
     public:
         constexpr TaggedID() = default;
         constexpr explicit TaggedID(Int i) : mValue(i) {};
+
         constexpr Int getID() const { return mValue; }
         constexpr explicit operator bool() const { return mValue != 0; }
         constexpr void reset() { mValue = 0; }
+
     private:
         Int mValue{0};
     };
@@ -29,19 +42,19 @@ namespace spatacs
     };
 
     template<class I, class T>
-    bool operator==(TaggedID<I, T> a, TaggedID<I, T> b)
+    constexpr bool operator==(TaggedID<I, T> a, TaggedID<I, T> b)
     {
         return a.getID() == b.getID();
     };
 
     template<class I, class T>
-    bool operator!=(TaggedID<I, T> a, TaggedID<I, T> b)
+    constexpr bool operator!=(TaggedID<I, T> a, TaggedID<I, T> b)
     {
         return a.getID() != b.getID();
     };
 
     template<class I, class T>
-    bool operator<(TaggedID<I, T> a, TaggedID<I, T> b)
+    constexpr bool operator<(TaggedID<I, T> a, TaggedID<I, T> b)
     {
         return a.getID() < b.getID();
     };
