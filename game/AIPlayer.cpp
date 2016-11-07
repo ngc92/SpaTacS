@@ -58,9 +58,10 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
             mCommands->addCommand( own.id(), cmd::Attack(target->id()) );
             auto best = getBestAmmo(own, *target);
 
-            for(unsigned i = 0; i < own.weapon_count(); ++i) {
-                mCommands->addCommand(own.id(), cmd::SetWpnMode(own.id(), i, best.ammo));
-            }
+            auto ammo_event_generator = game::for_each_weapon_id([&](std::size_t id){
+                mCommands->addCommand(own.id(), cmd::SetWpnMode(own.id(), id, best.ammo));
+            });
+            own.components().apply(ammo_event_generator);
         }
 
         // fly closer if shield is stronger

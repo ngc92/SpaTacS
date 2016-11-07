@@ -20,7 +20,6 @@ ShipStatusUI::ShipStatusUI(irr::gui::ShipStatusUI* rp) :
 
 }
 
-
 void ShipStatusUI::update(const game::Starship& ship)
 {
     mGUIElement->setShipName( ship.name() );
@@ -28,7 +27,7 @@ void ShipStatusUI::update(const game::Starship& ship)
 
     if(mShowShipStatus) {
         mGUIElement->pushSystem(irr::gui::SystemStatus{"shield", ship.shield(), ship.max_shield()});
-        mGUIElement->pushSystem(irr::gui::SystemStatus{"hull", ship.hull_status().current, ship.hull_status().max});
+        mGUIElement->pushSystem(irr::gui::SystemStatus{"hull", ship.armour(), ship.max_armour()});
         mGUIElement->pushSystem(irr::gui::SystemStatus{"structure", ship.hp(), ship.max_hp()});
     }
     if(mShowFuel) {
@@ -60,29 +59,35 @@ void ShipStatusUI::update(const game::Starship& ship)
         ship.components().apply(la);
 
         auto viewer = mWpnStatusView.begin();
-        auto wc     = ship.weapon_count();
-        for(unsigned i = 0; i < wc && viewer != mWpnStatusView.end(); ++i, ++viewer)
-        {
-            const auto& wpn = ship.weapon(i);
-            const auto& ammo_type = wpn.get<game::ProjectileWpnData>();
-            std::size_t ammo = 0;
-            game::AmmoData dat;
-            for (auto& a : la) {
-                if(a.data.name == ammo_type.mAmmo) {
-                    ammo += a.amount;
-                    dat = a.data;
+        int i = 1;
+        auto wpn_view = core::make_system<const game::ComponentEntity, const game::ProjectileWpnData>(
+            [&](const game::ProjectileWpnData& wpn_data)
+            {
+                std::size_t ammo = 0;
+                game::AmmoData dat;
+                for (auto& a : la) {
+                    if(a.data.name == wpn_data.mAmmo) {
+                        ammo += a.amount;
+                        dat = a.data;
+                    }
                 }
+                std::wstringstream str;
+                str << std::setprecision(2);
+                str << L"weapon " << (i) << L"\n";
+                str << L" " << wpn_data.mAmmo.c_str() << L" (" << ammo << L")\n";
+                str << L" " << dat.mass << " @ " << sqrt(2.0*dat.charge / dat.mass) << "\n";
+                str << L" " << dat.damage.shield_overload << L" | " << dat.damage.high_explosive <<
+                    " | " << dat.damage.armour_pierce << L"\n";
+                (*viewer)->setText(str.str().c_str());
+                (*viewer)->setVisible(true);
+
+                i += 1;
+                if(viewer != mWpnStatusView.end())
+                    ++viewer;
             }
-            std::wstringstream str;
-            str << std::setprecision(2);
-            str << L"weapon " << (i+1) << L"\n";
-            str << L" " << ammo_type.mAmmo.c_str() << L" (" << ammo << L")\n";
-            str << L" " << dat.mass << " @ " << sqrt(2.0*dat.charge / dat.mass) << "\n";
-            str << L" " << dat.damage.shield_overload << L" | " << dat.damage.high_explosive <<
-                " | " << dat.damage.armour_pierce << L"\n";
-            (*viewer)->setText(str.str().c_str());
-            (*viewer)->setVisible(true);
-        }
+        );
+
+        ship.components().apply(wpn_view);
 
         // make unused wpns invisible
         std::for_each(viewer, mWpnStatusView.end(), [](auto& v){ v->setVisible(false); });

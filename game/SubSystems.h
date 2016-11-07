@@ -33,9 +33,6 @@ namespace spatacs
         struct SubSystems
         {
             SubSystems(const boost::property_tree::ptree& data);
-            SubSystems( const SubSystems& other );
-
-            std::vector<ComponentEntity*> mArmament;
 
             void onStep(Starship& ship);
 

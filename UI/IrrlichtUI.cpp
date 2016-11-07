@@ -168,8 +168,7 @@ void IrrlichtUI::setState(const std::shared_ptr<const spatacs::core::GameState>&
                                       {255, 200, 0,   0}};
             shipfx->setColor(colors[ship->team() - 1]);
             shipfx->setShieldStatus(ship->shield() / ship->max_shield());
-            auto hs = ship->hull_status();
-            shipfx->setHullStatus(hs.current / hs.max);
+            shipfx->setHullStatus(ship->armour() / ship->max_armour());
             node = shipfx;
         } else
         {

@@ -5,6 +5,7 @@
 #include "CommandManager.h"
 #include "core/GameState.h"
 #include <iostream>
+#include <game/systems.h>
 #include "events/Accelerate.h"
 #include "game/Starship.h"
 #include "events/Combat.h"
@@ -31,13 +32,11 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
             // dead ships don't shoot
             if(ship.alive() && target.alive())
             {
-                std::size_t wp_count = ship.weapon_count();
-                for(std::size_t i = 0; i < wp_count; ++i)
-                {
-                    // send the command even when not ready, otherwise we loose
-                    // one or two steps.
-                    events.push_back( events::EventPtr(new events::FireWeapon(ship.id(), target.id(), i)) );
-                }
+
+                auto fire_event_generator = game::for_each_weapon_id([&](std::size_t id){
+                    events.push_back( events::EventPtr(new events::FireWeapon(ship.id(), target.id(), id)));
+                });
+                ship.components().apply(fire_event_generator);
             }
         }
 

@@ -132,6 +132,18 @@ namespace spatacs
             length_vec mAimPos{.0, .0, .0};
             speed_t mMuzzleVel{.0};
         };
+
+        template<class Lambda>
+        auto for_each_weapon_id(Lambda&& lambda)
+        {
+            return core::make_system<
+                    const game::ComponentEntity, const game::ComponentEntity, const game::WeaponAimData>(
+                    [l=std::move(lambda)](const game::ComponentEntity& ety, const game::WeaponAimData&){
+                        l(ety.id());
+                    }
+            );
+        }
+
     }
 }
 

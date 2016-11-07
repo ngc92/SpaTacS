@@ -51,21 +51,6 @@ void Starship::onStep()
     mSubSystems->onStep(*this);
 }
 
-std::size_t Starship::weapon_count() const
-{
-    return mSubSystems->mArmament.size();
-}
-
-const ComponentEntity& Starship::weapon( std::size_t id ) const
-{
-    return *mSubSystems->mArmament.at(id);
-}
-
-ComponentEntity& Starship::getWeapon( std::size_t id )
-{
-    return *mSubSystems->mArmament.at(id);
-}
-
 bool Starship::alive() const
 {
     return mHitPoints > 0;
@@ -98,10 +83,6 @@ Starship& Starship::operator=( Starship&& o )
     ShipData::operator=( o );
     mSubSystems = std::move(o.mSubSystems);
     return *this;
-}
-
-SystemStatus Starship::hull_status() const {
-    return SystemStatus{armour(), max_armour()};
 }
 
 void Starship::dealDamage(double dmg)

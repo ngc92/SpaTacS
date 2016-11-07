@@ -28,7 +28,7 @@ namespace spatacs
                 return;
 
             auto& target = context.state.getShip( mTarget );
-            auto& wpn = shooter.getWeapon( mWeaponId );
+            auto& wpn = shooter.components().get(mWeaponId);
             auto tpos = target.position();
             auto tvel = target.velocity();
             auto ev = fireWeapon(shooter, tpos, tvel, wpn);
@@ -89,7 +89,7 @@ namespace spatacs
 
         void SetWeaponAmmo::applyToShip(Starship& ship, EventContext& context) const
         {
-            ship.getWeapon(mWeaponId).get<game::ProjectileWpnData>().mAmmo = mAmmo;
+            ship.components().get(mWeaponId).get<game::ProjectileWpnData>().mAmmo = mAmmo;
         }
 
         SetSystemActivity::SetSystemActivity(game::ObjectID ship, std::uint64_t system, double activity)

@@ -18,12 +18,6 @@ namespace spatacs
     namespace game {
         class SubSystems;
 
-        struct SystemStatus
-        {
-            double current;
-            double max;
-        };
-
         /// the purpose of this class is the ability to add members to
         /// Starship, without having to worry about adding them to the
         /// copy/move c'tors.
@@ -114,15 +108,6 @@ namespace spatacs
 
             /// called at the end of a game step.
             void onStep() override;
-
-            // hull interface
-            SystemStatus hull_status() const;
-
-            /// Subcomponents
-            // weapon interface
-            std::size_t weapon_count() const;
-            const ComponentEntity& weapon( std::size_t id) const;
-            ComponentEntity& getWeapon( std::size_t id );
 
             const core::EntityManager<ComponentEntity>& components() const;
             core::EntityManager<ComponentEntity>& components();

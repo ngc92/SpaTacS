@@ -19,6 +19,21 @@ namespace spatacs
             using type_list = boost::mpl::vector<Components...>;
         };
 
+        template<class E, class Sig>
+        struct normalized;
+
+        template<class E, class... Comps>
+        struct normalized<E, Signature<Comps...>>
+        {
+            using type = Signature<Comps...>;
+        };
+
+        template<class E, class... Comps>
+        struct normalized<E, Signature<E, Comps...>>
+        {
+            using type = Signature<Comps...>;
+        };
+
         template<class Entity, class Imp, class... Sigs>
         class System
         {
@@ -39,7 +54,7 @@ namespace spatacs
             void try_apply(Entity& entity, std::enable_if_t<I != sizeof...(Sigs), void*> v = nullptr)
             {
                 using sig = std::tuple_element_t<I, signatures>;
-                if(match<sig>( entity.bits() ))
+                if(match<typename normalized<Entity, sig>::type>( entity.bits() ))
                 {
                     apply_matching(entity, sig());
                 } else
@@ -63,7 +78,7 @@ namespace spatacs
             // overload in case the first thing in the signature is the entity.
             /// \todo maybe we can generalize this a bit later on.
             template<class... SigTypes>
-            void apply_matching(Entity& entity, Signature<Entity&, SigTypes...>&& s)
+            void apply_matching(Entity& entity, Signature<Entity, SigTypes...>&& s)
             {
                 imp().apply( entity, entity.template get<SigTypes>()... );
             }

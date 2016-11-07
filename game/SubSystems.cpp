@@ -35,18 +35,8 @@ SubSystems::SubSystems(const boost::property_tree::ptree& data)
         if(child.first == "ammo_storage")
             makeAmmoStorage(child.second, mComponents.addEntity());
     }
-
-    mComponents.apply([this](game::ComponentEntity& cmp)
-                      { if(cmp.has<WeaponAimData>()){ mArmament.push_back(&cmp);} });
 }
 
-SubSystems::SubSystems( const SubSystems& other ):
-        mComponents( other.mComponents ),
-        mEnergyMgr( other.mEnergyMgr )
-{
-    mComponents.apply([this](game::ComponentEntity& cmp)
-                      { if(cmp.has<WeaponAimData>()){ mArmament.push_back(&cmp);} });
-}
 
 void SubSystems::onStep(Starship& ship)
 {

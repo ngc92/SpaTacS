@@ -140,26 +140,25 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
     if(mActiveShipID)
     {
         const auto& ship = state().getShip(mActiveShipID);
-        for(unsigned i = 0; i < ship.weapon_count(); ++i) {
-            std::size_t ammo_id = std::size_t(-1);
-            if (key == irr::KEY_KEY_1) {
-                ammo_id = 0;
-            } else if (key == irr::KEY_KEY_2) {
-                ammo_id = 1;
-            } else if (key == irr::KEY_KEY_3) {
-                ammo_id = 2;
-            }
+        std::size_t ammo_id = std::size_t(-1);
+        if (key == irr::KEY_KEY_1) {
+            ammo_id = 0;
+        } else if (key == irr::KEY_KEY_2) {
+            ammo_id = 1;
+        } else if (key == irr::KEY_KEY_3) {
+            ammo_id = 2;
+        }
 
-            if(ammo_id != -1)
-            {
-                game::ListAmmunition la;
-                ship.components().apply(la);
-                if(ammo_id < la.getAmmos().size()) {
-                    getCmdMgr().addCommand(mActiveShipID,
-                                           cmd::SetWpnMode(mActiveShipID, i, la.getAmmos().at(ammo_id).data.name));
-                }
-            }
+        game::ListAmmunition la;
+        ship.components().apply(la);
 
+        if(ammo_id != -1 && ammo_id < la.getAmmos().size())
+        {
+            auto ammo_event_generator = game::for_each_weapon_id([&](std::size_t id){
+                getCmdMgr().addCommand(mActiveShipID,
+                                       cmd::SetWpnMode(mActiveShipID, id, la.getAmmos().at(ammo_id).data.name));
+            });
+            ship.components().apply(ammo_event_generator);
         }
 
         if( key == irr::KEY_PLUS )
