@@ -36,3 +36,24 @@ std::ostream& ::spatacs::cmd::operator<<(std::ostream& out, const SetWpnMode& mo
 {
     return out << "SetWpnMode("<<move.object() << ", " << move.weapon() << " " << move.ammo() << ")";
 }
+
+
+SetSystemActivity::SetSystemActivity(game::ObjectID object, std::uint64_t system_id, double activity) :
+    mObject(object), mSystem(system_id), mActivity(activity)
+{
+
+}
+
+game::ObjectID SetSystemActivity::object() const
+{
+    return mObject;
+}
+double SetSystemActivity::activity() const
+{
+    return mActivity;
+}
+
+std::uint64_t SetSystemActivity::system() const
+{
+    return mSystem;
+}

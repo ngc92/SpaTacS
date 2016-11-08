@@ -30,7 +30,8 @@ void ShipStatusUI::draw()
         Environment->getVideoDriver()->draw2DRectangle(SColor(255, 64, 0, 0), rect, &clip);
         auto cp = rect;
         auto div = sys.max_hp;
-        if(div == 0) div = 1;
+        /// \todo make this stable for div -> 0
+        if(div < 1e-14) div = 1;
         cp.LowerRightCorner.X = cp.UpperLeftCorner.X + (int)std::round(rect.getWidth() * sys.hp / div);
         Environment->getVideoDriver()->draw2DRectangle(SColor(255, 64, 128, 0), cp, &clip);
         std::wstringstream stream;

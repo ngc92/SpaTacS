@@ -51,13 +51,26 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
     }
 
     for(auto& s : mOneShotCommands) {
-        auto& ship = mState->getShip(s.object());
-        // dead ships don't shoot
-        if (!ship.alive()) {
-            continue;
-        }
+        /// \todo this is ugly, really ugly
+        if(s.type() == typeid(SetWpnMode)) {
+            auto& wm = boost::get<SetWpnMode>(s);
+            auto& ship = mState->getShip(wm.object());
+            // dead ships don't shoot
+            if (!ship.alive()) {
+                continue;
+            }
 
-        events.push_back(events::EventPtr(new events::SetWeaponAmmo(ship.id(), s.weapon(), s.ammo())));
+            events.push_back(events::EventPtr(new events::SetWeaponAmmo(ship.id(), wm.weapon(), wm.ammo())));
+        }else if(s.type() == typeid(SetSystemActivity)) {
+            auto& sa = boost::get<SetSystemActivity>(s);
+            auto& ship = mState->getShip(sa.object());
+            // dead ships don't shoot
+            if (!ship.alive()) {
+                continue;
+            }
+
+            events.push_back(events::EventPtr(new events::SetSystemActivity(ship.id(), sa.system(), sa.activity())));
+        }
     }
 
     mOneShotCommands.clear();
@@ -114,6 +127,11 @@ void CommandManager::addCommand(game::ObjectID target, cmd::Attack cmd)
 }
 
 void CommandManager::addCommand(game::ObjectID target, cmd::SetWpnMode cmd)
+{
+    mOneShotCommands.push_back(std::move(cmd));
+}
+
+void CommandManager::addCommand(game::ObjectID target, cmd::SetSystemActivity cmd)
 {
     mOneShotCommands.push_back(std::move(cmd));
 }

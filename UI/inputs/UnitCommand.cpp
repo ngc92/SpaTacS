@@ -170,6 +170,69 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
             if(mTargetSpeed < 0.1_kps)
                 mTargetSpeed = 0.1_kps;
         }
+
+        double change_sgen_activity = 0.0;
+        if( key == irr::KEY_KEY_O )
+        {
+            change_sgen_activity = 0.1;
+        } else if( key == irr::KEY_KEY_L )
+        {
+            change_sgen_activity = -0.1;
+        }
+
+        if(change_sgen_activity != 0)
+        {
+            auto eventgen = core::make_system<
+                    const game::ComponentEntity, const game::ComponentEntity, const game::ShieldGeneratorData,
+                            const game::Activity>(
+            [&](const game::ComponentEntity& ety, const game::ShieldGeneratorData&, const game::Activity& ac){
+                getCmdMgr().addCommand( mActiveShipID,
+                    cmd::SetSystemActivity(mActiveShipID, ety.id(), ac.get() + change_sgen_activity) );
+            });
+            ship.components().apply(eventgen);
+        }
+
+        double change_pp_activity = 0.0;
+        if( key == irr::KEY_KEY_I )
+        {
+            change_pp_activity = 0.1;
+        } else if( key == irr::KEY_KEY_K )
+        {
+            change_pp_activity = -0.1;
+        }
+
+        if(change_pp_activity != 0)
+        {
+            auto eventgen = core::make_system<
+                    const game::ComponentEntity, const game::ComponentEntity, const game::PowerPlantData,
+                            const game::Activity>(
+            [&](const game::ComponentEntity& ety, const game::PowerPlantData&, const game::Activity& ac){
+                getCmdMgr().addCommand( mActiveShipID,
+                    cmd::SetSystemActivity(mActiveShipID, ety.id(), ac.get() + change_pp_activity) );
+            });
+            ship.components().apply(eventgen);
+        }
+
+        double change_eg_activity = 0.0;
+        if( key == irr::KEY_KEY_U )
+        {
+            change_eg_activity = 0.1;
+        } else if( key == irr::KEY_KEY_J )
+        {
+            change_eg_activity = -0.1;
+        }
+
+        if(change_eg_activity != 0)
+        {
+            auto eventgen = core::make_system<
+                    const game::ComponentEntity, const game::ComponentEntity, const game::EngineData,
+                    const game::Activity>(
+                    [&](const game::ComponentEntity& ety, const game::EngineData&, const game::Activity& ac){
+                        getCmdMgr().addCommand( mActiveShipID,
+                                                cmd::SetSystemActivity(mActiveShipID, ety.id(), ac.get() + change_eg_activity) );
+                    });
+            ship.components().apply(eventgen);
+        }
     }
 }
 

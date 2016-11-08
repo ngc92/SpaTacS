@@ -28,6 +28,20 @@ namespace cmd
         std::uint64_t  mWeapon;
 	};
 
+	class SetSystemActivity
+	{
+	public:
+        SetSystemActivity(game::ObjectID object, std::uint64_t system_id, double activity);
+
+		game::ObjectID object() const;
+		double activity() const;
+		std::uint64_t system() const;
+	private:
+		game::ObjectID mObject;
+		double         mActivity;
+		std::uint64_t  mSystem;
+	};
+
 	std::ostream& operator<<( std::ostream& out, const SetWpnMode& move );
 }
 }

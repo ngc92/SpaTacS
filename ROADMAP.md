@@ -5,7 +5,7 @@
       + [ ] evade
     - [x] optimize waypoints (do not brake too much)
     - [ ] allow management of multiple weapons
-    - [ ] allow setting system activity
+    - [x] allow setting system activity
     - [ ] UI panels
     - [ ] select multiple ships
   * game:

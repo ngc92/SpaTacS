@@ -14,6 +14,7 @@
 #include "Move.h"
 #include "Attack.h"
 #include "SetMode.h"
+#include <boost/variant.hpp>
 
 namespace spatacs
 {
@@ -36,6 +37,7 @@ namespace spatacs
             void addCommand(game::ObjectID target, Move cmd);
             void addCommand(game::ObjectID target, Attack cmd);
             void addCommand(game::ObjectID target, SetWpnMode cmd);
+            void addCommand(game::ObjectID target, SetSystemActivity cmd);
 
             const CommandSlot& getCommandsOf(game::ObjectID ship) const;
 
@@ -49,8 +51,10 @@ namespace spatacs
         private:
             void validate( );
 
+            using oneshot_t = boost::variant<SetWpnMode, SetSystemActivity> ;
+
             std::unordered_map<game::ObjectID, CommandSlot> mCommandSlots;
-            std::vector<SetWpnMode> mOneShotCommands;
+            std::vector<oneshot_t> mOneShotCommands;
             std::shared_ptr<const core::GameState> mState;
         };
     }
