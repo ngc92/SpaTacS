@@ -3,7 +3,7 @@
     - [ ] new flight commands:
       + [ ] hold distance
       + [ ] evade
-    - [ ] optimize waypoints (do not brake too much)
+    - [x] optimize waypoints (do not brake too much)
     - [ ] allow management of multiple weapons
     - [ ] allow setting system activity
     - [ ] UI panels

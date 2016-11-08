@@ -40,9 +40,13 @@ namespace cmd
         auto max_accel = ship.getMaxAcceleration();
         if(max_accel.value == 0.0)
             max_accel.value = 1.0;
-        physics::time_t time_to_brake = length(ship.velocity()) / max_accel;
 
-        if( length(target_pos - ship.position()) < 0.5_km && mTargets.size() > 0)
+        auto ship_speed = length(ship.velocity());
+        physics::time_t time_to_brake = ship_speed / max_accel;
+        if(mTargets.size() > 1)
+            time_to_brake *= 0.25;
+
+        if( length(target_pos - ship.position()) < 0.3_km + 0.1_s*ship_speed && mTargets.size() > 0)
         {
             const_cast<Move*>(this)->mTargets.erase(mTargets.begin());
         }
