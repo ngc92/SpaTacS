@@ -24,6 +24,7 @@
 #include "ShipStatus.h"
 #include <irrlicht/IBillboardSceneNode.h>
 #include "UI/panels/DamageReport.h"
+#include "UI/panels/WeaponsPanel.h"
 
 using namespace spatacs;
 
@@ -47,16 +48,12 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::IScene
                                             irr::core::recti(10, 10, 100, 170));
     mShipStatus = std::make_unique<ShipStatusUI>(sstat);
 
-    mShipStatus->addWeaponStatus( guienv->addStaticText(L"", irr::core::recti(110, 10, 200, 50)) );
-    mShipStatus->addWeaponStatus( guienv->addStaticText(L"", irr::core::recti(210, 10, 300, 50)) );
-
     sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1,
                                        irr::core::recti(700, 10, 790, 90));
     mTargetStatus = std::make_unique<ShipStatusUI>(sstat);
     mTargetStatus->setShowSystemHealth(false);
     mTargetStatus->setShowFuel(false);
     mTargetStatus->setShowAmmunition(false);
-    mTargetStatus->setShowWeapons(false);
     mTargetStatus->setShowPower(false);
 
     txt = guienv->addStaticText(L"", irr::core::recti(10, 175, 100, 195));
@@ -66,6 +63,7 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::IScene
     mTrajectoryPlotter.reset( new irr::scene::MultiLineNode(smgr->getRootSceneNode(), smgr) );
 
     mDamageReport.reset(new ui::DamageReport(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(10, 500, 110, 600)));
+    mWeaponsPanel.reset(new ui::WeaponsPanel(guienv, guienv->getRootGUIElement(), -1, irr::core::recti(110, 10, 300, 50)));
 }
 
 
@@ -256,6 +254,7 @@ void ui::UnitCommand::step()
     auto sp = convert(ship.position());
     mShipStatus->update(ship);
     mDamageReport->update(ship);
+    mWeaponsPanel->update(ship);
 
     game::ObjectID enemy_ship{};
 

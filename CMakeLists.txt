@@ -124,7 +124,9 @@ set(UI_SOURCE_FILES
         UI/panels/DamageReport.h
         UI/panels/DamageReport.cpp
         UI/gfx/HealthBar.h
-        UI/gfx/HealthBar.cpp)
+        UI/gfx/HealthBar.cpp
+        UI/panels/WeaponsPanel.h
+        UI/panels/WeaponsPanel.cpp)
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}

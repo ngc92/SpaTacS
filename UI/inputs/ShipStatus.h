@@ -33,28 +33,20 @@ namespace spatacs
             ShipStatusUI(irr::gui::ShipStatusUI* rp);
             void update(const game::Starship& ship);
 
-            void addWeaponStatus(irr::gui::IGUIStaticText* wsui);
-
             void setShowFuel( bool sf );
-            void setShowShipStatus( bool ss );
+
             void setShowSystemHealth( bool sh );
             void setShowAmmunition( bool sa );
             void setShowPower( bool sp );
-            void setShowWeapons( bool sw );
 
             void setVisible( bool v );
         private:
             remove_ptr<irr::gui::ShipStatusUI> mGUIElement;
 
-            std::vector<remove_ptr<irr::gui::IGUIElement>> mWpnStatusView;
-
             // configuration
             bool mShowFuel         = true;
-            bool mShowShipStatus   = true;
-            bool mShowSystemHealth = true;
             bool mShowAmmunition   = true;
             bool mShowPower        = true;
-            bool mShowWeapons      = true;
         };
     }
 }
