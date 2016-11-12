@@ -11,6 +11,11 @@
 
 namespace spatacs
 {
+    namespace core
+    {
+        template<class T>
+        class EntityManager;
+    }
     namespace game
     {
         class Starship;
@@ -61,9 +66,11 @@ namespace spatacs
                 core::Signature<const PowerPlantData, const Health, const Activity>>
         {
         public:
+            PowerProduction(core::EntityManager <ComponentEntity>& entities);
             void apply(const PowerPlantData& pp, const Health& health, const Activity& acc);
             energy_t energy() const { return mProducedEnergy; }
         private:
+            core::EntityManager<ComponentEntity>& mEntites;
             energy_t mProducedEnergy = 0.0_J;
         };
 
@@ -143,6 +150,8 @@ namespace spatacs
                     }
             );
         }
+
+        mass_t getFuel(core::EntityManager<ComponentEntity>& entities, mass_t request);
 
     }
 }

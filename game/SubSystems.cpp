@@ -62,7 +62,7 @@ void SubSystems::onStep(Starship& ship)
 
 void EnergyManager::process(core::EntityManager<ComponentEntity>& comps)
 {
-    PowerProduction gpe;
+    PowerProduction gpe(comps);
     comps.apply(gpe);
     mTotal = gpe.energy();
 

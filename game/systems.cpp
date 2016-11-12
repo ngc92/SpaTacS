@@ -23,6 +23,22 @@ Propulsion::Propulsion(Starship& ship, accel_vec mDesiredAcceleration)
         : mShip(ship), mDesiredAcceleration(mDesiredAcceleration)
 {}
 
+mass_t spatacs::game::getFuel(core::EntityManager<ComponentEntity>& entities, mass_t request)
+{
+    mass_t fuel = 0.0_kg;
+
+    auto sys = core::make_system<game::ComponentEntity, game::FuelStorage>
+            ( [&](game::FuelStorage& s) {
+                auto get = s.request(request);
+                request -= get;
+                fuel += get;
+            });
+    entities.apply(sys);
+
+
+    return fuel;
+}
+
 void Propulsion::apply(EngineData& engine, const Health& health, const Activity& acc)
 {
     auto dt = 0.1_s;
@@ -37,31 +53,7 @@ void Propulsion::apply(EngineData& engine, const Health& health, const Activity&
     if(need_mass > max_mass)
         need_mass = max_mass;
 
-    /// \todo once we have more than one system that requires fuel, it might be
-    /// smart to pack this code into another component/system combination!
-    mass_t fuel = 0.0_kg;
-    if(mShip.components().has(engine.fuel_source))
-    {
-        auto& fs = mShip.components().get(engine.fuel_source);
-        if(fs.has<FuelStorage>())
-        {
-            fuel = fs.get<FuelStorage>().request(need_mass);
-            if(fuel < 0.1_kg)
-                engine.fuel_source = 0;
-        } else
-        {
-            engine.fuel_source = 0;
-        }
-    } else
-    {
-        std::uint64_t id = 0;
-        mShip.components().apply([&](const ComponentEntity& ety){
-            if(ety.has<FuelStorage>() && ety.get<FuelStorage>().current > 0.0_kg)
-                id = ety.id();
-        });
-        engine.fuel_source = id;
-    }
-
+    mass_t fuel = getFuel(mShip.components(), need_mass);
     force_t f = fuel * engine.propellant_speed  / dt;
     mMaxAcceleration += max_mass * engine.propellant_speed  / dt / mShip.mass();
     mProducedAcceleration += mDesiredAcceleration * (f / want);
@@ -88,9 +80,18 @@ void ShieldManagement::apply(ShieldGeneratorData& sgen, const Health& health, co
     ship.setShield( shield );
 }
 
+PowerProduction::PowerProduction(core::EntityManager<ComponentEntity>& entities) : mEntites(entities)
+{
+
+}
+
 void PowerProduction::apply(const PowerPlantData& pp, const Health& health, const Activity& acc)
 {
-    mProducedEnergy += 0.1_s * pp.energy_production * health.status() * acc.get();
+    auto base_energy = 0.1_s * pp.energy_production * acc.get();
+    mass_t need_fuel = base_energy * 10.0_kg / 1.0_MJ;
+    mass_t fuel = getFuel(mEntites, need_fuel);
+    if(need_fuel < 0.001_kg) need_fuel = 0.001_kg;
+    mProducedEnergy += base_energy * health.status() * fuel / need_fuel;
 }
 
 LifeSupportStep::LifeSupportStep(const Starship& s, EnergyManager& e) : ship(s), emgr(e) { }

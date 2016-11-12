@@ -1,4 +1,4 @@
-## Version 0.8 (UI upgrade)
+## Version 0.8
   * UI:
     - multiple levels
     - show energy production/consumption
@@ -8,7 +8,7 @@
     - set weapon loadout and fuel in level file
     - add a few levels
 
-## Version 0.7 (ammunition update)
+## Version 0.7
   * UI:
     - improved enemy status view
   * game:
@@ -19,7 +19,7 @@
     - multiple weapons per ship
     - minute variations in projectile speed
 
-## Version 0.6 (menu update)
+## Version 0.6
   * UI:
     - main menu
     - gfx for enemy status
@@ -30,7 +30,7 @@
   * physics
     - runtime unit loading
 
-## Version 0.5 (player update)
+## Version 0.5
   * UI:
     - waypoints for move command
     - show currently active targets
@@ -44,7 +44,7 @@
     - switch ammo based on target status
     - evasive/aggressive maneuvers for damaged ships
 
-## Version 0.4 (systems update)
+## Version 0.4
   * UI:
     - system status view
     - shield indicator
@@ -53,7 +53,7 @@
     - LifeSupport component
     - overheating of shield generator
 
-## Version 0.3 (damage update)
+## Version 0.3
   * controls:
     - switch ammo command
   * UI:
@@ -68,7 +68,7 @@
     - use units library in all physics code.
     - collision tests.
 
-## Version 0.2 (UI Update)
+## Version 0.2
  * controls:
    - move camera
  * UI:
@@ -86,7 +86,7 @@
    - masses and real forces
    - vector tests
 
-## Version 0.1 (Initial Version)
+## Version 0.1
  * Mouse control of ships:
    - attack
    - move
