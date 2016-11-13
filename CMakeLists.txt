@@ -88,7 +88,6 @@ SET(PHYSICS_SOURCE_FILES
 set(UI_SOURCE_FILES
         UI/gfx/GridNode.h
         UI/gfx/GridNode.cpp
-        UI/gfx/ShipUI.h
         UI/gfx/ShotFx.cpp
         UI/gfx/ShotFx.h
         UI/IrrlichtUI.cpp
@@ -99,8 +98,6 @@ set(UI_SOURCE_FILES
         UI/inputs/UnitCommand.h
         UI/inputs/UnitSelection.cpp
         UI/inputs/UnitSelection.h
-        UI/gfx/ShipStatusUI.cpp
-        UI/gfx/ShipStatusUI.h
         UI/gfx/ShipFx.cpp
         UI/gfx/ShipFx.h
         UI/convert.h
@@ -119,8 +116,8 @@ set(UI_SOURCE_FILES
         UI/gfx/MultiLineNode.cpp
         UI/states/LevelSelection.h
         UI/states/LevelSelection.cpp
-        UI/inputs/ShipStatus.h
-        UI/inputs/ShipStatus.cpp
+        UI/panels/ShipStatus.h
+        UI/panels/ShipStatus.cpp
         UI/panels/DamageReport.h
         UI/panels/DamageReport.cpp
         UI/gfx/HealthBar.h

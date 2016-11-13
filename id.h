@@ -53,6 +53,7 @@ namespace spatacs
         return a.getID() != b.getID();
     };
 
+    //! <, defined so IDs can be used in ordered containers.
     template<class I, class T>
     constexpr bool operator<(TaggedID<I, T> a, TaggedID<I, T> b)
     {
@@ -65,6 +66,7 @@ namespace std
     template<class T>
     struct hash;
 
+    //! hash, defined so IDs can be used in unordered containers.
     template <class I, class T>
     struct hash<spatacs::TaggedID<I, T>>
     {

@@ -6,7 +6,7 @@
     - [x] optimize waypoints (do not brake too much)
     - [ ] allow management of multiple weapons
     - [x] allow setting system activity
-    - [ ] UI panels
+    - [x] UI panels
     - [ ] select multiple ships
   * game:
     - [ ] powerplant requires fuel

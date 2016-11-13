@@ -27,7 +27,7 @@ namespace irr
 
 namespace spatacs {
     namespace ui {
-        class ShipStatusUI;
+        class ShipStatus;
         class DamageReport;
         class WeaponsPanel;
 
@@ -57,8 +57,8 @@ namespace spatacs {
             float mBaseY      = 0.f;
 
             remove_ptr<irr::gui::IGUIElement>  mDistanceMarker;
-            std::unique_ptr<ShipStatusUI>      mShipStatus;
-            std::unique_ptr<ShipStatusUI>      mTargetStatus;
+            remove_ptr<ShipStatus>             mShipStatus;
+            remove_ptr<ShipStatus>             mTargetStatus;
             remove_ptr<irr::gui::IGUIElement>  mSpeedInfo;
             remove_ptr<irr::scene::MultiLineNode> mTrajectoryPlotter;
             remove_ptr<DamageReport>           mDamageReport;

@@ -3,6 +3,7 @@
 #include <irrlicht/IGUIEnvironment.h>
 #include <irrlicht/IGUIFont.h>
 #include <iostream>
+#include <boost/algorithm/clamp.hpp>
 
 using namespace irr;
 using namespace gui;
@@ -28,7 +29,8 @@ void HealthBar::draw()
 
     driver->setTransform(video::ETS_WORLD, core::matrix4{});
     driver->draw2DRectangle( mDamageColor, rect );
-    rect.LowerRightCorner.X -= rect.getWidth() * (1.f - mStatus);
+    float s = boost::algorithm::clamp(1.f - mStatus, 0.f, 1.f);
+    rect.LowerRightCorner.X -= rect.getWidth() * s;
     driver->draw2DRectangle( mHealthyColor, rect );
 
     Environment->getBuiltInFont()->draw(getText(), rect + irr::core::vector2di(4, 0), mTextColor, false, true);

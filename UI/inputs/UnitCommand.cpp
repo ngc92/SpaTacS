@@ -13,7 +13,6 @@
 #include "core/GameState.h"
 #include <irrlicht/ICameraSceneNode.h>
 #include <iostream>
-#include "UI/gfx/ShipStatusUI.h"
 #include "UI/convert.h"
 #include "game/Starship.h"
 #include "UI/IrrlichtUI.h"
@@ -21,7 +20,7 @@
 #include <irrlicht/ISceneManager.h>
 #include "game/systems.h"
 #include "UI/gfx/MultiLineNode.h"
-#include "ShipStatus.h"
+#include "UI/panels/ShipStatus.h"
 #include <irrlicht/IBillboardSceneNode.h>
 #include "UI/panels/DamageReport.h"
 #include "UI/panels/WeaponsPanel.h"
@@ -44,14 +43,11 @@ void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::IScene
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mDistanceMarker.reset(txt);
 
-    auto sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1,
-                                            irr::core::recti(10, 10, 100, 170));
-    mShipStatus = std::make_unique<ShipStatusUI>(sstat);
+    mShipStatus.reset(new ShipStatus(guienv, guienv->getRootGUIElement(), -1,
+                                                 irr::core::recti(10, 10, 100, 170)));
 
-    sstat = new irr::gui::ShipStatusUI(guienv, guienv->getRootGUIElement(), -1,
-                                       irr::core::recti(700, 10, 790, 90));
-    mTargetStatus = std::make_unique<ShipStatusUI>(sstat);
-    mTargetStatus->setShowSystemHealth(false);
+    mTargetStatus.reset( new ShipStatus(guienv, guienv->getRootGUIElement(), -1,
+            irr::core::recti(700, 10, 790, 90)));
     mTargetStatus->setShowFuel(false);
     mTargetStatus->setShowAmmunition(false);
     mTargetStatus->setShowPower(false);

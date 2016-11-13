@@ -13,19 +13,27 @@
 namespace spatacs
 {
     namespace physics {
+
+        /*! \brief Minimal class for a three dimensional vector.
+         *  \details This class
+         */
         template<class T>
         struct Vec3
         {
             constexpr Vec3() = default;
 
+            /// \brief heterogeneous construtor.
+            /// \details This allows us to write eg. vec<double>(int, float, double).
             template<class A, class B, class C>
-            constexpr Vec3(A x_, B y_, C z_) : x(x_), y(y_), z(z_)
+            constexpr Vec3(A&& x_, B&& y_, C&& z_) : x(x_), y(y_), z(z_)
             {}
 
+            /// conversion constructor from a vector of convertable types.
             template<class S>
             constexpr explicit Vec3(const Vec3<S>& o) : x(T(o.x)), y(T(o.y)), z(T(o.z))
             {}
 
+            // the coordinates
             T x{0};
             T y{0};
             T z{0};
@@ -146,7 +154,7 @@ namespace spatacs
         }
     }
 
-    using Vec = physics::Vec3<float>;
+    using Vec = physics::Vec3<double>;
 }
 
 #endif //SOI_VEC_H

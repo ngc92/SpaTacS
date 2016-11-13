@@ -13,9 +13,7 @@ namespace irr
 {
     namespace gui
     {
-        class IGUIElement;
-        class ShipStatusUI;
-        class WeaponStatusUI;
+        class HealthBar;
     }
 }
 
@@ -27,21 +25,19 @@ namespace spatacs
     }
     namespace ui
     {
-        class ShipStatusUI
+        class ShipStatus : public irr::gui::IGUIElement
         {
         public:
-            ShipStatusUI(irr::gui::ShipStatusUI* rp);
+            ShipStatus(irr::gui::IGUIEnvironment* environment, irr::gui::IGUIElement* parent, irr::s32 id,
+                       const irr::core::rect<irr::s32>& rectangle);
             void update(const game::Starship& ship);
 
             void setShowFuel( bool sf );
-
-            void setShowSystemHealth( bool sh );
             void setShowAmmunition( bool sa );
             void setShowPower( bool sp );
-
-            void setVisible( bool v );
         private:
-            remove_ptr<irr::gui::ShipStatusUI> mGUIElement;
+            remove_ptr<irr::gui::IGUIElement> mName;
+            std::vector<remove_ptr<irr::gui::HealthBar>> mBars;
 
             // configuration
             bool mShowFuel         = true;
