@@ -46,11 +46,6 @@ namespace cmd
         if(mTargets.size() > 1)
             time_to_brake *= 0.25;
 
-        if( length(target_pos - ship.position()) < 0.3_km + 0.1_s*ship_speed && mTargets.size() > 0)
-        {
-            const_cast<Move*>(this)->mTargets.erase(mTargets.begin());
-        }
-
         auto delta = (target_pos - (ship.position() + time_to_brake * ship.velocity())) / 1.0_s;
         auto l = length(delta);
         if(l > speed())
@@ -60,6 +55,19 @@ namespace cmd
         /// \todo this looks fishy!
         auto dv = (delta - ship.velocity()) / 1.0_s;
         return dv;
+    }
+
+    void Move::update(const game::Starship& ship)
+    {
+        if( mTargets.empty() )
+            return;
+
+        auto target_pos = mTargets.front();
+        auto ship_speed = length(ship.velocity());
+        if( length(target_pos - ship.position()) < 0.3_km + 0.1_s*ship_speed && mTargets.size() > 0)
+        {
+            mTargets.erase(mTargets.begin());
+        }
     }
 
     std::size_t Move::waypoint_count() const

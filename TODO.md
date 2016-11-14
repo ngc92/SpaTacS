@@ -6,7 +6,6 @@
   - Spatial data structure to speed up hit tests
   - Reduce dynamic allocs
   - disable projectile/projectile collision tests in physics
-  - limit render thread fps
 * code
   - collision handling: use current positions.
   - CEGUI?

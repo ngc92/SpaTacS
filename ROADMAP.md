@@ -5,9 +5,7 @@
       + [ ] evade
     - [x] optimize waypoints (do not brake too much)
     - [x] allow setting system activity
-    - [ ] UI panels
     - [x] UI panels
-    - [ ] select multiple ships
   * game:
     - [x] powerplant requires fuel
   * AI:
@@ -24,6 +22,7 @@
   * UI:
     - [ ] allow management of multiple weapons
     - [ ] select multiple ships
+    - [ ] limit render thread fps
   * game:
     - [ ] rockets and missiles 
     - [ ] configurable shield radius
@@ -32,8 +31,16 @@
     - [ ] more tests for advanced collision
   * code:
     - [ ] clean separation between in and out events of game simulation
-
+    
 ## Version 1.0
+  * code:
+    - [ ] ECS rewrite
+      + [ ] Signatures
+      + [ ] Convenience layer
+      + [ ] Better parameter support for Systems (i.e 
+         pass Entity, pass Entity ID etc)
+    - [ ] Separate user input from irrlicht rendering.
+
 The plan is to add nothing "major" until this version, 
 but significantly improve what is there now, and flesh out 
 the content a bit. Also, a lot of code cleanup has to happen.
@@ -46,6 +53,8 @@ Major changes that are planned for after 1.0 are
  * sound
  * networking
  * moving frames of reference
+ * dynamic movement targets
+ * level scripting
 
 
 ## Easy projects:

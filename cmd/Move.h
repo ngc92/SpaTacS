@@ -30,6 +30,7 @@ namespace cmd
         Move& addWaypoint(length_vec wp);
 
         accel_vec calcThrust(const game::Starship& ship) const;
+		void update(const game::Starship& ship);
 	private:
 		std::vector<length_vec> mTargets;
 		speed_t mSpeed;

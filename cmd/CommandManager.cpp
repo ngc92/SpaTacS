@@ -32,7 +32,6 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
             // dead ships don't shoot
             if(ship.alive() && target.alive())
             {
-
                 auto fire_event_generator = game::for_each_weapon_id([&](std::size_t id){
                     events.push_back( events::EventPtr(new events::FireWeapon(ship.id(), target.id(), id)));
                 });
@@ -44,6 +43,7 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
         auto& ship = mState->getShip(c.first);
         if(ship.alive()) {
             // and handle the command
+            command.update(ship);
             auto dv = command.calcThrust(ship);
             events.push_back(events::EventPtr(new events::Accelerate(ship.id(), dv)));
         }
