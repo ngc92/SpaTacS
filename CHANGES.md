@@ -1,3 +1,14 @@
+## Version 0.9
+  * UI:
+    - engage flight command
+    - optimize waypoints (do not brake too much)
+    - allow setting system activity
+    - UI panels
+  * game:
+    - powerplant requires fuel
+  * AI:
+    - smart selection of ammunition
+
 ## Version 0.8
   * UI:
     - multiple levels

@@ -1,36 +1,26 @@
-## Version 0.9 (commands update)
-  * UI:
-    - [x] engage flight command
-    - [x] optimize waypoints (do not brake too much)
-    - [x] allow setting system activity
-    - [x] UI panels
-  * game:
-    - [x] powerplant requires fuel
-  * AI:
-    - [x] smart selection of ammunition
-  * physics:
-    - [x] allow applying impulse during callback
-    - [x] write tests for unit io
-    - [x] write test  for advanced collision handling
-  * code:
-    - [x] remove non UI code from UI
-    - [x] opaque typedefs for IDs
-    
 ## Version 0.10
   * UI:
-    - [ ] allow management of multiple weapons
-    - [ ] select multiple ships
     - [ ] limit render thread fps
+    - [ ] present levels in sensible order
   * game:
-    - [ ] rockets and missiles 
     - [ ] configurable shield radius
+    - [ ] allow initial spawn velocity in level files
+  * AI:
+    - [ ] prevent stacking
   * physics:
     - [ ] improve advanced collision
     - [ ] more tests for advanced collision
   * code:
-    - [ ] clean separation between in and out events of game simulation
+    - [ ] clean separation between in and out events 
+            of game simulation
+    - [ ] test whether it makes sense to use CEGUI
     
 ## Version 1.0
+  * UI:
+    - [ ] allow management of multiple weapons
+    - [ ] select multiple ships
+  * game:
+    - [ ] rockets and missiles 
   * code:
     - [ ] ECS rewrite
       + [ ] Signatures
