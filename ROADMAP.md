@@ -4,26 +4,34 @@
       + [ ] hold distance
       + [ ] evade
     - [x] optimize waypoints (do not brake too much)
-    - [ ] allow management of multiple weapons
     - [x] allow setting system activity
+    - [ ] UI panels
     - [x] UI panels
     - [ ] select multiple ships
   * game:
-    - [ ] powerplant requires fuel
+    - [x] powerplant requires fuel
   * AI:
     - [x] smart selection of ammunition
   * physics:
     - [x] allow applying impulse during callback
     - [x] write tests for unit io
-    - [ ] write test  for advanced collision handling
+    - [x] write test  for advanced collision handling
   * code:
-    - [ ] clean separation between in and out events of game simulation
     - [x] remove non UI code from UI
     - [x] opaque typedefs for IDs
     
 ## Version 0.10
+  * UI:
+    - [ ] allow management of multiple weapons
+    - [ ] select multiple ships
   * game:
-    - rockets and missiles
+    - [ ] rockets and missiles 
+    - [ ] configurable shield radius
+  * physics:
+    - [ ] improve advanced collision
+    - [ ] more tests for advanced collision
+  * code:
+    - [ ] clean separation between in and out events of game simulation
 
 ## Version 1.0
 The plan is to add nothing "major" until this version, 
@@ -49,6 +57,9 @@ Major changes that are planned for after 1.0 are
 * Settings menu:
   - an in game menu to configure the settings
   - save settings to xml  
+
+* Loadout menu:
+  - set ammo etc you take with you into a mission
   
 * Asteroids:
   - passive objects

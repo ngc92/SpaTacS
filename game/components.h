@@ -44,8 +44,6 @@ namespace spatacs
             // engine config
             speed_t propellant_speed = 0.0_kps;
             rate_t<mass_t> mass_rate = 1.0_kg / 1.0_s;
-
-            std::uint64_t fuel_source;
         };
 
         struct FuelStorage

@@ -2,8 +2,8 @@
 // Created by erik on 10/8/16.
 //
 
-#ifndef SPATACS_MANAGER_H
-#define SPATACS_MANAGER_H
+#ifndef SPATACS_ENTITY_MANAGER_H
+#define SPATACS_ENTITY_MANAGER_H
 
 #include <cstdint>
 #include <map>
@@ -60,6 +60,7 @@ namespace spatacs
 
         template<class T>
         template<class Sys>
+        /// \todo SFINAE for Sys types that are functions
         void EntityManager<T>::apply( Sys&& system )
         {
             for(auto& e : mEntities)
@@ -70,6 +71,7 @@ namespace spatacs
 
         template<class T>
         template<class Sys>
+        /// \todo SFINAE for Sys types that are functions
         void EntityManager<T>::apply( Sys&& system ) const
         {
             for(auto& e : mEntities)
