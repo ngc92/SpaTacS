@@ -67,12 +67,18 @@ void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
         // fly closer if shield is stronger
         if(own_shield > target->shield() || own_shield > 2)
         {
-            mCommands->addCommand( own.id(), cmd::Move(target->position(), 0.3_kps));
+            mCommands->addCommand( own.id(),
+                                   cmd::Move(std::make_unique<cmd::movement::EngageTarget>(
+                                           target->id(), 0.3_kps))
+            );
         } else
         {
             auto delta = own.position() - target->position();
             delta *= 1.0_km / length(delta);
-            mCommands->addCommand( own.id(), cmd::Move(own.position() + delta, 2.0_kps));
+            mCommands->addCommand( own.id(),
+                                   cmd::Move(std::make_unique<cmd::movement::FollowRoute>(
+                                           own.position() + delta, 2.0_kps))
+            );
         }
     }
 

@@ -75,20 +75,38 @@ void ui::UnitCommand::onRightClick(ray_t ray, const irr::SEvent::SMouseInput& ev
     {
         if(t->team() != ship.team())
         {
-            getCmdMgr().addCommand(mActiveShipID, cmd::Attack(t->id()));
+            if(event.Shift) {
+                getCmdMgr().addCommand(mActiveShipID,
+                                       cmd::Move(std::make_unique<cmd::movement::EngageTarget>(t->id(), mTargetSpeed)));
+
+            } else {
+                getCmdMgr().addCommand(mActiveShipID, cmd::Attack(t->id()));
+            }
         }
     } else {
         auto target = aim(ray);
         if(target) {
             auto vec = target.get();
+            bool add_cmd = true;
             if(event.Shift) {
                 auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
-                cmd::Move cp = cmd.move;
-                cp.addWaypoint(vec);
-                cp.setSpeed( mTargetSpeed );
-                getCmdMgr().addCommand(mActiveShipID, cp);
-            } else {
-                getCmdMgr().addCommand(mActiveShipID, cmd::Move(vec, mTargetSpeed));
+                if(cmd.move) {
+                    auto c = &cmd.move.getCommand();
+                    if (dynamic_cast<const cmd::movement::FollowRoute*>(c)) {
+                        auto fr = std::make_unique<cmd::movement::FollowRoute>(
+                                dynamic_cast<const cmd::movement::FollowRoute&>(*c));
+                        fr->addWaypoint(vec);
+                        fr->setSpeed(mTargetSpeed);
+                        getCmdMgr().addCommand(mActiveShipID,
+                                               cmd::Move(std::move(fr)));
+                        add_cmd = false;
+                    }
+                }
+            }
+            if(add_cmd)
+            {
+                getCmdMgr().addCommand(mActiveShipID,
+                                       cmd::Move(std::make_unique<cmd::movement::FollowRoute>(vec, mTargetSpeed)));
             }
         }
     }
@@ -257,7 +275,7 @@ void ui::UnitCommand::step()
     auto& cmd = getCmdMgr().getCommandsOf(mActiveShipID);
     auto& mv = cmd.move;
     auto src = sp;
-    for(unsigned i = 0; i < mv.waypoint_count(); ++i) {
+    for(unsigned i = 0; i < mv.point_count(); ++i) {
         mTrajectoryPlotter->addLine(src, convert(mv.target(i)), video::SColor(255, 0, 128, 0));
         src = convert(mv.target(i));
     }
@@ -322,7 +340,7 @@ void ui::UnitCommand::step()
                                         video::SColor(128, 255, 255, 255));
             mTrajectoryPlotter->addLine(aimbase + vector3df(-1, 0, 1), aimbase + vector3df(1, 0, -1),
                                         video::SColor(128, 255, 255, 255));
-            mTrajectoryPlotter->addLine(aimbase + vector3df(0, -0.5, 0), aimbase + vector3df(0, 0.5, 0),
+            mTrajectoryPlotter->addLine(aimbase + vector3df(0, -0.5f, 0), aimbase + vector3df(0, 0.5, 0),
                                         video::SColor(128, 255, 255, 255));
         }
     }

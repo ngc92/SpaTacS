@@ -43,8 +43,8 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
         auto& ship = mState->getShip(c.first);
         if(ship.alive()) {
             // and handle the command
-            command.update(ship);
-            auto dv = command.calcThrust(ship);
+            command.update(ship, *mState);
+            auto dv = command.thrust(ship);
             events.push_back(events::EventPtr(new events::Accelerate(ship.id(), dv)));
         }
 

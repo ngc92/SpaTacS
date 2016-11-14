@@ -1,8 +1,6 @@
 ## Version 0.9 (commands update)
   * UI:
-    - [ ] new flight commands:
-      + [ ] hold distance
-      + [ ] evade
+    - [x] engage flight command
     - [x] optimize waypoints (do not brake too much)
     - [x] allow setting system activity
     - [x] UI panels
