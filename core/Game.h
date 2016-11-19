@@ -1,22 +1,21 @@
-#ifndef GAMECORE_H_INCLUDED
-#define GAMECORE_H_INCLUDED
+#ifndef SPATACS_CORE_GAME_H_INCLUDED
+#define SPATACS_CORE_GAME_H_INCLUDED
 
 #include <random>
 #include <memory>
 
 namespace spatacs
 {
-    namespace core
-    {
-        class GameInterface;
-    }
     namespace events
     {
         class IEvent;
     }
 	namespace core {
         class GameState;
-        class GameThread;
+        namespace detail {
+            class GameThread;
+        }
+        class GameInterface;
 
         class Game {
         public:
@@ -25,12 +24,12 @@ namespace spatacs
             ~Game();
 
             void run();
-            void addInterface( std::shared_ptr<core::GameInterface> ui );
+            void addInterface( std::shared_ptr<GameInterface> ui );
             void setPause(bool p);
 
         private:
 
-            std::unique_ptr<GameThread> mThread;
+            std::unique_ptr<detail::GameThread> mThread;
 
             std::default_random_engine mRandom;
 
@@ -38,9 +37,9 @@ namespace spatacs
             std::vector<EventPtr>      mEvents;
 
             // interfaces
-            std::vector<std::shared_ptr<core::GameInterface>> mUIs;
+            std::vector<std::shared_ptr<GameInterface>> mUIs;
         };
     }
 }
 
-#endif // GAMECORE_H_INCLUDED
+#endif // SPATACS_CORE_GAME_H_INCLUDED

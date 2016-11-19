@@ -3,18 +3,17 @@
 #include "GameInterface.h"
 #include <chrono>
 #include <algorithm>
-#include "GameThread.h"
+#include "core/detail/GameThread.h"
 #include "events/Accelerate.h"
 #include "events/Combat.h"
 #include <iostream>
-#include "game/Starship.h"
+#include "game/GameSimulation.h"
 
 using namespace spatacs;
 using namespace core;
 
-Game::Game()
+Game::Game() : mThread( std::make_unique<detail::GameThread>( std::make_unique<game::GameSimulation>() ) )
 {
-    mThread.reset( new GameThread );
 }
 
 Game::~Game()

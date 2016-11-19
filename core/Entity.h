@@ -2,8 +2,8 @@
 // Created by erik on 10/7/16.
 //
 
-#ifndef SPATACS_ENTITY_H
-#define SPATACS_ENTITY_H
+#ifndef SPATACS_CORE_ENTITY_H
+#define SPATACS_CORE_ENTITY_H
 
 #include <bitset>
 #include <tuple>
@@ -114,4 +114,4 @@ namespace spatacs
     }
 }
 
-#endif //SPATACS_ENTITY_H
+#endif //SPATACS_CORE_ENTITY_H

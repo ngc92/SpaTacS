@@ -218,7 +218,7 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
                             + h->damage().shield_overload;
                 if (dmg > 0.1) {
                     float s = 5 * dmg + 1;
-                    auto pos = mState->getShip(ship).position();
+                    auto pos = mState->getObject(ship).position();
                     auto bb = smgr->addBillboardSceneNode();
                     bb->setPosition(convert(pos));
                     bb->setMaterialFlag(video::EMF_LIGHTING, false);
@@ -229,7 +229,7 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
                     bb->addAnimator(a.get());
                 }
             } else if (auto h = dynamic_cast<const events::HitShield*>(evt.get())) {
-                auto& ship = mState->getShip(h->id());
+                const auto& ship = mState->getShip(h->id());
                 if(ship.shield() > 0) {
                     float s = 5;
                     auto pos = ship.position();

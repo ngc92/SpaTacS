@@ -26,7 +26,7 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
         {
             auto& command = c.second.attack.get();
             auto& ship   = mState->getShip(c.first);
-            auto& target = mState->getShip(command.target());
+            auto& target = mState->getObject(command.target());
             /// \todo prevent deliberate friendly fire
 
             // dead ships don't shoot
@@ -54,7 +54,7 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
         /// \todo this is ugly, really ugly
         if(s.type() == typeid(SetWpnMode)) {
             auto& wm = boost::get<SetWpnMode>(s);
-            auto& ship = mState->getShip(wm.object());
+            auto& ship = mState->getObject(wm.object());
             // dead ships don't shoot
             if (!ship.alive()) {
                 continue;
@@ -63,7 +63,7 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
             events.push_back(events::EventPtr(new events::SetWeaponAmmo(ship.id(), wm.weapon(), wm.ammo())));
         }else if(s.type() == typeid(SetSystemActivity)) {
             auto& sa = boost::get<SetSystemActivity>(s);
-            auto& ship = mState->getShip(sa.object());
+            auto& ship = mState->getObject(sa.object());
             // dead ships don't shoot
             if (!ship.alive()) {
                 continue;

@@ -32,25 +32,10 @@ const Starship& GameState::getShip(ObjectID id) const
     return dynamic_cast<const Starship&>( getObject(id) );
 }
 
-void GameState::add(std::unique_ptr<Starship> ship) {
-    /// \todo ensure uniqueness of ids
-    mObjects.push_back( ship.release() );
-}
 
-
-void GameState::add(std::unique_ptr<Projectile> proj)
+void GameState::add(std::unique_ptr<GameObject> obj)
 {
-    mObjects.push_back( proj.release() );
-}
-
-Projectile& GameState::getProjectile(ObjectID id)
-{
-    return dynamic_cast<Projectile&>( getObject(id) );
-}
-
-const Projectile& GameState::getProjectile(ObjectID id) const
-{
-    return dynamic_cast<const Projectile&>( getObject(id) );
+    mObjects.push_back( obj.release() );
 }
 
 GameObject& GameState::getObject(ObjectID id)
@@ -69,11 +54,6 @@ const GameObject& GameState::getObject(ObjectID id) const
             return p;
 
     BOOST_THROW_EXCEPTION(std::logic_error("Could not find Object"));
-}
-
-std::uint64_t GameState::getNextFreeID()
-{
-    return ++mFreeID;
 }
 
 void GameState::cleanup()

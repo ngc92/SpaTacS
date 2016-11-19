@@ -13,6 +13,7 @@
   * code:
     - [ ] clean separation between in and out events 
             of game simulation
+    - [ ] better separation between core and game classes.
     - [ ] test whether it makes sense to use CEGUI
     
 ## Version 1.0

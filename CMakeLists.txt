@@ -48,12 +48,14 @@ SET(CORE_SOURCE_FILES
         game/Projectile.h
         game/Projectile.cpp
         game/components.cpp
-        core/GameThread.cpp
-        core/GameThread.h
+        core/detail/GameThread.cpp
+        core/detail/GameThread.h
         game/GameObject.h
         game/GameObject.cpp
-        core/Simulation.cpp
-        core/Simulation.h
+        core/SimulationBase.cpp
+        core/SimulationBase.h
+        game/GameSimulation.cpp
+        game/GameSimulation.h
         game/Damage.h
         game/SubSystems.h
         game/SubSystems.cpp
@@ -65,7 +67,7 @@ SET(CORE_SOURCE_FILES
         game/LevelLoader.cpp
         game/AIPlayer.cpp
         game/AIPlayer.h
-        game/ObjectID.h)
+        game/ObjectID.h core/GameStateBase.h core/GameStateBase.cpp)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h

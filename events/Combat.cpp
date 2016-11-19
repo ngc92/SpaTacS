@@ -27,7 +27,7 @@ namespace spatacs
             if(!context.state.hasObject( mTarget ))
                 return;
 
-            auto& target = context.state.getShip( mTarget );
+            auto& target = context.state.getObject( mTarget );
             auto& wpn = shooter.components().get(mWeaponId);
             auto tpos = target.position();
             auto tvel = target.velocity();
@@ -146,10 +146,10 @@ namespace spatacs
             auto effect = game::getShieldDamage(mDamage, target.shield());
             // mDamage = effect.remaining;
             target.setShield( target.shield() - effect.applied );
-            auto& proj = context.state.getProjectile(mProjectileID);
+            auto& proj = context.state.getObject(mProjectileID);
             if(effect.remaining.kinetic == 0)
             {
-                proj.expire();
+                dynamic_cast<game::Projectile&>(proj).expire();
             } else
             {
                 auto pid = proj.physics_id();

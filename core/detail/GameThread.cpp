@@ -8,19 +8,20 @@
 #include "physics/HitTests.h"
 #include <cassert>
 #include <iostream>
-#include "Simulation.h"
+#include "core/SimulationBase.h"
 
-using namespace spatacs;
-using namespace core;
+using namespace spatacs::core;
+using spatacs::core::detail::GameThread;
 
 namespace chrono = std::chrono;
 using chrono::steady_clock;
 
-GameThread::GameThread() : mSimulation( std::make_unique<Simulation>() ),
-                           mLastStep( steady_clock::now() ),
-                           mPause( false ),
-                           mRunThread(true),
-                           mProfileStats( boost::accumulators::tag::rolling_window::window_size = 100 )
+GameThread::GameThread(std::unique_ptr<SimulationBase> simulation) :
+        mSimulation( std::move(simulation) ),
+        mLastStep( steady_clock::now() ),
+        mPause( false ),
+        mRunThread(true),
+        mProfileStats( boost::accumulators::tag::rolling_window::window_size = 100 )
 {
     mThread = std::thread([this](){ this->thread_run(); });
 }

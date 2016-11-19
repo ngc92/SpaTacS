@@ -99,7 +99,7 @@ namespace physics
     };
 
     template<class T, class U>
-    constexpr auto operator*(const T& f, const UnitWrapper<T, U>& a)
+    constexpr UnitWrapper<T, U> operator*(const T& f, const UnitWrapper<T, U>& a)
     {
         auto c = a;
         c *= f;
@@ -108,9 +108,10 @@ namespace physics
 
     // unit multiplication
     template<class T, class U, class V>
-    auto operator*( const UnitWrapper<T, U>& a, const UnitWrapper<T, V>& b)
+    UnitWrapper<T, dimensions::mul_t<U, V>>
+    operator*( const UnitWrapper<T, U>& a, const UnitWrapper<T, V>& b)
     {
-        return UnitWrapper<T, dimensions::mul_t<U, V>>(a.value * b.value);
+        return UnitWrapper<T, dimensions::mul_t<U, V>> (a.value * b.value);
     };
 
     template<class T, class U, class V>
@@ -121,7 +122,8 @@ namespace physics
     };
 
     template<class T, class U, class V>
-    constexpr auto operator/( const UnitWrapper<T, U>& a, const UnitWrapper<T, V>& b)
+    constexpr UnitWrapper<T, dimensions::div_t<U, V>>
+    operator/( const UnitWrapper<T, U>& a, const UnitWrapper<T, V>& b)
     {
         return UnitWrapper<T, dimensions::div_t<U, V>>(a.value / b.value);
     };
@@ -159,14 +161,14 @@ namespace physics
 
     // vector multiplication
     template<class T, class U, class V>
-    constexpr auto operator*( const Vec3<T>& a, const UnitWrapper<U, V>& s )
+    constexpr auto operator*( const Vec3<T>& a, const UnitWrapper<U, V>& s ) -> Vec3<decltype(a.x*s)>
     {
         return Vec3<decltype(a.x*s)>{a.x*s, a.y*s, a.z*s};
     }
 
     // vector division
     template<class T, class U, class V>
-    constexpr auto operator/( const Vec3<T>& a, const UnitWrapper<U, V>& s )
+    constexpr auto operator/( const Vec3<T>& a, const UnitWrapper<U, V>& s ) -> Vec3<decltype(a.x/s)>
     {
         return Vec3<decltype(a.x/s)>{a.x/s, a.y/s, a.z/s};
     }

@@ -9,6 +9,7 @@
 #include <cstdint>
 
 #include "game/GameObject.h"
+#include "GameStateBase.h"
 
 namespace spatacs
 {
@@ -24,7 +25,7 @@ namespace game
 
 namespace core
 {
-    class GameState
+    class GameState : public GameStateBase
     {
         using GameObject = game::GameObject;
         using Starship   = game::Starship;
@@ -40,14 +41,9 @@ namespace core
         // Ships
         Starship& getShip(game::ObjectID id);
         const Starship& getShip(game::ObjectID id) const;
-        void add(std::unique_ptr<Starship> ship);
 
-        // Projectiles
-        void add(std::unique_ptr<Projectile> proj);
-        Projectile& getProjectile(game::ObjectID id);
-        const Projectile& getProjectile(game::ObjectID id) const;
-
-        // Objccts
+        // Objects
+        void add(std::unique_ptr<GameObject> obj);
         GameObject& getObject(game::ObjectID id);
         const GameObject& getObject(game::ObjectID id) const;
         const bool hasObject(game::ObjectID id) const;
@@ -58,13 +54,11 @@ namespace core
         auto end() const { return mObjects.end(); };
 
         /// removes all objects that are not alive
-        void cleanup();
+        void cleanup() override;
 
-        std::uint64_t getNextFreeID();
     private:
         boost::ptr_vector<GameObject> mObjects;
 
-        std::uint64_t mFreeID = 0;
     };
 }
 }

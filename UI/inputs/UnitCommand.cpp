@@ -38,7 +38,7 @@ ui::UnitCommand::UnitCommand(game::ObjectID id) :
 
 void ui::UnitCommand::init(irr::gui::IGUIEnvironment* guienv, irr::scene::ISceneManager* smgr)
 {
-    mTargetY = state().getShip(mActiveShipID).position().y;
+    mTargetY = state().getObject(mActiveShipID).position().y;
     auto txt = guienv->addStaticText(L"", irr::core::recti(0, 0, 100, 40));
     txt->setOverrideColor( irr::video::SColor(255, 128, 128, 255) );
     mDistanceMarker.reset(txt);
@@ -284,7 +284,7 @@ void ui::UnitCommand::step()
         auto& at = cmd.attack.get();
         if(state().hasObject(at.target())) {
             enemy_ship = at.target();
-            mTrajectoryPlotter->addLine(sp, convert(state().getShip(at.target()).position()),
+            mTrajectoryPlotter->addLine(sp, convert(state().getObject(at.target()).position()),
                                         video::SColor(255, 128, 0, 0));
         } else
         {

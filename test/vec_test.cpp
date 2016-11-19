@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_SUITE(VecTest)
         BOOST_CHECK_EQUAL(parallel(a, b) , parallel(a, 2*b));
         BOOST_CHECK_EQUAL(perpendicular(a, b) , perpendicular(a, 2*b));
 
-        BOOST_CHECK_SMALL( dot(parallel(a, b), perpendicular(a, b)), 1e-6f );
+        BOOST_CHECK_SMALL( dot(parallel(a, b), perpendicular(a, b)), 1e-6 );
     }
 
     BOOST_AUTO_TEST_CASE(Decomposition_CornerCases)
