@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include "MetaStorage.h"
 #include "ComponentStorage.h"
-#include "Translation.h"
+#include "mp.h"
 
 namespace spatacs
 {
@@ -29,10 +29,9 @@ namespace ecs
         using cmp_storage_t  = typename Config::cmp_storage_t;
         using id_t           = typename Config::id_t;
         using bits_t         = typename meta_storage_t::bits_t;
-        using translator_t   = Translator<cmp_storage_t>;
 
         template<class T>
-        static constexpr std::size_t component_id = translator_t::template index<T>();
+        static constexpr std::size_t component_id = find(type_t<T>{}, typename Config::comp_vec{});
 
     public:
         // --------------------------------------------------------------------------------
@@ -105,6 +104,17 @@ namespace ecs
         //! Gets the component tuple index of a component.
         template<class T>
         constexpr static std::size_t tuple_index(type_t<T>);
+
+        // --------------------------------------------------------------------------------
+        //                       iteration functions
+        // --------------------------------------------------------------------------------
+        //! non-mutating iteration. Calls f with(bits, components).
+        template<class F>
+        void iterate(F&& f) const;
+
+        //! mutating iteration. Calls f with(bits, components).
+        template<class F>
+        void iterate_mutable(F&& f);
     private:
         // --------------------------------------------------------------------------------
         //                       helper functions
@@ -262,6 +272,33 @@ namespace ecs
 
         return std::get<tuple_index(component)>(components);
     };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    //                                              iteration
+    // -----------------------------------------------------------------------------------------------------------------
+    template<class C>
+    template<class F>
+    void EntityStorage<C>::iterate(F&& f) const
+    {
+        for(std::size_t i = 0; i < size(); ++i)
+        {
+            if(mMetaData.is_alive(i)) {
+                f(mMetaData.bits(i), mComponents.get(i));
+            }
+        }
+    }
+
+    template<class C>
+    template<class F>
+    void EntityStorage<C>::iterate_mutable(F&& f)
+    {
+        for(std::size_t i = 0; i < size(); ++i)
+        {
+            if(mMetaData.is_alive(i)) {
+                f(mMetaData.bits(i), mComponents.get(i));
+            }
+        }
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
     //                                              helpers

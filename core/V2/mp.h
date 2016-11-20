@@ -20,6 +20,30 @@ namespace ecs
     {
         using type = T;
     };
+
+    template<class... T>
+    struct type_vec_t
+    {
+    };
+
+    template<class Needle, class First, class... Haystack>
+    constexpr std::size_t find(type_t<Needle> n, type_vec_t<First, Haystack...>)
+    {
+        if(std::is_same<Needle, First>::value)
+        {
+            return 0;
+        } else
+        {
+            return 1 + find(n, type_vec_t<Haystack...>{} );
+        }
+    };
+
+    template<class Needle>
+    constexpr std::size_t find(type_t<Needle> n, type_vec_t<>)
+    {
+        /// \todo rewrite this to allow for static assertions here!
+        return -1;
+    };
 }
 }
 }

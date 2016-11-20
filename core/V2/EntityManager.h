@@ -27,6 +27,9 @@ namespace core
         template<class Config>
         class EntityStorage;
 
+        template<class Signature>
+        class System;
+
         template<class Config>
         class EntityManager;
 
@@ -35,10 +38,11 @@ namespace core
          *      All possible components types.
          */
         template<class ID, class... Components>
-        class Config {
+        struct Config {
             // types
             using this_t        = Config<ID, Components...>;
-            using id_type       = ID;
+            using comp_vec      = type_vec_t<Components...>;
+            using id_t          = ID;
             using cmp_id_type   = TaggedID<std::uint64_t, this_t>;
             using cmp_storage_t = ComponentStorage<Components...>;
 
@@ -59,7 +63,7 @@ namespace core
         public:
             // get types
             using config_t  = Config;
-            using id_t      = typename Config::id_type;
+            using id_t      = typename Config::id_t;
             using storage_t = typename Config::storage_t;
             using handle_t  = typename Config::handle_t;
 
@@ -91,10 +95,21 @@ namespace core
 
             template<class T>
             T& get_mutable_component(id_t entity) { return mStorage.get_mutable_component(entity, type_t<T>{}); }
+
+            // System application
+            template<class Signature>
+            void apply(System<Signature>&& system);
         private:
             // Storage
             storage_t mStorage;
         };
+
+        template<class C>
+        template<class S>
+        void EntityManager<C>::apply(System<S>&& system)
+        {
+            mStorage.iterate( S::forwarder(std::forward<System<S>>(system)) );
+        }
 
     }
 }

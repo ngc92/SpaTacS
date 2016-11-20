@@ -6,6 +6,7 @@
 #include "physics/PhysicsWorld.h"
 #include <boost/test/unit_test.hpp>
 #include <iostream>
+#include <core/V2/System.h>
 
 #include "core/V2/EntityManager.h"
 #include "core/V2/ComponentStorage.h"
@@ -41,6 +42,7 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         using manager_t = MockMgr;
         using id_t      = std::size_t;
         using cmp_storage_t = ecs::ComponentStorage<int, float, double>;
+        using comp_vec      = ecs::type_vec_t<int, float, double>;
         constexpr static std::size_t comp_count = 5;
     };
 
@@ -81,7 +83,6 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
 
     BOOST_AUTO_TEST_CASE(EntityStorage)
     {
-        /// \todo test for remove
         ecs::EntityStorage<MockConfig> es;
         es.resize(2);
         BOOST_REQUIRE_EQUAL(es.size(), 2);
@@ -122,6 +123,9 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         es.add_component(third, ecs::type_t<float>{}, 1.f);
         es.get_mutable_component(third, ecs::type_t<float>{}) = 1.5f;
         BOOST_CHECK_EQUAL( es.get_component(third, ecs::type_t<float>{}), 1.5f );
+
+        es.remove_component(third, ecs::type_t<float>{});
+        BOOST_CHECK(!es.bits(third).test(1));
     }
 
 
@@ -215,6 +219,46 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         BOOST_CHECK_EQUAL(h.get<int>(), 2);
     }
 
-    /// \todo tests for EntityManager
+    BOOST_AUTO_TEST_CASE(Signature_SingleParam)
+    {
+        using sig_t  = ecs::Signature<double>;
+        using data_t = std::tuple<bool, int, float, double>;
+
+        auto double_f = [](double d) { BOOST_CHECK_EQUAL(d, 1.2); };
+        data_t data {true, 2, 5.2f, 1.2};
+
+        auto double_fw = sig_t::forwarder(double_f);
+        double_fw(0, data); // ignore the bits for now
+    }
+
+    BOOST_AUTO_TEST_CASE(Signature_MutliParam)
+    {
+        using sig_t  = ecs::Signature<double, bool>;
+        using data_t = std::tuple<bool, int, float, double>;
+
+        auto multi_f = [](double d, bool b) {
+            BOOST_CHECK_EQUAL(d, 1.2);
+            BOOST_CHECK(b);
+        };
+        data_t data {true, 2, 5.2f, 1.2};
+
+        auto double_fw = sig_t::forwarder(multi_f);
+        double_fw(0, data); // ignore the bits for now
+    }
+
+    BOOST_AUTO_TEST_CASE(EntityManager)
+    {
+        using Config = ecs::Config<std::size_t, int, double, float>;
+        using EM_t   = ecs::EntityManager<Config>;
+
+        EM_t mgr;
+        BOOST_CHECK(!mgr.is_alive(0));
+        BOOST_CHECK(!mgr.is_alive(1));
+
+        auto first = mgr.create();
+        BOOST_CHECK_EQUAL(first.id(), 1);
+        BOOST_CHECK(mgr.is_alive(first.id()));
+
+    }
 
 BOOST_AUTO_TEST_SUITE_END()
