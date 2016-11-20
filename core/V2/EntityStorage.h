@@ -82,17 +82,21 @@ namespace ecs
         //! Adds a component to a given \p entity.
         //! \todo What do we do if that component already exists?
         template<class T, class... Args>
-        auto add_component(id_t entity, T component, Args... args) -> typename T::type&;
+        T& add_component(id_t entity, type_t<T> component, Args... args);
+
+        //! Removes a component from a given \p entity.
+        template<class T>
+        void remove_component(id_t entity, type_t<T> component);
 
         //! Gets the component (const) of a given \p entity.
         //! \note this does not check if the component is actually valid!
         template<class T>
-        auto get_component(id_t entity, T component) const -> const typename T::type&;
+        const T& get_component(id_t entity, type_t<T> component) const;
 
         //! Gets the component (const) of a given \p entity.
         //! \note this does not check if the component is actually valid!
         template<class T>
-        auto get_mutable_component(id_t entity, T component) -> typename T::type&;
+        T& get_mutable_component(id_t entity, type_t<T> component);
 
         //! Gets the bitfield index of a component.
         template<class T>
@@ -223,24 +227,30 @@ namespace ecs
 
     template<class C>
     template<class T>
-    auto EntityStorage<C>::get_component(id_t entity, T component) const -> const typename T::type&
+    const T& EntityStorage<C>::get_component(id_t entity, type_t<T> component) const
     {
         return std::get<tuple_index(component)>(components(entity));
     }
 
     template<class C>
     template<class T>
-    auto EntityStorage<C>::get_mutable_component(id_t entity, T component) -> typename T::type&
+    T& EntityStorage<C>::get_mutable_component(id_t entity, type_t<T> component)
     {
         return std::get<tuple_index(component)>(mutable_components(entity));
     }
 
     template<class C>
+    template<class T>
+    void EntityStorage<C>::remove_component(id_t entity, type_t<T> component)
+    {
+        mMetaData.mutable_bits(lookup(entity)).reset(bit_index(component));
+    }
+
+    template<class C>
     template<class T, class... Args>
-    auto EntityStorage<C>::add_component(id_t entity, T component, Args... args) -> typename T::type&
+    T& EntityStorage<C>::add_component(id_t entity, type_t<T> component, Args... args)
     {
         // preparation
-        using Component = typename T::type;
         auto index = lookup(entity);
 
         // update metadata
@@ -248,7 +258,7 @@ namespace ecs
 
         // create new component, forward args to constructor.
         auto components = mComponents.get(index);
-        std::get<tuple_index(component)>(components) = Component(std::forward<Args>(args)...);
+        std::get<tuple_index(component)>(components) = T(std::forward<Args>(args)...);
 
         return std::get<tuple_index(component)>(components);
     };

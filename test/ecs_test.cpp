@@ -12,7 +12,6 @@
 #include "core/V2/MetaStorage.h"
 #include "core/V2/EntityStorage.h"
 #include "core/V2/EntityHandle.h"
-#include "core/V2/mp.h"
 
 namespace ecs = spatacs::core::ecs;
 
@@ -82,6 +81,7 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
 
     BOOST_AUTO_TEST_CASE(EntityStorage)
     {
+        /// \todo test for remove
         ecs::EntityStorage<MockConfig> es;
         es.resize(2);
         BOOST_REQUIRE_EQUAL(es.size(), 2);
@@ -158,7 +158,14 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         }
 
         template<class T>
-        T& get_component(id_t id)
+        const T& get_component(id_t id) const
+        {
+            if(std::is_same<T, int>::value) return reinterpret_cast<T&>(mIntValues.at(id));
+            return  reinterpret_cast<T&>(mFloatValues.at(id));
+        }
+
+        template<class T>
+        T& get_mutable_component(id_t id)
         {
             if(std::is_same<T, int>::value) return reinterpret_cast<T&>(mIntValues.at(id));
             return  reinterpret_cast<T&>(mFloatValues.at(id));
@@ -174,6 +181,7 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
 
     BOOST_AUTO_TEST_CASE(EntityHandle)
     {
+        /// \todo add test for remove
         using Handle = ecs::EntityHandle<MockConfig>;
 
         // default construct
@@ -206,5 +214,7 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         h.get<int>() = 2;
         BOOST_CHECK_EQUAL(h.get<int>(), 2);
     }
+
+    /// \todo tests for EntityManager
 
 BOOST_AUTO_TEST_SUITE_END()

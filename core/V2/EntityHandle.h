@@ -40,12 +40,10 @@ namespace ecs
 
         template<class T, class... Args>
         T& add(Args&&... args);
-/*
-            template<class T>
-            void remove();
 
-            const bits_t& bits() const;
-*/
+        template<class T>
+        void remove();
+
         bool alive() const;
         void kill();
     private:
@@ -76,7 +74,7 @@ namespace ecs
     template<class T>
     T& EntityHandle<Config>::get()
     {
-        return mManager->template get_component<T>(mID);
+        return mManager->template get_mutable_component<T>(mID);
     }
 
     template<class Config>
@@ -91,6 +89,13 @@ namespace ecs
     T& EntityHandle<Config>::add(Args&&... args)
     {
         return mManager->template add_component<T>(mID, std::forward<Args>(args)...);
+    }
+
+    template<class C>
+    template<class T>
+    void EntityHandle<C>::remove()
+    {
+        mManager->template remove_component<T>(mID);
     }
 }
 }
