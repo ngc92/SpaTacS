@@ -12,6 +12,7 @@
 #include "core/V2/MetaStorage.h"
 #include "core/V2/EntityStorage.h"
 #include "core/V2/EntityHandle.h"
+#include "core/V2/mp.h"
 
 namespace ecs = spatacs::core::ecs;
 
@@ -112,6 +113,15 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         // components test
         std::get<0>(es.mutable_components(second)) = 2;
         BOOST_CHECK_EQUAL( std::get<0>(es.components(second)), 2 );
+
+        es.add_component(third, ecs::type_t<int>{}, 1);
+        BOOST_CHECK_EQUAL( std::get<0>(es.components(third)), 1 );
+        BOOST_CHECK_EQUAL( es.get_component(third, ecs::type_t<int>{}), 1 );
+        BOOST_CHECK(es.bits(third).test(0));
+
+        es.add_component(third, ecs::type_t<float>{}, 1.f);
+        es.get_mutable_component(third, ecs::type_t<float>{}) = 1.5f;
+        BOOST_CHECK_EQUAL( es.get_component(third, ecs::type_t<float>{}), 1.5f );
     }
 
 

@@ -23,7 +23,6 @@ void GameSimulation::updateObjects()
         ship.setPosition( po.position() );
         ship.setVelocity( po.velocity() );
         ship.setMass( po.mass() );
-        ship.onStep();
     }
 }
 
@@ -51,7 +50,7 @@ void GameSimulation::physics_callback(physics::PhysicsWorld& world, const physic
     if(aship && bship)
     {
 
-    } else if( aship) // Ship - Projectile
+    } else if( aship ) // Ship - Projectile
     {
         /// \todo use correct positions here!
         auto& proj = dynamic_cast<game::Projectile&>(*ob_B);
@@ -81,5 +80,6 @@ void GameSimulation::updateShips()
             mWorld->applyForce(ship.physics_id(), acc * ship.mass());
             mWorld->setMass(ship.physics_id(), conv.getTotalMass());
         }
+        ship.onStep();
     }
 }

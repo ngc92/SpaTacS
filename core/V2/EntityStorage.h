@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include "MetaStorage.h"
 #include "ComponentStorage.h"
+#include "Translation.h"
 
 namespace spatacs
 {
@@ -28,15 +29,24 @@ namespace ecs
         using cmp_storage_t  = typename Config::cmp_storage_t;
         using id_t           = typename Config::id_t;
         using bits_t         = typename meta_storage_t::bits_t;
+        using translator_t   = Translator<cmp_storage_t>;
+
+        template<class T>
+        static constexpr std::size_t component_id = translator_t::template index<T>();
+
     public:
-        // size related functions
+        // --------------------------------------------------------------------------------
+        //                      size related functions
+        // --------------------------------------------------------------------------------
         //! resizes the buffers to accomodate \p new_size entities.
         EntityStorage& resize(std::size_t new_size);
 
         //! gets the current size of the buffers.
         std::size_t size() const noexcept;
 
-        // lifetime related functions
+        // --------------------------------------------------------------------------------
+        //                              lifetime related functions
+        // --------------------------------------------------------------------------------
         //! kills the object with \p id. This marks the object for deletion,
         //! and it will be removed during the next cleanup run.
         //! \note If the supplied \p id is invalid, nothing happens.
@@ -58,7 +68,9 @@ namespace ecs
         //! \throw If \p id is not valid.
         bits_t& mutable_bits(id_t id);
 
-        // components functions
+        // --------------------------------------------------------------------------------
+        //                          components functions
+        // --------------------------------------------------------------------------------
         //! gets the components associated with \p id.
         //! \throw If \p id is not valid.
         auto components(id_t id) const;
@@ -67,24 +79,54 @@ namespace ecs
         //! \throw If \p id is not valid.
         auto mutable_components(id_t id);
 
+        //! Adds a component to a given \p entity.
+        //! \todo What do we do if that component already exists?
+        template<class T, class... Args>
+        auto add_component(id_t entity, T component, Args... args) -> typename T::type&;
+
+        //! Gets the component (const) of a given \p entity.
+        //! \note this does not check if the component is actually valid!
+        template<class T>
+        auto get_component(id_t entity, T component) const -> const typename T::type&;
+
+        //! Gets the component (const) of a given \p entity.
+        //! \note this does not check if the component is actually valid!
+        template<class T>
+        auto get_mutable_component(id_t entity, T component) -> typename T::type&;
+
+        //! Gets the bitfield index of a component.
+        template<class T>
+        constexpr static std::size_t bit_index(type_t<T>);
+
+        //! Gets the component tuple index of a component.
+        template<class T>
+        constexpr static std::size_t tuple_index(type_t<T>);
     private:
-        // helper functions
+        // --------------------------------------------------------------------------------
+        //                       helper functions
+        // --------------------------------------------------------------------------------
         /// looks up \p id and returns the corresponding subscript.
         std::size_t lookup(id_t id) const;
 
         /// returns the next free subscript, resizing storage if necessary.
         std::size_t next_free();
 
-        // data storage
+        // --------------------------------------------------------------------------------
+        //                      data storage
+        // --------------------------------------------------------------------------------
         meta_storage_t mMetaData;
         cmp_storage_t  mComponents;
 
-        // Lookup table
+        // --------------------------------------------------------------------------------
+        //                      Lookup table
+        // --------------------------------------------------------------------------------
         std::unordered_map<id_t, std::size_t> mLookup;
         id_t mLastGivenID{};
     };
 
-    // size functions
+    // -----------------------------------------------------------------------------------------------------------------
+    //                                      size functions
+    // -----------------------------------------------------------------------------------------------------------------
     template<class C>
     EntityStorage<C>& EntityStorage<C>::resize(std::size_t new_size)
     {
@@ -100,7 +142,9 @@ namespace ecs
         return mMetaData.size();
     }
 
-    // lifetime related functions
+    // -----------------------------------------------------------------------------------------------------------------
+    //                              lifetime related functions
+    // -----------------------------------------------------------------------------------------------------------------
     template<class C>
     EntityStorage<C>& EntityStorage<C>::kill(id_t id) noexcept
     {
@@ -134,7 +178,9 @@ namespace ecs
         return mMetaData.is_alive(found->second);
     }
 
-    // bits functions
+    // -----------------------------------------------------------------------------------------------------------------
+    //                                          bits functions
+    // -----------------------------------------------------------------------------------------------------------------
     template<class C>
     auto EntityStorage<C>::bits(id_t id) const -> const bits_t&
     {
@@ -147,7 +193,22 @@ namespace ecs
         return mMetaData.mutable_bits( lookup(id) );
     }
 
-    // components functions
+    // -----------------------------------------------------------------------------------------------------------------
+    //                                      components functions
+    // -----------------------------------------------------------------------------------------------------------------
+    template<class C>
+    template<class T>
+    constexpr std::size_t EntityStorage<C>::bit_index(type_t<T>)
+    {
+        return component_id<T>;
+    }
+
+    template<class C>
+    template<class T>
+    constexpr std::size_t EntityStorage<C>::tuple_index(type_t<T>)
+    {
+        return component_id<T>;
+    }
 
     template<class C>
     auto EntityStorage<C>::components(id_t id) const
@@ -160,7 +221,41 @@ namespace ecs
         return mComponents.get( lookup(id) );
     }
 
-    // helpers
+    template<class C>
+    template<class T>
+    auto EntityStorage<C>::get_component(id_t entity, T component) const -> const typename T::type&
+    {
+        return std::get<tuple_index(component)>(components(entity));
+    }
+
+    template<class C>
+    template<class T>
+    auto EntityStorage<C>::get_mutable_component(id_t entity, T component) -> typename T::type&
+    {
+        return std::get<tuple_index(component)>(mutable_components(entity));
+    }
+
+    template<class C>
+    template<class T, class... Args>
+    auto EntityStorage<C>::add_component(id_t entity, T component, Args... args) -> typename T::type&
+    {
+        // preparation
+        using Component = typename T::type;
+        auto index = lookup(entity);
+
+        // update metadata
+        mMetaData.mutable_bits(index).set(bit_index(component));
+
+        // create new component, forward args to constructor.
+        auto components = mComponents.get(index);
+        std::get<tuple_index(component)>(components) = Component(std::forward<Args>(args)...);
+
+        return std::get<tuple_index(component)>(components);
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    //                                              helpers
+    // -----------------------------------------------------------------------------------------------------------------
     template<class C>
     std::size_t EntityStorage<C>::lookup(id_t id) const
     {
