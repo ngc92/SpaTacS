@@ -9,6 +9,8 @@
 
 #include "core/V2/EntityManager.h"
 #include "core/V2/ComponentStorage.h"
+#include "core/V2/MetaStorage.h"
+#include "core/V2/EntityStorage.h"
 #include "core/V2/EntityHandle.h"
 
 namespace ecs = spatacs::core::ecs;
@@ -31,20 +33,87 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         BOOST_CHECK_EQUAL(std::get<0>(cs.get(0)), 5);
         BOOST_CHECK_EQUAL(std::get<1>(cs.get(0)), 1.5f);
         BOOST_CHECK_EQUAL(std::get<2>(cs.get(0)), 2.0);
+    }
 
-        BOOST_CHECK_EQUAL( cs.getNextFreeIndex(), 0 );
+    struct MockMgr;
+    struct MockConfig
+    {
+        using manager_t = MockMgr;
+        using id_t      = std::size_t;
+        using cmp_storage_t = ecs::ComponentStorage<int, float, double>;
+        constexpr static std::size_t comp_count = 5;
+    };
+
+    BOOST_AUTO_TEST_CASE(MetadataStorage)
+    {
+        ecs::MetadataStorage<5> ms;
+
+        ms.resize(10);
+        BOOST_CHECK_EQUAL( ms.size(), 10 );
+        BOOST_CHECK_EQUAL( ms.getNextFreeIndex(), 0 );
 
         // Lifetime mgm
         for(int i = 0; i < 10; ++i) {
-            BOOST_CHECK_EQUAL(cs.is_alive(i), false);
+            BOOST_CHECK_EQUAL(ms.is_alive(i), false);
         }
 
-        cs.create(2);
-        BOOST_CHECK_EQUAL(cs.is_alive(2), true);
+        ms.create(2);
+        BOOST_CHECK_EQUAL(ms.is_alive(2), true);
 
-        cs.kill(2);
-        BOOST_CHECK_EQUAL(cs.is_alive(2), false);
+        ms.kill(2);
+        BOOST_CHECK_EQUAL(ms.is_alive(2), false);
+
+        // Bits mgm
+        for(int i = 0; i < 10; ++i) {
+            BOOST_CHECK_EQUAL(ms.bits(i), 0);
+        }
+
+        ms.mutable_bits(0).flip();
+        BOOST_CHECK(ms.bits(0).all());
+
+        // kill does not yet change the bits
+        ms.kill(0);
+        BOOST_CHECK(ms.bits(0).all());
+        // ensure that newly creates one have all bits set to zero
+        ms.create(0);
+        BOOST_CHECK(ms.bits(0).none());
     }
+
+    BOOST_AUTO_TEST_CASE(EntityStorage)
+    {
+        ecs::EntityStorage<MockConfig> es;
+        es.resize(2);
+        BOOST_REQUIRE_EQUAL(es.size(), 2);
+
+        auto first = es.create();
+        auto second = es.create();
+        BOOST_CHECK( es.is_alive(first) );
+        BOOST_CHECK( es.is_alive(second) );
+
+        BOOST_CHECK_EQUAL(&es.kill(first), &es);
+        BOOST_CHECK(!es.is_alive(first));
+
+        // without proper versioning, we wil overwrite here
+        auto third = es.create();
+        BOOST_CHECK(es.is_alive(third));
+        BOOST_CHECK(!es.is_alive(first));
+
+        // automatic resizing
+        auto forth = es.create();
+        BOOST_CHECK(es.is_alive(forth));
+        BOOST_CHECK_GE(es.size(), 3);
+
+
+        // bits test
+        BOOST_CHECK(es.bits(second).none());
+        es.mutable_bits(second).set(2);
+        BOOST_CHECK_EQUAL(es.bits(second), std::bitset<5>(0b00100));
+
+        // components test
+        std::get<0>(es.mutable_components(second)) = 2;
+        BOOST_CHECK_EQUAL( std::get<0>(es.components(second)), 2 );
+    }
+
 
     struct MockMgr
     {
@@ -89,18 +158,12 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         std::vector<bool> mHasInt;
         std::vector<bool> mHasFloat;
 
-        std::vector<int> mIntValues;
+        std::vector<int>  mIntValues;
         std::vector<float> mFloatValues;
     };
 
     BOOST_AUTO_TEST_CASE(EntityHandle)
     {
-        struct MockConfig
-        {
-            using manager_t = MockMgr;
-            using id_t      = std::size_t;
-        };
-
         using Handle = ecs::EntityHandle<MockConfig>;
 
         // default construct

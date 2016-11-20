@@ -8,7 +8,6 @@
 #include <tuple>
 #include <utility>
 #include <vector>
-#include <limits>
 
 namespace spatacs {
 namespace core {
@@ -18,10 +17,12 @@ namespace ecs {
      *  \details This class manages owns the components
      *      and manages accessing them. Access is provided
      *      through get methods, that return tuples of
-     *      (const) references. It also contains a bit
-     *      vector that determines which index is alive.
-     *      (\todo we might want to move that somewhere
-     *      else).
+     *      (const) references. This is pruposefully defined
+     *      as a pretty dumb data structure. It is mostly a
+     *      container that manages different data in a
+     *      "Struct of Arrays" manner.
+     *      \todo maybe rename stuff so that is does not
+     *          sound specific.
      */
     template<class... Components>
     class ComponentStorage
@@ -48,8 +49,6 @@ namespace ecs {
         {
             // resize all component arrays
             resize_all(new_size, index_list{});
-            // and resize the alive vector.
-            mIsAlive.resize(new_size, false);
         }
 
         //! gets the current size of the buffers.
@@ -70,46 +69,13 @@ namespace ecs {
         {
             return get(index, index_list{});
         }
-
-        // free id
-        //! returns the next free ID. If none is found, returns
-        //! numeric_limits<size_t>::max()
-        std::size_t getNextFreeIndex() const noexcept
-        {
-            for(std::size_t i = 0; i < mIsAlive.size(); ++i)
-            {
-                if(mIsAlive[i] == false)
-                    return i;
-            }
-
-            return std::numeric_limits<std::size_t>::max();
-        }
-
-        // lifetime
-        ///! sets an index to dead
-        void kill(std::size_t index)
-        {
-            mIsAlive.at(index) = false;
-        }
-
-        //! sets an index to alive
-        void create(std::size_t index)
-        {
-            mIsAlive.at(index) = true;
-        }
-
-        //! checks whether a given index is alive
-        bool is_alive(std::size_t index) const
-        {
-            return mIsAlive.at(index);
-        }
-
     private:
 
         template<std::size_t... idx>
         void resize_all(std::size_t new_size, std::index_sequence<idx...>)
         {
             std::initializer_list<int> A{(std::get<idx>(mData).resize(new_size), 0)...};
+            (void)A; // fix unused warning
         }
 
         template<std::size_t... idx>
@@ -126,8 +92,6 @@ namespace ecs {
 
         //! This contains all the component data.
         cvec_type mData;
-        //! This vector contains whether a specific entity is alive.
-        std::vector<bool> mIsAlive;
     };
 }
 }
