@@ -9,7 +9,6 @@
 
 using namespace spatacs;
 using namespace core;
-using namespace game;
 
 using EventPtr = std::unique_ptr<events::IEvent>;
 
@@ -79,7 +78,7 @@ SimulationBase::SimulationBase():
     );
 }
 
-GameState SimulationBase::extractState()
+auto SimulationBase::extractState() const -> StatePtr
 {
-    return GameState(mState);
+    return mState.clone();
 }

@@ -29,7 +29,7 @@ namespace irr
 }
 
 namespace spatacs {
-    namespace core
+    namespace game
     {
         class GameState;
     }
@@ -65,7 +65,7 @@ namespace spatacs {
             irr::core::vector2di getScreenPosition(const irr::core::vector3df pos3d);
             irr::scene::ICameraSceneNode* getCamera();
 
-            const core::GameState& state() const;
+            const game::GameState& state() const;
             cmd::CommandManager& getCmdMgr();
 
 

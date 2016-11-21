@@ -3,7 +3,7 @@
 //
 
 #include "CommandManager.h"
-#include "core/GameState.h"
+#include "game/GameState.h"
 #include <iostream>
 #include <game/systems.h>
 #include "events/Accelerate.h"
@@ -76,9 +76,9 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
     mOneShotCommands.clear();
 }
 
-void CommandManager::setState(const std::shared_ptr<const core::GameState>& state)
+void CommandManager::setState(const state_t& state)
 {
-    mState = state;
+    mState = std::dynamic_pointer_cast<const game::GameState>(state);
     validate();
 }
 

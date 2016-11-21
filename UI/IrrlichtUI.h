@@ -7,7 +7,7 @@
 
 #include "core/GameInterface.h"
 #include "IrrRAII.h"
-#include "core/GameState.h"
+#include "game/GameState.h"
 
 namespace irr
 {
@@ -39,7 +39,7 @@ namespace spatacs {
 
             virtual void getCommandEvents(std::vector<events::EventPtr>& evts) override;
 
-            void setState(const std::shared_ptr<const core::GameState>& state) override;
+            void setState(const state_t& state) override;
 
             bool step() override;
 
@@ -48,14 +48,14 @@ namespace spatacs {
             bool handleUIEvent( const irr::SEvent& ev );
 
             // interface for tools
-            const core::GameState& state() const { return *mState; }
+            const game::GameState& state() const { return *mState; }
             cmd::CommandManager& getCommandMgr();
             irr::IrrlichtDevice* getDevice() { return mDevice; }
             bool pause() const;
         private:
             std::uint64_t mOwnTeam;
             irr::IrrlichtDevice* mDevice;
-            std::shared_ptr<const core::GameState> mState;
+            std::shared_ptr<const game::GameState> mState;
 
             class EventRec;
             std::unique_ptr<EventRec> mEventReceiver;

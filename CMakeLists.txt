@@ -39,8 +39,8 @@ SET(CORE_SOURCE_FILES
         game/Starship.h
         core/Game.h
         core/Game.cpp
-        core/GameState.h
-        core/GameState.cpp
+        game/GameState.h
+        game/GameState.cpp
         core/Entity.h
         core/System.h
         core/EntityManager.h

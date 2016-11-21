@@ -3,6 +3,7 @@
 
 #include <random>
 #include <memory>
+#include <functional>
 
 namespace spatacs
 {
@@ -11,16 +12,19 @@ namespace spatacs
         class IEvent;
     }
 	namespace core {
-        class GameState;
+        class GameStateBase;
         namespace detail {
             class GameThread;
         }
         class GameInterface;
+        class SimulationBase;
 
         class Game {
         public:
             using EventPtr = std::unique_ptr<events::IEvent>;
-            Game();
+            //! creates a game.
+            //! \param simulation: Pointer to the simulation that is to be used in the game thread.
+            Game(std::unique_ptr<SimulationBase> simulation);
             ~Game();
 
             void run();
@@ -31,10 +35,10 @@ namespace spatacs
 
             std::unique_ptr<detail::GameThread> mThread;
 
-            std::default_random_engine mRandom;
+            std::default_random_engine     mRandom;
 
-            std::shared_ptr<GameState> mState;
-            std::vector<EventPtr>      mEvents;
+            std::shared_ptr<GameStateBase> mState;
+            std::vector<EventPtr>          mEvents;
 
             // interfaces
             std::vector<std::shared_ptr<GameInterface>> mUIs;

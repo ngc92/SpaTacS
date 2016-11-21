@@ -4,13 +4,12 @@
 
 #include <boost/throw_exception.hpp>
 #include <stdexcept>
-#include "GameState.h"
+#include "game/GameState.h"
 #include <algorithm>
 #include "game/Starship.h"
 #include "game/Projectile.h"
 
 using namespace spatacs;
-using namespace core;
 using namespace game;
 
 GameState::GameState()
@@ -67,4 +66,9 @@ const bool GameState::hasObject(ObjectID id) const
         if (p.id() == id)
             return true;
     return false;
+}
+
+std::unique_ptr<core::GameStateBase> GameState::clone() const
+{
+    return std::make_unique<GameState>(*this);
 }

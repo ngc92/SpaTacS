@@ -10,7 +10,7 @@
 #include <sstream>
 #include <iomanip>
 #include "UnitCommand.h"
-#include "core/GameState.h"
+#include "game/GameState.h"
 #include <irrlicht/ICameraSceneNode.h>
 #include <iostream>
 #include "UI/convert.h"
@@ -28,7 +28,7 @@
 using namespace spatacs;
 
 /// \todo this is copy paste, improve that!
-const game::Starship* pick(const core::GameState& world, irr::core::line3df ray);
+const game::Starship* pick(const game::GameState& world, irr::core::line3df ray);
 
 ui::UnitCommand::UnitCommand(game::ObjectID id) :
         mActiveShipID(id)

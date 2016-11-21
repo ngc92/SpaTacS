@@ -26,7 +26,7 @@ using namespace ui;
 namespace icore = irr::core;
 
 
-const game::Starship* pick(const spatacs::core::GameState& world, icore::line3df ray)
+const game::Starship* pick(const spatacs::game::GameState& world, icore::line3df ray)
 {
     const spatacs::game::Starship* picked = nullptr;
     f64 md = 1e10;
@@ -138,7 +138,7 @@ public:
 
 void IrrlichtUI::init()
 {
-    mState = std::make_shared<spatacs::core::GameState>();
+    mState = std::make_shared<spatacs::game::GameState>();
     mEventReceiver.reset( new EventRec );
     mEventReceiver->setCollisionManager( mDevice->getSceneManager()->getSceneCollisionManager() );
     mEventReceiver->mInputMode = std::make_shared<UnitSelection>(mOwnTeam);
@@ -151,8 +151,10 @@ void IrrlichtUI::init()
     mMap = mDevice->getSceneManager()->addEmptySceneNode();
 }
 
-void IrrlichtUI::setState(const std::shared_ptr<const spatacs::core::GameState>& state)
+void IrrlichtUI::setState(const state_t& bstate)
 {
+    auto state = std::dynamic_pointer_cast<const game::GameState>(bstate);
+
     auto smgr = mDevice->getSceneManager();
     mState = state;
 

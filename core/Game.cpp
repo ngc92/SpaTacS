@@ -1,18 +1,18 @@
 #include "Game.h"
-#include "GameState.h"
 #include "GameInterface.h"
+#include "SimulationBase.h"
 #include <chrono>
 #include <algorithm>
 #include "core/detail/GameThread.h"
 #include "events/Accelerate.h"
 #include "events/Combat.h"
 #include <iostream>
-#include "game/GameSimulation.h"
 
 using namespace spatacs;
 using namespace core;
 
-Game::Game() : mThread( std::make_unique<detail::GameThread>( std::make_unique<game::GameSimulation>() ) )
+Game::Game(std::unique_ptr<SimulationBase> simulation) :
+    mThread( std::make_unique<detail::GameThread>( std::move(simulation) ) )
 {
 }
 
@@ -33,7 +33,7 @@ void Game::run()
     if( mThread->has_data() )
     {
         // if yes, we update stuff
-        mState  = std::make_shared<GameState>(mThread->getState());
+        mState  = std::shared_ptr<GameStateBase>(mThread->getState());
         mEvents = mThread->getEvents();
 
         std::vector<events::EventPtr> in_events;

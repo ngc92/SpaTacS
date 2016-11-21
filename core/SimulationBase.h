@@ -2,11 +2,11 @@
 // Created by erik on 10/1/16.
 //
 
-#ifndef SOI_SIMULATION_H
-#define SOI_SIMULATION_H
+#ifndef SPATACS_CORE_SIMULATION_BASE_H
+#define SPATACS_CORE_SIMULATION_BASE_H
 
 #include <events/IEvent.h>
-#include "GameState.h"
+#include "game/GameState.h"
 #include "physics/PhysicsWorld.h"
 
 namespace spatacs
@@ -17,6 +17,7 @@ namespace core
     {
         using EventPtr = std::unique_ptr<events::IEvent>;
         using EventVec = std::vector<EventPtr>;
+        using StatePtr = std::unique_ptr<GameStateBase>;
 
         // thread internal variables, don't touch from outside!
         EventVec mEventCache;
@@ -32,7 +33,7 @@ namespace core
 
     protected:
         // thread internal variables, don't touch from outside!
-        GameState mState;
+        game::GameState mState;
         std::unique_ptr<physics::PhysicsWorld> mWorld;
 
         void addEvent(EventPtr e );
@@ -41,10 +42,10 @@ namespace core
         virtual ~SimulationBase() = default;
 
         EventVec step(EventVec inEvents);
-        GameState extractState();
+        StatePtr extractState() const;
     };
 }
 }
 
 
-#endif //SOI_SIMULATION_H
+#endif //SPATACS_CORE_SIMULATION_BASE_H

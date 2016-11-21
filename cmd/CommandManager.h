@@ -2,8 +2,8 @@
 // Created by erik on 9/22/16.
 //
 
-#ifndef SPATACS_COMMANDMANAGER_H_H
-#define SPATACS_COMMANDMANAGER_H_H
+#ifndef SPATACS_COMMANDMANAGER_H
+#define SPATACS_COMMANDMANAGER_H
 
 #include <vector>
 #include <unordered_map>
@@ -18,7 +18,7 @@
 
 namespace spatacs
 {
-    namespace core
+    namespace game
     {
         class GameState;
     }
@@ -44,7 +44,7 @@ namespace spatacs
             //
             void init() override { };
             void getCommandEvents(std::vector<events::EventPtr>& evts) override;
-            void setState(const std::shared_ptr<const core::GameState>& state) override;
+            void setState(const state_t& state) override;
             void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) override { }
             bool step() override { return true; }
 
@@ -55,9 +55,9 @@ namespace spatacs
 
             std::unordered_map<game::ObjectID, CommandSlot> mCommandSlots;
             std::vector<oneshot_t> mOneShotCommands;
-            std::shared_ptr<const core::GameState> mState;
+            std::shared_ptr<const game::GameState> mState;
         };
     }
 }
 
-#endif //SOI_COMMANDMANAGER_H_H
+#endif //SPATACS_COMMANDMANAGER_H

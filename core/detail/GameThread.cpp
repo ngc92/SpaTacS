@@ -72,7 +72,7 @@ bool GameThread::has_data() const
     return mHasData;
 }
 
-GameState GameThread::getState()
+auto GameThread::getState() -> StatePtr
 {
     assert(mHasData);
     std::lock_guard<std::mutex> lck(mMutex);

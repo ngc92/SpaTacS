@@ -7,7 +7,7 @@
 #include <events/Combat.h>
 #include <iostream>
 #include "game/Starship.h"
-#include "core/GameState.h"
+#include "GameState.h"
 #include "cmd/CommandManager.h"
 #include "systems.h"
 
@@ -16,11 +16,12 @@ using namespace game;
 
 void AIPlayer::init()
 {
-    mState = std::make_shared<core::GameState>();
+    mState = std::make_shared<game::GameState>();
 }
 
-void AIPlayer::setState(const std::shared_ptr<const core::GameState>& state)
+void AIPlayer::setState(const state_t& bstate)
 {
+    auto state = std::dynamic_pointer_cast<const game::GameState>(bstate);
     for(auto& obj : *state)
     {
         if(!dynamic_cast<const game::Starship*>(&obj))

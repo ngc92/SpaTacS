@@ -11,7 +11,7 @@
 
 namespace spatacs
 {
-    namespace core
+    namespace game
     {
         class GameState;
     }
@@ -30,7 +30,7 @@ namespace spatacs
 
         struct EventContext
         {
-            core::GameState& state;
+            game::GameState& state;
             EventList& events;
             physics::PhysicsWorld& world;
         };
@@ -38,7 +38,7 @@ namespace spatacs
         class IEvent
         {
         public:
-            using State     = core::GameState;
+            using State     = game::GameState;
 
             /// applies this event to the game state.
             virtual void apply(EventContext& context) const = 0;

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <game/Starship.h>
 #include <events/Accelerate.h>
-#include "core/GameState.h"
+#include "game/GameState.h"
 
 using namespace spatacs;
 using namespace cmd::movement;
@@ -52,7 +52,7 @@ accel_vec FollowRoute::thrust(const game::Starship& ship) const
     return dv;
 }
 
-void FollowRoute::update(const game::Starship& ship, const core::GameState& state)
+void FollowRoute::update(const game::Starship& ship, const game::GameState& state)
 {
     if( mTargets.empty() )
         return;
@@ -95,7 +95,7 @@ accel_vec cmd::Move::thrust(const game::Starship& ship) const
     return accel_vec(0, 0, 0);
 }
 
-void cmd::Move::update(const game::Starship& ship, const core::GameState& state)
+void cmd::Move::update(const game::Starship& ship, const game::GameState& state)
 {
     if(mCommand)
         return mCommand->update(ship, state);
@@ -181,7 +181,7 @@ EngageTarget::EngageTarget(game::ObjectID target_id, speed_t speed) :
 
 }
 
-void EngageTarget::update(const game::Starship& ship, const core::GameState& state)
+void EngageTarget::update(const game::Starship& ship, const game::GameState& state)
 {
     if(!mTargetID)
         return;

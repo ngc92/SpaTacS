@@ -22,7 +22,7 @@ namespace spatacs
 
             virtual void getCommandEvents(std::vector<events::EventPtr>& evts) override;
 
-            virtual void setState(const std::shared_ptr<const core::GameState>& state) override;
+            virtual void setState(const state_t& state) override;
 
             virtual void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) override { }
 
