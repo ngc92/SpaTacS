@@ -72,7 +72,6 @@ namespace core
             // ----------------------------------------------------------------
             EntityManager& kill(id_t entity) noexcept { mStorage.kill(entity); return *this; }
             bool is_alive(id_t entity) const noexcept { return mStorage.is_alive(entity); }
-
             handle_t create() { return {*this, mStorage.create()}; }
 
             template<class T, class... Args>
@@ -82,13 +81,10 @@ namespace core
             };
 
             template<class T>
-            void remove_component(id_t entity) { return mStorage.add_component(entity, type_t<T>{}); };
+            void remove_component(id_t entity) { return mStorage.add_component(entity, type_t<T>{}); }
 
             template<class T>
-            bool has_component(id_t entity)
-            {
-                return mStorage.bits(entity).test( mStorage.bit_index(type_t<T>{}) );
-            }
+            bool has_component(id_t entity) { return mStorage.has_components(entity); }
 
             template<class T>
             const T& get_component(id_t entity) const { return mStorage.get_component(entity, type_t<T>{}); }
@@ -104,13 +100,28 @@ namespace core
             storage_t mStorage;
         };
 
+        template<class Bitfield>
+        bool match_bits(const Bitfield& required, const Bitfield& available)
+        {
+            return required & available == required;
+        }
+
         template<class C>
         template<class S>
         void EntityManager<C>::apply(System<S>&& system)
         {
-            mStorage.iterate( S::forwarder(std::forward<System<S>>(system)) );
-        }
+            typename C::bits_t system_bits;
+            auto apply_comps = S::forwarder(std::forward<System<S>>(system));
 
+            auto f = [&](std::size_t index)
+            {
+                if(match_bits(system_bits, mStorage.bits(index)))
+                {
+                    apply_comps(mStorage.components(index));
+                }
+            };
+            mStorage.iterate_indices(f);
+        }
     }
 }
 }

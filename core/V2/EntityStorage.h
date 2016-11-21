@@ -6,6 +6,9 @@
 #define SPATACS_CORE_ENTITYSTORAGE_H
 
 #include <unordered_map>
+#include <boost/range/irange.hpp>
+#include <boost/range/adaptor/filtered.hpp>
+#include <boost/range/algorithm/for_each.hpp>
 #include "MetaStorage.h"
 #include "ComponentStorage.h"
 #include "mp.h"
@@ -58,26 +61,24 @@ namespace ecs
         //! Returns false if the id is not valid.
         bool is_alive(id_t id) const noexcept;
 
-        // bits functions
+        // --------------------------------------------------------------------------------
+        //                          direct access functions
+        // --------------------------------------------------------------------------------
         //! gets the bits associated with \p id.
         //! \throw If \p id is not valid.
-        const bits_t& bits(id_t id) const;
+        const bits_t& bits(std::size_t index) const;
 
-        //! gets the bits associated with \p id (non const).
+        //! gets the components associated with given subscript \p id.
         //! \throw If \p id is not valid.
-        bits_t& mutable_bits(id_t id);
+        auto components(std::size_t id) const;
+
+        //! gets the components associated with given subscript \p id (non const).
+        //! \throw If \p id is not valid.
+        auto mutable_components(std::size_t id);
 
         // --------------------------------------------------------------------------------
         //                          components functions
         // --------------------------------------------------------------------------------
-        //! gets the components associated with \p id.
-        //! \throw If \p id is not valid.
-        auto components(id_t id) const;
-
-        //! gets the components associated with \p id (non const).
-        //! \throw If \p id is not valid.
-        auto mutable_components(id_t id);
-
         //! Adds a component to a given \p entity.
         //! \todo What do we do if that component already exists?
         template<class T, class... Args>
@@ -86,6 +87,10 @@ namespace ecs
         //! Removes a component from a given \p entity.
         template<class T>
         void remove_component(id_t entity, type_t<T> component);
+
+        //! Checks for the existence of a component.
+        template<class T>
+        bool has_component(id_t entity, type_t<T> component);
 
         //! Gets the component (const) of a given \p entity.
         //! \note this does not check if the component is actually valid!
@@ -97,6 +102,10 @@ namespace ecs
         template<class T>
         T& get_mutable_component(id_t entity, type_t<T> component);
 
+        // --------------------------------------------------------------------------------
+        //                          index functions
+        // --------------------------------------------------------------------------------
+
         //! Gets the bitfield index of a component.
         template<class T>
         constexpr static std::size_t bit_index(type_t<T>);
@@ -105,22 +114,20 @@ namespace ecs
         template<class T>
         constexpr static std::size_t tuple_index(type_t<T>);
 
-        // --------------------------------------------------------------------------------
-        //                       iteration functions
-        // --------------------------------------------------------------------------------
-        //! non-mutating iteration. Calls f with(bits, components).
-        template<class F>
-        void iterate(F&& f) const;
+        /// looks up \p id and returns the corresponding subscript.
+        std::size_t lookup(id_t id) const;
 
-        //! mutating iteration. Calls f with(bits, components).
+        // --------------------------------------------------------------------------------
+        //                          iteration
+        // --------------------------------------------------------------------------------
+        //! This function iterates over all indices and calls \p f for those where the
+        //! entity is alive.
         template<class F>
-        void iterate_mutable(F&& f);
+        void iterate_indices(F&& f) const;
     private:
         // --------------------------------------------------------------------------------
         //                       helper functions
         // --------------------------------------------------------------------------------
-        /// looks up \p id and returns the corresponding subscript.
-        std::size_t lookup(id_t id) const;
 
         /// returns the next free subscript, resizing storage if necessary.
         std::size_t next_free();
@@ -193,22 +200,27 @@ namespace ecs
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    //                                          bits functions
+    //                                          direct access functions
     // -----------------------------------------------------------------------------------------------------------------
     template<class C>
-    auto EntityStorage<C>::bits(id_t id) const -> const bits_t&
+    auto EntityStorage<C>::bits(std::size_t index) const -> const bits_t&
     {
-        return mMetaData.bits( lookup(id) );
+        return mMetaData.bits( index );
     }
 
     template<class C>
-    auto EntityStorage<C>::mutable_bits(id_t id) -> bits_t&
+    auto EntityStorage<C>::components(std::size_t index) const
     {
-        return mMetaData.mutable_bits( lookup(id) );
+        return mComponents.get( index );
+    }
+    template<class C>
+    auto EntityStorage<C>::mutable_components(std::size_t index)
+    {
+        return mComponents.get( index );
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    //                                      components functions
+    //                                      index functions
     // -----------------------------------------------------------------------------------------------------------------
     template<class C>
     template<class T>
@@ -225,28 +237,26 @@ namespace ecs
     }
 
     template<class C>
-    auto EntityStorage<C>::components(id_t id) const
+    std::size_t EntityStorage<C>::lookup(id_t id) const
     {
-        return mComponents.get( lookup(id) );
-    }
-    template<class C>
-    auto EntityStorage<C>::mutable_components(id_t id)
-    {
-        return mComponents.get( lookup(id) );
+        return mLookup.at(id);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    //                                      components functions
+    // -----------------------------------------------------------------------------------------------------------------
     template<class C>
     template<class T>
     const T& EntityStorage<C>::get_component(id_t entity, type_t<T> component) const
     {
-        return std::get<tuple_index(component)>(components(entity));
+        return std::get<tuple_index(component)>( components(lookup(entity)) );
     }
 
     template<class C>
     template<class T>
     T& EntityStorage<C>::get_mutable_component(id_t entity, type_t<T> component)
     {
-        return std::get<tuple_index(component)>(mutable_components(entity));
+        return std::get<tuple_index(component)>( mutable_components(lookup(entity)) );
     }
 
     template<class C>
@@ -254,6 +264,13 @@ namespace ecs
     void EntityStorage<C>::remove_component(id_t entity, type_t<T> component)
     {
         mMetaData.mutable_bits(lookup(entity)).reset(bit_index(component));
+    }
+
+    template<class C>
+    template<class T>
+    bool EntityStorage<C>::has_component(id_t entity, type_t<T> component)
+    {
+        return bits(lookup(entity)).test(bit_index(component));
     }
 
     template<class C>
@@ -278,37 +295,16 @@ namespace ecs
     // -----------------------------------------------------------------------------------------------------------------
     template<class C>
     template<class F>
-    void EntityStorage<C>::iterate(F&& f) const
+    void EntityStorage<C>::iterate_indices(F&& f) const
     {
-        for(std::size_t i = 0; i < size(); ++i)
-        {
-            if(mMetaData.is_alive(i)) {
-                f(mMetaData.bits(i), mComponents.get(i));
-            }
-        }
-    }
-
-    template<class C>
-    template<class F>
-    void EntityStorage<C>::iterate_mutable(F&& f)
-    {
-        for(std::size_t i = 0; i < size(); ++i)
-        {
-            if(mMetaData.is_alive(i)) {
-                f(mMetaData.bits(i), mComponents.get(i));
-            }
-        }
+        auto range = boost::irange(std::size_t(0), size()) |
+                     boost::adaptors::filtered([this](auto i){ return mMetaData.is_alive(i); });
+        for_each(range, f);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
     //                                              helpers
     // -----------------------------------------------------------------------------------------------------------------
-    template<class C>
-    std::size_t EntityStorage<C>::lookup(id_t id) const
-    {
-        return mLookup.at(id);
-    }
-
     template<class C>
     std::size_t EntityStorage<C>::next_free()
     {

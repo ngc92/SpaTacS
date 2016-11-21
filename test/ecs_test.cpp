@@ -108,24 +108,36 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
 
         // bits test
         BOOST_CHECK(es.bits(second).none());
-        es.mutable_bits(second).set(2);
-        BOOST_CHECK_EQUAL(es.bits(second), std::bitset<5>(0b00100));
+        es.add_component(second, ecs::type_t<double>{}, 1.0);
+        BOOST_CHECK_EQUAL(es.bits(es.lookup(second)), std::bitset<5>(0b00100));
 
         // components test
-        std::get<0>(es.mutable_components(second)) = 2;
-        BOOST_CHECK_EQUAL( std::get<0>(es.components(second)), 2 );
+        std::get<0>(es.mutable_components(es.lookup(second))) = 2;
+        BOOST_CHECK_EQUAL( std::get<0>(es.components(es.lookup(second))), 2 );
 
         es.add_component(third, ecs::type_t<int>{}, 1);
-        BOOST_CHECK_EQUAL( std::get<0>(es.components(third)), 1 );
+        BOOST_CHECK_EQUAL( std::get<0>(es.components(es.lookup(third))), 1 );
         BOOST_CHECK_EQUAL( es.get_component(third, ecs::type_t<int>{}), 1 );
-        BOOST_CHECK(es.bits(third).test(0));
+        BOOST_CHECK(es.bits(es.lookup(third)).test(0));
 
         es.add_component(third, ecs::type_t<float>{}, 1.f);
+        BOOST_CHECK(es.has_component(third, ecs::type_t<float>{}));
         es.get_mutable_component(third, ecs::type_t<float>{}) = 1.5f;
         BOOST_CHECK_EQUAL( es.get_component(third, ecs::type_t<float>{}), 1.5f );
 
         es.remove_component(third, ecs::type_t<float>{});
-        BOOST_CHECK(!es.bits(third).test(1));
+        BOOST_CHECK(!es.has_component(third, ecs::type_t<float>{}));
+
+        // iteration
+        std::vector<std::size_t> indices;
+        auto f = [&](std::size_t idx) { indices.push_back(idx); };
+        es.iterate_indices(f);
+
+        BOOST_CHECK_EQUAL(indices.size(), 3);
+        es.kill(third);
+        indices.clear();
+        es.iterate_indices(f);
+        BOOST_CHECK_EQUAL(indices.size(), 2);
     }
 
 
