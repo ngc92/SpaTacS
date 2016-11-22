@@ -114,6 +114,9 @@ namespace ecs
         template<class T>
         constexpr static std::size_t tuple_index(type_t<T>);
 
+        template<class... T>
+        static bits_t get_bits(type_vec_t<T...>);
+
         /// looks up \p id and returns the corresponding subscript.
         std::size_t lookup(id_t id) const;
 
@@ -240,6 +243,17 @@ namespace ecs
     std::size_t EntityStorage<C>::lookup(id_t id) const
     {
         return mLookup.at(id);
+    }
+
+    template<class C>
+    template<class... T>
+    auto EntityStorage<C>::get_bits(type_vec_t<T...>) -> bits_t
+    {
+        /// \todo up to sizeof(ulong), we could to this constexpr.
+        bits_t& bits;
+        auto A = {(bits.set(bit_index(type_t<T>{})), 0)...};
+        (void)A;
+        return bits;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

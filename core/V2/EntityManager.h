@@ -110,7 +110,10 @@ namespace core
         template<class S>
         void EntityManager<C>::apply(System<S>&& system)
         {
-            typename C::bits_t system_bits;
+            // get the sytem bits
+            auto system_bits = mStorage.get_bits(typename S::types_t{});
+
+            // create a functor that forwards the correct components.
             auto apply_comps = S::forwarder(std::forward<System<S>>(system));
 
             auto f = [&](std::size_t index)

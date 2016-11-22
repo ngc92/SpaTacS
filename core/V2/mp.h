@@ -21,10 +21,22 @@ namespace ecs
         using type = T;
     };
 
+    template<template<class...> class T>
+    struct template_t
+    {
+    };
+
     template<class... T>
     struct type_vec_t
     {
     };
+
+    /*
+    template<template<class...> class T, class... S>
+    auto substitute(template_t<T>, type_vec_t<S...>) -> type_t<T<S...>>
+    {
+        return {};
+    }*/
 
     template<class Needle, class First, class... Haystack>
     constexpr std::size_t find(type_t<Needle> n, type_vec_t<First, Haystack...>)

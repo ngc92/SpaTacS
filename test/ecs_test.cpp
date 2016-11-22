@@ -274,3 +274,6 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
     }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+
+#include "game/entity_system/test.h"
