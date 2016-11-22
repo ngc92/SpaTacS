@@ -6,40 +6,36 @@
 #define SPATACS_CORE_SIMULATION_BASE_H
 
 #include <events/IEvent.h>
-#include "game/GameState.h"
-#include "physics/PhysicsWorld.h"
 
 namespace spatacs
 {
 namespace core
 {
+    class GameStateBase;
+
     class SimulationBase
     {
+        void cleanup();
+
+        virtual void update() = 0;
+        virtual void eventLoop() = 0;
+
+    protected:
         using EventPtr = std::unique_ptr<events::IEvent>;
         using EventVec = std::vector<EventPtr>;
         using StatePtr = std::unique_ptr<GameStateBase>;
 
         // thread internal variables, don't touch from outside!
-        EventVec mEventCache;
-        EventVec mAllEvents;
-
-        void eventLoop();
-        void cleanup();
-
-        virtual void physics_callback(physics::PhysicsWorld& world, const physics::Object& A, const physics::Object& B,
-                              physics::ImpactInfo info) = 0;
-        virtual void updateObjects() = 0;
-        virtual void updateShips()   = 0;
-
-    protected:
-        // thread internal variables, don't touch from outside!
-        game::GameState mState;
-        std::unique_ptr<physics::PhysicsWorld> mWorld;
+        std::unique_ptr<GameStateBase> mState;
 
         void addEvent(EventPtr e );
+
+        EventVec mAllEvents;
+        // thread internal variables, don't touch from outside!
+        EventVec mEventCache;
     public:
         SimulationBase();
-        virtual ~SimulationBase() = default;
+        virtual ~SimulationBase();
 
         EventVec step(EventVec inEvents);
         StatePtr extractState() const;

@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "GameInterface.h"
 #include "SimulationBase.h"
+#include "GameStateBase.h"
 #include <chrono>
 #include <algorithm>
 #include "core/detail/GameThread.h"

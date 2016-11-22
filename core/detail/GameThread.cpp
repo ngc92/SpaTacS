@@ -9,6 +9,7 @@
 #include <cassert>
 #include <iostream>
 #include "core/SimulationBase.h"
+#include "core/GameStateBase.h"
 
 using namespace spatacs::core;
 using spatacs::core::detail::GameThread;
