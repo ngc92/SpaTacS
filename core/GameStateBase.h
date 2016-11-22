@@ -6,6 +6,7 @@
 #define SPATACS_CORE_GAMESTATEBASE_H
 
 #include <cstdint>
+#include <memory>
 
 namespace spatacs
 {
@@ -19,6 +20,7 @@ namespace core
 
         std::uint64_t getNextFreeID();
         virtual void cleanup() = 0;
+        virtual std::unique_ptr<GameStateBase> clone() const = 0;
     };
 }
 }

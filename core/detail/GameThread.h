@@ -5,7 +5,6 @@
 #ifndef SPATACS_CORE_GAME_THREAD_INCLUDED
 #define SPATACS_CORE_GAME_THREAD_INCLUDED
 
-#include "core/GameState.h"
 #include <mutex>
 #include <atomic>
 #include <thread>
@@ -23,6 +22,7 @@ namespace events
 namespace core
 {
     class SimulationBase;
+    class GameStateBase;
 
     namespace detail
     {
@@ -31,6 +31,7 @@ namespace core
         public:
             using EventPtr = std::unique_ptr<events::IEvent>;
             using EventVec = std::vector<EventPtr>;
+            using StatePtr = std::unique_ptr<GameStateBase>;
 
             GameThread(std::unique_ptr<SimulationBase> simulation);
             ~GameThread();
@@ -38,7 +39,7 @@ namespace core
             // communication
             bool has_data() const;
 
-            GameState getState();
+            StatePtr getState();
 
             EventVec getEvents();
 
@@ -63,9 +64,9 @@ namespace core
             // thread communication variables
             mutable std::mutex mMutex;
             std::thread mThread;
-            GameState mOutState;
-            EventVec mOutEvents;
-            EventVec mInEvents;
+            StatePtr    mOutState;
+            EventVec    mOutEvents;
+            EventVec    mInEvents;
             std::atomic<bool> mHasData;
             std::atomic<bool> mPause;
             std::atomic<bool> mRunThread;

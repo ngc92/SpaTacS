@@ -57,6 +57,6 @@ bool LevelLoader::step()
     return false;
 }
 
-void LevelLoader::setState(const std::shared_ptr<const core::GameState>& state)
+void LevelLoader::setState(const state_t& state)
 {
 }

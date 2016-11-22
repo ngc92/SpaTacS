@@ -10,13 +10,10 @@
 
 namespace spatacs
 {
-namespace core
-{
-    class GameState;
-}
 namespace game
 {
     class Starship;
+    class GameState;
 }
 namespace cmd
 {
@@ -27,7 +24,7 @@ namespace cmd
         public:
             virtual ~MvCommand() = default;
             virtual accel_vec thrust(const game::Starship& ship) const = 0;
-            virtual void update(const game::Starship& ship, const core::GameState& state) = 0;
+            virtual void update(const game::Starship& ship, const game::GameState& state) = 0;
             virtual std::size_t point_count() const = 0;
             virtual const length_vec& target(std::size_t id = 0) const = 0;
         };
@@ -40,7 +37,7 @@ namespace cmd
 
         // this is for movement control
         accel_vec thrust(const game::Starship& ship) const;
-        void update(const game::Starship& ship, const core::GameState& state);
+        void update(const game::Starship& ship, const game::GameState& state);
 
         // this is for drawing
         std::size_t point_count() const;
@@ -68,7 +65,7 @@ namespace cmd
             FollowRoute& addWaypoint(length_vec wp);
 
             accel_vec thrust(const game::Starship& ship) const override;
-            void update(const game::Starship& ship, const core::GameState& state) override;
+            void update(const game::Starship& ship, const game::GameState& state) override;
 
         private:
             std::vector<length_vec> mTargets;
@@ -87,7 +84,7 @@ namespace cmd
             EngageTarget& setSpeed(speed_t s);
 
             accel_vec thrust(const game::Starship& ship) const override;
-            void update(const game::Starship& ship, const core::GameState& state) override;
+            void update(const game::Starship& ship, const game::GameState& state) override;
 
         private:
             game::ObjectID mTargetID;

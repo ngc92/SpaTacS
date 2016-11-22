@@ -9,6 +9,7 @@
 #include <cassert>
 #include <iostream>
 #include "core/SimulationBase.h"
+#include "core/GameStateBase.h"
 
 using namespace spatacs::core;
 using spatacs::core::detail::GameThread;
@@ -72,7 +73,7 @@ bool GameThread::has_data() const
     return mHasData;
 }
 
-GameState GameThread::getState()
+auto GameThread::getState() -> StatePtr
 {
     assert(mHasData);
     std::lock_guard<std::mutex> lck(mMutex);

@@ -6,7 +6,7 @@
 #include <iostream>
 #include "Combat.h"
 #include "Spawn.h"
-#include "core/GameState.h"
+#include "game/GameState.h"
 #include "game/Starship.h"
 #include "game/Projectile.h"
 #include "game/systems.h"

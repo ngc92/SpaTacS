@@ -8,11 +8,12 @@
 #include "cmd/CommandManager.h"
 #include "GameState.h"
 #include "core/Game.h"
+#include "game/GameSimulation.h"
 
 using namespace spatacs::ui;
 
 GameState::GameState(const std::string& filename) :
-        mGame( std::make_unique<spatacs::core::Game>() ),
+        mGame( std::make_unique<spatacs::core::Game>( std::make_unique<spatacs::game::GameSimulation>() ) ),
         mCmdMgr( std::make_shared<cmd::CommandManager>() )
 {
     mGame->addInterface( std::make_shared<game::AIPlayer>(2, mCmdMgr) );

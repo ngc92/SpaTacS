@@ -16,16 +16,20 @@ namespace spatacs
     }
     namespace core
     {
+        class GameStateBase;
+
         class GameInterface
         {
         public:
+            using state_t = std::shared_ptr<const core::GameStateBase>;
+
             virtual void init() = 0;
             /// this function gets all the events that this interface wants to transfer
             /// into the simulation.
             /// \param evts Push your events into this vector!
             virtual void getCommandEvents(std::vector<events::EventPtr>& evts) = 0;
 
-            virtual void setState(const std::shared_ptr<const core::GameState>& state) = 0;
+            virtual void setState(const state_t& state) = 0;
             virtual void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) = 0;
             virtual bool step() = 0;
         private:

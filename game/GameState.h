@@ -8,8 +8,8 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <cstdint>
 
-#include "game/GameObject.h"
-#include "GameStateBase.h"
+#include "GameObject.h"
+#include "core/GameStateBase.h"
 
 namespace spatacs
 {
@@ -21,11 +21,8 @@ namespace game
     {
         return s.clone();
     }
-}
 
-namespace core
-{
-    class GameState : public GameStateBase
+    class GameState : public core::GameStateBase
     {
         using GameObject = game::GameObject;
         using Starship   = game::Starship;
@@ -55,6 +52,8 @@ namespace core
 
         /// removes all objects that are not alive
         void cleanup() override;
+
+        std::unique_ptr<GameStateBase> clone() const override;
 
     private:
         boost::ptr_vector<GameObject> mObjects;

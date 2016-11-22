@@ -7,7 +7,7 @@
 #include <irrlicht/irrlicht.h>
 
 using namespace spatacs;
-const core::GameState& ui::IInputMode::state() const
+const game::GameState& ui::IInputMode::state() const
 {
     return mMainUI->state();
 }

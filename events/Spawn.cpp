@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include "Spawn.h"
-#include "core/GameState.h"
+#include "game/GameState.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include "game/Starship.h"
