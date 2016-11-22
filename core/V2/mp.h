@@ -56,6 +56,9 @@ namespace ecs
         /// \todo rewrite this to allow for static assertions here!
         return -1;
     };
+
+    static_assert(find(type_t<int>{}, type_vec_t<int, float>{}) == 0, "Error in find!");
+    static_assert(find(type_t<float>{}, type_vec_t<int, float>{}) == 1, "Error in find!");
 }
 }
 }

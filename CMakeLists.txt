@@ -41,9 +41,6 @@ SET(CORE_SOURCE_FILES
         core/Game.cpp
         game/GameState.h
         game/GameState.cpp
-        core/Entity.h
-        core/System.h
-        core/EntityManager.h
         game/Starship.cpp
         game/Projectile.h
         game/Projectile.cpp
@@ -67,7 +64,10 @@ SET(CORE_SOURCE_FILES
         game/LevelLoader.cpp
         game/AIPlayer.cpp
         game/AIPlayer.h
-        game/ObjectID.h core/GameStateBase.h core/GameStateBase.cpp)
+        game/ObjectID.h
+        core/GameStateBase.h
+        core/GameStateBase.cpp
+        core/V2/fwd.h)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h
@@ -135,7 +135,7 @@ set(SOURCE_FILES
         ${UI_SOURCE_FILES}
         main.cpp)
 
-set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp test/units_test.cpp test/PhysicsWorld.cpp)
+set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp test/units_test.cpp test/PhysicsWorld.cpp test/ecs_test.cpp)
 
 add_executable(SpaTacS ${SOURCE_FILES})
 add_executable(tests ${TEST_SOURCE_FILES} ${PHYSICS_SOURCE_FILES})

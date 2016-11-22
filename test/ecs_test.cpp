@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         data_t data {true, 2, 5.2f, 1.2};
 
         auto double_fw = sig_t::forwarder(double_f);
-        double_fw(0, data); // ignore the bits for now
+        double_fw(data);
     }
 
     BOOST_AUTO_TEST_CASE(Signature_MutliParam)
@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         data_t data {true, 2, 5.2f, 1.2};
 
         auto double_fw = sig_t::forwarder(multi_f);
-        double_fw(0, data); // ignore the bits for now
+        double_fw(data);
     }
 
     BOOST_AUTO_TEST_CASE(EntityManager)
@@ -264,16 +264,34 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         using EM_t   = ecs::EntityManager<Config>;
 
         EM_t mgr;
+
+        // lifetime
         BOOST_CHECK(!mgr.is_alive(0));
         BOOST_CHECK(!mgr.is_alive(1));
 
         auto first = mgr.create();
         BOOST_CHECK_EQUAL(first.id(), 1);
         BOOST_CHECK(mgr.is_alive(first.id()));
+        mgr.kill(first.id());
+        BOOST_CHECK(!mgr.is_alive(first.id()));
 
+        auto second = mgr.create().id();
+
+        // components
+        BOOST_CHECK(!mgr.has_component<int>(second));
+        mgr.add_component<int>(second, 1);
+        BOOST_CHECK_EQUAL(mgr.get_component<int>(second), 1);
+        /*BOOST_CHECK_EQUAL(h.has<float>(), false);
+        mgr.mHasInt[1] = true;
+        BOOST_CHECK_EQUAL(h.has<int>(), true);
+
+
+        h.add<float>(5.f);
+        BOOST_CHECK_EQUAL(h.has<float>(), true);
+        BOOST_CHECK_EQUAL(h.get<float>(), 5.f);
+
+        h.get<int>() = 2;
+        BOOST_CHECK_EQUAL(h.get<int>(), 2);*/
     }
 
 BOOST_AUTO_TEST_SUITE_END()
-
-
-#include "game/entity_system/test.h"

@@ -250,7 +250,7 @@ namespace ecs
     auto EntityStorage<C>::get_bits(type_vec_t<T...>) -> bits_t
     {
         /// \todo up to sizeof(ulong), we could to this constexpr.
-        bits_t& bits;
+        bits_t bits;
         auto A = {(bits.set(bit_index(type_t<T>{})), 0)...};
         (void)A;
         return bits;

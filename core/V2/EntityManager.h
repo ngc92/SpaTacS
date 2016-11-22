@@ -10,6 +10,8 @@
 #include <tuple>
 #include <unordered_map>
 #include "mp.h"
+#include "fwd.h"
+#include "EntityStorage.h"
 
 namespace spatacs
 {
@@ -17,22 +19,6 @@ namespace core
 {
     namespace ecs
     {
-        // forward declarations
-        template<class... Components>
-        class ComponentStorage;
-
-        template<class Config>
-        class EntityHandle;
-
-        template<class Config>
-        class EntityStorage;
-
-        template<class Signature>
-        class System;
-
-        template<class Config>
-        class EntityManager;
-
         /*! \brief Type that collects all information to configure our ECS.
          *  \details Configuration includes:
          *      All possible components types.
@@ -74,6 +60,10 @@ namespace core
             bool is_alive(id_t entity) const noexcept { return mStorage.is_alive(entity); }
             handle_t create() { return {*this, mStorage.create()}; }
 
+            //! This function creates a handle to an entity with id \p entity. It does not check
+            //! whether \p entity is actually valid!
+            handle_t get(id_t entity) { return {*this, entity}; }
+
             template<class T, class... Args>
             T& add_component(id_t entity, Args&&... args)
             {
@@ -84,7 +74,7 @@ namespace core
             void remove_component(id_t entity) { return mStorage.add_component(entity, type_t<T>{}); }
 
             template<class T>
-            bool has_component(id_t entity) { return mStorage.has_components(entity); }
+            bool has_component(id_t entity) { return mStorage.has_component(entity, type_t<T>{}); }
 
             template<class T>
             const T& get_component(id_t entity) const { return mStorage.get_component(entity, type_t<T>{}); }
@@ -93,8 +83,8 @@ namespace core
             T& get_mutable_component(id_t entity) { return mStorage.get_mutable_component(entity, type_t<T>{}); }
 
             // System application
-            template<class Signature>
-            void apply(System<Signature>&& system);
+            template<class System>
+            void apply(System&& system);
         private:
             // Storage
             storage_t mStorage;
@@ -103,24 +93,26 @@ namespace core
         template<class Bitfield>
         bool match_bits(const Bitfield& required, const Bitfield& available)
         {
-            return required & available == required;
+            return (required & available) == required;
         }
 
         template<class C>
-        template<class S>
-        void EntityManager<C>::apply(System<S>&& system)
+        template<class System>
+        void EntityManager<C>::apply(System&& system)
         {
+            using signature_t = typename System::signature_t;
+
             // get the sytem bits
-            auto system_bits = mStorage.get_bits(typename S::types_t{});
+            auto system_bits = mStorage.get_bits(typename signature_t::types_t{});
 
             // create a functor that forwards the correct components.
-            auto apply_comps = S::forwarder(std::forward<System<S>>(system));
+            auto apply_comps = signature_t::forwarder( std::forward<System>(system) );
 
             auto f = [&](std::size_t index)
             {
                 if(match_bits(system_bits, mStorage.bits(index)))
                 {
-                    apply_comps(mStorage.components(index));
+                    apply_comps(mStorage.mutable_components(index));
                 }
             };
             mStorage.iterate_indices(f);

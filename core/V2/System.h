@@ -19,16 +19,19 @@ namespace ecs
     ///       such as IDs, handles, user data, optional components etc.
 
     template<class T, class... C>
-    auto find_single(std::tuple<C...>& comps)
+    auto& find_single(std::tuple<C...>& comps)
     {
-        constexpr std::size_t id = find(type_t<T>{}, type_vec_t<C...>{});
+        using search_t = type_t<std::remove_reference_t<T>>;
+        using haystack_t = type_vec_t<std::remove_reference_t<C>...>;
+
+        constexpr std::size_t id = find(search_t{}, haystack_t{});
         return std::get<id>(comps);
     }
 
     template<class Input, class... Types>
     auto make_forwarder(Input&& ip, type_vec_t<Types...>)
     {
-        return [&](auto&& bits, auto&& components){
+        return [&](auto&& components) {
             return ip(find_single<Types>(components)...);
         };
     };
@@ -47,9 +50,9 @@ namespace ecs
 
 
     template<class Signature>
-    class System
+    struct System
     {
-
+        using signature_t = Signature;
     };
 }
 }
