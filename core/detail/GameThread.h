@@ -67,9 +67,9 @@ namespace core
             StatePtr    mOutState;
             EventVec    mOutEvents;
             EventVec    mInEvents;
-            std::atomic<bool> mHasData;
+            std::atomic<bool> mHasData{false};
             std::atomic<bool> mPause;
-            std::atomic<bool> mRunThread;
+            std::atomic<bool> mRunThread{true};
 
             // profiling
             boost::accumulators::accumulator_set<double,
