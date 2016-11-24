@@ -6,7 +6,7 @@
 #define SOI_IEVENT_H
 
 #include <memory>
-#include <vector>
+#include <deque>
 #include "physics/units.h"
 
 namespace spatacs
@@ -26,12 +26,12 @@ namespace spatacs
         class IEvent;
 
         using EventPtr  = std::unique_ptr<IEvent>;
-        using EventList = std::vector<EventPtr>;
+        using EventQueue = std::deque<EventPtr>;
 
         struct EventContext
         {
             game::GameState& state;
-            EventList& events;
+            EventQueue& events;
             physics::PhysicsWorld& world;
         };
 

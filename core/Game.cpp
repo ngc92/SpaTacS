@@ -35,6 +35,7 @@ void Game::run()
     {
         // if yes, we update stuff
         mState  = std::shared_ptr<GameStateBase>(mThread->getState());
+        assert(mState);
         mEvents = mThread->getEvents();
 
         std::vector<events::EventPtr> in_events;

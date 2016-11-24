@@ -9,6 +9,7 @@
 #include <memory>
 #include "game/ObjectID.h"
 #include "game/Damage.h"
+#include <vector>
 
 namespace spatacs
 {

@@ -7,6 +7,8 @@
 
 #include "core/SimulationBase.h"
 #include "physics/PhysicsWorld.h"
+#include "GameState.h"
+#include <queue>
 
 namespace spatacs { namespace game {
 
@@ -18,15 +20,26 @@ namespace spatacs { namespace game {
         GameSimulation();
         virtual ~GameSimulation() = default;
 
+        void processInput(EventVec inEvents) override;
+        EventVec update() override;
+
     private:
+
         void physics_callback(physics::PhysicsWorld& world, const physics::Object& A, const physics::Object& B,
                               physics::ImpactInfo info);
 
-        void update() override;
-
         std::unique_ptr<physics::PhysicsWorld> mWorld;
 
-        void eventLoop() override;
+        void eventLoop();
+
+        const GameState& getState() const override;
+
+        using EventQueue = std::deque<EventPtr>;
+        EventQueue mEventQueue;
+        EventVec mAllEvents;
+
+        // thread internal variables, don't touch from outside!
+        std::unique_ptr<GameState> mState;
     };
 
 }}
