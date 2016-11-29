@@ -32,13 +32,8 @@ namespace spatacs
             void setPause(bool p);
 
         private:
-
             std::unique_ptr<detail::GameThread> mThread;
-
             std::default_random_engine     mRandom;
-
-            std::shared_ptr<GameStateBase> mState;
-            std::vector<EventPtr>          mEvents;
 
             // interfaces
             std::vector<std::shared_ptr<GameInterface>> mUIs;

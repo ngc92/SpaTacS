@@ -18,6 +18,7 @@
 #include "convert.h"
 #include "game/Starship.h"
 #include "game/Projectile.h"
+#include "game/events/events.h"
 
 using namespace irr;
 using spatacs::ui::IrrlichtUI;
@@ -207,12 +208,13 @@ bool IrrlichtUI::step()
     return true;
 }
 
-void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events::IEvent>>& events)
+void IrrlichtUI::notify(const notify_t& events)
 {
     using drop_ani_ptr = drop_ptr<scene::ISceneNodeAnimator>;
     auto smgr = mDevice->getSceneManager();
-    for(auto& evt : events)
+    for(auto& evt : events.get_as<game::events::notification_t>())
     {
+        /*
         try {
             if (auto h = dynamic_cast<const events::Damage*>(evt.get())) {
                 auto ship = h->id();
@@ -262,7 +264,7 @@ void IrrlichtUI::notifyEvents(const std::vector<std::unique_ptr<spatacs::events:
         } catch( std::exception& e )
         {
             std::cerr << e.what() << "\n";
-        }
+        }*/
     }
 }
 

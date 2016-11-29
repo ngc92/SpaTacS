@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "events/IEvent.h"
+#include "any_vector.h"
 
 namespace spatacs
 {
@@ -21,7 +22,8 @@ namespace spatacs
         class GameInterface
         {
         public:
-            using state_t = std::shared_ptr<const core::GameStateBase>;
+            using notify_t = any_vector;
+            using state_t  = std::shared_ptr<const core::GameStateBase>;
 
             virtual void init() = 0;
             /// this function gets all the events that this interface wants to transfer
@@ -29,8 +31,11 @@ namespace spatacs
             /// \param evts Push your events into this vector!
             virtual void getCommandEvents(std::vector<events::EventPtr>& evts) = 0;
 
+            /// Generic setState method, gets called with the \p state_t type.
+            /// To use the provided data, this has to be downcasted to the actual
+            /// state type used in the game simulation.
             virtual void setState(const state_t& state) = 0;
-            virtual void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) = 0;
+            virtual void notify(const notify_t& events) = 0;
             virtual bool step() = 0;
         private:
         };

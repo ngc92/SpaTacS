@@ -8,6 +8,7 @@
 #include "core/SimulationBase.h"
 #include "physics/PhysicsWorld.h"
 #include "GameState.h"
+#include "events/events.h"
 #include <queue>
 
 namespace spatacs { namespace game {
@@ -21,7 +22,7 @@ namespace spatacs { namespace game {
         virtual ~GameSimulation() = default;
 
         void processInput(EventVec inEvents) override;
-        EventVec update() override;
+        NotifyVec update() override;
 
     private:
 
@@ -36,7 +37,7 @@ namespace spatacs { namespace game {
 
         using EventQueue = std::deque<EventPtr>;
         EventQueue mEventQueue;
-        EventVec mAllEvents;
+        std::vector<events::notification_t> mNotifications;
 
         // thread internal variables, don't touch from outside!
         std::unique_ptr<GameState> mState;

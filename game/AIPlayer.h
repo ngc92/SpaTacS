@@ -5,9 +5,10 @@
 #ifndef SOI_AIPLAYER_H
 #define SOI_AIPLAYER_H
 
-#include "core/GameInterface.h"
+#include "core/TypedGameInterface.h"
 #include "ObjectID.h"
 #include "Starship.h"
+#include "game/events/events.h"
 
 namespace spatacs {
     namespace cmd
@@ -15,7 +16,7 @@ namespace spatacs {
         class CommandManager;
     }
     namespace game {
-        class AIPlayer : public core::GameInterface
+        class AIPlayer : public core::TypedGameInterface<game::GameState, game::events::notification_t>
         {
         public:
             AIPlayer(std::uint64_t team, std::shared_ptr<cmd::CommandManager> cmd);
@@ -25,11 +26,9 @@ namespace spatacs {
             /// this function gets all the events that this interface wants to transfer
             /// into the simulation.
             /// \param evts Push your events into this vector!
-            void getCommandEvents(std::vector<events::EventPtr>& evts) override { }
+            void getCommandEvents(std::vector<spatacs::events::EventPtr>& evts) override { }
 
-            virtual void setState(const state_t& state) override;
-
-            virtual void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) override;
+            virtual void setState(state_t state) override;
 
             virtual bool step() override;
 
@@ -38,7 +37,6 @@ namespace spatacs {
             std::shared_ptr<cmd::CommandManager> mCommands;
 
             std::shared_ptr<const game::GameState> mState;
-            std::vector<ObjectID> mHits;
 
             struct BestAmmo
             {

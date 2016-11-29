@@ -20,15 +20,15 @@ namespace spatacs
 
             virtual void init() override { }
 
-            virtual void getCommandEvents(std::vector<events::EventPtr>& evts) override;
+            virtual void getCommandEvents(std::vector<spatacs::events::EventPtr>& evts) override;
 
             virtual void setState(const state_t& state) override;
 
-            virtual void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) override { }
+            virtual void notify(const notify_t& events) override { }
 
             virtual bool step() override;
         private:
-            std::vector<events::SpawnShip> mSpawnEvents;
+            std::vector<spatacs::events::SpawnShip> mSpawnEvents;
         };
     }
 }

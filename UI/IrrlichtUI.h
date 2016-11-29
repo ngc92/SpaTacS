@@ -43,7 +43,7 @@ namespace spatacs {
 
             bool step() override;
 
-            void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) override;
+            void notify(const notify_t& events) override;
 
             bool handleUIEvent( const irr::SEvent& ev );
 

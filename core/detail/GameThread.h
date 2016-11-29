@@ -13,6 +13,8 @@
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/rolling_mean.hpp>
 
+#include "core/any_vector.h"
+
 namespace spatacs
 {
 namespace events
@@ -40,8 +42,7 @@ namespace core
             bool has_data() const;
 
             StatePtr getState();
-
-            EventVec getEvents();
+            any_vector getEvents();
 
             void setInEvents(EventVec events);
 
@@ -65,7 +66,7 @@ namespace core
             mutable std::mutex mMutex;
             std::thread mThread;
             StatePtr    mOutState;
-            EventVec    mOutEvents;
+            any_vector  mOutEvents;
             EventVec    mInEvents;
             std::atomic<bool> mHasData{false};
             std::atomic<bool> mPause;

@@ -66,7 +66,7 @@ SET(CORE_SOURCE_FILES
         game/LevelLoader.cpp
         game/AIPlayer.cpp
         game/AIPlayer.h
-        game/ObjectID.h core/GameStateBase.h game/events/events.h)
+        game/ObjectID.h core/GameStateBase.h game/events/events.h core/TypedGameInterface.h core/any_vector.h)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h

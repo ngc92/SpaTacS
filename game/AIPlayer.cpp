@@ -7,9 +7,9 @@
 #include <events/Combat.h>
 #include <iostream>
 #include "game/Starship.h"
-#include "GameState.h"
 #include "cmd/CommandManager.h"
 #include "systems.h"
+#include "GameState.h"
 
 using namespace spatacs;
 using namespace game;
@@ -19,9 +19,8 @@ void AIPlayer::init()
     mState = std::make_shared<game::GameState>();
 }
 
-void AIPlayer::setState(const state_t& bstate)
+void AIPlayer::setState(state_t state)
 {
-    auto state = std::dynamic_pointer_cast<const game::GameState>(bstate);
     for(auto& obj : *state)
     {
         if(!dynamic_cast<const game::Starship*>(&obj))
@@ -112,28 +111,8 @@ auto AIPlayer::getBestAmmo(const Starship& own, const Starship& target) const ->
     return {mode, best};
 }
 
-void AIPlayer::notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events)
-{
-    mHits.clear();
-    for(const auto& ev : boost::adaptors::indirect(events))
-    {
-        if( dynamic_cast<const events::Hit*>(&ev) )
-        {
-            auto hit_id = dynamic_cast<const events::Hit&>(ev).id();
-            mHits.push_back(hit_id);
-        }
-    }
-}
-
 bool AIPlayer::step()
 {
-    for(auto& hit : mHits)
-    {
-        if(mState->getShip(hit).team() == mOwnTeam)
-        {
-            // don't do anything for now!
-        }
-    }
     return false;
 }
 

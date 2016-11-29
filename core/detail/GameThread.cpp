@@ -81,7 +81,7 @@ auto GameThread::getState() -> StatePtr
     return std::move(mOutState);
 }
 
-auto GameThread::getEvents() -> EventVec
+auto GameThread::getEvents() -> any_vector
 {
     assert(mHasData);
     std::lock_guard<std::mutex> lck(mMutex);

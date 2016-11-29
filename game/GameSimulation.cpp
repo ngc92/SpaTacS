@@ -26,12 +26,12 @@ GameSimulation::GameSimulation():
 
 void GameSimulation::processInput(EventVec inEvents)
 {
-    mAllEvents.clear();
+    mNotifications.clear();
     std::move(begin(inEvents), end(inEvents), std::back_inserter(mEventQueue));
     eventLoop();
 }
 
-auto GameSimulation::update() -> EventVec
+auto GameSimulation::update() -> NotifyVec
 {
     mState->cleanup();
 
@@ -65,7 +65,7 @@ auto GameSimulation::update() -> EventVec
         }
     }
 
-    return std::move(mAllEvents);
+    return core::any_vector(std::move(mNotifications));
 }
 
 void GameSimulation::physics_callback(physics::PhysicsWorld& world, const physics::Object& A,
@@ -100,9 +100,9 @@ void GameSimulation::physics_callback(physics::PhysicsWorld& world, const physic
         {
             if(info.fixture_A == 1) // shield fixture
             {
-                mEventQueue.push_back(std::make_unique<events::HitShield>(*aship, proj));
+                mEventQueue.push_back(std::make_unique<spatacs::events::HitShield>(*aship, proj));
             } else {    // ship fixture
-                mEventQueue.push_back(std::make_unique<events::Hit>(*aship, proj));
+                mEventQueue.push_back(std::make_unique<spatacs::events::Hit>(*aship, proj));
                 proj.expire();
             }
         }
@@ -118,11 +118,9 @@ void GameSimulation::eventLoop()
     {
         // process next event
         auto& next = mEventQueue.front();
-        events::EventContext ctx{*mState, mEventQueue, *mWorld };
+        spatacs::events::EventContext ctx{*mState, mEventQueue, *mWorld };
         next->apply(ctx);
 
-        // and move from queue to all events.
-        mAllEvents.push_back(std::move(next));
         mEventQueue.pop_front();
     }
 }
