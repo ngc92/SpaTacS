@@ -118,7 +118,7 @@ void GameSimulation::eventLoop()
     {
         // process next event
         auto& next = mEventQueue.front();
-        spatacs::events::EventContext ctx{*mState, mEventQueue, *mWorld };
+        spatacs::events::EventContext ctx{*mState, mEventQueue, *mWorld, mNotifications };
         next->apply(ctx);
 
         mEventQueue.pop_front();

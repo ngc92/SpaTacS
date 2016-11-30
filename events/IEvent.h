@@ -8,6 +8,7 @@
 #include <memory>
 #include <deque>
 #include "physics/units.h"
+#include "game/events/events.h"
 
 namespace spatacs
 {
@@ -33,6 +34,7 @@ namespace spatacs
             game::GameState& state;
             EventQueue& events;
             physics::PhysicsWorld& world;
+            std::vector<game::events::notification_t>& notifications;
         };
 
         class IEvent

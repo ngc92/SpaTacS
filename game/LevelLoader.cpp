@@ -10,10 +10,10 @@ using namespace spatacs;
 using namespace game;
 using boost::property_tree::ptree;
 
-void LevelLoader::getCommandEvents(std::vector<events::EventPtr>& evts)
+void LevelLoader::getCommandEvents(std::vector<spatacs::events::EventPtr>& evts)
 {
     for(auto& ev : mSpawnEvents)
-        evts.push_back( std::make_unique<events::SpawnShip>(ev) );
+        evts.push_back( std::make_unique<spatacs::events::SpawnShip>(ev) );
 
     mSpawnEvents.clear();
 

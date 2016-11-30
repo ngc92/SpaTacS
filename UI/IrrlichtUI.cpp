@@ -208,63 +208,72 @@ bool IrrlichtUI::step()
     return true;
 }
 
+struct IrrlichtUI::Dispatch : public boost::static_visitor<void>
+{
+    Dispatch(IrrlichtUI* iui) : ui(iui) {}
+    IrrlichtUI* ui;
+    template<class T>
+    void operator()(T&& e)
+    {
+        ui->onEvent(std::forward<T>(e));
+    }
+};
+
 void IrrlichtUI::notify(const notify_t& events)
 {
-    using drop_ani_ptr = drop_ptr<scene::ISceneNodeAnimator>;
-    auto smgr = mDevice->getSceneManager();
+    IrrlichtUI::Dispatch dispatch{this};
     for(auto& evt : events.get_as<game::events::notification_t>())
     {
-        /*
-        try {
-            if (auto h = dynamic_cast<const events::Damage*>(evt.get())) {
-                auto ship = h->id();
-                float dmg = h->damage().high_explosive + h->damage().kinetic
-                            + h->damage().shield_overload;
-                if (dmg > 0.1) {
-                    float s = 5 * dmg + 1;
-                    auto pos = mState->getObject(ship).position();
-                    auto bb = smgr->addBillboardSceneNode();
-                    bb->setPosition(convert(pos));
-                    bb->setMaterialFlag(video::EMF_LIGHTING, false);
-                    bb->setSize(s, s, s);
-                    bb->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
-                    bb->setMaterialTexture(0, mDevice->getVideoDriver()->getTexture("data/attack.png"));
-                    drop_ani_ptr a{smgr->createDeleteAnimator(200)};
-                    bb->addAnimator(a.get());
-                }
-            } else if (auto h = dynamic_cast<const events::HitShield*>(evt.get())) {
-                const auto& ship = mState->getShip(h->id());
-                if(ship.shield() > 0) {
-                    float s = 5;
-                    auto pos = ship.position();
-                    auto bb = smgr->addBillboardSceneNode();
-                    bb->setPosition(convert(pos));
-                    bb->setMaterialFlag(video::EMF_LIGHTING, false);
-                    bb->setSize(s, s, s);
-                    bb->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
-                    bb->setRotation( irr::core::vector3df(rand() % 100, rand() % 100, rand() % 100) );
-                    drop_ani_ptr a{smgr->createDeleteAnimator(500)};
-                    bb->addAnimator(a.get());
-                    irr::core::array<irr::video::ITexture*> textures;
-                    for (int i = 1; i <= 32; ++i) {
-                        textures.push_back(mDevice->getVideoDriver()->getTexture(
-                                ("data/fx7_energyBall/aura_test_1_32_" + std::to_string(i) + ".png").c_str()));
-                    }
-                    a.reset(smgr->createTextureAnimator(textures, 20));
-                    bb->addAnimator(a.get());
-                    a.reset(smgr->createFlyStraightAnimator(convert(pos),
-                                                            convert(pos + ship.velocity() * 1.0_s),
-                                                            1000)
-                    );
-                    bb->addAnimator(a.get());
-                }
-            }
+        boost::apply_visitor(dispatch, evt);
+    }
+}
 
+using drop_ani_ptr = drop_ptr<scene::ISceneNodeAnimator>;
 
-        } catch( std::exception& e )
-        {
-            std::cerr << e.what() << "\n";
-        }*/
+void IrrlichtUI::onEvent(const game::events::ReceiveDamage& ev)
+{
+    auto smgr = mDevice->getSceneManager();
+    if (ev.damage > 0.1)
+    {
+        float s = 5 * ev.damage + 1;
+        auto pos = mState->getObject(ev.id).position();
+        auto bb = smgr->addBillboardSceneNode();
+        bb->setPosition(convert(pos));
+        bb->setMaterialFlag(video::EMF_LIGHTING, false);
+        bb->setSize(s, s, s);
+        bb->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
+        bb->setMaterialTexture(0, mDevice->getVideoDriver()->getTexture("data/attack.png"));
+        drop_ani_ptr a{smgr->createDeleteAnimator(200)};
+        bb->addAnimator(a.get());
+    }
+}
+
+void IrrlichtUI::onEvent(const game::events::ShieldAbsorbtion& ev)
+{
+    auto smgr = mDevice->getSceneManager();
+    const auto& ship = mState->getShip(ev.id);
+    if(ship.shield() > 0) {
+        float s = 5;
+        auto pos = ship.position();
+        auto bb = smgr->addBillboardSceneNode();
+        bb->setPosition(convert(pos));
+        bb->setMaterialFlag(video::EMF_LIGHTING, false);
+        bb->setSize(s, s, s);
+        bb->setMaterialType(video::EMT_TRANSPARENT_ALPHA_CHANNEL);
+        drop_ani_ptr a{smgr->createDeleteAnimator(500)};
+        bb->addAnimator(a.get());
+        irr::core::array<irr::video::ITexture*> textures;
+        for (int i = 1; i <= 32; ++i) {
+            textures.push_back(mDevice->getVideoDriver()->getTexture(
+                    ("data/fx7_energyBall/aura_test_1_32_" + std::to_string(i) + ".png").c_str()));
+        }
+        a.reset(smgr->createTextureAnimator(textures, 20));
+        bb->addAnimator(a.get());
+        a.reset(smgr->createFlyStraightAnimator(convert(pos),
+                                                convert(pos + ship.velocity() * 1.0_s),
+                                                1000)
+        );
+        bb->addAnimator(a.get());
     }
 }
 

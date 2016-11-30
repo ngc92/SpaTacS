@@ -164,6 +164,7 @@ namespace spatacs
 
                 /// \todo the shield should apply force (at least in part) radially, i think.
             }
+            context.notifications.push_back( game::events::ShieldAbsorbtion(target.id(), effect.applied) );
         }
 
 
@@ -183,6 +184,8 @@ namespace spatacs
             // Ok, now all that remains goes towards the ship structure
             double damage = armour_dmg.remaining.high_explosive + armour_dmg.remaining.kinetic;
             target.dealDamage( damage );
+
+            context.notifications.push_back( game::events::ReceiveDamage(target.id(), armour_dmg.applied + damage) );
         }
     }
 }

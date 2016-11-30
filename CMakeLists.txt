@@ -19,9 +19,10 @@ set(EVENT_SOURCE_FILES
         events/ShipEvent.cpp
         events/Combat.h
         events/Combat.cpp
-        events/Spawn.h
         events/IEvent.h
-        events/Spawn.cpp)
+        events/Spawn.h
+        events/Spawn.cpp
+        )
 
 set(COMMAND_SOURCE_FILES
         cmd/Attack.h
@@ -36,23 +37,29 @@ set(COMMAND_SOURCE_FILES
 
 SET(CORE_SOURCE_FILES
         id.h
-        game/Starship.h
         core/Game.h
         core/Game.cpp
-        game/GameState.h
-        game/GameState.cpp
         core/Entity.h
         core/System.h
         core/EntityManager.h
+        core/detail/GameThread.cpp
+        core/detail/GameThread.h
+        core/GameInterface.h
+        core/SimulationBase.h
+        core/GameStateBase.h
+        core/TypedGameInterface.h
+        core/any_vector.h)
+
+SET(GAME_SOURCE_FILES
+        game/Starship.h
+        game/GameState.h
+        game/GameState.cpp
         game/Starship.cpp
         game/Projectile.h
         game/Projectile.cpp
         game/components.cpp
-        core/detail/GameThread.cpp
-        core/detail/GameThread.h
         game/GameObject.h
         game/GameObject.cpp
-        core/SimulationBase.h
         game/GameSimulation.cpp
         game/GameSimulation.h
         game/Damage.h
@@ -66,7 +73,9 @@ SET(CORE_SOURCE_FILES
         game/LevelLoader.cpp
         game/AIPlayer.cpp
         game/AIPlayer.h
-        game/ObjectID.h core/GameStateBase.h game/events/events.h core/TypedGameInterface.h core/any_vector.h)
+        game/ObjectID.h
+        game/events/events.h
+        )
 
 SET(PHYSICS_SOURCE_FILES
         vec.h
@@ -84,7 +93,7 @@ SET(PHYSICS_SOURCE_FILES
         physics/parse_unit.h
         physics/parse_unit.cpp
         physics/ObjectID.h
-        core/GameInterface.h)
+        )
 
 set(UI_SOURCE_FILES
         UI/gfx/GridNode.h
@@ -132,6 +141,7 @@ set(SOURCE_FILES
         ${CORE_SOURCE_FILES}
         ${PHYSICS_SOURCE_FILES}
         ${UI_SOURCE_FILES}
+        ${GAME_SOURCE_FILES}
         main.cpp)
 
 set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp test/units_test.cpp test/PhysicsWorld.cpp)

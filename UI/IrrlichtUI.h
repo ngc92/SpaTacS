@@ -8,6 +8,7 @@
 #include "core/GameInterface.h"
 #include "IrrRAII.h"
 #include "game/GameState.h"
+#include "game/events/events.h"
 
 namespace irr
 {
@@ -62,6 +63,11 @@ namespace spatacs {
 
             irr::scene::ISceneNode* mMap;
             std::shared_ptr<cmd::CommandManager> mCommands;
+
+            class Dispatch;
+
+            void onEvent(const game::events::ReceiveDamage&);
+            void onEvent(const game::events::ShieldAbsorbtion&);
         };
     }
 }
