@@ -21,7 +21,6 @@ GameThread::GameThread(std::unique_ptr<SimulationBase> simulation) :
         mSimulation( std::move(simulation) ),
         mLastStep( steady_clock::now() ),
         mPause( false ),
-        mRunThread(true),
         mProfileStats( boost::accumulators::tag::rolling_window::window_size = 100 )
 {
     mThread = std::thread([this](){ this->thread_run(); });
@@ -50,8 +49,10 @@ void GameThread::thread_run()
             }
 
             auto start_profile = steady_clock::now();
-            auto events   = mSimulation->step(std::move(inev));
-            auto newstate = mSimulation->extractState();
+            mSimulation->processInput( std::move(inev) );
+            auto events   = mSimulation->update();
+            auto newstate = mSimulation->getState().clone();
+            assert(newstate);
             auto delta_t  = steady_clock::now() - start_profile;
 
             mProfileStats( chrono::duration_cast<chrono::microseconds>(delta_t).count() );
@@ -80,7 +81,7 @@ auto GameThread::getState() -> StatePtr
     return std::move(mOutState);
 }
 
-auto GameThread::getEvents() -> EventVec
+auto GameThread::getEvents() -> any_vector
 {
     assert(mHasData);
     std::lock_guard<std::mutex> lck(mMutex);
@@ -95,7 +96,8 @@ void GameThread::setInEvents(GameThread::EventVec events)
     mHasData = false;
 }
 
-double GameThread::getAverageSimulationTime() const {
+double GameThread::getAverageSimulationTime() const
+{
     return boost::accumulators::rolling_mean( mProfileStats );
 }
 

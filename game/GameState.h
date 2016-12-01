@@ -27,6 +27,7 @@ namespace game
         using GameObject = game::GameObject;
         using Starship   = game::Starship;
         using Projectile = game::Projectile;
+        std::uint64_t mFreeID = 0;
     public:
         GameState();
         ~GameState();
@@ -54,6 +55,8 @@ namespace game
         void cleanup() override;
 
         std::unique_ptr<GameStateBase> clone() const override;
+
+        uint64_t getNextFreeID();
 
     private:
         boost::ptr_vector<GameObject> mObjects;

@@ -72,3 +72,8 @@ std::unique_ptr<core::GameStateBase> GameState::clone() const
 {
     return std::make_unique<GameState>(*this);
 }
+
+uint64_t GameState::getNextFreeID()
+{
+    return ++mFreeID;
+}

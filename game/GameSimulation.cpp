@@ -12,7 +12,8 @@ using namespace spatacs;
 using namespace game;
 
 GameSimulation::GameSimulation():
-        mWorld(std::make_unique<physics::PhysicsWorld>() )
+        mWorld(std::make_unique<physics::PhysicsWorld>() ),
+        mState(std::make_unique<GameState>() )
 {
     mWorld->setCollisionCallback([this](physics::PhysicsWorld& world,
                                         const physics::Object& A, const physics::Object& B, physics::ImpactInfo info)
@@ -23,10 +24,19 @@ GameSimulation::GameSimulation():
     );
 }
 
-void GameSimulation::update()
+void GameSimulation::processInput(EventVec inEvents)
 {
+    mNotifications.clear();
+    std::move(begin(inEvents), end(inEvents), std::back_inserter(mEventQueue));
+    eventLoop();
+}
+
+auto GameSimulation::update() -> NotifyVec
+{
+    mState->cleanup();
+
     // get the acceleration of ships and convert to physics events
-    for (auto& ship : dynamic_cast<game::GameState&>(*mState)) {
+    for (auto& ship : *mState) {
         if(ship.type() == ObjectType::STARSHIP)
         {
             auto& conv = dynamic_cast<Starship&>(ship);
@@ -43,7 +53,7 @@ void GameSimulation::update()
     eventLoop();
 
     // copy new positions and velocities to game objects
-    for (auto& ship : dynamic_cast<game::GameState&>(*mState)) {
+    for (auto& ship : *mState) {
         auto po = mWorld->getObject(ship.physics_id() );
         ship.setPosition( po.position() );
         ship.setVelocity( po.velocity() );
@@ -54,6 +64,8 @@ void GameSimulation::update()
             mWorld->despawn(ship.physics_id());
         }
     }
+
+    return core::any_vector(std::move(mNotifications));
 }
 
 void GameSimulation::physics_callback(physics::PhysicsWorld& world, const physics::Object& A,
@@ -64,8 +76,8 @@ void GameSimulation::physics_callback(physics::PhysicsWorld& world, const physic
     uint64_t id_b = B.userdata();
 
     // get objects associated with A and B.
-    auto* ob_A = &dynamic_cast<game::GameState*>(mState.get())->getObject( game::ObjectID(id_a) );
-    auto* ob_B = &dynamic_cast<game::GameState*>(mState.get())->getObject( game::ObjectID(id_b) );
+    auto* ob_A = &mState->getObject( game::ObjectID(id_a) );
+    auto* ob_B = &mState->getObject( game::ObjectID(id_b) );
 
     // check if A is a ship
     game::Starship* aship = dynamic_cast<game::Starship*>(ob_A);
@@ -88,9 +100,9 @@ void GameSimulation::physics_callback(physics::PhysicsWorld& world, const physic
         {
             if(info.fixture_A == 1) // shield fixture
             {
-                addEvent(std::make_unique<events::HitShield>(*aship, proj));
+                mEventQueue.push_back(std::make_unique<spatacs::events::HitShield>(*aship, proj));
             } else {    // ship fixture
-                addEvent(std::make_unique<events::Hit>(*aship, proj));
+                mEventQueue.push_back(std::make_unique<spatacs::events::Hit>(*aship, proj));
                 proj.expire();
             }
         }
@@ -102,16 +114,19 @@ void GameSimulation::physics_callback(physics::PhysicsWorld& world, const physic
 
 void GameSimulation::eventLoop()
 {
-    std::vector<EventPtr> events = move(mEventCache);
-    while(!events.empty()) {
-        for (auto& event : events) {
-            events::EventContext ctx{dynamic_cast<game::GameState&>(*mState), mEventCache, *mWorld };
-            event->apply(ctx);
-        }
+    while(!mEventQueue.empty())
+    {
+        // process next event
+        auto& next = mEventQueue.front();
+        spatacs::events::EventContext ctx{*mState, mEventQueue, *mWorld, mNotifications };
+        next->apply(ctx);
 
-        // save all current events in all_events and update event list
-        mAllEvents.reserve( mAllEvents.size() + events.size() );
-        move( begin(events), end(events), back_inserter(mAllEvents) );
-        events = move( mEventCache );
+        mEventQueue.pop_front();
     }
 }
+
+const GameState& GameSimulation::getState() const
+{
+    return *mState;
+}
+

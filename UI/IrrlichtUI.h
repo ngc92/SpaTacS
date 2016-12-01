@@ -8,6 +8,7 @@
 #include "core/GameInterface.h"
 #include "IrrRAII.h"
 #include "game/GameState.h"
+#include "game/events/events.h"
 
 namespace irr
 {
@@ -43,7 +44,7 @@ namespace spatacs {
 
             bool step() override;
 
-            void notifyEvents(const std::vector<std::unique_ptr<events::IEvent>>& events) override;
+            void notify(const notify_t& events) override;
 
             bool handleUIEvent( const irr::SEvent& ev );
 
@@ -62,6 +63,11 @@ namespace spatacs {
 
             irr::scene::ISceneNode* mMap;
             std::shared_ptr<cmd::CommandManager> mCommands;
+
+            class Dispatch;
+
+            void onEvent(const game::events::ReceiveDamage&);
+            void onEvent(const game::events::ShieldAbsorbtion&);
         };
     }
 }

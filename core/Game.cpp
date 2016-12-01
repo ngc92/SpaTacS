@@ -34,8 +34,9 @@ void Game::run()
     if( mThread->has_data() )
     {
         // if yes, we update stuff
-        mState  = std::shared_ptr<GameStateBase>(mThread->getState());
-        mEvents = mThread->getEvents();
+        auto state  = std::shared_ptr<GameStateBase>(mThread->getState());
+        assert(state);
+        auto events = mThread->getEvents();
 
         std::vector<events::EventPtr> in_events;
         for(auto& itf : mUIs)
@@ -51,8 +52,8 @@ void Game::run()
 
         for(auto& itf : mUIs)
         {
-            itf->setState( mState );
-            itf->notifyEvents( mEvents );
+            itf->setState( state );
+            itf->notify( events );
         }
     }
 }
