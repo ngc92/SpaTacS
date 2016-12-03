@@ -106,23 +106,57 @@ namespace core
                 return (required & available) == required;
             }
 
-            /// \todo add tags that allow passing other data,
-            ///       such as IDs, handles, user data, optional components etc.
-            template<class T, class... C>
-            auto& find_single(std::tuple<C...>& comps)
+            /// get from tuple
+            template<class T, class Comps>
+            auto& get_component(Comps&& comps, type_t<T> type)
             {
-                using search_t = type_t<std::decay_t<T>>;
-                using haystack_t = pack_t<std::decay_t<C>...>;
-
-                constexpr std::size_t id = find(search_t{}, haystack_t{});
+                constexpr std::size_t id = find(decay(type), decay(args_of(type_v<Comps>)));
                 return std::get<id>(comps);
             }
 
-            template<class Input, class... Types>
-            auto make_forwarder(Input&& ip, pack_t<Types...>)
+
+            template<class Index, class T, class CG>
+            auto& get_argument_dispatch(Index&& index, type_t<T> type, CG&& get_components)
             {
-                return [&](auto&& components) {
-                    return ip(find_single<Types>(components)...);
+                return get_component(get_components(std::forward<Index>(index)), type);
+            };
+
+            template<class Index, class Config, class T, class CG>
+            auto& get_single_argument(Index&& index, type_t<Config> config, type_t<T> type, CG&& cg)
+            {
+                return get_argument_dispatch(std::forward<Index>(index),
+                                             type,
+                                             std::forward<CG>(cg));
+            }
+
+            /*! \brief Creates a forwarder function for System arguments
+             *  \details This is a higher-order function that returns a lambda
+             *           that takes an entity index as an input and applies
+             *           \p system_f to the  requested (according to \p signature)
+             *           components.
+             *           The components (and other possible function parameters) are
+             *           retrieved by calls to the corresponding getter functions. These calls
+             *           only happen when the Signature requests the corresponding info.
+             *           This function itself does nothing more than expanding the call for
+             *           all \p Types to be passed to get_single_argument.
+             *
+             * @param system         Forwarding reference to the system.
+             * @param argument_types Parameter pack that contains the information about the System signature. Used to
+             *                       deduce that \p Types template arguments.
+             * @param config         Transmitts the \p Config of the EntityManager.
+             * @param get_components A function that, given an index, returns the components that belong to that given
+             *                       index as a tuple of references.
+             * @return A function that has to be applied to a components tuple.
+             */
+            template<class System, class Config, class ComponentGetter, class... Types>
+            auto make_forwarder(System&& system, type_t<Config> config, pack_t<Types...> argument_types,
+                                ComponentGetter&& get_components)
+            {
+                // components gets passed a tuple with all the components of the entity.
+                return [&](auto&& index) {
+                    //! \todo maybe we can static assert that \p index has a sensible type.
+                    return system( get_single_argument(index, config, type_v<Types>,
+                                                       std::forward<ComponentGetter>(get_components))... );
                 };
             };
         }
@@ -149,25 +183,20 @@ namespace core
 
             using system_t = std::decay_t<System>;
             using signature_t = typename system_t::signature_t;
-            using types_t  = typename signature_t::types_t;
-
-            // get the sytem bits
-            auto system_bits = mStorage.get_bits(types_t{});
+            constexpr typename signature_t::types_t types{};
 
             // create a functor that forwards the correct components.
-            auto apply_comps = make_forwarder( std::forward<System>(system), types_t{} );
+            auto system_functor = make_forwarder( std::forward<System>(system), type_v<C>, types, get_components);
+
+            // get the sytem bits
+            auto system_bits = mStorage.get_bits(types);
 
             // functor that checks that bits match
             auto matcher = [&](std::size_t index) {
                 return match_bits(system_bits, mStorage.bits(index));
             };
 
-            auto f = [&](std::size_t index)
-            {
-                apply_comps(get_components(index));
-            };
-
-            for_each(mStorage.index_range() | boost::adaptors::filtered(matcher), f);
+            for_each(mStorage.index_range() | boost::adaptors::filtered(matcher), system_functor);
         }
 
         // specific apply functions in const and non-const variations. These just call

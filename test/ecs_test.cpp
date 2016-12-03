@@ -232,11 +232,16 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         using sig_t  = ecs::Signature<double>;
         using data_t = std::tuple<bool, int, float, double>;
 
+        struct FakeConfig {
+            using handle_t = std::string;
+        };
+
         auto double_f = [](double d) { BOOST_CHECK_EQUAL(d, 1.2); };
         data_t data {true, 2, 5.2f, 1.2};
+        auto provider = [&](std::size_t){ return data; };
 
-        auto double_fw = sig_t::forwarder(double_f);
-        double_fw(data);
+        auto double_fw = ecs::detail::make_forwarder(double_f, type_v<FakeConfig>, sig_t::types_t{}, provider);
+        double_fw(0);
     }
 
     BOOST_AUTO_TEST_CASE(Signature_MutliParam)
@@ -244,14 +249,19 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         using sig_t  = ecs::Signature<double, bool>;
         using data_t = std::tuple<bool, int, float, double>;
 
+        struct FakeConfig {
+            using handle_t = std::string;
+        };
+
         auto multi_f = [](double d, bool b) {
-            BOOST_CHECK_EQUAL(d, 1.2);
+            BOOST_CHECK_EQUAL(d, 4.0);
             BOOST_CHECK(b);
         };
-        data_t data {true, 2, 5.2f, 1.2};
+        data_t data {true, 2, 5.2f, 4.0};
 
-        auto double_fw = sig_t::forwarder(multi_f);
-        double_fw(data);
+        //! \todo I cannot capture by ref here, but I do not understand why.
+        auto double_fw = ecs::detail::make_forwarder(multi_f, type_v<FakeConfig>, sig_t::types_t{}, [=](std::size_t){ return data; });
+        BOOST_CHECK_NO_THROW(double_fw(0));
     }
 
     BOOST_AUTO_TEST_CASE(EntityManager)
