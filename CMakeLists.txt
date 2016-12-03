@@ -55,8 +55,7 @@ SET(CORE_SOURCE_FILES
         core/ecs/EntityStorage.h
         core/ecs/System.h
         core/ecs/MetaStorage.h
-        core/ecs/mp.h
-        core/ecs/fwd.h)
+        core/ecs/fwd.h core/meta/types.h core/meta/find.h)
 
 SET(GAME_SOURCE_FILES
         game/Starship.h

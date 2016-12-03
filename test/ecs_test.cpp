@@ -6,17 +6,17 @@
 #include "physics/PhysicsWorld.h"
 #include <boost/test/unit_test.hpp>
 #include <iostream>
-#include <core/V2/System.h>
+#include "core/ecs/System.h"
 
-#include "core/V2/EntityManager.h"
-#include "core/V2/ComponentStorage.h"
-#include "core/V2/MetaStorage.h"
-#include "core/V2/EntityStorage.h"
-#include "core/V2/EntityHandle.h"
-
-namespace ecs = spatacs::core::ecs;
+#include "core/ecs/EntityManager.h"
+#include "core/ecs/ComponentStorage.h"
+#include "core/ecs/MetaStorage.h"
+#include "core/ecs/EntityStorage.h"
+#include "core/ecs/EntityHandle.h"
 
 BOOST_AUTO_TEST_SUITE(ECS_tests)
+
+    using namespace spatacs::core;
 
     BOOST_AUTO_TEST_CASE(ComponentStorage)
     {
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         using manager_t = MockMgr;
         using id_t      = std::size_t;
         using cmp_storage_t = ecs::ComponentStorage<int, float, double>;
-        using comp_vec      = ecs::type_vec_t<int, float, double>;
+        using comp_vec      = pack_t<int, float, double>;
         constexpr static std::size_t comp_count = 5;
     };
 
@@ -108,25 +108,25 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
 
         // bits test
         BOOST_CHECK(es.bits(second).none());
-        es.add_component(second, ecs::type_t<double>{}, 1.0);
+        es.add_component(second, type_t<double>{}, 1.0);
         BOOST_CHECK_EQUAL(es.bits(es.lookup(second)), std::bitset<5>(0b00100));
 
         // components test
         std::get<0>(es.mutable_components(es.lookup(second))) = 2;
         BOOST_CHECK_EQUAL( std::get<0>(es.components(es.lookup(second))), 2 );
 
-        es.add_component(third, ecs::type_t<int>{}, 1);
+        es.add_component(third, type_t<int>{}, 1);
         BOOST_CHECK_EQUAL( std::get<0>(es.components(es.lookup(third))), 1 );
-        BOOST_CHECK_EQUAL( es.get_component(third, ecs::type_t<int>{}), 1 );
+        BOOST_CHECK_EQUAL( es.get_component(third, type_t<int>{}), 1 );
         BOOST_CHECK(es.bits(es.lookup(third)).test(0));
 
-        es.add_component(third, ecs::type_t<float>{}, 1.f);
-        BOOST_CHECK(es.has_component(third, ecs::type_t<float>{}));
-        es.get_mutable_component(third, ecs::type_t<float>{}) = 1.5f;
-        BOOST_CHECK_EQUAL( es.get_component(third, ecs::type_t<float>{}), 1.5f );
+        es.add_component(third, type_t<float>{}, 1.f);
+        BOOST_CHECK(es.has_component(third, type_t<float>{}));
+        es.get_mutable_component(third, type_t<float>{}) = 1.5f;
+        BOOST_CHECK_EQUAL( es.get_component(third, type_t<float>{}), 1.5f );
 
-        es.remove_component(third, ecs::type_t<float>{});
-        BOOST_CHECK(!es.has_component(third, ecs::type_t<float>{}));
+        es.remove_component(third, type_t<float>{});
+        BOOST_CHECK(!es.has_component(third, type_t<float>{}));
 
         // iteration
         auto indices = es.index_range();

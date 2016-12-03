@@ -12,7 +12,7 @@
 #include <boost/range/algorithm/for_each.hpp>
 #include "MetaStorage.h"
 #include "ComponentStorage.h"
-#include "mp.h"
+#include "core/meta/find.h"
 
 namespace spatacs
 {
@@ -116,7 +116,7 @@ namespace ecs
         constexpr static std::size_t tuple_index(type_t<T>);
 
         template<class... T>
-        static bits_t get_bits(type_vec_t<T...>);
+        static bits_t get_bits(pack_t<T...>);
 
         /// looks up \p id and returns the corresponding subscript.
         std::size_t lookup(id_t id) const;
@@ -250,7 +250,7 @@ namespace ecs
 
     template<class C>
     template<class... T>
-    auto EntityStorage<C>::get_bits(type_vec_t<T...>) -> bits_t
+    auto EntityStorage<C>::get_bits(pack_t<T...>) -> bits_t
     {
         /// \todo up to sizeof(ulong), we could to this constexpr.
         bits_t bits;

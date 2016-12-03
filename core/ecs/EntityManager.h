@@ -9,7 +9,7 @@
 #include <vector>
 #include <tuple>
 #include <unordered_map>
-#include "mp.h"
+#include "core/meta/find.h"
 #include "fwd.h"
 #include "EntityStorage.h"
 
@@ -27,7 +27,7 @@ namespace core
         struct Config {
             // types
             using this_t        = Config<ID, Components...>;
-            using comp_vec      = type_vec_t<Components...>;
+            using comp_vec      = pack_t<Components...>;
             using id_t          = ID;
             using cmp_id_type   = TaggedID<std::uint64_t, this_t>;
             using cmp_storage_t = ComponentStorage<Components...>;
@@ -91,28 +91,71 @@ namespace core
             template<class System>
             void apply(System&& system) const;
         private:
+
+            template<class System, class F>
+            void apply_imp(System&& system, F&& get_components) const;
+
             // Storage
             storage_t mStorage;
         };
 
-        template<class Bitfield>
-        bool match_bits(const Bitfield& required, const Bitfield& available)
-        {
-            return (required & available) == required;
+        namespace detail {
+            template<class Bitfield>
+            bool match_bits(const Bitfield& required, const Bitfield& available)
+            {
+                return (required & available) == required;
+            }
+
+            /// \todo add tags that allow passing other data,
+            ///       such as IDs, handles, user data, optional components etc.
+            template<class T, class... C>
+            auto& find_single(std::tuple<C...>& comps)
+            {
+                using search_t = type_t<std::decay_t<T>>;
+                using haystack_t = pack_t<std::decay_t<C>...>;
+
+                constexpr std::size_t id = find(search_t{}, haystack_t{});
+                return std::get<id>(comps);
+            }
+
+            template<class Input, class... Types>
+            auto make_forwarder(Input&& ip, pack_t<Types...>)
+            {
+                return [&](auto&& components) {
+                    return ip(find_single<Types>(components)...);
+                };
+            };
         }
 
+
+        /*! \brief Implementation of the apply function.
+         * @tparam C \p Config parameter of the EntitiyManager
+         * @tparam System Type of the System that is passed. Needs an accessible typedef \p signarture_t
+         *                  that specifies which components should be passed to its operator().
+         * @tparam F Function type of the \p get_components function.
+         * @param system The system that will be applied to all entities (that match its signature).
+         * @param get_components A function that, for a given storage index, returns the components of
+         *                      the corresponding entity. Depending on whether the application is
+         *                      to a const EntityManager or not, this getter function can either retrieve
+         *                      mutable components or const components. The dispatch is handled through the
+         *                      apply() oververloads.
+         */
         template<class C>
-        template<class System>
-        void EntityManager<C>::apply(System&& system)
+        template<class System, class F>
+        void EntityManager<C>::apply_imp(System&& system, F&& get_components) const
         {
+            // extract relevant types
+            using namespace detail;
+
             using system_t = std::decay_t<System>;
             using signature_t = typename system_t::signature_t;
+            using types_t  = typename signature_t::types_t;
 
             // get the sytem bits
-            auto system_bits = mStorage.get_bits(typename signature_t::types_t{});
+            auto system_bits = mStorage.get_bits(types_t{});
 
             // create a functor that forwards the correct components.
-            auto apply_comps = signature_t::forwarder( std::forward<System>(system) );
+            auto apply_comps = make_forwarder( std::forward<System>(system), types_t{} );
 
             // functor that checks that bits match
             auto matcher = [&](std::size_t index) {
@@ -121,35 +164,36 @@ namespace core
 
             auto f = [&](std::size_t index)
             {
-                apply_comps(mStorage.mutable_components(index));
+                apply_comps(get_components(index));
             };
+
             for_each(mStorage.index_range() | boost::adaptors::filtered(matcher), f);
+        }
+
+        // specific apply functions in const and non-const variations. These just call
+        // apply_imp with correctly specified getter.
+        template<class C>
+        template<class System>
+        void EntityManager<C>::apply(System&& system)
+        {
+            auto getter = [&](std::size_t index)
+            {
+                return mStorage.mutable_components(index);
+            };
+
+            apply_imp(std::forward<System>(system), getter);
         }
 
         template<class C>
         template<class System>
         void EntityManager<C>::apply(System&& system) const
         {
-            //! \todo unify with non-const variation.
-            using system_t = std::decay_t<System>;
-            using signature_t = typename system_t::signature_t;
-
-            // get the sytem bits
-            auto system_bits = mStorage.get_bits(typename signature_t::types_t{});
-
-            // create a functor that forwards the correct components.
-            auto apply_comps = signature_t::forwarder( std::forward<System>(system) );
-
-            // functor that checks that bits match
-            auto matcher = [&](std::size_t index) {
-                return match_bits(system_bits, mStorage.bits(index));
-            };
-
-            auto f = [&](std::size_t index)
+            auto getter = [&](std::size_t index)
             {
-                apply_comps(mStorage.components(index));
+                return mStorage.components(index);
             };
-            for_each(mStorage.index_range() | boost::adaptors::filtered(matcher), f);
+
+            apply_imp(std::forward<System>(system), getter);
         }
     }
 }
