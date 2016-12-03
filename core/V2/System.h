@@ -48,7 +48,6 @@ namespace ecs
         }
     };
 
-
     template<class Signature>
     struct System
     {

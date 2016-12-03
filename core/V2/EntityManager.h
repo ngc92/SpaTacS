@@ -82,6 +82,8 @@ namespace core
             template<class T>
             T& get_mutable_component(id_t entity) { return mStorage.get_mutable_component(entity, type_t<T>{}); }
 
+            auto id_range() const { return mStorage.id_range(); }
+
             // System application
             template<class System>
             void apply(System&& system);
@@ -100,7 +102,8 @@ namespace core
         template<class System>
         void EntityManager<C>::apply(System&& system)
         {
-            using signature_t = typename System::signature_t;
+            using system_t = std::decay_t<System>;
+            using signature_t = typename system_t::signature_t;
 
             // get the sytem bits
             auto system_bits = mStorage.get_bits(typename signature_t::types_t{});
@@ -108,14 +111,16 @@ namespace core
             // create a functor that forwards the correct components.
             auto apply_comps = signature_t::forwarder( std::forward<System>(system) );
 
+            // functor that checks that bits match
+            auto matcher = [&](std::size_t index) {
+                return match_bits(system_bits, mStorage.bits(index));
+            };
+
             auto f = [&](std::size_t index)
             {
-                if(match_bits(system_bits, mStorage.bits(index)))
-                {
-                    apply_comps(mStorage.mutable_components(index));
-                }
+                apply_comps(mStorage.mutable_components(index));
             };
-            mStorage.iterate_indices(f);
+            for_each(mStorage.index_range() | boost::adaptors::filtered(matcher), f);
         }
     }
 }

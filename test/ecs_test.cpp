@@ -129,15 +129,11 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         BOOST_CHECK(!es.has_component(third, ecs::type_t<float>{}));
 
         // iteration
-        std::vector<std::size_t> indices;
-        auto f = [&](std::size_t idx) { indices.push_back(idx); };
-        es.iterate_indices(f);
-
-        BOOST_CHECK_EQUAL(indices.size(), 3);
+        auto indices = es.index_range();
+        BOOST_CHECK_EQUAL(boost::size(indices), 3);
         es.kill(third);
-        indices.clear();
-        es.iterate_indices(f);
-        BOOST_CHECK_EQUAL(indices.size(), 2);
+        indices = es.index_range();
+        BOOST_CHECK_EQUAL(boost::size(indices), 2);
     }
 
 

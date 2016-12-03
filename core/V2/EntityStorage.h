@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <boost/range/irange.hpp>
 #include <boost/range/adaptor/filtered.hpp>
+#include <boost/range/adaptor/map.hpp>
 #include <boost/range/algorithm/for_each.hpp>
 #include "MetaStorage.h"
 #include "ComponentStorage.h"
@@ -121,12 +122,14 @@ namespace ecs
         std::size_t lookup(id_t id) const;
 
         // --------------------------------------------------------------------------------
-        //                          iteration
+        //                          ranges
         // --------------------------------------------------------------------------------
-        //! This function iterates over all indices and calls \p f for those where the
-        //! entity is alive.
-        template<class F>
-        void iterate_indices(F&& f) const;
+        //! Returns a range of all valid indices (i.e. indices of entities that are alive).
+        auto index_range() const;
+
+        //! Returns a range of all valid IDs. Valid IDs are IDs that correspond to an entity.
+        //! \note The corresponging entity may be dead!
+        auto id_range() const;
     private:
         // --------------------------------------------------------------------------------
         //                       helper functions
@@ -305,15 +308,26 @@ namespace ecs
     };
 
     // -----------------------------------------------------------------------------------------------------------------
-    //                                              iteration
+    //                                              ranges
     // -----------------------------------------------------------------------------------------------------------------
     template<class C>
-    template<class F>
-    void EntityStorage<C>::iterate_indices(F&& f) const
+    auto EntityStorage<C>::index_range() const
     {
-        auto range = boost::irange(std::size_t(0), size()) |
-                     boost::adaptors::filtered([this](auto i){ return mMetaData.is_alive(i); });
-        for_each(range, f);
+        using namespace boost;
+        auto fn = [this](std::size_t i){ return mMetaData.is_alive(i); };
+        /// \todo due to some weird stuff inside adaptors::filtered, boost tries to copy the lambda.
+        /// but that does not work. So we need to wrap inside std::function here, which might cause
+        /// some overhead. The lambda should be small enough so that std::function does not dynamically
+        /// allocate memory here!
+        return irange(std::size_t(0), size()) | adaptors::filtered(std::function<bool(std::size_t)>(fn));
+    }
+
+    template<class C>
+    auto EntityStorage<C>::id_range() const
+    {
+        using namespace boost::adaptors;
+
+        return mLookup | map_keys;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
