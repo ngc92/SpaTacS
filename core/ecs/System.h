@@ -21,8 +21,8 @@ namespace ecs
     template<class T, class... C>
     auto& find_single(std::tuple<C...>& comps)
     {
-        using search_t = type_t<std::remove_reference_t<T>>;
-        using haystack_t = type_vec_t<std::remove_reference_t<C>...>;
+        using search_t = type_t<std::decay_t<T>>;
+        using haystack_t = type_vec_t<std::decay_t<C>...>;
 
         constexpr std::size_t id = find(search_t{}, haystack_t{});
         return std::get<id>(comps);

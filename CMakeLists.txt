@@ -33,7 +33,7 @@ set(COMMAND_SOURCE_FILES
         cmd/CommandManager.h
         cmd/CommandManager.cpp
         cmd/SetMode.h
-        cmd/SetMode.cpp)
+        cmd/SetMode.cpp        )
 
 SET(CORE_SOURCE_FILES
         id.h
@@ -48,7 +48,15 @@ SET(CORE_SOURCE_FILES
         core/SimulationBase.h
         core/GameStateBase.h
         core/TypedGameInterface.h
-        core/any_vector.h)
+        core/any_vector.h
+        core/ecs/ComponentStorage.h
+        core/ecs/EntityManager.h
+        core/ecs/EntityHandle.h
+        core/ecs/EntityStorage.h
+        core/ecs/System.h
+        core/ecs/MetaStorage.h
+        core/ecs/mp.h
+        core/ecs/fwd.h)
 
 SET(GAME_SOURCE_FILES
         game/Starship.h

@@ -87,6 +87,9 @@ namespace core
             // System application
             template<class System>
             void apply(System&& system);
+
+            template<class System>
+            void apply(System&& system) const;
         private:
             // Storage
             storage_t mStorage;
@@ -119,6 +122,32 @@ namespace core
             auto f = [&](std::size_t index)
             {
                 apply_comps(mStorage.mutable_components(index));
+            };
+            for_each(mStorage.index_range() | boost::adaptors::filtered(matcher), f);
+        }
+
+        template<class C>
+        template<class System>
+        void EntityManager<C>::apply(System&& system) const
+        {
+            //! \todo unify with non-const variation.
+            using system_t = std::decay_t<System>;
+            using signature_t = typename system_t::signature_t;
+
+            // get the sytem bits
+            auto system_bits = mStorage.get_bits(typename signature_t::types_t{});
+
+            // create a functor that forwards the correct components.
+            auto apply_comps = signature_t::forwarder( std::forward<System>(system) );
+
+            // functor that checks that bits match
+            auto matcher = [&](std::size_t index) {
+                return match_bits(system_bits, mStorage.bits(index));
+            };
+
+            auto f = [&](std::size_t index)
+            {
+                apply_comps(mStorage.components(index));
             };
             for_each(mStorage.index_range() | boost::adaptors::filtered(matcher), f);
         }
