@@ -29,9 +29,9 @@ namespace ecs
     template<class Config>
     class EntityStorage
     {
-        using meta_storage_t = MetadataStorage<Config::comp_count>;
         using cmp_storage_t  = typename Config::cmp_storage_t;
         using id_t           = typename Config::id_t;
+        using meta_storage_t = MetadataStorage<Config::comp_count, id_t>;
         using bits_t         = typename meta_storage_t::bits_t;
 
         template<class T>
@@ -121,6 +121,9 @@ namespace ecs
         /// looks up \p id and returns the corresponding subscript.
         std::size_t lookup(id_t id) const;
 
+        /// gets the \p id that corresponds to a \p subscript
+        id_t id_of(std::size_t subscript) const;
+
         // --------------------------------------------------------------------------------
         //                          ranges
         // --------------------------------------------------------------------------------
@@ -190,7 +193,7 @@ namespace ecs
         std::size_t idx = next_free();
 
         mLookup[++mLastGivenID] = idx;
-        mMetaData.create(idx);
+        mMetaData.create(idx, mLastGivenID);
         return mLastGivenID;
     }
 
@@ -246,6 +249,12 @@ namespace ecs
     std::size_t EntityStorage<C>::lookup(id_t id) const
     {
         return mLookup.at(id);
+    }
+
+    template<class C>
+    auto EntityStorage<C>::id_of(std::size_t subscript) const -> id_t
+    {
+        return mMetaData.id_of(subscript);
     }
 
     template<class C>

@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
 
     BOOST_AUTO_TEST_CASE(MetadataStorage)
     {
-        ecs::MetadataStorage<5> ms;
+        ecs::MetadataStorage<5, std::size_t> ms;
 
         ms.resize(10);
         BOOST_CHECK_EQUAL( ms.size(), 10 );
@@ -59,8 +59,9 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
             BOOST_CHECK_EQUAL(ms.is_alive(i), false);
         }
 
-        ms.create(2);
+        ms.create(2, 32);
         BOOST_CHECK_EQUAL(ms.is_alive(2), true);
+        BOOST_CHECK_EQUAL(ms.id_of(2), 42);
 
         ms.kill(2);
         BOOST_CHECK_EQUAL(ms.is_alive(2), false);
@@ -77,7 +78,7 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         ms.kill(0);
         BOOST_CHECK(ms.bits(0).all());
         // ensure that newly creates one have all bits set to zero
-        ms.create(0);
+        ms.create(0, 42);
         BOOST_CHECK(ms.bits(0).none());
     }
 

@@ -21,12 +21,13 @@ namespace ecs
      *          a vector that saves whether the component is alive.
      *  \todo Add entity versioning information here.
      */
-    template<std::size_t bits_count>
+    template<std::size_t bits_count, class ID>
     class MetadataStorage
     {
     public:
         using bits_t   = std::bitset<bits_count>;
         using bits_vec = std::vector<bits_t>;
+        using id_t     = ID;
 
         // size
         //! resizes all buffers
@@ -39,15 +40,19 @@ namespace ecs
         void kill(std::size_t index);
 
         //! sets an index to alive, and ensures that all bits are set to zero.
-        void create(std::size_t index);
+        //! \param id the ID that will be associated with the new entity.
+        void create(std::size_t index, id_t id);
 
         //! checks whether a given index is alive
         bool is_alive(std::size_t index) const;
 
-        // free id
+        // ids
         //! returns the next free ID. If none is found, returns
         //! numeric_limits<size_t>::max()
         std::size_t getNextFreeIndex() const noexcept;
+
+        //! gets the id that is associated with a subscript
+        id_t id_of(std::size_t index) const;
 
         // bits
         //! get a constant reference to the bits at \p index.
@@ -60,32 +65,41 @@ namespace ecs
         bits_vec mComponentBits;
         //! This vector contains whether a specific entity is alive.
         std::vector<bool> mIsAlive;
+        //! This vector contains the IDs of all the entities.
+        std::vector<id_t> mIDs;
     };
 
     // -------------------------------------------------------------------------------
 
     // lifetime
-    template<std::size_t C>
-    void MetadataStorage<C>::kill(std::size_t index)
+    template<std::size_t C, class ID>
+    void MetadataStorage<C, ID>::kill(std::size_t index)
     {
         mIsAlive.at(index) = false;
     }
 
-    template<std::size_t C>
-    void MetadataStorage<C>::create(std::size_t index)
+    template<std::size_t C, class ID>
+    void MetadataStorage<C, ID>::create(std::size_t index, id_t id)
     {
         mIsAlive.at(index) = true;
+        mIDs.at(index)     = id;
         mComponentBits.at(index).reset();
     }
 
-    template<std::size_t C>
-    bool MetadataStorage<C>::is_alive(std::size_t index) const
+    template<std::size_t C, class ID>
+    bool MetadataStorage<C, ID>::is_alive(std::size_t index) const
     {
         return mIsAlive.at(index);
     }
 
-    template<std::size_t C>
-    std::size_t MetadataStorage<C>::getNextFreeIndex() const noexcept
+    template<std::size_t C, class ID>
+    auto MetadataStorage<C, ID>::id_of(std::size_t index) const -> id_t
+    {
+        return mIDs.at(index);
+    };
+
+    template<std::size_t C, class ID>
+    std::size_t MetadataStorage<C, ID>::getNextFreeIndex() const noexcept
     {
         /// \todo do not always start crawling for free indices
         ///       in the beginning.
@@ -100,29 +114,30 @@ namespace ecs
 
     // size
 
-    template<std::size_t C>
-    void MetadataStorage<C>::resize(std::size_t new_size)
+    template<std::size_t C, class ID>
+    void MetadataStorage<C, ID>::resize(std::size_t new_size)
     {
         mIsAlive.resize(new_size, false);
+        mIDs.resize(new_size);
         mComponentBits.resize(new_size, 0);
     }
 
-    template<std::size_t C>
-    std::size_t MetadataStorage<C>::size() const noexcept
+    template<std::size_t C, class ID>
+    std::size_t MetadataStorage<C, ID>::size() const noexcept
     {
         return mIsAlive.size();
     }
 
     // bits
 
-    template<std::size_t C>
-    auto MetadataStorage<C>::bits(std::size_t index) const -> const bits_t&
+    template<std::size_t C, class ID>
+    auto MetadataStorage<C, ID>::bits(std::size_t index) const -> const bits_t&
     {
         return mComponentBits.at(index);
     }
 
-    template<std::size_t C>
-    auto MetadataStorage<C>::mutable_bits(std::size_t index) -> bits_t&
+    template<std::size_t C, class ID>
+    auto MetadataStorage<C, ID>::mutable_bits(std::size_t index) -> bits_t&
     {
         return mComponentBits.at(index);;
     }
