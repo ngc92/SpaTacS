@@ -13,11 +13,6 @@ namespace game
 {
 namespace systems
 {
-    namespace signatures
-    {
-        using ShieldSignature = core::ecs::Signature<ShieldGeneratorData, const Health, const Activity>;
-    }
-
     class ShieldManagement : public core::ecs::System<signatures::ShieldSignature>
     {
     public:

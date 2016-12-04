@@ -19,7 +19,7 @@ namespace spatacs
 {
     namespace events
     {
-        FireWeapon::FireWeapon(game::ObjectID shooter, game::ObjectID target, std::uint64_t weapon) :
+        FireWeapon::FireWeapon(game::ObjectID shooter, game::ObjectID target, game::CompEntID weapon) :
                 ShipEvent( shooter ), mTarget( target ), mWeaponId(weapon)
         {
         }
@@ -31,10 +31,10 @@ namespace spatacs
                 return;
 
             auto& target = context.state.getObject( mTarget );
-            auto wpn = shooter.components().get(game::CompEntID(mWeaponId));
-            auto tpos = target.position();
-            auto tvel = target.velocity();
-            auto ev = fireWeapon(shooter, tpos, tvel, wpn);
+            auto wpn     = shooter.components().get(mWeaponId);
+            auto tpos    = target.position();
+            auto tvel    = target.velocity();
+            auto ev      = fireWeapon(shooter, tpos, tvel, wpn);
             if(ev)
                 context.events.push_back( std::move(ev) );
         }
@@ -72,7 +72,7 @@ namespace spatacs
         }
         // -------------------------------------------------------------------------------------------------------------
 
-        SetWeaponAmmo::SetWeaponAmmo(game::ObjectID ship, std::uint64_t wpn, std::string ammo):
+        SetWeaponAmmo::SetWeaponAmmo(game::ObjectID ship, game::CompEntID wpn, std::string ammo):
             ShipEvent(ship),
             mAmmo(ammo),
             mWeaponId(wpn)
@@ -82,17 +82,17 @@ namespace spatacs
 
         void SetWeaponAmmo::applyToShip(Starship& ship, EventContext& context) const
         {
-            ship.components().get(game::CompEntID(mWeaponId)).get<game::ProjectileWpnData>().mAmmo = mAmmo;
+            ship.components().get(mWeaponId).get<game::ProjectileWpnData>().mAmmo = mAmmo;
         }
 
-        SetSystemActivity::SetSystemActivity(game::ObjectID ship, std::uint64_t system, double activity)
+        SetSystemActivity::SetSystemActivity(game::ObjectID ship, game::CompEntID system, double activity)
                 : ShipEvent(ship), mSystem(system), mActivity(activity)
         {}
 
         void SetSystemActivity::applyToShip(ShipEvent::Starship& ship, EventContext& context) const
         {
-            if(ship.components().is_alive(game::CompEntID(mSystem))) {
-                auto sys = ship.components().get(game::CompEntID(mSystem));
+            if(ship.components().is_alive(mSystem)) {
+                auto sys = ship.components().get(mSystem);
                 if(sys.has<game::Activity>())
                 {
                     sys.get<game::Activity>().set(mActivity);

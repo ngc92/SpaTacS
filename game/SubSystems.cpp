@@ -7,7 +7,7 @@
 #include "SubSystems.h"
 #include "components.h"
 #include "systems/Timer.h"
-#include "systems/TankInfo.h"
+#include "game/systems/FuelTank.h"
 #include "systems/Propulsion.h"
 #include "systems/Shield.h"
 #include "systems/Power.h"
@@ -51,7 +51,7 @@ void SubSystems::onStep(Starship& ship)
     systems::ShieldManagement smgm(ship, mEnergyMgr);
     systems::LifeSupportStep ls(ship, mEnergyMgr);
     systems::Propulsion prop(ship, ship.getDesiredAcceleration());
-    systems::TankInfo tank;
+    systems::FuelTank tank;
 
     mComponents.apply(tc);
     mComponents.apply(smgm);
@@ -84,7 +84,6 @@ double SubSystems::dealDamage(double dmg)
 
 void EnergyManager::process(SubsystemManager& comps)
 {
-
     systems::PowerProduction gpe(comps);
     comps.apply(gpe);
     mTotal = gpe.energy();
@@ -105,4 +104,3 @@ energy_t EnergyManager::requestPower(energy_t amount)
     mPowerLeft -= real;
     return real;
 }
-

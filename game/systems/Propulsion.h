@@ -13,11 +13,6 @@ namespace game
 {
 namespace systems
 {
-    namespace signatures
-    {
-        using PropulsionSignature = core::ecs::Signature<EngineData, const Health, const Activity>;
-    }
-
     class Propulsion : public core::ecs::System<signatures::PropulsionSignature>
     {
     public:

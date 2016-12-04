@@ -9,7 +9,7 @@
 using namespace spatacs;
 using namespace cmd;
 
-SetWpnMode::SetWpnMode(game::ObjectID object, std::uint64_t wp_id, std::string ammo):
+SetWpnMode::SetWpnMode(game::ObjectID object, game::CompEntID wp_id, std::string ammo):
     mObject(object),
     mAmmo(ammo),
     mWeapon(wp_id)
@@ -27,7 +27,7 @@ const std::string& SetWpnMode::ammo() const
     return mAmmo;
 }
 
-std::uint64_t SetWpnMode::weapon() const
+game::CompEntID SetWpnMode::weapon() const
 {
     return mWeapon;
 }
@@ -38,7 +38,7 @@ std::ostream& ::spatacs::cmd::operator<<(std::ostream& out, const SetWpnMode& mo
 }
 
 
-SetSystemActivity::SetSystemActivity(game::ObjectID object, std::uint64_t system_id, double activity) :
+SetSystemActivity::SetSystemActivity(game::ObjectID object, game::CompEntID system_id, double activity) :
     mObject(object), mSystem(system_id), mActivity(activity)
 {
 
@@ -53,7 +53,7 @@ double SetSystemActivity::activity() const
     return mActivity;
 }
 
-std::uint64_t SetSystemActivity::system() const
+game::CompEntID SetSystemActivity::system() const
 {
     return mSystem;
 }

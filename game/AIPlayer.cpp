@@ -11,7 +11,6 @@
 #include "systems/Ammunition.h"
 #include "SubSystems.h"
 #include "GameState.h"
-#include "systems/Weapon.h"
 
 using namespace spatacs;
 using namespace game;
@@ -62,7 +61,7 @@ void AIPlayer::setState(state_t state)
             auto wpn_id_range = own.components().get_matching_ids(core::type_v<systems::signatures::AimSignature>);
             for(const auto& id : wpn_id_range)
             {
-                mCommands->addCommand(own.id(), cmd::SetWpnMode(own.id(), (std::uint64_t)id, best.ammo));
+                mCommands->addCommand(own.id(), cmd::SetWpnMode(own.id(), id, best.ammo));
             }
         }
 

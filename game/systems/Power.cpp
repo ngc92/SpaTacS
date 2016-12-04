@@ -3,9 +3,8 @@
 //
 
 #include "Power.h"
-#include "TankInfo.h"
+#include "FuelTank.h"
 #include "../components.h"
-#include "game/SubSystems.h"
 
 using namespace spatacs;
 using namespace game::systems;
@@ -20,9 +19,7 @@ void PowerProduction::operator()(const PowerPlantData& pp, const Health& health,
     auto base_energy = 0.1_s * pp.energy_production * acc.get();
     mass_t need_fuel = base_energy * 10.0_kg / 1.0_MJ;
 
-    FuelRequest request{need_fuel};
-    mEntities.apply(request);
-    mass_t fuel = request.fuel();
+    mass_t fuel = request_fuel(mEntities, need_fuel);
 
     if(need_fuel < 0.001_kg) need_fuel = 0.001_kg;
     mProducedEnergy += base_energy * health.status() * fuel / need_fuel;

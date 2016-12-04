@@ -13,11 +13,6 @@ namespace game
 {
 namespace systems
 {
-    namespace signatures
-    {
-        using AimSignature    = core::ecs::Signature<const WeaponAimData, const Health>;
-    }
-
     class Aiming : public core::ecs::System<signatures::AimSignature>
     {
     public:

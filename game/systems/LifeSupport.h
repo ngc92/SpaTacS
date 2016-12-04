@@ -13,11 +13,6 @@ namespace game
 {
 namespace systems
 {
-    namespace signatures
-    {
-        using LifeSupportSignature = core::ecs::Signature<LifeSupportData>;
-    }
-
     class LifeSupportStep : public core::ecs::System<signatures::LifeSupportSignature>
     {
     public:

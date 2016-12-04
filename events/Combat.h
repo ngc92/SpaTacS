@@ -8,7 +8,7 @@
 #include "ShipEvent.h"
 #include "vec.h"
 #include "game/Damage.h"
-#include "game/components.h"
+#include "game/systems/fwd.h"
 
 namespace spatacs {
 
@@ -20,7 +20,7 @@ namespace spatacs {
         class FireWeapon : public ShipEvent
         {
         public:
-            FireWeapon(game::ObjectID shooter, game::ObjectID target, std::uint64_t wpn);
+            FireWeapon(game::ObjectID shooter, game::ObjectID target, game::CompEntID wpn);
 
             game::ObjectID target() const { return mTarget; }
         private:
@@ -30,32 +30,32 @@ namespace spatacs {
                                 game::SubsystemHandle& weapon) const;
 
             game::ObjectID mTarget;
-            std::uint64_t mWeaponId;
+            game::CompEntID mWeaponId;
         };
 
         class SetWeaponAmmo : public ShipEvent
         {
         public:
-            SetWeaponAmmo(game::ObjectID ship, std::uint64_t wpn, std::string ammo);
+            SetWeaponAmmo(game::ObjectID ship, game::CompEntID wpn, std::string ammo);
 
             const std::string& ammo() const { return mAmmo; }
         private:
 
             void applyToShip(Starship& shooter, EventContext& context) const override;
 
-            std::string   mAmmo;
-            std::uint64_t mWeaponId;
+            std::string     mAmmo;
+            game::CompEntID mWeaponId;
         };
 
         class SetSystemActivity : public ShipEvent
         {
         public:
-            SetSystemActivity(game::ObjectID ship, std::uint64_t system, double activity);
+            SetSystemActivity(game::ObjectID ship, game::CompEntID system, double activity);
         private:
 
             void applyToShip(Starship& shooter, EventContext& context) const override;
-            std::uint64_t mSystem;
-            double mActivity;
+            game::CompEntID mSystem;
+            double          mActivity;
         };
 
         class HitShield : public ShipEvent

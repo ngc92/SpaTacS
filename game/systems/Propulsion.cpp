@@ -3,9 +3,8 @@
 //
 
 #include "Propulsion.h"
-#include "TankInfo.h"
+#include "FuelTank.h"
 #include "game/Starship.h"
-#include "game/SubSystems.h"
 
 using namespace spatacs;
 using namespace game::systems;
@@ -29,9 +28,7 @@ void Propulsion::operator()(EngineData& engine, const Health& health, const Acti
         need_mass = max_mass;
 
     // get fuel
-    FuelRequest request{need_mass};
-    mShip.components().apply(request);
-    mass_t fuel = request.fuel();
+    mass_t fuel = request_fuel(mShip.components(), need_mass);
 
     force_t f = fuel * engine.propellant_speed  / dt;
     mMaxAcceleration += max_mass * engine.propellant_speed  / dt / mShip.mass();

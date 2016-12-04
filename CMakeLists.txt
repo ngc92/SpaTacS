@@ -79,8 +79,8 @@ SET(GAME_SOURCE_FILES
         game/events/events.h
         game/systems/Timer.h
         game/systems/Timer.cpp
-        game/systems/TankInfo.h
-        game/systems/TankInfo.cpp
+        game/systems/FuelTank.h
+        game/systems/FuelTank.cpp
         game/systems/Ammunition.h
         game/systems/Ammunition.cpp
         game/systems/Propulsion.h

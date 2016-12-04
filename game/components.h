@@ -9,7 +9,6 @@
 #include "game/Damage.h"
 #include <boost/property_tree/ptree_fwd.hpp>
 #include <vector>
-#include "core/ecs/fwd.h"
 #include "ObjectID.h"
 #include "systems/fwd.h"
 

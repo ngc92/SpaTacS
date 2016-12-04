@@ -38,6 +38,21 @@ namespace game
 
     using SubsystemManager = core::EntityManager<SubsystemConfig>;
     using SubsystemHandle  = core::EntityHandle<SubsystemConfig>;
+
+    namespace systems {
+        namespace signatures {
+            using ListAmmoSignature    = core::ecs::Signature<const AmmoStorage>;
+            using ChangeAmmoSignature  = core::ecs::Signature<AmmoStorage>;
+            using LifeSupportSignature = core::ecs::Signature<LifeSupportData>;
+            using PowerProductionSignature = core::ecs::Signature<const PowerPlantData, const Health, const Activity>;
+            using PropulsionSignature  = core::ecs::Signature<EngineData, const Health, const Activity>;
+            using ShieldSignature      = core::ecs::Signature<ShieldGeneratorData, const Health, const Activity>;
+            using TankInfoSignature    = core::ecs::Signature<const FuelStorage>;
+            using ModifyFuelSignature  = core::ecs::Signature<FuelStorage>;
+            using CountdownSignature   = core::ecs::Signature<Timer>;
+            using AimSignature         = core::ecs::Signature<const WeaponAimData, const Health>;
+        }
+    }
 }
 }
 

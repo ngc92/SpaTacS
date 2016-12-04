@@ -24,8 +24,6 @@
 #include "UI/panels/DamageReport.h"
 #include "UI/panels/WeaponsPanel.h"
 #include "game/systems/Ammunition.h"
-#include "game/systems/Weapon.h"
-#include "game/systems/make_system.h"
 #include "game/SubSystems.h"
 
 using namespace spatacs;
@@ -172,7 +170,7 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
             auto wpn_id_range = ship.components().get_matching_ids(core::type_v<game::systems::signatures::AimSignature>);
             for(const auto& id : wpn_id_range) {
                 getCmdMgr().addCommand(mActiveShipID,
-                                       cmd::SetWpnMode(mActiveShipID, (std::uint64_t)id, la.getAmmos().at(ammo_id).data.name));
+                                       cmd::SetWpnMode(mActiveShipID, id, la.getAmmos().at(ammo_id).data.name));
             }
         }
 
@@ -204,7 +202,7 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
             auto transform = [&](auto id) {
                 return cmd::SetSystemActivity(
                         mActiveShipID,
-                        (std::uint64_t)id,
+                        id,
                         ship.components().get_component<game::Activity>(id).get() + change
                 );
             };
@@ -252,7 +250,6 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
             using EGSig = core::ecs::Signature<const game::EngineData, const game::Activity>;
             apply_change(core::type_v<EGSig>, change_eg_activity);
         }
-
     }
 }
 

@@ -13,10 +13,6 @@ namespace game
 {
 namespace systems
 {
-    namespace signatures {
-        using CountdownSignature = core::ecs::Signature<Timer>;
-    }
-
     // General purpose components
     class TimerCountdown : public core::ecs::System<signatures::CountdownSignature>
     {

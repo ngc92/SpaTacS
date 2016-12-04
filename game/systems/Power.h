@@ -13,11 +13,6 @@ namespace game
 {
     namespace systems
     {
-        namespace signatures
-        {
-            using PowerProductionSignature = core::ecs::Signature<const PowerPlantData, const Health, const Activity>;
-        }
-
         class PowerProduction : public core::ecs::System<signatures::PowerProductionSignature>
         {
         public:

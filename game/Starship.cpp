@@ -9,7 +9,6 @@
 #include "game/SubSystems.h"
 #include <boost/property_tree/ptree.hpp>
 #include <iostream>
-#include <boost/range/size.hpp>
 
 using namespace spatacs;
 using namespace game;

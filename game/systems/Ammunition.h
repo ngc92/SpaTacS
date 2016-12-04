@@ -15,12 +15,6 @@ namespace game
 {
 namespace systems
 {
-    namespace signatures
-    {
-        using ListAmmoSignature   = core::ecs::Signature<const AmmoStorage>;
-        using ChangeAmmoSignature = core::ecs::Signature<AmmoStorage>;
-    }
-
     class ListAmmunition : public core::ecs::System<signatures::ListAmmoSignature>
     {
     public:

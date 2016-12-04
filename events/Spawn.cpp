@@ -11,7 +11,7 @@
 #include "game/Projectile.h"
 #include "game/SubSystems.h"
 #include "game/systems/Ammunition.h"
-#include "game/systems/TankInfo.h"
+#include "game/systems/FuelTank.h"
 #include "physics/PhysicsWorld.h"
 
 using namespace spatacs;
@@ -103,7 +103,9 @@ void SpawnShip::apply(EventContext& context) const
         ship->components().apply( game::systems::AddAmmunition(getAmmoData(ammo.type), ammo.amount) );
     }
 
-    ship->components().apply(game::systems::AddFuel(mFuel));
+    mass_t rest = game::systems::fill_fuel(ship->components(), mFuel);
+    if( rest > 0.0_kg )
+        std::cerr << "Could not fit total fuel into tank!" << std::endl;
 
     context.state.add(std::move(ship));
 }

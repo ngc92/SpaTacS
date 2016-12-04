@@ -5,7 +5,7 @@
 #include "UI/gfx/HealthBar.h"
 #include "ShipStatus.h"
 #include "game/Starship.h"
-#include "game/systems/TankInfo.h"
+#include "game/systems/FuelTank.h"
 #include "game/systems/Ammunition.h"
 #include "game/SubSystems.h"
 #include <irrlicht/IGUIEnvironment.h>
@@ -44,7 +44,7 @@ void ShipStatus::update(const game::Starship& ship)
     bars.push_back( Sys{L"structure", ship.hp() / ship.max_hp()} );
 
     if(mShowFuel) {
-        game::systems::TankInfo ti;
+        game::systems::FuelTank ti;
         ship.components().apply(ti);
         bars.push_back( Sys{L"fuel", ti.fuel() / ti.capacity()} );
     }

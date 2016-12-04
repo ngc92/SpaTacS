@@ -9,7 +9,8 @@
 #include "game/Starship.h"
 #include "events/Combat.h"
 #include "core/ecs/EntityManager.h"
-#include "game/systems/Weapon.h"
+#include "game/systems/fwd.h"
+#include <boost/range/algorithm/copy.hpp>
 
 using namespace spatacs;
 using cmd::CommandManager;
@@ -33,11 +34,13 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
             // dead ships don't shoot
             if(ship.alive() && target.alive())
             {
-                auto wpn_id_range = ship.components().get_matching_ids(core::type_v<game::systems::signatures::AimSignature>);
-                for(const auto& id : wpn_id_range)
+                auto make_event = [&](auto id)
                 {
-                    events.push_back( events::EventPtr(new events::FireWeapon(ship.id(), target.id(), (std::uint64_t)id)));
-                }
+                    return events::EventPtr(new events::FireWeapon(ship.id(), target.id(), id));
+                };
+
+                auto wpn_id_range = ship.components().get_matching_ids(core::type_v<game::systems::signatures::AimSignature>);
+                boost::copy(wpn_id_range | boost::adaptors::transformed( make_event ), std::back_inserter(events));
             }
         }
 
