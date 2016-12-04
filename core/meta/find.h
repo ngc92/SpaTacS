@@ -45,7 +45,7 @@ namespace meta
     constexpr std::size_t find(type_t<Needle> n, pack_t<Haystack...> h)
     {
         constexpr std::size_t candidate = detail::find_imp(n, h);
-        static_assert(candidate <= h.size, "Could not find Needle in Haystack");
+        static_assert(candidate < h.size, "Could not find Needle in Haystack");
         return candidate;
     };
 
@@ -53,7 +53,7 @@ namespace meta
     constexpr auto has(type_t<Needle> n, pack_t<Haystack...> h)
     {
         constexpr std::size_t index = detail::find_imp(n, h);
-        return bool_t<index <= h.size>{};
+        return bool_t<index < h.size>{};
     };
 }
 }

@@ -37,7 +37,7 @@ namespace ecs
         static_assert(type_v<id_t> != type_v<std::size_t>, "ID type and subscript type are indistinguishable!");
 
         template<class T>
-        static constexpr std::size_t component_id = find(type_t<T>{}, typename Config::comp_vec{});
+        static constexpr std::size_t component_id = find(decay(type_v<T>), typename Config::comp_vec{});
 
     public:
         // --------------------------------------------------------------------------------
