@@ -35,6 +35,7 @@ namespace core
         struct bool_t
         {
             constexpr static const bool value = b;
+            constexpr explicit operator bool() const { return value; }
         };
 
         // -------------------------------------------------------------------------------------------------------------

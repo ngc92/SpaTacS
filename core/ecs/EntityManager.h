@@ -29,7 +29,6 @@ namespace core
             using this_t        = Config<ID, Components...>;
             using comp_vec      = pack_t<Components...>;
             using id_t          = ID;
-            using cmp_id_type   = TaggedID<std::uint64_t, this_t>;
             using cmp_storage_t = ComponentStorage<Components...>;
 
             using storage_t     = EntityStorage<this_t>;
@@ -85,19 +84,29 @@ namespace core
             auto id_range() const { return mStorage.id_range(); }
 
             // System application
+            //! Apply \p system to all components, allowing them to be changed.
             template<class System>
             void apply(System&& system);
 
+            //! Apply \p system to all components in a non-mutating way.
             template<class System>
             void apply(System&& system) const;
+
+            //! Apply \p system to a single component, allowing for mutation.
+            template<class System>
+            auto apply_to(System&& system, id_t target);
+
+            //! Apply \p system to a single component, not allowing for mutation.
+            template<class System>
+            auto apply_to(System&& system, id_t target) const;
 
             //! \todo do we really need this function in the long run?
             template<class Signature>
             auto get_matching_ids(type_t<Signature>) const;
         private:
 
-            template<class System, class F>
-            void apply_imp(System&& system, F&& get_components) const;
+            template<class System, class F, class IDRange>
+            void apply_imp(System&& system, IDRange&& id_range, F&& get_components) const;
 
             // Storage
             storage_t mStorage;
@@ -163,6 +172,25 @@ namespace core
                                                        std::forward<ComponentGetter>(get_components))... );
                 };
             };
+
+            template<class T>
+            struct has_signature_helper
+            {
+                using base_t = std::decay_t<T>;
+                using yes    = std::uint8_t;
+                using no     = std::uint16_t;
+
+                template<class U>
+                static yes test(int, typename U::signature_t* p = nullptr);
+
+                template<class U>
+                static no  test(...);
+
+                constexpr static bool result = std::is_same<decltype(test<base_t>(1)), yes>::value;
+            };
+
+            template<class T>
+            constexpr bool has_signature_v = detail::has_signature_helper<T>::result;
         }
 
 
@@ -170,18 +198,20 @@ namespace core
          * @tparam C \p Config parameter of the EntitiyManager
          * @tparam System Type of the System that is passed. Needs an accessible typedef \p signarture_t
          *                  that specifies which components should be passed to its operator().
-         * @tparam F Function type of the \p get_components function.
          * @param system The system that will be applied to all entities (that match its signature).
          * @param get_components A function that, for a given storage index, returns the components of
          *                      the corresponding entity. Depending on whether the application is
          *                      to a const EntityManager or not, this getter function can either retrieve
          *                      mutable components or const components. The dispatch is handled through the
          *                      apply() oververloads.
+         *
          */
         template<class C>
-        template<class System, class F>
-        void EntityManager<C>::apply_imp(System&& system, F&& get_components) const
+        template<class System, class F, class IDRange>
+        void EntityManager<C>::apply_imp(System&& system, IDRange&& id_range, F&& get_components) const
         {
+            static_assert(detail::has_signature_v<System>, "Could not find typedef \"signature_t\" in \"system\"");
+
             // extract relevant types
             using namespace detail;
 
@@ -197,10 +227,10 @@ namespace core
 
             // functor that checks that bits match
             auto matcher = [&](std::size_t index) {
-                return match_bits(system_bits, mStorage.bits(index));
+                return mStorage.is_alive(index) && match_bits(system_bits, mStorage.bits(index));
             };
 
-            for_each(mStorage.index_range() | boost::adaptors::filtered(matcher), system_functor);
+            for_each(id_range | boost::adaptors::filtered(matcher), system_functor);
         }
 
         // specific apply functions in const and non-const variations. These just call
@@ -214,7 +244,7 @@ namespace core
                 return mStorage.mutable_components(index);
             };
 
-            apply_imp(std::forward<System>(system), getter);
+            apply_imp(std::forward<System>(system), mStorage.index_range(), getter);
         }
 
         template<class C>
@@ -226,7 +256,35 @@ namespace core
                 return mStorage.components(index);
             };
 
-            apply_imp(std::forward<System>(system), getter);
+            apply_imp(std::forward<System>(system), mStorage.index_range(), getter);
+        }
+
+        template<class C>
+        template<class System>
+        auto EntityManager<C>::apply_to(System&& system, id_t target) const
+        {
+            auto getter = [&](std::size_t index)
+            {
+                return mStorage.components(index);
+            };
+
+            std::array<std::size_t, 1> ids = {mStorage.lookup(target)};
+
+            apply_imp(std::forward<System>(system), ids, getter);
+        }
+
+        template<class C>
+        template<class System>
+        auto EntityManager<C>::apply_to(System&& system, id_t target)
+        {
+            auto getter = [&](std::size_t index)
+            {
+                return mStorage.mutable_components(index);
+            };
+
+            std::array<std::size_t, 1> ids = {mStorage.lookup(target)};
+
+            apply_imp(std::forward<System>(system), ids, getter);
         }
 
         template<class C>
@@ -239,7 +297,7 @@ namespace core
 
             // functor that checks that bits match
             auto matcher = [&](std::size_t index) {
-                return match_bits(system_bits, mStorage.bits(index));
+                return detail::match_bits(system_bits, mStorage.bits(index));
             };
 
             return mStorage.index_range() |

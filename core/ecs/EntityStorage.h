@@ -31,8 +31,10 @@ namespace ecs
     {
         using cmp_storage_t  = typename Config::cmp_storage_t;
         using id_t           = typename Config::id_t;
-        using meta_storage_t = MetadataStorage<Config::comp_count, id_t>;
+        using meta_storage_t = MetadataStorage<MetaConfig<Config::comp_count, id_t, std::size_t>>;
         using bits_t         = typename meta_storage_t::bits_t;
+
+        static_assert(type_v<id_t> != type_v<std::size_t>, "ID type and subscript type are indistinguishable!");
 
         template<class T>
         static constexpr std::size_t component_id = find(type_t<T>{}, typename Config::comp_vec{});
@@ -76,6 +78,9 @@ namespace ecs
         //! gets the components associated with given subscript \p id (non const).
         //! \throw If \p id is not valid.
         auto mutable_components(std::size_t id);
+
+        //! gets whether a component is alive, based directly on the id
+        bool is_alive(std::size_t id) const;
 
         // --------------------------------------------------------------------------------
         //                          components functions
@@ -127,7 +132,8 @@ namespace ecs
         // --------------------------------------------------------------------------------
         //                          ranges
         // --------------------------------------------------------------------------------
-        //! Returns a range of all valid indices (i.e. indices of entities that are alive).
+        //! Returns a range of all valid indices.
+        //! \note The corresponging entity may be dead!
         auto index_range() const;
 
         //! Returns a range of all valid IDs. Valid IDs are IDs that correspond to an entity.
@@ -205,7 +211,7 @@ namespace ecs
         if(found == mLookup.end())
             return false;
 
-        return mMetaData.is_alive(found->second);
+        return is_alive(found->second);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -226,6 +232,12 @@ namespace ecs
     auto EntityStorage<C>::mutable_components(std::size_t index)
     {
         return mComponents.get( index );
+    }
+
+    template<class C>
+    bool EntityStorage<C>::is_alive(std::size_t id) const
+    {
+        return mMetaData.is_alive(id);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -322,13 +334,7 @@ namespace ecs
     template<class C>
     auto EntityStorage<C>::index_range() const
     {
-        using namespace boost;
-        auto fn = [this](std::size_t i){ return mMetaData.is_alive(i); };
-        /// \todo due to some weird stuff inside adaptors::filtered, boost tries to copy the lambda.
-        /// but that does not work. So we need to wrap inside std::function here, which might cause
-        /// some overhead. The lambda should be small enough so that std::function does not dynamically
-        /// allocate memory here!
-        return irange(std::size_t(0), size()) | adaptors::filtered(std::function<bool(std::size_t)>(fn));
+        return boost::irange(std::size_t(0), size());
     }
 
     template<class C>
