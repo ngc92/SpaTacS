@@ -9,6 +9,7 @@
 #include "game/SubSystems.h"
 #include <boost/property_tree/ptree.hpp>
 #include <iostream>
+#include <boost/range/size.hpp>
 
 using namespace spatacs;
 using namespace game;
@@ -87,15 +88,7 @@ Starship& Starship::operator=( Starship&& o )
 
 void Starship::dealDamage(double dmg)
 {
-    auto dmg_target = rand() % mSubSystems->mComponents.size();
-    auto& cmp = mSubSystems->mComponents.get(dmg_target + 1);
-
-    // one shot can only ever destroy half the component
-    if(cmp.has<Health>()) {
-        double d = std::min(dmg, cmp.get<Health>().current / 2);
-        cmp.get<Health>().current -= d;
-        dmg -= d;
-    }
+    dmg = mSubSystems->dealDamage(dmg);
     mHitPoints -= dmg;
 }
 
@@ -139,12 +132,12 @@ Starship* Starship::clone() const
     return new Starship(*this);
 }
 
-const core::EntityManager<ComponentEntity>& Starship::components() const
+const SubsystemManager& Starship::components() const
 {
     return mSubSystems->mComponents;
 }
 
-core::EntityManager<ComponentEntity>& Starship::components()
+SubsystemManager& Starship::components()
 {
     return mSubSystems->mComponents;
 }

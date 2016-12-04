@@ -6,10 +6,12 @@
 #define SPATACS_COMPS_H
 
 #include "physics/units.h"
-#include "core/Entity.h"
 #include "game/Damage.h"
 #include <boost/property_tree/ptree_fwd.hpp>
 #include <vector>
+#include "core/ecs/fwd.h"
+#include "ObjectID.h"
+#include "systems/fwd.h"
 
 namespace spatacs
 {
@@ -52,6 +54,7 @@ namespace spatacs
             explicit FuelStorage(mass_t v);
 
             mass_t request(mass_t desire);
+            mass_t fill(mass_t amount);
 
             // data about stored fuel
             mass_t current;
@@ -138,19 +141,14 @@ namespace spatacs
             double mActivity;
         };
 
-        using ComponentEntity = core::Entity<Health, FuelStorage, EngineData,
-                PowerPlantData, ShieldGeneratorData, LifeSupportData, WeaponAimData, ProjectileWpnData,
-                        Timer, Name, AmmoStorage, Activity>;
-
-
         // creation functions
-        void makeEngine(const boost::property_tree::ptree& data, ComponentEntity& cmp);
-        void makeFuelTank(const boost::property_tree::ptree& data, ComponentEntity& cmp);
-        void makeLifeSupport(const boost::property_tree::ptree& data, ComponentEntity& cmp);
-        void makePowerPlant(const boost::property_tree::ptree& data, ComponentEntity& cmp);
-        void makeProjectileWpn(const boost::property_tree::ptree& data, ComponentEntity& cmp);
-        void makeShieldGenerator(const boost::property_tree::ptree& data, ComponentEntity& cmp);
-        void makeAmmoStorage(const boost::property_tree::ptree& data, ComponentEntity& cmp);
+        void makeEngine(const boost::property_tree::ptree& data, SubsystemHandle cmp);
+        void makeFuelTank(const boost::property_tree::ptree& data, SubsystemHandle cmp);
+        void makeLifeSupport(const boost::property_tree::ptree& data, SubsystemHandle cmp);
+        void makePowerPlant(const boost::property_tree::ptree& data, SubsystemHandle cmp);
+        void makeProjectileWpn(const boost::property_tree::ptree& data, SubsystemHandle cmp);
+        void makeShieldGenerator(const boost::property_tree::ptree& data, SubsystemHandle cmp);
+        void makeAmmoStorage(const boost::property_tree::ptree& data, SubsystemHandle cmp);
     }
 }
 

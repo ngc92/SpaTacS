@@ -9,8 +9,11 @@
 #include "game/GameState.h"
 #include "game/Starship.h"
 #include "game/Projectile.h"
-#include "game/systems.h"
 #include "physics/PhysicsWorld.h"
+#include "core/ecs/EntityManager.h"
+#include "core/ecs/EntityHandle.h"
+#include "game/systems/Weapon.h"
+#include "game/systems/Ammunition.h"
 
 namespace spatacs
 {
@@ -28,7 +31,7 @@ namespace spatacs
                 return;
 
             auto& target = context.state.getObject( mTarget );
-            auto& wpn = shooter.components().get(mWeaponId);
+            auto wpn = shooter.components().get(game::CompEntID(mWeaponId));
             auto tpos = target.position();
             auto tvel = target.velocity();
             auto ev = fireWeapon(shooter, tpos, tvel, wpn);
@@ -37,7 +40,7 @@ namespace spatacs
         }
 
         auto FireWeapon::fireWeapon(Starship& shooter, const length_vec& tpos,
-                                    const velocity_vec& tvel, game::ComponentEntity& weapon) const -> EventPtr
+                                    const velocity_vec& tvel, game::SubsystemHandle& weapon) const -> EventPtr
         {
             if (weapon.get<game::Timer>().time > 0)
                 return nullptr;
@@ -46,27 +49,17 @@ namespace spatacs
             weapon.get<game::Timer>().time = 60 / weapon.get<game::ProjectileWpnData>().mRPM;
 
             // get the ammo storage
-            game::AmmoStorage::Ammo* ammo = nullptr;
-            shooter.components().apply(
-                    core::make_system<game::ComponentEntity, game::AmmoStorage>(
-                            [&](game::AmmoStorage& as) mutable
-                    {
-                        auto aptr = &as.getAmmo(weapon.get<game::ProjectileWpnData>().mAmmo);
-                        if(aptr->amount > 0)
-                            ammo = aptr;
-                    })
-            );
-            if(ammo == nullptr)
+            game::systems::GetAmmunition getter{weapon.get<game::ProjectileWpnData>().mAmmo};
+            shooter.components().apply(getter);
+            if(!getter.has())
                 return nullptr;
 
-            speed_t muzzle_speed = sqrt(2.0 * ammo->data.charge / ammo->data.mass);
+            speed_t muzzle_speed = sqrt(2.0 * getter.ammo_data().charge / getter.ammo_data().mass);
             weapon.get<game::WeaponAimData>().muzzle_velocity = muzzle_speed;
 
             // aiming
-            game::Aiming aim(tpos - shooter.position(), tvel - shooter.velocity());
-            aim(weapon);
-
-            ammo->amount -= 1;
+            game::systems::Aiming aim(tpos - shooter.position(), tvel - shooter.velocity());
+            shooter.components().apply_to(aim, weapon.id());
 
             auto d = length(aim.aim_pos());
             // modulate the speed with +-5%
@@ -74,8 +67,8 @@ namespace spatacs
             auto vel = aim.speed() * aim.aim_pos() / d * speed_factor;
             return EventPtr(new SpawnProjectile(shooter.id(), shooter.position(),
                                                 vel + shooter.velocity(),
-                                                ammo->data.mass,
-                                                0.0_m, ammo->data.damage));
+                                                getter.ammo_data().mass,
+                                                0.0_m, getter.ammo_data().damage));
         }
         // -------------------------------------------------------------------------------------------------------------
 
@@ -89,7 +82,7 @@ namespace spatacs
 
         void SetWeaponAmmo::applyToShip(Starship& ship, EventContext& context) const
         {
-            ship.components().get(mWeaponId).get<game::ProjectileWpnData>().mAmmo = mAmmo;
+            ship.components().get(game::CompEntID(mWeaponId)).get<game::ProjectileWpnData>().mAmmo = mAmmo;
         }
 
         SetSystemActivity::SetSystemActivity(game::ObjectID ship, std::uint64_t system, double activity)
@@ -98,8 +91,8 @@ namespace spatacs
 
         void SetSystemActivity::applyToShip(ShipEvent::Starship& ship, EventContext& context) const
         {
-            if(ship.components().has(mSystem)) {
-                auto& sys = ship.components().get(mSystem);
+            if(ship.components().is_alive(game::CompEntID(mSystem))) {
+                auto sys = ship.components().get(game::CompEntID(mSystem));
                 if(sys.has<game::Activity>())
                 {
                     sys.get<game::Activity>().set(mActivity);

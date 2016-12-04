@@ -8,8 +8,10 @@
 #include <iostream>
 #include "game/Starship.h"
 #include "cmd/CommandManager.h"
-#include "systems.h"
+#include "systems/Ammunition.h"
+#include "SubSystems.h"
 #include "GameState.h"
+#include "systems/Weapon.h"
 
 using namespace spatacs;
 using namespace game;
@@ -57,11 +59,11 @@ void AIPlayer::setState(state_t state)
         if(min < 20.0_km)  {
             mCommands->addCommand( own.id(), cmd::Attack(target->id()) );
             auto best = getBestAmmo(own, *target);
-
-            auto ammo_event_generator = game::for_each_weapon_id([&](std::size_t id){
-                mCommands->addCommand(own.id(), cmd::SetWpnMode(own.id(), id, best.ammo));
-            });
-            own.components().apply(ammo_event_generator);
+            auto wpn_id_range = own.components().get_matching_ids(core::type_v<systems::signatures::AimSignature>);
+            for(const auto& id : wpn_id_range)
+            {
+                mCommands->addCommand(own.id(), cmd::SetWpnMode(own.id(), (std::uint64_t)id, best.ammo));
+            }
         }
 
         // fly closer if shield is stronger
@@ -87,7 +89,7 @@ void AIPlayer::setState(state_t state)
 
 auto AIPlayer::getBestAmmo(const Starship& own, const Starship& target) const -> BestAmmo
 {
-    ListAmmunition la;
+    systems::ListAmmunition la;
     own.components().apply(la);
 
     double best = 0.0;

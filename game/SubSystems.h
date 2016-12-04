@@ -7,16 +7,18 @@
 
 #include <boost/property_tree/ptree_fwd.hpp>
 #include "GameObject.h"
-#include "core/EntityManager.h"
+#include "components.h"
+#include "core/ecs/EntityManager.h"
 
 namespace spatacs
 {
     namespace game
     {
+
         class EnergyManager
         {
         public:
-            void process(core::EntityManager <ComponentEntity>& mgr);
+            void process(SubsystemManager& mgr);
 
             energy_t requestPower(energy_t amount);
 
@@ -35,8 +37,9 @@ namespace spatacs
             SubSystems(const boost::property_tree::ptree& data);
 
             void onStep(Starship& ship);
+            double dealDamage(double dmg);
 
-            core::EntityManager<ComponentEntity> mComponents;
+            SubsystemManager mComponents;
             EnergyManager mEnergyMgr;
         };
     }

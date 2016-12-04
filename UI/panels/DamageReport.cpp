@@ -3,6 +3,8 @@
 //
 
 #include "DamageReport.h"
+#include "game/systems/make_system.h"
+#include "game/SubSystems.h"
 
 using spatacs::ui::DamageReport;
 
@@ -13,7 +15,7 @@ void DamageReport::update(const game::Starship& ship)
     auto W = getRelativePosition().getWidth();
     auto H = getRelativePosition().getHeight();
 
-    auto sys = core::make_system<const game::ComponentEntity, const game::Health, const game::Name>
+    auto sys = game::systems::make_system<const game::Health, const game::Name>
             (       [this, W](const game::Health& h, const game::Name& n) mutable
                     {
                         remove_ptr<irr::gui::HealthBar> rptr;
@@ -25,13 +27,14 @@ void DamageReport::update(const game::Starship& ship)
             );
     ship.components().apply(sys);
 
-    irr::core::position2di offset{0, 0};
-    int bar_h = H - mHealthBars.size() + 1;
-    int hpb = bar_h / mHealthBars.size();
-    for(auto& hb : mHealthBars)
-    {
-        offset.Y += hpb - 15;
-        hb->setRelativePosition( hb->getRelativePosition() + offset );
+    if(mHealthBars.size() > 0) {
+        irr::core::position2di offset{0, 0};
+        int bar_h = H - mHealthBars.size() + 1;
+        int hpb = bar_h / mHealthBars.size();
+        for (auto& hb : mHealthBars) {
+            offset.Y += hpb - 15;
+            hb->setRelativePosition(hb->getRelativePosition() + offset);
+        }
     }
 }
 

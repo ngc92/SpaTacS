@@ -5,10 +5,11 @@
 #include "CommandManager.h"
 #include "game/GameState.h"
 #include <iostream>
-#include <game/systems.h>
 #include "events/Accelerate.h"
 #include "game/Starship.h"
 #include "events/Combat.h"
+#include "core/ecs/EntityManager.h"
+#include "game/systems/Weapon.h"
 
 using namespace spatacs;
 using cmd::CommandManager;
@@ -32,10 +33,11 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
             // dead ships don't shoot
             if(ship.alive() && target.alive())
             {
-                auto fire_event_generator = game::for_each_weapon_id([&](std::size_t id){
-                    events.push_back( events::EventPtr(new events::FireWeapon(ship.id(), target.id(), id)));
-                });
-                ship.components().apply(fire_event_generator);
+                auto wpn_id_range = ship.components().get_matching_ids(core::type_v<game::systems::signatures::AimSignature>);
+                for(const auto& id : wpn_id_range)
+                {
+                    events.push_back( events::EventPtr(new events::FireWeapon(ship.id(), target.id(), (std::uint64_t)id)));
+                }
             }
         }
 

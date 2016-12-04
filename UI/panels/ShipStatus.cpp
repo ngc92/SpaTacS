@@ -2,10 +2,12 @@
 // Created by erik on 10/21/16.
 //
 
-#include "game/systems.h"
 #include "UI/gfx/HealthBar.h"
 #include "ShipStatus.h"
 #include "game/Starship.h"
+#include "game/systems/TankInfo.h"
+#include "game/systems/Ammunition.h"
+#include "game/SubSystems.h"
 #include <irrlicht/IGUIEnvironment.h>
 #include <algorithm>
 #include <sstream>
@@ -42,13 +44,13 @@ void ShipStatus::update(const game::Starship& ship)
     bars.push_back( Sys{L"structure", ship.hp() / ship.max_hp()} );
 
     if(mShowFuel) {
-        game::TankInfo ti;
+        game::systems::TankInfo ti;
         ship.components().apply(ti);
         bars.push_back( Sys{L"fuel", ti.fuel() / ti.capacity()} );
     }
 
     if(mShowAmmunition) {
-        game::ListAmmunition la;
+        game::systems::ListAmmunition la;
         ship.components().apply(la);
         std::size_t amm = 0;
         for (auto& a : la) {

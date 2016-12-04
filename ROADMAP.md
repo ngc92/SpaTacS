@@ -11,9 +11,9 @@
     - [ ] improve advanced collision
     - [ ] more tests for advanced collision
   * code:
-    - [ ] clean separation between in and out events 
+    - [x] clean separation between in and out events 
             of game simulation
-    - [ ] better separation between core and game classes.
+    - [x] better separation between core and game classes.
     - [ ] test whether it makes sense to use CEGUI
     
 ## Version 1.0

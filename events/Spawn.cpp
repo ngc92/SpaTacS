@@ -9,7 +9,9 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include "game/Starship.h"
 #include "game/Projectile.h"
-#include "game/systems.h"
+#include "game/SubSystems.h"
+#include "game/systems/Ammunition.h"
+#include "game/systems/TankInfo.h"
 #include "physics/PhysicsWorld.h"
 
 using namespace spatacs;
@@ -98,18 +100,10 @@ void SpawnShip::apply(EventContext& context) const
     // now add the ammo
     for(auto& ammo : mAmmo)
     {
-        ship->components().apply( game::AddAmmunition(getAmmoData(ammo.type), ammo.amount) );
+        ship->components().apply( game::systems::AddAmmunition(getAmmoData(ammo.type), ammo.amount) );
     }
 
-    auto add_fuel = core::make_system<game::ComponentEntity, game::FuelStorage>(
-            [this](game::FuelStorage& fs)
-            {
-                fs.current = mFuel;
-                /// \todo this does not take into accout capacity
-                ///        and multiple tanks
-            }
-    );
-    ship->components().apply(add_fuel);
+    ship->components().apply(game::systems::AddFuel(mFuel));
 
     context.state.add(std::move(ship));
 }

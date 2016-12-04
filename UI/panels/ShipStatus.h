@@ -6,6 +6,7 @@
 #define SPATACS_SHIPSTATUS_H
 
 #include "UI/IrrRAII.h"
+#include <vector>
 #include <irrlicht/rect.h>
 #include <irrlicht/IGUIStaticText.h>
 

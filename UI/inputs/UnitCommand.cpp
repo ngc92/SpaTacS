@@ -18,12 +18,15 @@
 #include "UI/IrrlichtUI.h"
 #include "cmd/CommandManager.h"
 #include <irrlicht/ISceneManager.h>
-#include "game/systems.h"
 #include "UI/gfx/MultiLineNode.h"
 #include "UI/panels/ShipStatus.h"
 #include <irrlicht/IBillboardSceneNode.h>
 #include "UI/panels/DamageReport.h"
 #include "UI/panels/WeaponsPanel.h"
+#include "game/systems/Ammunition.h"
+#include "game/systems/Weapon.h"
+#include "game/systems/make_system.h"
+#include "game/SubSystems.h"
 
 using namespace spatacs;
 
@@ -161,16 +164,16 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
             ammo_id = 2;
         }
 
-        game::ListAmmunition la;
+        game::systems::ListAmmunition la;
         ship.components().apply(la);
 
         if(ammo_id != -1 && ammo_id < la.getAmmos().size())
         {
-            auto ammo_event_generator = game::for_each_weapon_id([&](std::size_t id){
+            auto wpn_id_range = ship.components().get_matching_ids(core::type_v<game::systems::signatures::AimSignature>);
+            for(const auto& id : wpn_id_range) {
                 getCmdMgr().addCommand(mActiveShipID,
-                                       cmd::SetWpnMode(mActiveShipID, id, la.getAmmos().at(ammo_id).data.name));
-            });
-            ship.components().apply(ammo_event_generator);
+                                       cmd::SetWpnMode(mActiveShipID, (std::uint64_t)id, la.getAmmos().at(ammo_id).data.name));
+            }
         }
 
         if( key == irr::KEY_PLUS )
@@ -192,16 +195,32 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
             change_sgen_activity = -0.1;
         }
 
+        // a lambda that iterates over all components with given signature and
+        // creates a SetSystemActivity command.
+        auto apply_change = [&](auto type, double change)
+        {
+            using namespace boost::adaptors;
+
+            auto transform = [&](auto id) {
+                return cmd::SetSystemActivity(
+                        mActiveShipID,
+                        (std::uint64_t)id,
+                        ship.components().get_component<game::Activity>(id).get() + change
+                );
+            };
+
+            auto id_range = ship.components().get_matching_ids(type);
+
+            for(auto&& cmd : id_range | transformed(transform))
+            {
+                getCmdMgr().addCommand(mActiveShipID, std::move(cmd));
+            }
+        };
+
         if(change_sgen_activity != 0)
         {
-            auto eventgen = core::make_system<
-                    const game::ComponentEntity, const game::ComponentEntity, const game::ShieldGeneratorData,
-                            const game::Activity>(
-            [&](const game::ComponentEntity& ety, const game::ShieldGeneratorData&, const game::Activity& ac){
-                getCmdMgr().addCommand( mActiveShipID,
-                    cmd::SetSystemActivity(mActiveShipID, ety.id(), ac.get() + change_sgen_activity) );
-            });
-            ship.components().apply(eventgen);
+            using ShieldSig = core::ecs::Signature<const game::ShieldGeneratorData, const game::Activity>;
+            apply_change(core::type_v<ShieldSig>, change_sgen_activity);
         }
 
         double change_pp_activity = 0.0;
@@ -215,14 +234,8 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
 
         if(change_pp_activity != 0)
         {
-            auto eventgen = core::make_system<
-                    const game::ComponentEntity, const game::ComponentEntity, const game::PowerPlantData,
-                            const game::Activity>(
-            [&](const game::ComponentEntity& ety, const game::PowerPlantData&, const game::Activity& ac){
-                getCmdMgr().addCommand( mActiveShipID,
-                    cmd::SetSystemActivity(mActiveShipID, ety.id(), ac.get() + change_pp_activity) );
-            });
-            ship.components().apply(eventgen);
+            using PPSig = core::ecs::Signature<const game::PowerPlantData, const game::Activity>;
+            apply_change(core::type_v<PPSig>, change_pp_activity);
         }
 
         double change_eg_activity = 0.0;
@@ -236,15 +249,10 @@ void ui::UnitCommand::onKeyPress(irr::EKEY_CODE key)
 
         if(change_eg_activity != 0)
         {
-            auto eventgen = core::make_system<
-                    const game::ComponentEntity, const game::ComponentEntity, const game::EngineData,
-                    const game::Activity>(
-                    [&](const game::ComponentEntity& ety, const game::EngineData&, const game::Activity& ac){
-                        getCmdMgr().addCommand( mActiveShipID,
-                                                cmd::SetSystemActivity(mActiveShipID, ety.id(), ac.get() + change_eg_activity) );
-                    });
-            ship.components().apply(eventgen);
+            using EGSig = core::ecs::Signature<const game::EngineData, const game::Activity>;
+            apply_change(core::type_v<EGSig>, change_eg_activity);
         }
+
     }
 }
 

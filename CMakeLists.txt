@@ -33,15 +33,12 @@ set(COMMAND_SOURCE_FILES
         cmd/CommandManager.h
         cmd/CommandManager.cpp
         cmd/SetMode.h
-        cmd/SetMode.cpp        )
+        cmd/SetMode.cpp)
 
 SET(CORE_SOURCE_FILES
         id.h
         core/Game.h
         core/Game.cpp
-        core/Entity.h
-        core/System.h
-        core/EntityManager.h
         core/detail/GameThread.cpp
         core/detail/GameThread.h
         core/GameInterface.h
@@ -73,8 +70,6 @@ SET(GAME_SOURCE_FILES
         game/SubSystems.h
         game/SubSystems.cpp
         game/components.h
-        game/systems.h
-        game/systems.cpp
         game/Damage.cpp
         game/LevelLoader.h
         game/LevelLoader.cpp
@@ -82,7 +77,23 @@ SET(GAME_SOURCE_FILES
         game/AIPlayer.h
         game/ObjectID.h
         game/events/events.h
-        )
+        game/systems/Timer.h
+        game/systems/Timer.cpp
+        game/systems/TankInfo.h
+        game/systems/TankInfo.cpp
+        game/systems/Ammunition.h
+        game/systems/Ammunition.cpp
+        game/systems/Propulsion.h
+        game/systems/Propulsion.cpp
+        game/systems/fwd.h
+        game/systems/Shield.h
+        game/systems/Shield.cpp
+        game/systems/Power.h
+        game/systems/Power.cpp
+        game/systems/LifeSupport.h
+        game/systems/LifeSupport.cpp
+        game/systems/Weapon.h
+        game/systems/Weapon.cpp game/systems/make_system.h)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h
@@ -144,18 +155,15 @@ set(UI_SOURCE_FILES
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}
-        ${EVENT_SOURCE_FILES}
-        ${CORE_SOURCE_FILES}
-        ${PHYSICS_SOURCE_FILES}
         ${UI_SOURCE_FILES}
-        ${GAME_SOURCE_FILES}
         main.cpp)
 
 set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp test/units_test.cpp test/PhysicsWorld.cpp test/ecs_test.cpp)
 
+add_library(GameSimulation ${CORE_SOURCE_FILES} ${PHYSICS_SOURCE_FILES} ${GAME_SOURCE_FILES} ${EVENT_SOURCE_FILES})
 add_executable(SpaTacS ${SOURCE_FILES})
 add_executable(tests ${TEST_SOURCE_FILES} ${PHYSICS_SOURCE_FILES})
-target_link_libraries(SpaTacS ${Irrlicht_LIB} ${Boost_FILESYSTEM_LIBRARY_DEBUG} ${Boost_SYSTEM_LIBRARY_DEBUG} pthread)
+target_link_libraries(SpaTacS GameSimulation ${Irrlicht_LIB} ${Boost_FILESYSTEM_LIBRARY_DEBUG} ${Boost_SYSTEM_LIBRARY_DEBUG} pthread)
 
 ## data files ##
 set(DATA_SHEETS data/destroyer.xml)

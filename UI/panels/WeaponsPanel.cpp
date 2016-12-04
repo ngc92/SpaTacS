@@ -3,11 +3,13 @@
 //
 
 #include "WeaponsPanel.h"
-#include "game/systems.h"
 #include <sstream>
 #include <iomanip>
 #include <irrlicht/IGUIEnvironment.h>
 #include <irrlicht/IGUIStaticText.h>
+#include "game/systems/Ammunition.h"
+#include "game/SubSystems.h"
+#include "game/systems/make_system.h"
 
 using spatacs::ui::WeaponsPanel;
 
@@ -16,13 +18,13 @@ void WeaponsPanel::update(const game::Starship& ship)
 {
     mWeapons.clear();
 
-    game::ListAmmunition la;
+    game::systems::ListAmmunition la;
     ship.components().apply(la);
 
 
     int i = 1;
     int x0 = 0;
-    auto wpn_view = core::make_system<const game::ComponentEntity, const game::ProjectileWpnData>(
+    auto wpn_view = game::systems::make_system<const game::ProjectileWpnData>(
             [&](const game::ProjectileWpnData& wpn_data)
             {
                 std::size_t ammo = 0;

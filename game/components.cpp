@@ -3,8 +3,9 @@
 //
 
 #include "components.h"
-#include "systems.h"
 #include <boost/property_tree/ptree.hpp>
+#include "core/ecs/EntityHandle.h"
+#include "core/ecs/EntityManager.h"
 
 namespace spatacs
 {
@@ -19,6 +20,15 @@ namespace spatacs
             desire = std::min(desire, current);
             current -= desire;
             return desire;
+        }
+
+        mass_t FuelStorage::fill(mass_t amount)
+        {
+            mass_t free = capacity - current;
+            mass_t add  = std::min(free, amount);
+            amount -= add;
+            current += add;
+            return amount;
         }
 
         AmmoStorage::AmmoStorage(std::size_t cap) : capacity(cap)
@@ -73,12 +83,12 @@ namespace spatacs
         }
 
         // creation functions
-        void addHealth(ComponentEntity& cmp, const ptree& data)
+        void addHealth(SubsystemHandle& cmp, const ptree& data)
         {
             cmp.add<Health>( data.get<double>("HP") );
         }
 
-        void makeEngine(const ptree& data, ComponentEntity& cmp)
+        void makeEngine(const ptree& data, SubsystemHandle cmp)
         {
             addHealth(cmp, data);
             cmp.add<Name>("engine");
@@ -87,18 +97,18 @@ namespace spatacs
             cmp.add<Activity>();
         }
 
-        void makeFuelTank(const ptree& data, ComponentEntity& cmp)
+        void makeFuelTank(const ptree& data, SubsystemHandle cmp)
         {
             cmp.add<FuelStorage>(data.get<mass_t>("capacity") );
         }
 
-        void makeLifeSupport(const ptree& data, ComponentEntity& cmp)
+        void makeLifeSupport(const ptree& data, SubsystemHandle cmp)
         {
             addHealth(cmp, data);
             cmp.add<LifeSupportData>();
         }
 
-        void makePowerPlant(const ptree& data, ComponentEntity& cmp)
+        void makePowerPlant(const ptree& data, SubsystemHandle cmp)
         {
             addHealth(cmp, data);
             cmp.add<Name>("power plant");
@@ -106,7 +116,7 @@ namespace spatacs
             cmp.add<Activity>();
         }
 
-        void makeProjectileWpn(const ptree& data, ComponentEntity& cmp)
+        void makeProjectileWpn(const ptree& data, SubsystemHandle cmp)
         {
             addHealth(cmp, data);
             cmp.add<WeaponAimData>(1.0_km / 1.0_s, data.get<double>("precision"));
@@ -116,7 +126,7 @@ namespace spatacs
             cmp.add<Timer>();
         }
 
-        void makeShieldGenerator(const ptree& data, ComponentEntity& cmp)
+        void makeShieldGenerator(const ptree& data, SubsystemHandle cmp)
         {
             addHealth(cmp, data);
             cmp.add<Name>("shield generator");
@@ -126,7 +136,7 @@ namespace spatacs
             cmp.add<Activity>();
         }
 
-        void makeAmmoStorage(const boost::property_tree::ptree& data, ComponentEntity& cmp)
+        void makeAmmoStorage(const boost::property_tree::ptree& data, SubsystemHandle cmp)
         {
             std::size_t cap = data.get<std::size_t>("capacity");
             cmp.add<AmmoStorage>(cap);

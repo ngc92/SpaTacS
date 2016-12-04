@@ -16,7 +16,7 @@ namespace spatacs
      *    stream output
      *    equality comparison
      *    less than comparison (so they can be used in ordered containers)
-     *    std::hast (so they can be used in unordered containers).
+     *    std::hash (so they can be used in unordered containers).
      *  A value of 0 indicates a non-assigned ID.
      *  Most operations are declared constexpr, so this class could even be used for compile time IDs.
      */
@@ -29,7 +29,10 @@ namespace spatacs
 
         constexpr Int getID() const { return mValue; }
         constexpr explicit operator bool() const { return mValue != 0; }
+        constexpr explicit operator Int() const { return mValue; }
         constexpr void reset() { mValue = 0; }
+
+        constexpr TaggedID& operator++() { ++mValue; return *this; }
 
     private:
         Int mValue{0};

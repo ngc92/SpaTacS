@@ -10,7 +10,6 @@
 #include "physics/Object.h"
 #include "GameObject.h"
 #include "components.h"
-#include "core/EntityManager.h"
 
 
 namespace spatacs
@@ -109,8 +108,8 @@ namespace spatacs
             /// called at the end of a game step.
             void onStep() override;
 
-            const core::EntityManager<ComponentEntity>& components() const;
-            core::EntityManager<ComponentEntity>& components();
+            const SubsystemManager& components() const;
+            SubsystemManager& components();
 
             // damage the ship
             void dealDamage(double dmg);
