@@ -234,7 +234,7 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         using data_t = std::tuple<bool, int, float, double>;
 
         struct FakeConfig {
-            using handle_t = std::string;
+            using id_t = std::string;
         };
 
         auto double_f = [](double d) { BOOST_CHECK_EQUAL(d, 1.2); };
@@ -251,7 +251,7 @@ BOOST_AUTO_TEST_SUITE(ECS_tests)
         using data_t = std::tuple<bool, int, float, double>;
 
         struct FakeConfig {
-            using handle_t = std::string;
+            using id_t = std::string;
         };
 
         auto multi_f = [](double d, bool b) {

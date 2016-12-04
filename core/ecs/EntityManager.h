@@ -90,6 +90,10 @@ namespace core
 
             template<class System>
             void apply(System&& system) const;
+
+            //! \todo do we really need this function in the long run?
+            template<class Signature>
+            auto get_matching_ids(type_t<Signature>) const;
         private:
 
             template<class System, class F>
@@ -223,6 +227,26 @@ namespace core
             };
 
             apply_imp(std::forward<System>(system), getter);
+        }
+
+        template<class C>
+        template<class Signature>
+        auto EntityManager<C>::get_matching_ids(type_t<Signature>) const
+        {
+            constexpr typename Signature::types_t types{};
+            // get the sytem bits
+            auto system_bits = mStorage.get_bits(types);
+
+            // functor that checks that bits match
+            auto matcher = [&](std::size_t index) {
+                return match_bits(system_bits, mStorage.bits(index));
+            };
+
+            return mStorage.index_range() |
+                    boost::adaptors::filtered(matcher) |
+                    boost::adaptors::transformed([&](std::size_t index){
+                        return mStorage.id_of(index);
+                    });
         }
     }
 }
