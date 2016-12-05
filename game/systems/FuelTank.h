@@ -13,17 +13,13 @@ namespace game
 {
 namespace systems
 {
-    class FuelTank : public core::ecs::System<signatures::TankInfoSignature>
+    struct TankInfo
     {
-    public:
-        FuelTank() = default;
-        void operator()(const FuelStorage& h);
-        mass_t fuel() const     { return mFuel; }
-        mass_t capacity() const { return mCapacity; }
-    private:
-        mass_t mFuel     = 0.0_kg;
-        mass_t mCapacity = 0.0_kg;
+        mass_t fuel     = 0.0_kg;
+        mass_t capacity = 0.0_kg;
     };
+
+    TankInfo get_tank_info(const SubsystemManager& mgr);
 
     /// Requests \p amount fuel. Returns the amount that could be supplied.
     mass_t request_fuel(SubsystemManager& mgr, mass_t amount);

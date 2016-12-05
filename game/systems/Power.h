@@ -16,11 +16,10 @@ namespace game
         class PowerProduction : public core::ecs::System<signatures::PowerProductionSignature>
         {
         public:
-            PowerProduction(SubsystemManager& entities);
-            void operator()(const PowerPlantData& pp, const Health& health, const Activity& acc);
+            PowerProduction() = default;
+            void operator()(const PowerPlantData& pp, const Health& health, const Activity& acc, SubsystemManager& entities);
             energy_t energy() const { return mProducedEnergy; }
-        private:
-            SubsystemManager& mEntities;
+        private:;
             energy_t mProducedEnergy = 0.0_J;
         };
     }

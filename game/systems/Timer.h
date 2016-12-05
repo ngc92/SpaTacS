@@ -14,13 +14,9 @@ namespace game
 namespace systems
 {
     // General purpose components
-    class TimerCountdown : public core::ecs::System<signatures::CountdownSignature>
+    struct TimerCountdown : public core::ecs::System<signatures::CountdownSignature>
     {
-    public:
-        TimerCountdown(double dt);
-        void operator()(Timer& timer) const;
-    private:
-        double mDeltaT;
+        void operator()(Timer& timer, time_t dt) const;
     };
 }
 }

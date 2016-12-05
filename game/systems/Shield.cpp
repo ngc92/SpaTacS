@@ -9,13 +9,8 @@
 using namespace spatacs;
 using namespace game::systems;
 
-
-ShieldManagement::ShieldManagement(Starship& s, EnergyManager& e) :
-        ship(s), emgr(e)
-{
-}
-
-void ShieldManagement::operator()(ShieldGeneratorData& sgen, const Health& health, const Activity& acc)
+void ShieldManagement::operator()(ShieldGeneratorData& sgen, const Health& health, const Activity& acc,
+                                  Starship& ship, EnergyManager& emgr)
 {
     auto dt = 0.1_s;
     // shield decay

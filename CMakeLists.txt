@@ -52,7 +52,9 @@ SET(CORE_SOURCE_FILES
         core/ecs/EntityStorage.h
         core/ecs/System.h
         core/ecs/MetaStorage.h
-        core/ecs/fwd.h core/meta/types.h core/meta/find.h)
+        core/ecs/fwd.h
+        core/meta/types.h
+        core/meta/find.h core/ecs/detail.h)
 
 SET(GAME_SOURCE_FILES
         game/Starship.h
@@ -93,7 +95,8 @@ SET(GAME_SOURCE_FILES
         game/systems/LifeSupport.h
         game/systems/LifeSupport.cpp
         game/systems/Weapon.h
-        game/systems/Weapon.cpp game/systems/make_system.h)
+        game/systems/Weapon.cpp
+        game/systems/make_system.h)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h

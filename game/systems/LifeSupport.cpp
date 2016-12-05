@@ -9,12 +9,7 @@
 using namespace spatacs;
 using namespace game::systems;
 
-LifeSupportStep::LifeSupportStep(const Starship& s, EnergyManager& e) :
-        ship(s), emgr(e)
-{
-}
-
-void LifeSupportStep::operator()(LifeSupportData& sup) const
+void LifeSupportStep::operator()(LifeSupportData& sup, const Starship& ship, EnergyManager& emgr) const
 {
     auto accel = length(ship.velocity() - sup.mLastVelocity) / 0.1_s + 9.81_m/(1.0_s)/(1.0_s);
     sup.mLastVelocity = ship.velocity();

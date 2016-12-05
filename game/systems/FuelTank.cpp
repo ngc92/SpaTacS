@@ -9,86 +9,58 @@
 using namespace spatacs;
 using namespace game::systems;
 
-void FuelTank::operator()(const FuelStorage& h)
-{
-    mFuel     += h.current;
-    mCapacity += h.capacity;
-}
-
-
 namespace {
-    class FuelRequest : public core::ecs::System<signatures::ModifyFuelSignature>
+    struct FuelTank : public core::ecs::System<signatures::TankInfoSignature>
     {
-    public:
-        FuelRequest(mass_t request);
+        void operator()(const game::FuelStorage& h, TankInfo& info) const;
+    };
 
-        mass_t fuel() const;
-
-        void operator()(game::FuelStorage& t);
-
-    private:
-        mass_t mRequest = 0.0_kg;
-        mass_t mFuel = 0.0_kg;
+    struct FuelRequest : public core::ecs::System<signatures::ModifyFuelSignature>
+    {
+        void operator()(game::FuelStorage& t, mass_t& requested, mass_t& provided) const;
     };
 
 
-    class AddFuel : public core::ecs::System<signatures::ModifyFuelSignature>
+    struct AddFuel : public core::ecs::System<signatures::ModifyFuelSignature>
     {
-    public:
-        AddFuel(mass_t amount);
-
-        void operator()(game::FuelStorage& t);
-
-        mass_t fuel() const;
-
-    private:
-        mass_t mFuel;
+        void operator()(game::FuelStorage& t, mass_t& amount) const;
     };
 
-    FuelRequest::FuelRequest(mass_t request) :
-            mRequest(request)
+    void FuelRequest::operator()(game::FuelStorage& t, mass_t& requested, mass_t& provided) const
     {
+        auto get = t.request(requested);
+        requested -= get;
+        provided += get;
     }
 
-    mass_t FuelRequest::fuel() const
+    void AddFuel::operator()(game::FuelStorage& t, mass_t& amount) const
     {
-        return mFuel;
+        amount = t.fill(amount);
     }
 
-    void FuelRequest::operator()(game::FuelStorage& t)
+    void FuelTank::operator()(const game::FuelStorage& h, TankInfo& info) const
     {
-        auto get = t.request(mRequest);
-        mRequest -= get;
-        mFuel += get;
-    }
-
-    AddFuel::AddFuel(mass_t amount) : mFuel(amount)
-    {
-
-    }
-
-    void AddFuel::operator()(game::FuelStorage& t)
-    {
-        mFuel = t.fill(mFuel);
-    }
-
-    mass_t AddFuel::fuel() const
-    {
-        return mFuel;
+        info.fuel     += h.current;
+        info.capacity += h.capacity;
     }
 }
 
 mass_t spatacs::game::systems::request_fuel(game::SubsystemManager& mgr, mass_t amount)
 {
-    FuelRequest request{amount};
-    mgr.apply(request);
-    return request.fuel();
+    mass_t provided = 0.0_kg;
+    mgr.apply(FuelRequest{}, amount, provided);
+    return provided;
 }
 
 mass_t spatacs::game::systems::fill_fuel(game::SubsystemManager& mgr, mass_t amount)
 {
-    AddFuel adding{amount};
-    mgr.apply(adding);
-    return adding.fuel();
+    mgr.apply(AddFuel{}, amount);
+    return amount;
 }
 
+TankInfo spatacs::game::systems::get_tank_info(const game::SubsystemManager& mgr)
+{
+    TankInfo info;
+    mgr.apply(FuelTank{}, info);
+    return info;
+}

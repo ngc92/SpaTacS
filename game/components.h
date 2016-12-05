@@ -120,7 +120,7 @@ namespace spatacs
 
         struct Timer
         {
-            double time = 0;
+            time_t time = 0.0_s;
         };
 
         struct ProjectileWpnData

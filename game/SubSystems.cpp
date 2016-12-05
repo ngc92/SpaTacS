@@ -45,23 +45,20 @@ SubSystems::SubSystems(const boost::property_tree::ptree& data)
 
 void SubSystems::onStep(Starship& ship)
 {
+    using namespace systems;
+
     mEnergyMgr.process(mComponents);
 
-    systems::TimerCountdown tc(0.1);
-    systems::ShieldManagement smgm(ship, mEnergyMgr);
-    systems::LifeSupportStep ls(ship, mEnergyMgr);
-    systems::Propulsion prop(ship, ship.getDesiredAcceleration());
-    systems::FuelTank tank;
+    Propulsion prop;
 
-    mComponents.apply(tc);
-    mComponents.apply(smgm);
-    mComponents.apply(ls);
-    mComponents.apply(prop);
-    mComponents.apply(tank);
+    mComponents.apply(TimerCountdown{}, 0.1_s);
+    mComponents.apply(ShieldManagement{}, ship, mEnergyMgr);
+    mComponents.apply(LifeSupportStep{}, ship, mEnergyMgr);
+    mComponents.apply(prop, ship, ship.getDesiredAcceleration());
 
     ship.setProducedAcceleration( prop.getProduced() );
     ship.setMaxAcceleration( prop.getMax() );
-    ship.setFuelMass(tank.fuel());
+    ship.setFuelMass(get_tank_info(mComponents).fuel);
 }
 
 double SubSystems::dealDamage(double dmg)
@@ -84,8 +81,8 @@ double SubSystems::dealDamage(double dmg)
 
 void EnergyManager::process(SubsystemManager& comps)
 {
-    systems::PowerProduction gpe(comps);
-    comps.apply(gpe);
+    systems::PowerProduction gpe;
+    comps.apply(gpe, comps);
     mTotal = gpe.energy();
 
     if(mRequested < 0.1_J)

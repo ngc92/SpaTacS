@@ -13,14 +13,9 @@ namespace game
 {
 namespace systems
 {
-    class ShieldManagement : public core::ecs::System<signatures::ShieldSignature>
+    struct ShieldManagement : public core::ecs::System<signatures::ShieldSignature>
     {
-    public:
-        ShieldManagement(Starship& s, EnergyManager& emgr);
-        void operator()(ShieldGeneratorData& sgen, const Health& health, const Activity& acc);
-    private:
-        Starship& ship;
-        EnergyManager& emgr;
+        void operator()(ShieldGeneratorData& sgen, const Health& health, const Activity& acc, Starship& s, EnergyManager& emgr);
     };
 }
 }

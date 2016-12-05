@@ -13,14 +13,9 @@ namespace game
 {
 namespace systems
 {
-    class LifeSupportStep : public core::ecs::System<signatures::LifeSupportSignature>
+    struct LifeSupportStep : public core::ecs::System<signatures::LifeSupportSignature>
     {
-    public:
-        LifeSupportStep(const Starship& s, EnergyManager& e);
-        void operator()(LifeSupportData& sup) const;
-    private:
-        const Starship& ship;
-        EnergyManager& emgr;
+        void operator()(LifeSupportData& sup, const Starship& ship, EnergyManager& e) const;
     };
 }
 }

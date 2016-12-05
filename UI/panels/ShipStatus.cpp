@@ -44,9 +44,8 @@ void ShipStatus::update(const game::Starship& ship)
     bars.push_back( Sys{L"structure", ship.hp() / ship.max_hp()} );
 
     if(mShowFuel) {
-        game::systems::FuelTank ti;
-        ship.components().apply(ti);
-        bars.push_back( Sys{L"fuel", ti.fuel() / ti.capacity()} );
+        auto info = game::systems::get_tank_info(ship.components());
+        bars.push_back( Sys{L"fuel", info.fuel / info.capacity} );
     }
 
     if(mShowAmmunition) {

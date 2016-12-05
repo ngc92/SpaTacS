@@ -16,15 +16,14 @@ namespace systems
     class Propulsion : public core::ecs::System<signatures::PropulsionSignature>
     {
     public:
-        Propulsion(Starship& ship, accel_vec mDesiredAcceleration);
-        void operator()(EngineData& engine, const Health& health, const Activity& acc);
+        Propulsion() = default;
+        void operator()(EngineData& engine, const Health& health, const Activity& acc,
+                        Starship& ship, const accel_vec& desired_acceleration);
 
         const accel_vec& getProduced() const { return mProducedAcceleration; }
         accel_t getMax() const { return mMaxAcceleration; }
 
     private:
-        Starship& mShip;
-        accel_vec mDesiredAcceleration;
         accel_vec mProducedAcceleration{.0, .0, .0};
         accel_t   mMaxAcceleration{.0};
     };

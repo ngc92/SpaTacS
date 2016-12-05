@@ -42,11 +42,11 @@ namespace spatacs
         auto FireWeapon::fireWeapon(Starship& shooter, const length_vec& tpos,
                                     const velocity_vec& tvel, game::SubsystemHandle& weapon) const -> EventPtr
         {
-            if (weapon.get<game::Timer>().time > 0)
+            if (weapon.get<game::Timer>().time > 0.0_s)
                 return nullptr;
 
             // reset timer
-            weapon.get<game::Timer>().time = 60 / weapon.get<game::ProjectileWpnData>().mRPM;
+            weapon.get<game::Timer>().time = 60.0_s / (double)weapon.get<game::ProjectileWpnData>().mRPM;
 
             // get the ammo storage
             game::systems::GetAmmunition getter{weapon.get<game::ProjectileWpnData>().mAmmo};
@@ -59,11 +59,11 @@ namespace spatacs
 
             // aiming
             game::systems::Aiming aim(tpos - shooter.position(), tvel - shooter.velocity());
-            shooter.components().apply_to(aim, weapon.id());
+            shooter.components().apply_to(weapon.id(), aim);
 
             auto d = length(aim.aim_pos());
-            // modulate the speed with +-5%
-            double speed_factor = ((rand() % 101 - 50) / 1000.0 + 1.0);
+            // modulate the speed with +-2.5%
+            double speed_factor = ((rand() % 101 - 50) / 2000.0 + 1.0);
             auto vel = aim.speed() * aim.aim_pos() / d * speed_factor;
             return EventPtr(new SpawnProjectile(shooter.id(), shooter.position(),
                                                 vel + shooter.velocity(),

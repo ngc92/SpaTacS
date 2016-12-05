@@ -8,11 +8,7 @@
 using namespace spatacs;
 using namespace game::systems;
 
-TimerCountdown::TimerCountdown(double dt) : mDeltaT( dt )
+void TimerCountdown::operator()(Timer& timer, time_t dt) const
 {
-}
-
-void TimerCountdown::operator()(Timer& timer) const
-{
-    timer.time -= mDeltaT;
+    timer.time -= dt;
 }
