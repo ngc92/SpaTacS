@@ -3,9 +3,6 @@
 //
 
 #include "GameThread.h"
-#include "events/IEvent.h"
-#include "events/Combat.h"
-#include "physics/HitTests.h"
 #include <cassert>
 #include <iostream>
 #include "core/SimulationBase.h"
