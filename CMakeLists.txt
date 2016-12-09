@@ -96,7 +96,7 @@ SET(GAME_SOURCE_FILES
         game/systems/LifeSupport.cpp
         game/systems/Weapon.h
         game/systems/Weapon.cpp
-        game/systems/make_system.h)
+        game/systems/make_system.h game/Shield.h game/Shield.cpp)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h

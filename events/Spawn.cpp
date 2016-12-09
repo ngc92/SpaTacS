@@ -31,14 +31,15 @@ SpawnProjectile::SpawnProjectile(game::ObjectID shooter, length_vec pos, velocit
 
 void SpawnProjectile::apply(EventContext& context) const
 {
-    auto new_id = context.state.getNextFreeID();
+    game::ObjectID id{context.state.getNextFreeID()};
 
-    auto proj = std::make_unique<game::Projectile>(game::ObjectID(new_id), mShooter, mDamage);
+    auto proj = std::make_unique<game::Projectile>(mShooter, mDamage);
     proj->setPosition( mPosition );
     proj->setVelocity( mVelocity );
     proj->setMass( mMass );
+    proj->setID(id);
 
-    physics::Object obj(mPosition, mVelocity, mMass, new_id);
+    physics::Object obj(mPosition, mVelocity, mMass, id.getID());
     obj.addFixture( mRadius );
     auto pid = context.world.spawn(obj);
     proj->setPhysicsID( pid );

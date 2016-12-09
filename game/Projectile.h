@@ -19,7 +19,7 @@ namespace game
     {
     public:
         Projectile() = default;
-        Projectile(ObjectID id, ObjectID shooter, Damage damage);
+        Projectile(ObjectID shooter, Damage damage);
         void onStep() override;
 
         float age() const;

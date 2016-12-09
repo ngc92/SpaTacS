@@ -9,12 +9,11 @@
 using namespace spatacs::game;
 using spatacs::Vec;
 
-Projectile::Projectile(ObjectID id, ObjectID shooter, Damage damage) :
+Projectile::Projectile(ObjectID shooter, Damage damage) :
     GameObject(ObjectType::PROJECTILE),
     mShooterId(shooter),
     mDamage( damage )
 {
-    setID(id);
 }
 
 void Projectile::onStep()
