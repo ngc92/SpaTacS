@@ -173,11 +173,11 @@ void IrrlichtUI::setState(const state_t& bstate)
             shipfx->setShieldStatus(ship->shield() / ship->max_shield());
             shipfx->setHullStatus(ship->armour() / ship->max_armour());
             node = shipfx;
-        } else
+        } else if(auto proj = dynamic_cast<const game::Projectile*>(&obj))
         {
             auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
             shotfx->setShot(convert(obj.velocity()*1.0_s));
-            auto proj = dynamic_cast<const game::Projectile*>(&obj);
+
             if(proj->damage().shield_overload > 0)
             {
                 shotfx->setColor(video::SColor(255, 255, 0, 128));
@@ -188,9 +188,13 @@ void IrrlichtUI::setState(const state_t& bstate)
             node = shotfx;
         }
 
-        drop_ptr<scene::ISceneNodeAnimator> ani{smgr->createFlyStraightAnimator(convert(obj.position()),
-                                          convert(obj.position() + 0.1_s * obj.velocity()), 100)};
-        node->addAnimator(ani.get());
+        if(node) {
+            drop_ptr<scene::ISceneNodeAnimator> ani{smgr->createFlyStraightAnimator(convert(obj.position()),
+                                                                                    convert(obj.position() +
+                                                                                            0.1_s * obj.velocity()),
+                                                                                    100)};
+            node->addAnimator(ani.get());
+        }
     }
 
 }

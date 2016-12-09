@@ -18,7 +18,6 @@ namespace game
     class Projectile : public GameObject
     {
     public:
-        Projectile() = default;
         Projectile(ObjectID shooter, Damage damage);
         void onStep() override;
 
