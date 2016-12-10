@@ -15,7 +15,8 @@ namespace spatacs
         enum class ObjectType
         {
             STARSHIP,
-            PROJECTILE
+            PROJECTILE,
+            SHIELD
         };
 
         using ObjectID = TaggedID<std::uint64_t, struct game_object_tag>;

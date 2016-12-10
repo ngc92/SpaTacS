@@ -13,7 +13,6 @@ void ShieldManagement::operator()(ShieldGeneratorData& sgen, const Health& healt
                                   Starship& ship, EnergyManager& emgr)
 {
     auto dt = 0.1_s;
-    // shield decay
     auto shield = ship.shield();
     if(shield < ship.max_shield())
     {

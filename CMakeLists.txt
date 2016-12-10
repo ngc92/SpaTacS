@@ -22,7 +22,7 @@ set(EVENT_SOURCE_FILES
         events/IEvent.h
         events/Spawn.h
         events/Spawn.cpp
-        )
+        events/ShieldEvent.h)
 
 set(COMMAND_SOURCE_FILES
         cmd/Attack.h
@@ -96,7 +96,9 @@ SET(GAME_SOURCE_FILES
         game/systems/LifeSupport.cpp
         game/systems/Weapon.h
         game/systems/Weapon.cpp
-        game/systems/make_system.h game/Shield.h game/Shield.cpp)
+        game/systems/make_system.h
+        game/Shield.h
+        game/Shield.cpp game/Shield.h game/Shield.cpp events/ShieldEvent.cpp)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h
