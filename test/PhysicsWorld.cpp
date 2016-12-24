@@ -9,10 +9,41 @@
 
 using namespace spatacs::physics;
 
+BOOST_AUTO_TEST_SUITE(Fixture_tests)
+    BOOST_AUTO_TEST_CASE(Constructor)
+    {
+        ObjectID parent{5};
+        length_t radius = 0.1_m;
+        Fixture f(parent, FixtureID{1}, radius);
+
+        BOOST_CHECK_EQUAL(f.parent(), parent);
+        BOOST_CHECK_EQUAL(f.radius(), radius);
+        BOOST_CHECK_EQUAL(f.id(), FixtureID{1});
+    }
+
+    BOOST_AUTO_TEST_CASE(GetSet)
+    {
+        ObjectID parent{5};
+        length_t radius = 0.1_m;
+        Fixture f(parent, FixtureID{1}, radius);
+
+        radius = 1.0_m;
+        f.setRadius(radius);
+        BOOST_CHECK_EQUAL(f.radius(), radius);
+
+        f.setUserdata(10ul);
+        BOOST_CHECK_EQUAL(f.userdata(), 10ul);
+    }
+
+BOOST_AUTO_TEST_SUITE_END()
+
 BOOST_AUTO_TEST_SUITE(PhysicsWorld_tests)
     BOOST_AUTO_TEST_CASE(Errors)
     {
+        // create an empty world
         PhysicsWorld world;
+
+        // check that we cannot get an Object that does not exist.
         BOOST_CHECK_THROW(world.getObject( ObjectID{5}), std::logic_error );
         BOOST_CHECK_NO_THROW(world.simulate(0.1_s));
     }

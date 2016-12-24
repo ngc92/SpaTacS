@@ -163,7 +163,7 @@ set(SOURCE_FILES
         ${UI_SOURCE_FILES}
         main.cpp)
 
-set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp test/units_test.cpp test/PhysicsWorld.cpp test/ecs_test.cpp)
+set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp test/units_test.cpp test/PhysicsWorld.cpp test/core/ecs_test.cpp test/core/ecs_storage.cpp)
 
 add_library(GameSimulation ${CORE_SOURCE_FILES} ${PHYSICS_SOURCE_FILES} ${GAME_SOURCE_FILES} ${EVENT_SOURCE_FILES})
 add_executable(SpaTacS ${SOURCE_FILES})

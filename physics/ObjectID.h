@@ -13,6 +13,7 @@ namespace spatacs
     namespace physics
     {
         using ObjectID  = TaggedID<std::uint64_t, struct object_tag>;
+        using FixtureID = TaggedID<std::uint64_t, struct fixture_tag>;
     }
 }
 

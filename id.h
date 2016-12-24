@@ -18,21 +18,21 @@ namespace spatacs
      *    less than comparison (so they can be used in ordered containers)
      *    std::hash (so they can be used in unordered containers).
      *  A value of 0 indicates a non-assigned ID.
-     *  Most operations are declared constexpr, so this class could even be used for compile time IDs.
+     *  Most operations are declared noexcept constexpr, so this class could even be used for compile time IDs.
      */
     template<class Int, class Tag>
     class TaggedID
     {
     public:
-        constexpr TaggedID() = default;
-        constexpr explicit TaggedID(Int i) : mValue(i) {};
+        constexpr TaggedID() noexcept = default;
+        constexpr explicit TaggedID(Int i) noexcept : mValue(i) {};
 
-        constexpr Int getID() const { return mValue; }
-        constexpr explicit operator bool() const { return mValue != 0; }
-        constexpr explicit operator Int() const { return mValue; }
-        constexpr void reset() { mValue = 0; }
+        constexpr Int getID() const noexcept { return mValue; }
+        constexpr explicit operator bool() const noexcept { return mValue != 0; }
+        constexpr explicit operator Int() const noexcept  { return mValue; }
+        constexpr void reset() noexcept { mValue = 0; }
 
-        constexpr TaggedID& operator++() { ++mValue; return *this; }
+        constexpr TaggedID& operator++() noexcept { ++mValue; return *this; }
 
     private:
         Int mValue{0};
@@ -45,20 +45,20 @@ namespace spatacs
     };
 
     template<class I, class T>
-    constexpr bool operator==(TaggedID<I, T> a, TaggedID<I, T> b)
+    constexpr bool operator==(TaggedID<I, T> a, TaggedID<I, T> b) noexcept
     {
         return a.getID() == b.getID();
     };
 
     template<class I, class T>
-    constexpr bool operator!=(TaggedID<I, T> a, TaggedID<I, T> b)
+    constexpr bool operator!=(TaggedID<I, T> a, TaggedID<I, T> b) noexcept
     {
         return a.getID() != b.getID();
     };
 
     //! <, defined so IDs can be used in ordered containers.
     template<class I, class T>
-    constexpr bool operator<(TaggedID<I, T> a, TaggedID<I, T> b)
+    constexpr bool operator<(TaggedID<I, T> a, TaggedID<I, T> b) noexcept
     {
         return a.getID() < b.getID();
     };

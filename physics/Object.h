@@ -2,16 +2,22 @@
 // Created by erik on 9/26/16.
 //
 
-#ifndef SOI_PHYSICSOBJECT_H
-#define SOI_PHYSICSOBJECT_H
+#ifndef SPATACS_PHYSICS_OBJECT_H
+#define SPATACS_PHYSICS_OBJECT_H
 
 #include "units.h"
 #include "Fixture.h"
 #include <vector>
 #include "ObjectID.h"
 
-namespace spatacs {
-    namespace physics {
+namespace spatacs
+{
+    namespace physics
+    {
+        /*! \brief Class that represents a physics object.
+         *  \details This is mostly a dumb container that collects the data for a physics object.
+         *          Most functions are just getters or setters that may do some simple sanity checks.
+         */
         class Object
         {
         public:
@@ -24,7 +30,7 @@ namespace spatacs {
 
             // ID
             ObjectID id() const;
-            /// \note this should be called only once, when the object is added to the world
+            /// \note this should be called only once, when the object is added to the world.
             void setID(ObjectID id);
 
             // current step base data
@@ -63,4 +69,4 @@ namespace spatacs {
     }
 }
 
-#endif //SOI_PHYSICSOBJECT_H
+#endif //SPATACS_PHYSICS_OBJECT_H
