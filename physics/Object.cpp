@@ -27,11 +27,6 @@ const velocity_vec& Object::velocity() const
     return mVelocity;
 }
 
-length_vec Object::position(time_t dt) const
-{
-    return mPosition + dt*mVelocity;
-}
-
 void Object::setPosition(const length_vec& p)
 {
     mPosition = p;
@@ -59,6 +54,11 @@ ObjectID Object::id() const
 
 void Object::setID(ObjectID id)
 {
+    if( !id )
+        BOOST_THROW_EXCEPTION( std::logic_error("New ObjectID is invalid.") );
+    if( mID )
+        BOOST_THROW_EXCEPTION( std::logic_error("Trying to set ID to Object has already an ID assigned.") );
+
     mID = id;
     for(auto& fix : mFixtures)
         fix.setParent(mID);
@@ -78,7 +78,7 @@ void Object::setMass(mass_t mass)
 
 Fixture& Object::addFixture(length_t radius)
 {
-    mFixtures.push_back( Fixture(mID, radius) );
+    mFixtures.push_back( Fixture(mID, FixtureID{0}, radius) );
     return mFixtures.back();
 }
 

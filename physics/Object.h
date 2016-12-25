@@ -31,21 +31,26 @@ namespace spatacs
             // ID
             ObjectID id() const;
             /// \note this should be called only once, when the object is added to the world.
+            /// \throw std::logic_error, if \p id is an invalid ID
+            /// \thorw std::logic_error, if this Object has already an assigned ID.
             void setID(ObjectID id);
 
             // current step base data
+            /// Get the current (base) position of the Object.
             const length_vec& position() const;
+            /// Get the current (base) velocity of the Object.
             const velocity_vec& velocity() const;
 
-            // interpolated data
-            length_vec position(time_t dt) const;
-
             // these should be used with care.
+            /// Set the current (base) position of the Object.
             void setPosition(const length_vec& p);
+            /// Set the current (base) velocity of the Object.
             void setVelocity(const velocity_vec& v);
 
             // mass
+            /// Get the mass of the Object.
             mass_t mass() const;
+            /// Set the mass of the Object.
             void setMass(mass_t mass);
 
             // iterate over fixtures
@@ -56,7 +61,7 @@ namespace spatacs
             Fixture& addFixture(length_t radius);
 
         private:
-            ObjectID mID{0};
+            ObjectID mID{};
             length_vec mPosition{0.0_m, 0.0_m, 0.0_m};
             velocity_vec mVelocity{0.0_kps, 0.0_kps, 0.0_kps};
             mass_t mMass = 1.0_kg;

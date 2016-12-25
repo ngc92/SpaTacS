@@ -8,7 +8,13 @@
 
 using namespace spatacs::physics;
 
-Fixture::Fixture(ObjectID parent, length_t rad) :
+FixtureID Fixture::id() const
+{
+    return mID;
+}
+
+Fixture::Fixture(ObjectID parent, FixtureID id, length_t rad) :
+        mID(id),
         mRadius(rad),
         mParent(parent)
 {

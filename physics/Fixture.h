@@ -15,7 +15,10 @@ namespace physics
     class Fixture
     {
     public:
-        Fixture(ObjectID parent, length_t rad);
+        Fixture(ObjectID parent, FixtureID id, length_t rad);
+
+        // id
+        FixtureID id() const;
 
         // shape data
         length_t radius() const;
@@ -30,8 +33,9 @@ namespace physics
         void setParent( ObjectID parent );
 
     private:
-        length_t mRadius{0.01f};
-        ObjectID mParent; // parent object
+        FixtureID mID;
+        length_t  mRadius{0.01f};
+        ObjectID  mParent; // parent object
         std::uint64_t mUserData;
     };
 }

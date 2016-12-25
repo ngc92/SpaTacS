@@ -12,6 +12,7 @@ using namespace spatacs::physics;
 BOOST_AUTO_TEST_SUITE(Fixture_tests)
     BOOST_AUTO_TEST_CASE(Constructor)
     {
+        // This test checks that the constructor initializes all values properly
         ObjectID parent{5};
         length_t radius = 0.1_m;
         Fixture f(parent, FixtureID{1}, radius);
@@ -23,6 +24,7 @@ BOOST_AUTO_TEST_SUITE(Fixture_tests)
 
     BOOST_AUTO_TEST_CASE(GetSet)
     {
+        // This test checks that getters and setters work as expected
         ObjectID parent{5};
         length_t radius = 0.1_m;
         Fixture f(parent, FixtureID{1}, radius);
@@ -30,9 +32,93 @@ BOOST_AUTO_TEST_SUITE(Fixture_tests)
         radius = 1.0_m;
         f.setRadius(radius);
         BOOST_CHECK_EQUAL(f.radius(), radius);
+        BOOST_CHECK_THROW(f.setRadius(-1.0_m), std::logic_error);
 
         f.setUserdata(10ul);
         BOOST_CHECK_EQUAL(f.userdata(), 10ul);
+
+        ++parent;
+        f.setParent(parent);
+        BOOST_CHECK_EQUAL(f.parent(), parent);
+    }
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+
+BOOST_AUTO_TEST_SUITE(Object_tests)
+    BOOST_AUTO_TEST_CASE(Constructor)
+    {
+        // This test checks that the constructor initializes all values properly
+        length_vec p{5.0_m, 1.0_m, 4.8_m};
+        velocity_vec v{1.0_kps, 4.5_kps, -2.5_kps};
+        mass_t m = 12.5_kg;
+        std::uint64_t ud = 42;
+
+        Object o{p, v, m, ud};
+
+        BOOST_CHECK_EQUAL(o.position(), p);
+        BOOST_CHECK_EQUAL(o.velocity(), v);
+        BOOST_CHECK_EQUAL(o.mass(), m);
+        BOOST_CHECK_EQUAL(o.userdata(), ud);
+        BOOST_CHECK(!(bool)o.id());
+        BOOST_CHECK(o.begin() == o.end());
+    }
+
+    BOOST_AUTO_TEST_CASE(GetSet)
+    {
+        // This test checks that getters and setters work as expected
+        length_vec p{5.0_m, 1.0_m, 4.8_m};
+        velocity_vec v{1.0, 4.5, -2.5};
+        mass_t m = 12.5_kg;
+        std::uint64_t ud = 42;
+
+        Object o;
+
+        o.setPosition(p);
+        BOOST_CHECK_EQUAL(o.position(), p);
+
+        o.setVelocity(v);
+        BOOST_CHECK_EQUAL(o.velocity(), v);
+
+        o.setMass(m);
+        BOOST_CHECK_EQUAL(o.mass(), m);
+
+        o.setUserdata(ud);
+        BOOST_CHECK_EQUAL(o.userdata(), ud);
+
+        BOOST_CHECK_THROW(o.setID(ObjectID{}), std::logic_error);
+
+        o.setID(ObjectID{12});
+        BOOST_CHECK_EQUAL(o.id(), ObjectID{12});
+
+        BOOST_CHECK_THROW(o.setID(ObjectID{12}), std::logic_error);
+    }
+
+    BOOST_AUTO_TEST_CASE(Fixtures)
+    {
+        // This test checks the functions for adding, removing and iterating fixtures
+        Object o;
+
+        auto& f1 = o.addFixture( 0.5_m );
+        // check that there is a fixture
+        BOOST_CHECK_EQUAL(&f1, &(*o.begin()));
+        BOOST_CHECK_EQUAL(o.end() - o.begin(), 1);
+        BOOST_CHECK_EQUAL(f1.radius(), 0.5_m);
+        f1.setUserdata(42);
+        BOOST_CHECK_EQUAL(o.begin()->userdata(), 42);
+
+        // check that the ID is correctly updated
+        BOOST_CHECK_EQUAL(f1.parent(), o.id());
+        o.setID( ObjectID{5} );
+        BOOST_CHECK_EQUAL(f1.parent(), o.id());
+
+        // second fixture
+        auto& f2 = o.addFixture( 0.25_m );
+        BOOST_CHECK_EQUAL(o.end() - o.begin(), 2);
+        BOOST_CHECK_EQUAL(f2.parent(), o.id());
+
+        BOOST_CHECK(f1.id() != f2.id());
     }
 
 BOOST_AUTO_TEST_SUITE_END()
