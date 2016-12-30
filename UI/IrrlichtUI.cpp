@@ -9,6 +9,7 @@
 #include "events/Combat.h"
 #include "gfx/ShotFx.h"
 #include "gfx/ShipFx.h"
+#include "gfx/ShieldFx.h"
 #include <sstream>
 #include <iomanip>
 #include <UI/inputs/UnitSelection.h>
@@ -18,6 +19,7 @@
 #include "convert.h"
 #include "game/Starship.h"
 #include "game/Projectile.h"
+#include "game/Shield.h"
 #include "game/events/events.h"
 
 using namespace irr;
@@ -165,15 +167,16 @@ void IrrlichtUI::setState(const state_t& bstate)
         if(!obj.alive())
             continue;
         irr::scene::ISceneNode* node = nullptr;
-        if(auto ship = dynamic_cast<const game::Starship*>(&obj)) {
+        if(auto ship = dynamic_cast<const game::Starship*>(&obj))
+        {
             auto shipfx = new scene::ShipFx(mMap, mDevice->getSceneManager());
             video::SColor colors[] = {{255, 0,   200, 0},
                                       {255, 200, 0,   0}};
             shipfx->setColor(colors[ship->team() - 1]);
-            shipfx->setShieldStatus(ship->shield() / ship->max_shield());
             shipfx->setHullStatus(ship->armour() / ship->max_armour());
             node = shipfx;
-        } else if(auto proj = dynamic_cast<const game::Projectile*>(&obj))
+        }
+         else if(auto proj = dynamic_cast<const game::Projectile*>(&obj))
         {
             auto shotfx = new scene::ShotFx( mMap, mDevice->getSceneManager() );
             shotfx->setShot(convert(obj.velocity()*1.0_s));
@@ -186,6 +189,12 @@ void IrrlichtUI::setState(const state_t& bstate)
                 shotfx->setColor(video::SColor(255, 255, 128, 0));
             }
             node = shotfx;
+        } else if(auto shield = dynamic_cast<const game::Shield*>(&obj))
+        {
+            auto fx = new scene::ShieldFx(mMap, mDevice->getSceneManager());
+            fx->setColor(video::SColor(128, 32, 32, 200));
+            fx->setStatus(shield->current() / shield->maximum());
+            node = fx;
         }
 
         if(node) {
@@ -255,10 +264,10 @@ void IrrlichtUI::onEvent(const game::events::ReceiveDamage& ev)
 void IrrlichtUI::onEvent(const game::events::ShieldAbsorbtion& ev)
 {
     auto smgr = mDevice->getSceneManager();
-    const auto& ship = mState->getShip(ev.id);
-    if(ship.shield() > 0) {
+    const auto& shield = mState->getObject(ev.id);
+    //if(shield.shield() > 0) {
         float s = 5;
-        auto pos = ship.position();
+        auto pos = shield.position();
         auto bb = smgr->addBillboardSceneNode();
         bb->setPosition(convert(pos));
         bb->setMaterialFlag(video::EMF_LIGHTING, false);
@@ -274,11 +283,11 @@ void IrrlichtUI::onEvent(const game::events::ShieldAbsorbtion& ev)
         a.reset(smgr->createTextureAnimator(textures, 20));
         bb->addAnimator(a.get());
         a.reset(smgr->createFlyStraightAnimator(convert(pos),
-                                                convert(pos + ship.velocity() * 1.0_s),
+                                                convert(pos + shield.velocity() * 1.0_s),
                                                 1000)
         );
         bb->addAnimator(a.get());
-    }
+    //}
 }
 
 cmd::CommandManager& IrrlichtUI::getCommandMgr()

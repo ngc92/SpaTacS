@@ -1,20 +1,18 @@
 //
-// Created by erik on 10/6/16.
+// Created by erik on 12/30/16.
 //
 
-#ifndef SPATACS_SHIPFX_H
-#define SPATACS_SHIPFX_H
-
-
+#ifndef SPATACS_UI_SHIELDFX_H
+#define SPATACS_UI_SHIELDFX_H
 
 #include <irrlicht/ISceneManager.h>
 
 namespace irr {
     namespace scene {
-        class ShipFx : public ISceneNode
+        class ShieldFx : public ISceneNode
         {
         public:
-            ShipFx(ISceneNode* parent = nullptr, ISceneManager* mgr = nullptr, s32 id = -1);
+            ShieldFx(ISceneNode* parent = nullptr, ISceneManager* mgr = nullptr, s32 id = -1);
 
             void OnAnimate(u32 timeMs) override;
             void render() override;
@@ -22,19 +20,20 @@ namespace irr {
             void OnRegisterSceneNode() override;
 
             void setColor( video::SColor col );
-            void setHullStatus(float s);
+            void setStatus(float s);
 
         private:
             video::SMaterial mMaterial;
             video::SColor    mColor;
 
             core::aabbox3d<f32> mBBox;
-            float mHullStatus;
+            float mStatus;
 
             void drawCircle(const core::vector3df& view, const core::vector3df& h, const core::vector3df& v, float radius,
-                                        float status, const video::SColor& color) const;
+                            float status, const video::SColor& color) const;
         };
     }
 }
 
-#endif //SPATACS_SHIPFX_H
+
+#endif //SPATACS_UI_SHIELDFX_H
