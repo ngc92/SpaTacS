@@ -34,7 +34,7 @@ void AIPlayer::setState(state_t state)
             continue;
 
         // if the shield is damaged.
-        double own_shield = own.shield();
+        double own_shield = own.shield_strength(*state);
 
         length_t min = 100.0_km;
         // find closest ship to attack
@@ -57,7 +57,7 @@ void AIPlayer::setState(state_t state)
         // if found, do attack
         if(min < 20.0_km)  {
             mCommands->addCommand( own.id(), cmd::Attack(target->id()) );
-            auto best = getBestAmmo(own, *target);
+            auto best = getBestAmmo(own, *target, target->shield_strength( *state ));
             auto wpn_id_range = own.components().get_matching_ids(core::type_v<systems::signatures::AimSignature>);
             for(const auto& id : wpn_id_range)
             {
@@ -66,7 +66,7 @@ void AIPlayer::setState(state_t state)
         }
 
         // fly closer if shield is stronger
-        if(own_shield > target->shield() || own_shield > 2)
+        if(own_shield > target->shield_strength( *state ) || own_shield > 2)
         {
             mCommands->addCommand( own.id(),
                                    cmd::Move(std::make_unique<cmd::movement::EngageTarget>(
@@ -86,7 +86,7 @@ void AIPlayer::setState(state_t state)
     mState = state;
 }
 
-auto AIPlayer::getBestAmmo(const Starship& own, const Starship& target) const -> BestAmmo
+auto AIPlayer::getBestAmmo(const Starship& own, const Starship& target, double target_shield) const -> BestAmmo
 {
     systems::ListAmmunition la;
     own.components().apply(la);
@@ -100,11 +100,12 @@ auto AIPlayer::getBestAmmo(const Starship& own, const Starship& target) const ->
 
         Damage estimated = ammo.data.damage;
         estimated.kinetic      = ammo.data.charge / 20000.0_kJ;  /// \todo magic constant here
-        auto sd = getShieldDamage(estimated, target.shield());
+        auto sd = getShieldDamage(estimated, target_shield);
         auto ad = getArmourDamage(sd.remaining, target.armour(), target.radius());
         // give only 20% weight to damaging shield and 0.75% for damaging armour
         double total = 0.20 * sd.applied + 0.75 * ad.applied + ad.remaining.kinetic + ad.remaining.high_explosive;
-        if( total > best ) {
+        if( total > best )
+        {
             best = total;
             mode = ammo.data.name;
         }

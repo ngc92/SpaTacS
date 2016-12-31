@@ -264,8 +264,8 @@ void IrrlichtUI::onEvent(const game::events::ReceiveDamage& ev)
 void IrrlichtUI::onEvent(const game::events::ShieldAbsorbtion& ev)
 {
     auto smgr = mDevice->getSceneManager();
-    const auto& shield = mState->getObject(ev.id);
-    //if(shield.shield() > 0) {
+    const auto& shield = dynamic_cast<const game::Shield&>(mState->getObject(ev.id));
+    if(shield.current() > 0) {
         float s = 5;
         auto pos = shield.position();
         auto bb = smgr->addBillboardSceneNode();
@@ -287,7 +287,7 @@ void IrrlichtUI::onEvent(const game::events::ShieldAbsorbtion& ev)
                                                 1000)
         );
         bb->addAnimator(a.get());
-    //}
+    }
 }
 
 cmd::CommandManager& IrrlichtUI::getCommandMgr()

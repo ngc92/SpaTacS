@@ -16,7 +16,7 @@ Projectile::Projectile(ObjectID shooter, Damage damage) :
 {
 }
 
-void Projectile::onStep()
+void Projectile::onStep(GameState& state)
 {
     mAge += 0.1;
 }

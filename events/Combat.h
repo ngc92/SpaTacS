@@ -15,6 +15,7 @@ namespace spatacs {
     namespace game
     {
         class Projectile;
+        class Shield;
     }
     namespace events {
         class FireWeapon : public ShipEvent
@@ -58,15 +59,16 @@ namespace spatacs {
             double          mActivity;
         };
 
-        class HitShield : public ShipEvent
+        class HitShield : public IEvent
         {
         public:
-            HitShield(const Starship& ship, const game::Projectile& proj);
+            HitShield(const game::Starship& ship, const game::Projectile& proj);
         private:
-            virtual void applyToShip(Starship& target, EventContext& context) const override;
+            void apply(EventContext& context) const override;
 
             game::Damage   mDamage;
             game::ObjectID mProjectileID;
+            game::ObjectID mShieldID;
             velocity_vec   mShipVel;
         };
 

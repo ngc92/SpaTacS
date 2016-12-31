@@ -13,6 +13,7 @@ namespace spatacs
 {
     namespace game
     {
+        class GameState;
         class GameObject
         {
         public:
@@ -35,7 +36,7 @@ namespace spatacs
             void setPhysicsID(physics::ObjectID id);
 
             virtual bool alive() const = 0;
-            virtual void onStep() = 0;
+            virtual void onStep(GameState& state) = 0;
             virtual GameObject* clone() const = 0;
 
             ObjectType type() const;

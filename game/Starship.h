@@ -14,7 +14,9 @@
 
 namespace spatacs
 {
-    namespace game {
+    namespace game
+    {
+        class GameState;
         class SubSystems;
 
         /// the purpose of this class is the ability to add members to
@@ -36,12 +38,13 @@ namespace spatacs
             double max_armour() const;
             void setArmour( double new_value );
 
-            double shield() const;
-            double max_shield() const;
-            void setShield( double new_value );
-
             length_t radius() const;
             void setRadius(length_t radius);
+
+            // shield
+            ObjectID shield_id() const;
+            void setShieldID(ObjectID shield);
+            double shield_strength(const GameState& state) const;
 
             // propulsion
             void setDesiredAcceleration(accel_vec);
@@ -63,11 +66,6 @@ namespace spatacs
             double mMaxHitPoints = 10;
             double mHitPoints    = 10;
 
-            // shield
-            double mMaxShield = 10;
-            double mCurShield = 10;
-            rate_t<scalar_t> mShieldDecay{0.0};
-
             // armour
             double mMaxArmour = 10;
             double mCurArmour = 10;
@@ -84,6 +82,7 @@ namespace spatacs
             length_t mRadius;
 
         private:
+            ObjectID      mShieldObjectID;
             std::uint64_t mTeam = 0;
             std::string   mName;
         };
@@ -106,7 +105,7 @@ namespace spatacs
             Starship* clone() const override;
 
             /// called at the end of a game step.
-            void onStep() override;
+            void onStep(GameState& state) override;
 
             const SubsystemManager& components() const;
             SubsystemManager& components();

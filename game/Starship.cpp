@@ -3,10 +3,12 @@
 //
 
 #include "GameObject.h"
+#include "GameState.h"
 #include "game/Starship.h"
 #include <cmath>
 #include <algorithm>
 #include "game/SubSystems.h"
+#include "Shield.h"
 #include <boost/property_tree/ptree.hpp>
 #include <iostream>
 
@@ -16,9 +18,11 @@ using namespace game;
 ShipData::ShipData(std::uint64_t team, std::string name, const boost::property_tree::ptree& data) :
         mMaxHitPoints( data.get<double>("hitpoints") ),
         mHitPoints( mMaxHitPoints ),
+        /*,
         mMaxShield( data.get<double>("shield") ),
         mCurShield( mMaxShield ),
         mShieldDecay( scalar_t(std::log(1-data.get<float>("shield_dissipation") / 100.f)) / 1.0_s ),
+         */
         mMaxArmour( data.get<double>("armour") ),
         mCurArmour( mMaxArmour ),
         mEmptyMass( data.get<mass_t>("mass") ),
@@ -44,11 +48,9 @@ Starship::~Starship() {
 
 }
 
-void Starship::onStep()
+void Starship::onStep(GameState& state)
 {
-    double decay = std::exp( mShieldDecay*0.1_s );
-    mCurShield *= decay;
-    mSubSystems->onStep(*this);
+    mSubSystems->onStep(*this, state);
 }
 
 bool Starship::alive() const
@@ -166,24 +168,6 @@ void ShipData::setRadius(length_t radius)
     mRadius = radius;
 }
 
-double ShipData::shield() const
-{
-    return mCurShield;
-}
-
-double ShipData::max_shield() const
-{
-    return mMaxShield;
-}
-
-void ShipData::setShield(double new_value)
-{
-    if(new_value < 0)
-        BOOST_THROW_EXCEPTION( std::logic_error("Trying to set negative shield strength") );
-    mCurShield = std::min(new_value, mMaxShield);
-
-}
-
 void ShipData::setDesiredAcceleration(accel_vec a)
 {
     mDesiredAcceleration = a;
@@ -222,4 +206,25 @@ mass_t ShipData::getTotalMass() const
 void ShipData::setFuelMass(mass_t mass)
 {
     mFuelMass = mass;
+}
+
+double ShipData::shield_strength(const GameState& state) const
+{
+    try {
+        auto& assoc_shield = dynamic_cast<const Shield&>(state.getObject(mShieldObjectID));
+        return assoc_shield.current();
+    } catch (...) {
+        /// \todo this is very ugly!!
+        return 0;
+    }
+}
+
+ObjectID ShipData::shield_id() const
+{
+    return mShieldObjectID;
+}
+
+void ShipData::setShieldID(ObjectID shield)
+{
+    mShieldObjectID = shield;
 }

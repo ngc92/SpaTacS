@@ -2,6 +2,7 @@
 // Created by erik on 12/3/16.
 //
 
+#include <game/Shield.h>
 #include "Shield.h"
 #include "game/Starship.h"
 #include "game/SubSystems.h"
@@ -10,20 +11,18 @@ using namespace spatacs;
 using namespace game::systems;
 
 void ShieldManagement::operator()(ShieldGeneratorData& sgen, const Health& health, const Activity& acc,
-                                  Starship& ship, EnergyManager& emgr)
+                                  Shield& shield, EnergyManager& emgr)
 {
     auto dt = 0.1_s;
-    auto shield = ship.shield();
-    if(shield < ship.max_shield())
+    if(shield.current() < shield.maximum())
     {
-        double difference = ship.max_shield() - ship.shield();
+        double difference = shield.maximum() - shield.current();
         double recharge = sgen.mShieldRecharge * dt * health.status() * acc.get();
         double rec = std::min( recharge, difference );
         energy_t consumption = rec * sgen.mEnergyPerShieldPoint;
         if(!(consumption == 0.0_J)) {
             rec *= emgr.requestPower(consumption) / consumption;
         }
-        shield += rec;
+        shield.setShield( shield.current() + rec );
     }
-    ship.setShield( shield );
 }

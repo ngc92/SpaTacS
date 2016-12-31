@@ -53,17 +53,20 @@ auto GameSimulation::update() -> NotifyVec
     eventLoop();
 
     // copy new positions and velocities to game objects
-    for (auto& ship : *mState) {
-        if(ship.physics_id()) {
-            auto po = mWorld->getObject(ship.physics_id());
-            ship.setPosition(po.position());
-            ship.setVelocity(po.velocity());
-            ship.setMass(po.mass());
+    for (auto& object : *mState)
+    {
+        if(object.physics_id())
+        {
+            auto po = mWorld->getObject(object.physics_id());
+            object.setPosition(po.position());
+            object.setVelocity(po.velocity());
+            object.setMass(po.mass());
         }
-        ship.onStep();
+        object.onStep(*mState);
 
-        if(!ship.alive() && ship.physics_id()) {
-            mWorld->despawn(ship.physics_id());
+        if(!object.alive() && object.physics_id())
+        {
+            mWorld->despawn(object.physics_id());
         }
     }
 

@@ -16,11 +16,11 @@ namespace game
     public:
         Shield(ObjectID ship);
         bool alive() const override;
-        void onStep() override;
+        void onStep(GameState& state) override;
         Shield *clone() const override;
 
-        double shield() const;
-        double max_shield() const;
+        double current() const;
+        double maximum() const;
         void setShield( double new_value );
 
         length_t radius() const;

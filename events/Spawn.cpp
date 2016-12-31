@@ -7,6 +7,7 @@
 #include "game/GameState.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include "game/Shield.h"
 #include "game/Starship.h"
 #include "game/Projectile.h"
 #include "game/SubSystems.h"
@@ -108,7 +109,19 @@ void SpawnShip::apply(EventContext& context) const
     if( rest > 0.0_kg )
         std::cerr << "Could not fit total fuel into tank!" << std::endl;
 
+
+
+    // add the corresponding shield
+    auto shield = std::make_unique<game::Shield>( id );
+    shield->setPosition( mPosition );
+    id = game::ObjectID{context.state.getNextFreeID()};
+    shield->setID( id );
+    //shield->setPhysicsID( pid );
+
+    ship->setShieldID( id );
+
     context.state.add(std::move(ship));
+    context.state.add( std::move(shield) );
 }
 
 void SpawnShip::addAmmunition(std::string name, std::size_t amount)

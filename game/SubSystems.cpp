@@ -4,7 +4,9 @@
 
 #include "Starship.h"
 #include "GameObject.h"
+#include "GameState.h"
 #include "SubSystems.h"
+#include "Shield.h"
 #include "components.h"
 #include "systems/Timer.h"
 #include "game/systems/FuelTank.h"
@@ -43,7 +45,7 @@ SubSystems::SubSystems(const boost::property_tree::ptree& data)
 }
 
 
-void SubSystems::onStep(Starship& ship)
+void SubSystems::onStep(Starship& ship, GameState& state)
 {
     using namespace systems;
 
@@ -52,7 +54,10 @@ void SubSystems::onStep(Starship& ship)
     Propulsion prop;
 
     mComponents.apply(TimerCountdown{}, 0.1_s);
-    mComponents.apply(ShieldManagement{}, ship, mEnergyMgr);
+    auto& shield = dynamic_cast<Shield&>(state.getObject(ship.shield_id()));
+    mComponents.apply(ShieldManagement{}, shield, mEnergyMgr);
+    shield.setPosition( ship.position() );
+    shield.setVelocity( ship.velocity() );
     mComponents.apply(LifeSupportStep{}, ship, mEnergyMgr);
     mComponents.apply(prop, ship, ship.getDesiredAcceleration());
 

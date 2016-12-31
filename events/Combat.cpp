@@ -14,6 +14,7 @@
 #include "core/ecs/EntityHandle.h"
 #include "game/systems/Weapon.h"
 #include "game/systems/Ammunition.h"
+#include "game/Shield.h"
 
 namespace spatacs
 {
@@ -120,8 +121,7 @@ namespace spatacs
 
         // -------------------------------------------------------------------------------------------------------------
 
-        HitShield::HitShield(const Starship& ship, const game::Projectile& proj) :
-                ShipEvent( ship.id() )
+        HitShield::HitShield(const game::Starship& ship, const game::Projectile& proj)
         {
             mShipVel = ship.velocity();
             auto relvel = length(ship.velocity() - proj.velocity());
@@ -130,15 +130,17 @@ namespace spatacs
             mDamage = proj.damage();
             mDamage.kinetic += dval;
             mProjectileID = proj.id();
+            mShieldID = ship.shield_id();
         }
 
         using game::applyDamage;
 
-        void HitShield::applyToShip(Starship& target, EventContext& context) const
+        void HitShield::apply(EventContext& context) const
         {
-            auto effect = game::getShieldDamage(mDamage, target.shield());
+            auto& shield = dynamic_cast<game::Shield&>(context.state.getObject(mShieldID));
+            auto effect = game::getShieldDamage(mDamage, shield.current());
             // mDamage = effect.remaining;
-            target.setShield( target.shield() - effect.applied );
+            shield.setShield( shield.current() - effect.applied );
             auto& proj = context.state.getObject(mProjectileID);
             if(effect.remaining.kinetic == 0)
             {
@@ -157,7 +159,7 @@ namespace spatacs
 
                 /// \todo the shield should apply force (at least in part) radially, i think.
             }
-            context.notifications.push_back( game::events::ShieldAbsorbtion(target.id(), effect.applied) );
+            context.notifications.push_back( game::events::ShieldAbsorbtion(shield.id(), effect.applied) );
         }
 
 

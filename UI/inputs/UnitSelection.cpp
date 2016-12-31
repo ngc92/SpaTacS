@@ -146,7 +146,7 @@ void UnitSelection::step()
         std::wstringstream ws;
         ws << std::fixed << std::setprecision(1);
         ws << hover->name().c_str() << ":\n";
-        ws << " " << hover->shield() <<"|" << hover->armour() <<"|" << hover->hp() << "\n";
+        ws << " " << hover->shield_strength( state() ) <<"|" << hover->armour() <<"|" << hover->hp() << "\n";
         mHoverUI->setText(ws.str().c_str());
     }
 }

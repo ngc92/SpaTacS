@@ -10,12 +10,16 @@
 #include "Starship.h"
 #include "game/events/events.h"
 
-namespace spatacs {
+namespace spatacs
+{
     namespace cmd
     {
         class CommandManager;
     }
-    namespace game {
+    namespace game
+    {
+        class Shield;
+
         class AIPlayer : public core::TypedGameInterface<game::GameState, game::events::notification_t>
         {
         public:
@@ -43,7 +47,7 @@ namespace spatacs {
                 std::string ammo;
                 double score;
             };
-            BestAmmo getBestAmmo(const spatacs::game::Starship& own, const Starship& target) const;
+            BestAmmo getBestAmmo(const spatacs::game::Starship& own, const Starship& target, double target_shield) const;
         };
     }
 }

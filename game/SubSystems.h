@@ -36,7 +36,7 @@ namespace spatacs
         {
             SubSystems(const boost::property_tree::ptree& data);
 
-            void onStep(Starship& ship);
+            void onStep(Starship& ship, GameState& state);
             double dealDamage(double dmg);
 
             SubsystemManager mComponents;

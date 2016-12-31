@@ -19,7 +19,7 @@ namespace game
     {
     public:
         Projectile(ObjectID shooter, Damage damage);
-        void onStep() override;
+        void onStep(GameState& state) override;
 
         float age() const;
         const Damage& damage() const;

@@ -12,7 +12,7 @@ bool Shield::alive() const
     return true;
 }
 
-void Shield::onStep()
+void Shield::onStep(GameState& state)
 {
     double decay = std::exp( mShieldDecay*0.1_s );
     mCurShield *= decay;
@@ -28,12 +28,12 @@ Shield::Shield(ObjectID ship) : GameObject(ObjectType::SHIELD)
 
 }
 
-double Shield::shield() const
+double Shield::current() const
 {
     return mCurShield;
 }
 
-double Shield::max_shield() const
+double Shield::maximum() const
 {
     return mMaxShield;
 }

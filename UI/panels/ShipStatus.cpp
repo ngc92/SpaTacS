@@ -39,7 +39,8 @@ void ShipStatus::update(const game::Starship& ship)
     mBars.clear();
     mName->setText( irr::core::stringw(ship.name().c_str()).c_str() );
 
-    bars.push_back( Sys{L"shield", ship.shield() / ship.max_shield()} );
+    //! \todo find a way to re-introduce shield strength here
+    //bars.push_back( Sys{L"shield", ship.shield() / ship.max_shield()} );
     bars.push_back( Sys{L"hull", ship.armour() / ship.max_armour()} );
     bars.push_back( Sys{L"structure", ship.hp() / ship.max_hp()} );
 
