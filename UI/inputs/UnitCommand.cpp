@@ -29,7 +29,7 @@
 using namespace spatacs;
 
 /// \todo this is copy paste, improve that!
-const game::Starship* pick(const game::GameState& world, irr::core::line3df ray);
+const game::Starship* pick(const game::State& world, irr::core::line3df ray);
 
 ui::UnitCommand::UnitCommand(game::ObjectID id) :
         mActiveShipID(id)

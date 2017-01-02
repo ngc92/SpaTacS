@@ -17,7 +17,7 @@
 using namespace spatacs;
 using namespace ui;
 
-const game::Starship* pick(const game::GameState& world, irr::core::line3df ray);
+const game::Starship* pick(const game::State& world, irr::core::line3df ray);
 
 UnitSelection::UnitSelection(std::uint64_t team) :
         mOwnTeam(team)

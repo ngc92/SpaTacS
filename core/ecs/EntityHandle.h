@@ -38,6 +38,7 @@ namespace ecs
         template<class T>
         const T& get() const;
 
+        /// Add a new component of type \p T, which is constructed with \p args.
         template<class T, class... Args>
         T& add(Args&&... args);
 

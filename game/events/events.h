@@ -6,36 +6,36 @@
 #define SPATACS_GAME_EVENTS_H
 
 #include <boost/variant.hpp>
-#include "game/ObjectID.h"
+#include "game/entity/fwd.h"
 
 namespace spatacs
 {
-    namespace game
+namespace game
+{
+    namespace events
     {
-        namespace events
+        /*! The internal event system:
+         *
+         */
+
+        // Outgoing Events / Notifications
+        struct ReceiveDamage
         {
-            /*! The internal event system:
-             *  
-             */
+            ReceiveDamage(GameEntityID id_, double damage_) : id(id_), damage(damage_) { }
+            GameEntityID id;
+            double damage;
+        };
 
-            // Outgoing Events / Notifications
-            struct ReceiveDamage
-            {
-                ReceiveDamage(ObjectID id_, double damage_) : id(id_), damage(damage_) { }
-                ObjectID id;
-                double damage;
-            };
+        struct ShieldAbsorbtion
+        {
+            ShieldAbsorbtion(GameEntityID id_, double absorbed_) : id(id_), absorbed(absorbed_) { }
+            GameEntityID id;
+            double absorbed;
+        };
 
-            struct ShieldAbsorbtion
-            {
-                ShieldAbsorbtion(ObjectID id_, double absorbed_) : id(id_), absorbed(absorbed_) { }
-                ObjectID id;
-                double absorbed;
-            };
-
-            using notification_t = boost::variant<ReceiveDamage, ShieldAbsorbtion>;
-        }
+        using notification_t = boost::variant<ReceiveDamage, ShieldAbsorbtion>;
     }
+}
 }
 
 #endif //SPATACS_GAME_EVENTS_H

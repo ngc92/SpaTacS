@@ -83,7 +83,7 @@ void CommandManager::getCommandEvents(std::vector<events::EventPtr>& events)
 
 void CommandManager::setState(const state_t& state)
 {
-    mState = std::dynamic_pointer_cast<const game::GameState>(state);
+    mState = std::dynamic_pointer_cast<const game::State>(state);
     validate();
 }
 

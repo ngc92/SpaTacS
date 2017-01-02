@@ -20,7 +20,7 @@ namespace spatacs
 {
     namespace game
     {
-        class GameState;
+        class State;
     }
     namespace cmd
     {
@@ -55,7 +55,7 @@ namespace spatacs
 
             std::unordered_map<game::ObjectID, CommandSlot> mCommandSlots;
             std::vector<oneshot_t> mOneShotCommands;
-            std::shared_ptr<const game::GameState> mState;
+            std::shared_ptr<const game::State> mState;
         };
     }
 }

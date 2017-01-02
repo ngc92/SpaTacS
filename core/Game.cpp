@@ -5,8 +5,6 @@
 #include <chrono>
 #include <algorithm>
 #include "core/detail/GameThread.h"
-#include "events/Accelerate.h"
-#include "events/Combat.h"
 #include <iostream>
 
 using namespace spatacs;

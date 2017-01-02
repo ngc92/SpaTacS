@@ -17,7 +17,6 @@ namespace core
     public:
         virtual ~GameStateBase() = default;
 
-        virtual void cleanup() = 0;
         virtual std::unique_ptr<GameStateBase> clone() const = 0;
     };
 }

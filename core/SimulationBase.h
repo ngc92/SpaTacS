@@ -5,7 +5,6 @@
 #ifndef SPATACS_CORE_SIMULATION_BASE_H
 #define SPATACS_CORE_SIMULATION_BASE_H
 
-#include <events/IEvent.h>
 #include <vector>
 #include "any_vector.h"
 
@@ -18,8 +17,7 @@ namespace core
     class SimulationBase
     {
     protected:
-        using EventPtr  = std::unique_ptr<events::IEvent>;
-        using EventVec  = std::vector<EventPtr>;
+        using EventVec  = any_vector;
         using NotifyVec = any_vector;
 
     public:

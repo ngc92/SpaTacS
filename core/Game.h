@@ -11,17 +11,19 @@ namespace spatacs
     {
         class IEvent;
     }
-	namespace core {
+	namespace core
+    {
         class GameStateBase;
-        namespace detail {
+        namespace detail
+        {
             class GameThread;
         }
         class GameInterface;
         class SimulationBase;
 
-        class Game {
+        class Game
+        {
         public:
-            using EventPtr = std::unique_ptr<events::IEvent>;
             //! creates a game.
             //! \param simulation: Pointer to the simulation that is to be used in the game thread.
             Game(std::unique_ptr<SimulationBase> simulation);

@@ -13,15 +13,6 @@ include_directories(.
 
 ## SOURCE FILES ##
 set(EVENT_SOURCE_FILES
-        events/Accelerate.h
-        events/Accelerate.cpp
-        events/ShipEvent.h
-        events/ShipEvent.cpp
-        events/Combat.h
-        events/Combat.cpp
-        events/IEvent.h
-        events/Spawn.h
-        events/Spawn.cpp
         )
 
 set(COMMAND_SOURCE_FILES
@@ -57,49 +48,17 @@ SET(CORE_SOURCE_FILES
         core/meta/find.h core/ecs/detail.h)
 
 SET(GAME_SOURCE_FILES
-        game/Starship.h
-        game/GameState.h
-        game/GameState.cpp
-        game/Starship.cpp
-        game/Projectile.h
-        game/Projectile.cpp
-        game/components.cpp
-        game/GameObject.h
-        game/GameObject.cpp
-        game/GameSimulation.cpp
-        game/GameSimulation.h
         game/Damage.h
-        game/SubSystems.h
-        game/SubSystems.cpp
-        game/components.h
         game/Damage.cpp
         game/LevelLoader.h
         game/LevelLoader.cpp
-        game/AIPlayer.cpp
-        game/AIPlayer.h
-        game/ObjectID.h
         game/events/events.h
-        game/systems/Timer.h
-        game/systems/Timer.cpp
-        game/systems/FuelTank.h
-        game/systems/FuelTank.cpp
-        game/systems/Ammunition.h
-        game/systems/Ammunition.cpp
-        game/systems/Propulsion.h
-        game/systems/Propulsion.cpp
-        game/systems/fwd.h
-        game/systems/Shield.h
-        game/systems/Shield.cpp
-        game/systems/Power.h
-        game/systems/Power.cpp
-        game/systems/LifeSupport.h
-        game/systems/LifeSupport.cpp
-        game/systems/Weapon.h
-        game/systems/Weapon.cpp
-        game/systems/make_system.h
-        game/Shield.h
-        game/Shield.cpp
-        game/Shield.h)
+        game/entity/common_comps.h
+        game/entity/entity_comps.h
+        game/entity/fwd.h
+        game/entity/systems/Propulsion.h
+        game/entity/systems/Propulsion.cpp
+        game/entity/common_comps.cpp game/entity/entity.h game/State.h game/State.cpp game/Simulation.h game/Simulation.cpp game/events/Spawn.h game/events/Spawn.cpp game/events/context.h)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h
