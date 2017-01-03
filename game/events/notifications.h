@@ -14,10 +14,6 @@ namespace game
 {
     namespace events
     {
-        /*! The internal event system:
-         *
-         */
-
         // Outgoing Events / Notifications
         struct ReceiveDamage
         {
@@ -34,6 +30,9 @@ namespace game
         };
 
         using notification_t = boost::variant<ReceiveDamage, ShieldAbsorbtion>;
+
+        // Commands
+
     }
 }
 }

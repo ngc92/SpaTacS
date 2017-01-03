@@ -159,6 +159,12 @@ namespace physics
         return a.value == b.value;
     };
 
+    template<class T, class U>
+    constexpr bool operator!=(const UnitWrapper<T, U>& a, const UnitWrapper<T, U>& b)
+    {
+        return !(a==b);
+    };
+
     // vector multiplication
     template<class T, class U, class V>
     constexpr auto operator*( const Vec3<T>& a, const UnitWrapper<U, V>& s ) -> Vec3<decltype(a.x*s)>

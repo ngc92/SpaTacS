@@ -52,13 +52,29 @@ SET(GAME_SOURCE_FILES
         game/Damage.cpp
         game/LevelLoader.h
         game/LevelLoader.cpp
-        game/events/events.h
+        game/events/notifications.h
         game/entity/common_comps.h
         game/entity/entity_comps.h
         game/entity/fwd.h
         game/entity/systems/Propulsion.h
         game/entity/systems/Propulsion.cpp
-        game/entity/common_comps.cpp game/entity/entity.h game/State.h game/State.cpp game/Simulation.h game/Simulation.cpp game/events/Spawn.h game/events/Spawn.cpp game/events/context.h)
+        game/entity/common_comps.cpp
+        game/entity/entity.h
+        game/State.h
+        game/State.cpp
+        game/Simulation.h
+        game/Simulation.cpp
+        game/events/Spawn.h
+        game/events/Spawn.cpp
+        game/events/context.h
+        game/entity/systems/Physics.h
+        game/entity/systems/Physics.cpp
+        game/entity/entity_comps.cpp
+        game/events/commands.h
+        game/entity/subs/subcomponents.h
+        game/entity/subs/fwd.h
+        game/entity/subs/systems/Propulsion.cpp
+        game/entity/subs/systems/Propulsion.h)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h

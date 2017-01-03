@@ -1,16 +1,12 @@
 #ifndef SPATACS_CORE_GAME_H_INCLUDED
 #define SPATACS_CORE_GAME_H_INCLUDED
 
-#include <random>
 #include <memory>
 #include <functional>
+#include <vector>
 
 namespace spatacs
 {
-    namespace events
-    {
-        class IEvent;
-    }
 	namespace core
     {
         class GameStateBase;
@@ -35,8 +31,6 @@ namespace spatacs
 
         private:
             std::unique_ptr<detail::GameThread> mThread;
-            std::default_random_engine     mRandom;
-
             // interfaces
             std::vector<std::shared_ptr<GameInterface>> mUIs;
         };

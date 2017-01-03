@@ -17,10 +17,6 @@
 
 namespace spatacs
 {
-namespace events
-{
-    class IEvent;
-}
 namespace core
 {
     class SimulationBase;
@@ -31,8 +27,7 @@ namespace core
         class GameThread
         {
         public:
-            using EventPtr = std::unique_ptr<events::IEvent>;
-            using EventVec = std::vector<EventPtr>;
+            using EventVec = any_vector;
             using StatePtr = std::unique_ptr<GameStateBase>;
 
             GameThread(std::unique_ptr<SimulationBase> simulation);

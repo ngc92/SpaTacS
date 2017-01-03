@@ -6,13 +6,15 @@
 #define SPATACS_GAME_SIMULATION_H
 
 #include "core/SimulationBase.h"
-#include "events/events.h"
+#include "game/events/notifications.h"
 
 namespace spatacs
 {
 namespace physics
 {
     class PhysicsWorld;
+    class Object;
+    class ImpactInfo;
 }
 namespace game
 {
@@ -30,6 +32,9 @@ namespace game
     private:
         // physics
         std::unique_ptr<physics::PhysicsWorld> mWorld;
+        void physics_callback(physics::PhysicsWorld& world, const physics::Object& A,
+                              const physics::Object& B,
+                              physics::ImpactInfo info);
 
         // events
         std::vector<events::notification_t> mNotifications;

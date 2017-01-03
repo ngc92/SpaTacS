@@ -7,7 +7,7 @@
 
 ///! \todo figure out where to put this class: game or game::events.
 
-#include "events.h"
+#include "notifications.h"
 
 namespace spatacs
 {

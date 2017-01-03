@@ -20,7 +20,7 @@
 #include "game/Starship.h"
 #include "game/Projectile.h"
 #include "game/Shield.h"
-#include "game/events/events.h"
+#include "game/events/notifications.h"
 
 using namespace irr;
 using spatacs::ui::IrrlichtUI;

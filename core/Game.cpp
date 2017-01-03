@@ -3,7 +3,6 @@
 #include "SimulationBase.h"
 #include "GameStateBase.h"
 #include <chrono>
-#include <algorithm>
 #include "core/detail/GameThread.h"
 #include <iostream>
 
@@ -36,14 +35,11 @@ void Game::run()
         assert(state);
         auto events = mThread->getEvents();
 
-        std::vector<events::EventPtr> in_events;
+        any_vector in_events;
         for(auto& itf : mUIs)
         {
             itf->getCommandEvents(in_events);
         }
-
-        // shuffle commands.
-        std::shuffle(begin(in_events), end(in_events), mRandom);
 
         // process events generated due to commands
         mThread->setInEvents( std::move(in_events) );

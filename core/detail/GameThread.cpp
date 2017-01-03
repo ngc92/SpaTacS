@@ -85,7 +85,7 @@ auto GameThread::getEvents() -> any_vector
     return std::move(mOutEvents);
 }
 
-void GameThread::setInEvents(GameThread::EventVec events)
+void GameThread::setInEvents(EventVec events)
 {
     assert(mHasData);
     std::lock_guard<std::mutex> lck(mMutex);

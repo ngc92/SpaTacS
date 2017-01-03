@@ -185,6 +185,14 @@ void PhysicsWorld::applyImpulse(ObjectID id, impulse_vec impulse)
     detectCollisionsOf( id, 1.0_s, true );
 }
 
+void PhysicsWorld::updateObject(ObjectID id, length_vec new_position, velocity_vec new_veloctiy, mass_t new_mass)
+{
+    auto& target = getObjectRec(id);
+    target.object.setMass( new_mass );
+    target.object.setPosition(new_position);
+    target.object.setVelocity(new_veloctiy);
+}
+
 bool PhysicsWorld::Compare::operator()(const Collision& a, const Collision& b) const
 {
     return a.time > b.time;

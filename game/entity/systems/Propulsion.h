@@ -14,9 +14,9 @@ namespace spatacs
         namespace systems
         {
             using namespace components;
-            struct ApplyPropulsion : public core::ecs::System<signatures::ApplyPropulsion>
+            struct ApplyPropulsion : public System<signatures::ApplyPropulsion>
             {
-                void operator()(const PhysicsData&, const PropulsionControl&, physics::PhysicsWorld&) const;
+                void operator()(PhysicsData&, PropulsionControl&, SubEntities&) const;
             };
         }
     }

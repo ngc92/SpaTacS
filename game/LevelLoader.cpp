@@ -10,13 +10,12 @@ using namespace spatacs;
 using namespace game;
 using boost::property_tree::ptree;
 
-void LevelLoader::getCommandEvents(std::vector<spatacs::events::EventPtr>& evts)
+void LevelLoader::getCommandEvents(commands_t& evts)
 {
-    for(auto& ev : mSpawnEvents)
+    /*for(auto& ev : mSpawnEvents)
         evts.push_back( std::make_unique<spatacs::events::SpawnShip>(ev) );
 
-    mSpawnEvents.clear();
-
+    mSpawnEvents.clear();*/
 }
 
 LevelLoader::LevelLoader(std::string filename)
@@ -33,21 +32,22 @@ LevelLoader::LevelLoader(std::string filename)
             auto y = ship.second.get<length_t>("position.<xmlattr>.y");
             auto z = ship.second.get<length_t>("position.<xmlattr>.z");
 
-            mSpawnEvents.emplace_back(team, name, type, length_vec{x, y, z});
+            auto event = events::SpawnShip(team, name, type, length_vec{x, y, z});
+
 
             for(auto& sub : ship.second)
             {
                 if(sub.first == "ammo")
                 {
-                    mSpawnEvents.back().addAmmunition(sub.second.get<std::string>("type"),
+                    event.addAmmunition(sub.second.get<std::string>("type"),
                                                       sub.second.get<std::size_t>("amount"));
                 } else if (sub.first == "fuel")
                 {
-                    mSpawnEvents.back().setFuel(sub.second.get_value<mass_t>());
+                    event.setFuel(sub.second.get_value<mass_t>());
                 }
             }
 
-
+            mSpawnEvents.emplace_back(std::move(event));
         }
     }
 }

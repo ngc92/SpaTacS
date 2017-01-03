@@ -81,6 +81,9 @@ namespace physics
         /// Will affect only subsequent addForce calls.
         void setMass(ObjectID id, mass_t mass);
 
+        /// completely update the object. Be careful not to disrupt the physics simulation with this!
+        void updateObject(ObjectID id, length_vec new_position, velocity_vec new_veloctiy, mass_t new_mass);
+
         void simulate(time_t time_step);
 
     private:

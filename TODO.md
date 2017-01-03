@@ -31,3 +31,14 @@
 * AI    
 * other
   - Ship Editor
+  
+  
+  
+REWORK:
+  - [ ] Hit responses
+  - [ ] Event Loop
+  - [ ] Cleanup (remove dead Objects)
+  - [ ] Despawn Event
+  - [ ] Cleanup (remove physics Objects that are no longer needed)
+  - [ ] Propulsion (Object Level)
+  - [ ] Subcomponents

@@ -33,8 +33,8 @@ namespace game
         class Affiliation;
         class Armour;
         class PropulsionControl;
+        class SubEntities;
     }
-
 
     using GameEntityID = TaggedID<std::uint64_t, struct GameEntityTag>;
 
@@ -42,7 +42,7 @@ namespace game
     {
         using namespace components;
         using GameEntityConfig = core::ecs::Config<GameEntityID, Name, Timer, Health, Activity, PhysicsData, Parent,
-                Warhead, Affiliation, Armour>;
+                Warhead, Affiliation, Armour, SubEntities>;
     }
 
     using GameEntityManager = core::EntityManager<detail::GameEntityConfig>;
@@ -50,10 +50,15 @@ namespace game
 
     namespace systems
     {
+        using core::ecs::System;
         namespace signatures
         {
-            using namespace components;
-            using ApplyPropulsion = core::ecs::Signature<const PhysicsData, const PropulsionControl, physics::PhysicsWorld>;
+            namespace c = components;
+            using core::ecs::Signature;
+
+            using ApplyPropulsion = Signature<c::PhysicsData, c::PropulsionControl, c::SubEntities>;
+
+            using UpdatePhysics   = Signature<c::PhysicsData>;
         }
     }
 }

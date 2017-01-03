@@ -7,7 +7,7 @@
 
 #include "core/GameInterface.h"
 #include <string>
-#include "events/Spawn.h"
+#include "events/commands.h"
 
 namespace spatacs
 {
@@ -20,7 +20,7 @@ namespace spatacs
 
             virtual void init() override { }
 
-            virtual void getCommandEvents(std::vector<events::EventPtr>& evts) override;
+            virtual void getCommandEvents(commands_t& evts) override;
 
             virtual void setState(const state_t& state) override;
 
@@ -28,7 +28,7 @@ namespace spatacs
 
             virtual bool step() override;
         private:
-            std::vector<events::SpawnShip> mSpawnEvents;
+            std::vector<events::commands_t> mSpawnEvents;
         };
     }
 }

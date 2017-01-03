@@ -103,6 +103,12 @@ namespace spatacs
             return std::tie(a.x, a.y, a.z) == std::tie(b.x, b.y, b.z);
         }
 
+        template<class T>
+        constexpr bool operator!=(const Vec3<T>& a, const Vec3<T>& b)
+        {
+            return !(a==b);
+        }
+
         // utility functions
         template<class T, class S>
         auto dot(const Vec3<T>& a, const Vec3<S>& b)

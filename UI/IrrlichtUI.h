@@ -8,7 +8,7 @@
 #include "core/GameInterface.h"
 #include "IrrRAII.h"
 #include "game/GameState.h"
-#include "game/events/events.h"
+#include "game/events/notifications.h"
 
 namespace irr
 {
