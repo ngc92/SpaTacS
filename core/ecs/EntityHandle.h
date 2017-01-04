@@ -45,6 +45,15 @@ namespace ecs
         template<class T>
         void remove();
 
+        template<class T>
+        void add_tag();
+
+        template<class T>
+        void remove_tag();
+
+        template<class T>
+        bool has_tag();
+
         bool alive() const;
         void kill();
     private:
@@ -97,6 +106,27 @@ namespace ecs
     void EntityHandle<C>::remove()
     {
         mManager->template remove_component<T>(mID);
+    }
+
+    template<class C>
+    template<class T>
+    void EntityHandle<C>::add_tag()
+    {
+        mManager->template add_tag<T>(mID);
+    }
+
+    template<class C>
+    template<class T>
+    void EntityHandle<C>::remove_tag()
+    {
+        mManager->template remove_tag<T>(mID);
+    }
+
+    template<class C>
+    template<class T>
+    bool EntityHandle<C>::has_tag()
+    {
+        return mManager->template has_tag<T>(mID);
     }
 }
 }

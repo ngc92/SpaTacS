@@ -20,29 +20,6 @@ namespace core
 {
     namespace ecs
     {
-        /*! \brief Type that collects all information to configure our ECS.
-         *  \details Configuration includes:
-         *      All possible components types.
-         */
-        template<class ID, class... Components>
-        struct Config {
-            // types
-            using this_t        = Config<ID, Components...>;
-            using comp_vec      = pack_t<Components...>;
-            using id_t          = ID;
-            using cmp_storage_t = ComponentStorage<Components...>;
-
-            using storage_t     = EntityStorage<this_t>;
-
-            using handle_t      = EntityHandle<this_t>;
-            using manager_t     = EntityManager<this_t>;
-
-            // constant
-            static const constexpr std::size_t comp_count = sizeof...(Components);
-        };
-
-        // -----------------------------------------------------------------------------------------------------
-
         template<class Config>
         class EntityManager
         {
@@ -75,6 +52,15 @@ namespace core
 
             template<class T>
             bool has_component(id_t entity) { return mStorage.has_component(entity, type_t<T>{}); }
+
+            template<class T>
+            void add_tag(id_t entity) { mStorage.add_tag(entity, type_t<T>{}); };
+
+            template<class T>
+            void remove_tag(id_t entity) { mStorage.add_tag(entity, type_t<T>{}); }
+
+            template<class T>
+            bool has_tag(id_t entity) { return mStorage.has_tag(entity, type_t<T>{}); }
 
             template<class T>
             const T& get_component(id_t entity) const { return mStorage.get_component(entity, type_t<T>{}); }

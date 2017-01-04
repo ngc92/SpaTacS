@@ -30,6 +30,13 @@ namespace core
             constexpr static const std::size_t size = sizeof...(T);
         };
 
+        //! dumb wrapper around a template
+        template<template<class...> class T>
+        struct template_t
+        {
+            constexpr template_t() = default;
+        };
+
         //! compile time boolean
         template<bool b>
         struct bool_t
@@ -46,6 +53,9 @@ namespace core
         template<class... T>
         constexpr pack_t<T...> pack_v;
 
+        template<template<class...> class T>
+        constexpr template_t<T> template_v;
+
         // -------------------------------------------------------------------------------------------------------------
         // operations on types
         template<class T, class U>
@@ -58,13 +68,22 @@ namespace core
         // -------------------------------------------------------------------------------------------------------------
         // transformations
         template<class T>
-        constexpr type_t<std::decay_t<T>> decay(type_t<T> t) { return {}; }
+        constexpr type_t<std::decay_t<T>> decay(type_t<T>) { return {}; }
 
         template<class... T>
-        constexpr pack_t<std::decay_t<T>...> decay(pack_t<T...> t) { return {}; }
+        constexpr pack_t<std::decay_t<T>...> decay(pack_t<T...>) { return {}; }
 
         template<template<class...> class T, class... Args>
-        constexpr pack_t<Args...> args_of(type_t<T<Args...>> t) { return {}; };
+        constexpr pack_t<Args...> args_of(type_t<T<Args...>>) { return {}; };
+
+        template<class... T>
+        constexpr pack_t<T...> pack(type_t<T>...) { return {}; };
+
+        template<class... P1, class... P2>
+        constexpr pack_t<P1..., P2...> concat(pack_t<P1...>, pack_t<P2...>) { return {}; };
+
+        template<template<class...> class T, class... P>
+        constexpr type_t<T<P...>> substitute(template_t<T>, pack_t<P...>) { return {}; };
 
         // -------------------------------------------------------------------------------------------------------------
     }
@@ -77,6 +96,9 @@ namespace core
     template<bool b>
     using bool_t = meta::bool_t<b>;
 
+    template<template<class...> class T>
+    using template_t = meta::template_t<T>;
+
     // -----------------------------------------------------------------------------------------------------------------
     // variable templates for convenience
     template<class T>
@@ -84,6 +106,9 @@ namespace core
 
     template<class... T>
     constexpr pack_t<T...> pack_v;
+
+    template<template<class...> class T>
+    constexpr template_t<T> template_v;
 }
 }
 

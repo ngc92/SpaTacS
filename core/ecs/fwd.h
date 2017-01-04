@@ -11,9 +11,6 @@ namespace core
 {
 namespace ecs
 {
-    template<class ID, class... Components>
-    struct Config;
-
     template<class... Components>
     class ComponentStorage;
 
@@ -28,6 +25,14 @@ namespace ecs
 
     template<class Config>
     class EntityManager;
+
+    namespace config
+    {
+        template<class ID, class Comps, class Tags>
+        class Setup;
+    }
+
+    using config::Setup;
 }
 // pull important things out of ecs namespace
 using ecs::EntityManager;

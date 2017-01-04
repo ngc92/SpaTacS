@@ -29,9 +29,10 @@ namespace ecs
     template<class Config>
     class EntityStorage
     {
+        using config_t       = Config;
         using cmp_storage_t  = typename Config::cmp_storage_t;
         using id_t           = typename Config::id_t;
-        using meta_storage_t = MetadataStorage<MetaConfig<Config::comp_count, id_t, std::size_t>>;
+        using meta_storage_t = MetadataStorage<MetaConfig<Config::comp_count + Config::tags_count, id_t, std::size_t>>;
         using bits_t         = typename meta_storage_t::bits_t;
 
         static_assert(type_v<id_t> != type_v<std::size_t>, "ID type and subscript type are indistinguishable!");
@@ -109,6 +110,22 @@ namespace ecs
         T& get_mutable_component(id_t entity, type_t<T> component);
 
         // --------------------------------------------------------------------------------
+        //                          tags functions
+        // --------------------------------------------------------------------------------
+
+        //! Adds a tag to an entity. Does nothing if the tag is already present.
+        template<class T>
+        void add_tag(id_t entity, type_t<T> tag);
+
+        //! Removes a tag from a given \p entity. Does nothing if that tag was not set.
+        template<class T>
+        void remove_tag(id_t entity, type_t<T> tag);
+
+        //! Checks for the existence of a tag in \p entity.
+        template<class T>
+        bool has_tag(id_t entity, type_t<T> tag);
+
+        // --------------------------------------------------------------------------------
         //                          index functions
         // --------------------------------------------------------------------------------
 
@@ -119,6 +136,10 @@ namespace ecs
         //! Gets the component tuple index of a component.
         template<class T>
         constexpr static std::size_t tuple_index(type_t<T>);
+
+        //! Gets the bitfield index of a tag.
+        template<class T>
+        constexpr static std::size_t tag_index(type_t<T>);
 
         template<class... T>
         static bits_t get_bits(pack_t<T...>);
@@ -252,6 +273,13 @@ namespace ecs
 
     template<class C>
     template<class T>
+    constexpr std::size_t EntityStorage<C>::tag_index(type_t<T>)
+    {
+        return find(decay(type_v<T>), typename config_t::tags_vec{});
+    }
+
+    template<class C>
+    template<class T>
     constexpr std::size_t EntityStorage<C>::tuple_index(type_t<T>)
     {
         return component_id<T>;
@@ -326,6 +354,30 @@ namespace ecs
         std::get<tuple_index(component)>(components) = T(std::forward<Args>(args)...);
 
         return std::get<tuple_index(component)>(components);
+    };
+
+    // -----------------------------------------------------------------------------------------------------------------
+    //                                      tags functions
+    // -----------------------------------------------------------------------------------------------------------------
+    template<class C>
+    template<class T>
+    void EntityStorage<C>::remove_tag(id_t entity, type_t<T> tag)
+    {
+        mMetaData.mutable_bits(lookup(entity)).reset(tag_index(tag));
+    }
+
+    template<class C>
+    template<class T>
+    bool EntityStorage<C>::has_tag(id_t entity, type_t<T> tag)
+    {
+        return bits(lookup(entity)).test(tag_index(tag));
+    }
+
+    template<class C>
+    template<class T>
+    void EntityStorage<C>::add_tag(id_t entity, type_t<T> tag)
+    {
+        mMetaData.mutable_bits(lookup(entity)).set(tag_index(tag));
     };
 
     // -----------------------------------------------------------------------------------------------------------------
