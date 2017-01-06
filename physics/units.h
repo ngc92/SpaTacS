@@ -191,6 +191,17 @@ namespace physics
         return UnitWrapper<U, V>( std::abs(s.value) );
     };
 
+    /// this function safely calculated the ratio of \p a and \p b, taking into account
+    /// b == 0.
+    /// \return a/b, or 1 if b == 0.
+    template<class U, class V>
+    U ratio( const UnitWrapper<U, V>& a, const UnitWrapper<U, V>& b )
+    {
+        if( b == UnitWrapper<U, V>{U(0)})
+            return U(1);
+        return a / b;
+    };
+
     template<class O, class T, class U>
     std::basic_ostream<O>& operator<<(std::basic_ostream<O>& stream, const UnitWrapper<T, U>& u)
     {

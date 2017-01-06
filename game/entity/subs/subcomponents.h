@@ -27,6 +27,35 @@ namespace components
         speed_t propellant_speed = 0.0_kps;
         rate_t<mass_t> mass_rate = 1.0_kg / 1.0_s;
     };
+
+    struct FuelStorage
+    {
+        FuelStorage() = default;
+        explicit FuelStorage(mass_t v);
+
+        mass_t request(mass_t desire);
+        mass_t fill(mass_t amount);
+
+        // data about stored fuel
+        mass_t current;
+        mass_t capacity;
+    };
+
+    struct PowerPlantData
+    {
+        PowerPlantData() = default;
+        explicit PowerPlantData(power_t ep) : energy_production(ep) {}
+        power_t energy_production = 0.0_W;
+    };
+
+    struct ShieldGeneratorData
+    {
+        ShieldGeneratorData() = default;
+
+        // properties
+        rate_t<scalar_t> mShieldRecharge{0.0};
+        energy_t         mEnergyPerShieldPoint{1.0};
+    };
 }
 }
 }

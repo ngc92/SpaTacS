@@ -45,7 +45,9 @@ SET(CORE_SOURCE_FILES
         core/ecs/MetaStorage.h
         core/ecs/fwd.h
         core/meta/types.h
-        core/meta/find.h core/ecs/detail.h)
+        core/meta/find.h
+        core/ecs/detail.h
+        core/ecs/config.h)
 
 SET(GAME_SOURCE_FILES
         game/Damage.h
@@ -70,11 +72,15 @@ SET(GAME_SOURCE_FILES
         game/entity/systems/Physics.h
         game/entity/systems/Physics.cpp
         game/entity/entity_comps.cpp
-        game/events/commands.h
-        game/entity/subs/subcomponents.h
         game/entity/subs/fwd.h
+        game/entity/subs/subcomponents.h
+        game/entity/subs/systems/Propulsion.h
         game/entity/subs/systems/Propulsion.cpp
-        game/entity/subs/systems/Propulsion.h)
+        game/events/commands.h
+        game/entity/systems/Timer.h
+        game/entity/systems/Timer.cpp
+        game/events/controls.h
+        game/events/controls.cpp game/entity/subs/systems/Power.h game/entity/subs/systems/Power.cpp game/entity/subs/managers.h game/entity/subs/manager.cpp game/entity/systems/SubSys.h game/entity/systems/SubSys.cpp game/entity/subs/systems/Fuel.h game/entity/subs/systems/Fuel.cpp)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h

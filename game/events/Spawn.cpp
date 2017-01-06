@@ -42,6 +42,7 @@ void SpawnProjectile::apply(EventContext& context) const
     entity.add<components::Timer>(10.0_s);
     entity.add<components::Parent>(mShooter);
     entity.add<components::Warhead>(mDamage);
+    entity.add_tag<components::TimedDespawn>();
 
     physics::Object obj(mPosition, mVelocity, mMass, entity.id().getID());
     obj.addFixture( mRadius );

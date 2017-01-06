@@ -33,6 +33,9 @@ const core::GameStateBase& Simulation::getState() const
 auto Simulation::update() -> NotifyVec
 {
     /// \todo state cleanup
+    // process all the systems that update the entities
+
+
 
     // push all physics updates into the world.
     mState->entity_manager().apply(systems::UpdateToWorld{}, *mWorld);

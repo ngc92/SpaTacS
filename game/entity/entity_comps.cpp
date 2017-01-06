@@ -6,6 +6,7 @@
 #include "subs/fwd.h"
 #include "core/ecs/EntityManager.h"
 #include "subs/subcomponents.h"
+#include "subs/managers.h"
 
 using namespace spatacs;
 using namespace game;
@@ -67,17 +68,45 @@ const force_vec& PhysicsData::force() const
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
+//      Propulsion Control
+// ---------------------------------------------------------------------------------------------------------------------
+
+void PropulsionControl::setDesiredAcceleration(const accel_vec& desired)
+{
+    mDesiredAcceleration = desired;
+}
+
+const accel_vec& PropulsionControl::desired_acceleration() const
+{
+    return mDesiredAcceleration;
+}
+
+void PropulsionControl::setMaximumAcceleration(accel_t macc)
+{
+    mMaximumAcceleration = macc;
+}
+
+accel_t PropulsionControl::maximum_acceleration() const
+{
+    return mMaximumAcceleration;
+}
+
+
+// ---------------------------------------------------------------------------------------------------------------------
 //      Sub Entities stuff
 // ---------------------------------------------------------------------------------------------------------------------
+
 struct SubEntities::Data
 {
     SubEntityManager mgr;
+    FuelDistributor  fuel_dist;
 };
 
 SubEntities::SubEntities() : mData( std::make_unique<Data>() )
 {
-
 }
+
+SubEntities::~SubEntities() = default;
 
 SubEntities::SubEntities(const SubEntities& o) : mData( std::make_unique<Data>( *o.mData ) )
 {
@@ -85,3 +114,4 @@ SubEntities::SubEntities(const SubEntities& o) : mData( std::make_unique<Data>( 
 }
 
 SubEntities::SubEntities(SubEntities&&) = default;
+

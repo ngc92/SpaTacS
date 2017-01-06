@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include "id.h"
+#include "physics/units.h"
 #include "core/ecs/fwd.h"
 #include "../fwd.h"
 
@@ -17,14 +18,24 @@ namespace game
     namespace components
     {
         class EngineData;
+        class FuelStorage;
+        class PowerPlantData;
+        class ShieldGeneratorData;
+        constexpr auto sub_components = core::pack_v<EngineData, FuelStorage, PowerPlantData, ShieldGeneratorData>;
     }
 
     using SubEntityID = TaggedID<std::uint64_t, struct SubEntityTag>;
 
+    // managers
+    class FuelDistributor;
+
     namespace detail
     {
         using namespace components;
-        using SubEntityConfig = core::ecs::Config<SubEntityID, Name, Timer, Health, Activity, EngineData>;
+        constexpr auto SubEntitySetup = core::ecs::make_setup(core::type_v<SubEntityID>,
+                                                               concat(components::common_components, components::sub_components),
+                                                               core::pack_v<>);
+        using SubEntityConfig = decltype(make_config(SubEntitySetup));
     }
 
     using SubEntityManager = core::EntityManager<detail::SubEntityConfig>;
@@ -35,10 +46,12 @@ namespace game
         using core::ecs::System;
         namespace signatures
         {
-            namespace c = components;
+            using namespace components;
             using core::ecs::Signature;
 
-            using Engine = Signature<c::EngineData, const c::Health, const c::Activity>;
+            using Engine     = Signature<EngineData, const Health, const Activity>;
+            using PowerPlant = Signature<const PowerPlantData, const Health, const Activity>;
+            using FuelTank   = Signature<FuelStorage>;
         }
     }
 }

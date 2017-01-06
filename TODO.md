@@ -42,3 +42,6 @@ REWORK:
   - [ ] Cleanup (remove physics Objects that are no longer needed)
   - [ ] Propulsion (Object Level)
   - [ ] Subcomponents
+    * [ ] Power management
+    * [ ] Armament
+    * [ ] Storages

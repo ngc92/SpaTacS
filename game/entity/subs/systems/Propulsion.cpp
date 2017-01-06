@@ -4,12 +4,12 @@
 
 #include "Propulsion.h"
 #include "../subcomponents.h"
-//#include "FuelTank.h"
+#include "../managers.h"
 
 using namespace spatacs;
 using namespace game::systems;
 
-void EngineThrust::operator()(EngineData& engine, const Health& health, const Activity& acc,
+void EngineThrust::operator()(EngineData& engine, const Health& health, const Activity& acc, FuelDistributor& fuelmgr,
                             const force_vec& desired_force)
 {
     auto dt = 0.1_s;
@@ -25,7 +25,7 @@ void EngineThrust::operator()(EngineData& engine, const Health& health, const Ac
         need_mass = max_mass;
 
     // get fuel
-    mass_t fuel = 1.0_kg;//request_fuel(ship.components(), need_mass);
+    mass_t fuel = fuelmgr.request(need_mass);
 
     force_t f = fuel * engine.propellant_speed  / dt;
     mMaxForce += max_mass * engine.propellant_speed  / dt;

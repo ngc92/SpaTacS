@@ -23,7 +23,7 @@ void systems::ApplyPropulsion::operator()(PhysicsData& pd, PropulsionControl& pc
     auto desired_force = pc.desired_acceleration() * pd.mass();
 
     EngineThrust thrust;
-    se.submgr().apply(thrust, desired_force);
+    se.submgr().apply(thrust, se.fuelmgr(), desired_force);
 
     pc.setMaximumAcceleration( thrust.getMax() / pd.mass() );
     pd.setForce( pd.force() + thrust.getProduced() );

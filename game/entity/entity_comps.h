@@ -86,6 +86,13 @@ namespace components
         accel_t   mMaximumAcceleration{0};         //!< Estimated maximum possible propulsion.
     };
 
+    class EnergyManager
+    {
+    public:
+    private:
+
+    };
+
     class SubEntities
     {
     public:
@@ -96,6 +103,9 @@ namespace components
 
         SubEntityManager& submgr();
         const SubEntityManager& submgr() const;
+
+        FuelDistributor& fuelmgr();
+        const FuelDistributor& fuelmgr() const;
     private:
         class Data;
         std::unique_ptr<Data> mData;

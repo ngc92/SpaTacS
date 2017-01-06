@@ -21,6 +21,7 @@ namespace systems
     public:
         EngineThrust() = default;
         void operator()(EngineData& engine, const Health& health, const Activity& acc,
+                        FuelDistributor& fuelmgr,
                         const force_vec& desired_force);
 
         const force_vec& getProduced() const { return mProducedForce; }
