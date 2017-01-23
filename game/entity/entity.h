@@ -3,7 +3,6 @@
 //
 
 #include "fwd.h"
-#include "common_comps.h"
-#include "entity_comps.h"
+#include "components.h"
 #include "core/ecs/EntityManager.h"
 #include "core/ecs/EntityHandle.h"

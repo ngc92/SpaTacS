@@ -2,29 +2,23 @@
 // Created by erik on 9/22/16.
 //
 
-#include "cmd/Attack.h"
-#include "cmd/Move.h"
 #include <irrlicht/IVideoDriver.h>
 #include <irrlicht/IGUIEnvironment.h>
 #include <irrlicht/IGUIStaticText.h>
 #include <sstream>
 #include <iomanip>
 #include "UnitCommand.h"
-#include "game/GameState.h"
+#include "game/State.h"
 #include <irrlicht/ICameraSceneNode.h>
 #include <iostream>
 #include "UI/convert.h"
-#include "game/Starship.h"
 #include "UI/IrrlichtUI.h"
-#include "cmd/CommandManager.h"
 #include <irrlicht/ISceneManager.h>
 #include "UI/gfx/MultiLineNode.h"
 #include "UI/panels/ShipStatus.h"
 #include <irrlicht/IBillboardSceneNode.h>
 #include "UI/panels/DamageReport.h"
 #include "UI/panels/WeaponsPanel.h"
-#include "game/systems/Ammunition.h"
-#include "game/SubSystems.h"
 
 using namespace spatacs;
 

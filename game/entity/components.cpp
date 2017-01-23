@@ -2,15 +2,36 @@
 // Created by erik on 1/3/17.
 //
 
-#include "entity_comps.h"
-#include "subs/fwd.h"
+#include "components.h"
 #include "core/ecs/EntityManager.h"
-#include "subs/subcomponents.h"
-#include "subs/managers.h"
+#include <boost/algorithm/clamp.hpp>
+#include <boost/throw_exception.hpp>
+
 
 using namespace spatacs;
 using namespace game;
 using namespace components;
+
+double Health::setCurrent(double new_health)
+{
+    mCurrent = boost::algorithm::clamp(new_health, 0.0, mMaximum);
+    return mCurrent;
+}
+
+void Health::setMaximum(double new_maximum)
+{
+    if(new_maximum < 0)
+        BOOST_THROW_EXCEPTION(std::logic_error("negative maximum health!"));
+
+    mMaximum = new_maximum;
+    setCurrent(mCurrent);
+}
+
+double Health::setHealthStatus(double percentage)
+{
+    return setCurrent(percentage * maximum());
+}
+
 
 PhysicsData::PhysicsData(physics::ObjectID id, mass_t mass, length_vec pos, velocity_vec vel) :
     mPhysicsID(id), mMass(mass), mPosition(pos), mVelocity(vel)
@@ -68,7 +89,7 @@ const force_vec& PhysicsData::force() const
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-//      Propulsion Control
+//                                              Propulsion Control
 // ---------------------------------------------------------------------------------------------------------------------
 
 void PropulsionControl::setDesiredAcceleration(const accel_vec& desired)
@@ -91,27 +112,35 @@ accel_t PropulsionControl::maximum_acceleration() const
     return mMaximumAcceleration;
 }
 
-
 // ---------------------------------------------------------------------------------------------------------------------
-//      Sub Entities stuff
+//                                                  Fuel Tank
 // ---------------------------------------------------------------------------------------------------------------------
 
-struct SubEntities::Data
-{
-    SubEntityManager mgr;
-    FuelDistributor  fuel_dist;
-};
-
-SubEntities::SubEntities() : mData( std::make_unique<Data>() )
+FuelTank::FuelTank(mass_t v) : mCapacity(v)
 {
 }
 
-SubEntities::~SubEntities() = default;
-
-SubEntities::SubEntities(const SubEntities& o) : mData( std::make_unique<Data>( *o.mData ) )
+mass_t FuelTank::request(mass_t desire)
 {
-
+    if(desire < 0.0_kg)
+        BOOST_THROW_EXCEPTION( std::logic_error("Negative mass specified!") );
+    auto m = std::min(desire, mCurrent);
+    mCurrent -= m;
+    return m;
 }
 
-SubEntities::SubEntities(SubEntities&&) = default;
+mass_t FuelTank::fill(mass_t amount)
+{
+    if(amount < 0.0_kg)
+        BOOST_THROW_EXCEPTION( std::logic_error("Negative mass specified!") );
 
+    auto space = mCapacity - mCurrent;
+    auto m = std::min(amount, space);
+    mCurrent += m;
+    return amount - m;
+}
+
+mass_t FuelTank::capacity() const
+{
+    return mCapacity;
+}

@@ -6,7 +6,6 @@
 #include <irrlicht/irrlicht.h>
 #include <algorithm>
 #include "gfx/GridNode.h"
-#include "events/Combat.h"
 #include "gfx/ShotFx.h"
 #include "gfx/ShipFx.h"
 #include "gfx/ShieldFx.h"
@@ -17,10 +16,8 @@
 #include "UI/inputs/UnitCommand.h"
 #include <iostream>
 #include "convert.h"
-#include "game/Starship.h"
-#include "game/Projectile.h"
-#include "game/Shield.h"
 #include "game/events/notifications.h"
+#include "game/entity/entity.h"
 
 using namespace irr;
 using spatacs::ui::IrrlichtUI;
@@ -29,7 +26,7 @@ using namespace ui;
 namespace icore = irr::core;
 
 
-const game::Starship* pick(const spatacs::game::State& world, icore::line3df ray)
+/*const game::Starship* pick(const spatacs::game::State& world, icore::line3df ray)
 {
     const spatacs::game::Starship* picked = nullptr;
     f64 md = 1e10;
@@ -49,7 +46,7 @@ const game::Starship* pick(const spatacs::game::State& world, icore::line3df ray
         }
     }
     return picked;
-}
+}*/
 
 
 class IrrlichtUI::EventRec : public IEventReceiver
@@ -154,6 +151,30 @@ void IrrlichtUI::init()
     mMap = mDevice->getSceneManager()->addEmptySceneNode();
 }
 
+namespace
+{
+    namespace sns
+    {
+        using namespace game::components;
+        using SNS = spatacs::core::ecs::Signature<>;
+        struct SceneNodeSystem : public spatacs::core::ecs::System<SNS>
+        {
+            void operator()(const PhysicsData& pd, irr::scene::ISceneManager& smgr)
+            {
+                irr::scene::ISceneNode* node = nullptr;
+
+                if(node) {
+                    drop_ptr<scene::ISceneNodeAnimator> ani{smgr.createFlyStraightAnimator(convert(pd.position()),
+                                                                                            convert(pd.position() +
+                                                                                                    0.1_s * pd.velocity()),
+                                                                                            100)};
+                    node->addAnimator(ani.get());
+                }
+            }
+        };
+    }
+}
+
 void IrrlichtUI::setState(const state_t& bstate)
 {
     auto state = std::dynamic_pointer_cast<const game::State>(bstate);
@@ -163,7 +184,9 @@ void IrrlichtUI::setState(const state_t& bstate)
 
     // update the location map
     mMap->removeAll();
-    for(auto& obj : *mState) {
+    sns::SceneNodeSystem sys;
+    mState->entity_manager().apply(sys, *smgr);
+    /*for(auto& obj : *mState) {
         if(!obj.alive())
             continue;
         irr::scene::ISceneNode* node = nullptr;
@@ -204,8 +227,7 @@ void IrrlichtUI::setState(const state_t& bstate)
                                                                                     100)};
             node->addAnimator(ani.get());
         }
-    }
-
+    }*/
 }
 
 bool IrrlichtUI::step()
@@ -242,7 +264,7 @@ void IrrlichtUI::notify(const notify_t& events)
 }
 
 using drop_ani_ptr = drop_ptr<scene::ISceneNodeAnimator>;
-
+/*
 void IrrlichtUI::onEvent(const game::events::ReceiveDamage& ev)
 {
     auto smgr = mDevice->getSceneManager();
@@ -289,7 +311,7 @@ void IrrlichtUI::onEvent(const game::events::ShieldAbsorbtion& ev)
         bb->addAnimator(a.get());
     }
 }
-
+*/
 cmd::CommandManager& IrrlichtUI::getCommandMgr()
 {
     return *mCommands;

@@ -2,7 +2,7 @@
 // Created by erik on 1/3/17.
 //
 
-#include "game/entity/entity_comps.h"
+#include "game/entity/components.h"
 #include "physics/PhysicsWorld.h"
 #include "Physics.h"
 

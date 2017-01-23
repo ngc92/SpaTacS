@@ -2,6 +2,8 @@
 // Created by erik on 1/2/17.
 //
 
+#include <game/entity/systems/Propulsion.h>
+#include <game/entity/systems/Timer.h>
 #include "Simulation.h"
 #include "State.h"
 #include "physics/PhysicsWorld.h"
@@ -34,7 +36,8 @@ auto Simulation::update() -> NotifyVec
 {
     /// \todo state cleanup
     // process all the systems that update the entities
-
+    mState->entity_manager().apply(systems::ApplyPropulsion{});
+    mState->entity_manager().apply(systems::TimerCountdown{}, 0.1_s);
 
 
     // push all physics updates into the world.

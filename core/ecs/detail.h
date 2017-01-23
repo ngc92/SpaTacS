@@ -11,7 +11,8 @@ namespace core
 {
 namespace ecs
 {
-namespace detail {
+namespace detail
+{
     template<class Bitfield>
     bool match_bits(const Bitfield& required, const Bitfield& available)
     {
@@ -26,11 +27,12 @@ namespace detail {
         return std::get<id>(comps);
     }
 
-
+    /// dispatch to component
     template<class Index, class T, class CG>
     auto& get_argument_dispatch(Index&& index, type_t<T> type, CG&& get_components)
     {
-        return get_component(get_components(std::forward<Index>(index)), type);
+        auto& component_tuple = get_components(std::forward<Index>(index));
+        return get_component(component_tuple, type);
     };
 
     template<class Index, class Config, class T, class CG>
@@ -58,7 +60,7 @@ namespace detail {
      * @param config         Transmitts the \p Config of the EntityManager.
      * @param get_components A function that, given an index, returns the components that belong to that given
      *                       index as a tuple of references.
-     * @return A function that has to be applied to a components tuple.
+     * @return A function that has to be applied to an index.
      */
     template<class System, class Config, class ComponentGetter, class... Types>
     auto make_forwarder(System&& system, type_t<Config> config, pack_t<Types...> argument_types,

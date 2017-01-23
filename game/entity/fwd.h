@@ -6,9 +6,10 @@
 #define SPATACS_GAME_ENTITY_FWD_H
 
 #include <cstdint>
-#include "id.h"
+#include <game/entity/systems/ShipSystems.h>
 #include "core/ecs/System.h"
 #include "core/ecs/config.h"
+#include "game/ObjectID.h"
 
 namespace spatacs
 {
@@ -20,25 +21,24 @@ namespace game
 {
     namespace components
     {
-        // common components
+        // components
         class Timer;
         class Name;
         class Health;
         class Activity;
-
-        constexpr auto common_components = core::pack_v<Timer, Name, Health, Activity>;
-
-        // GameEntity components
         class PhysicsData;
         class Parent;
         class Warhead;
         class Affiliation;
         class Armour;
         class PropulsionControl;
-        class SubEntities;
 
-        constexpr auto entity_components = core::pack_v<PhysicsData, Parent, Warhead, Affiliation, Armour,
-                PropulsionControl, SubEntities>;
+        // Ship System components
+        class Engine;
+        class FuelTank;
+
+        constexpr auto components_list = core::pack_v<Timer, Name, Health, Activity, PhysicsData, Parent, Warhead,
+                Affiliation, Armour, PropulsionControl, Engine, FuelTank>;
 
         // tags
         class TimedDespawn;
@@ -46,12 +46,12 @@ namespace game
         constexpr auto entity_tags = core::pack_v<TimedDespawn>;
     }
 
-    using GameEntityID = TaggedID<std::uint64_t, struct GameEntityTag>;
+    using GameEntityID = ObjectID;
 
     namespace detail
     {
         constexpr auto GameEntitySetup = core::ecs::make_setup(core::type_v<GameEntityID>,
-                                      concat(components::common_components, components::entity_components),
+                                                               components::components_list,
                                                                components::entity_tags);
         using GameEntityConfig = decltype(make_config(GameEntitySetup));
     }
@@ -64,13 +64,21 @@ namespace game
         using core::ecs::System;
         namespace signatures
         {
-            namespace c = components;
-            using core::ecs::Signature;
+            namespace detail
+            {
+                using namespace components;
+                using core::ecs::Signature;
 
-            using ApplyPropulsion    = Signature<c::PhysicsData, c::PropulsionControl, c::SubEntities>;
-            using SubComonents       = Signature<c::SubEntities>;
-            using UpdatePhysics      = Signature<c::PhysicsData>;
-            using CountdownSignature = Signature<c::Timer>;
+                // put all into a sub-namespace so that we can later do a using declaration without getting also the components namespace
+                namespace sigs
+                {
+                    using ApplyPropulsion    = Signature<PhysicsData, PropulsionControl, Engine, FuelTank>;
+                    using UpdatePhysics      = Signature<PhysicsData>;
+                    using CountdownSignature = Signature<Timer>;
+                }
+            }
+
+            using namespace detail::sigs;
         }
     }
 }

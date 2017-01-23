@@ -7,8 +7,7 @@
 #include <irrlicht/IGUIStaticText.h>
 #include <iomanip>
 #include <sstream>
-#include "game/GameState.h"
-#include "game/Starship.h"
+#include "game/State.h"
 #include "UnitSelection.h"
 #include "UnitCommand.h"
 #include <irrlicht/ICameraSceneNode.h>
@@ -17,7 +16,7 @@
 using namespace spatacs;
 using namespace ui;
 
-const game::Starship* pick(const game::State& world, irr::core::line3df ray);
+//const game::Starship* pick(const game::State& world, irr::core::line3df ray);
 
 UnitSelection::UnitSelection(std::uint64_t team) :
         mOwnTeam(team)

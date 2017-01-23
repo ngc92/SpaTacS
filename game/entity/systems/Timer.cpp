@@ -3,7 +3,7 @@
 //
 
 #include "Timer.h"
-#include "../common_comps.h"
+#include "../components.h"
 
 using namespace spatacs;
 using namespace game::systems;

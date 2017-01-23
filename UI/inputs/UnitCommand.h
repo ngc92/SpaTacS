@@ -9,7 +9,8 @@
 #include <boost/optional.hpp>
 #include "UI/IrrRAII.h"
 #include "UI/IInputMode.h"
-#include "vec.h"
+#include "physics/units.h"
+#include "game/ObjectID.h"
 
 namespace irr
 {

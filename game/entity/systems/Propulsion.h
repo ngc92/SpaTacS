@@ -16,7 +16,7 @@ namespace spatacs
             using namespace components;
             struct ApplyPropulsion : public System<signatures::ApplyPropulsion>
             {
-                void operator()(PhysicsData&, PropulsionControl&, SubEntities&) const;
+                void operator()(PhysicsData& pd, PropulsionControl& pc, const Engine& engine, FuelTank& tank) const;
             };
         }
     }

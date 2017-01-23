@@ -7,7 +7,7 @@
 
 #include "core/GameInterface.h"
 #include "IrrRAII.h"
-#include "game/GameState.h"
+#include "game/State.h"
 #include "game/events/notifications.h"
 
 namespace irr
@@ -38,7 +38,7 @@ namespace spatacs {
             ~IrrlichtUI();
             void init() override;
 
-            virtual void getCommandEvents(std::vector<events::EventPtr>& evts) override;
+            virtual void getCommandEvents(commands_t& cmds) override;
 
             void setState(const state_t& state) override;
 
@@ -49,14 +49,14 @@ namespace spatacs {
             bool handleUIEvent( const irr::SEvent& ev );
 
             // interface for tools
-            const game::GameState& state() const { return *mState; }
+            const game::State& state() const { return *mState; }
             cmd::CommandManager& getCommandMgr();
             irr::IrrlichtDevice* getDevice() { return mDevice; }
             bool pause() const;
         private:
             std::uint64_t mOwnTeam;
             irr::IrrlichtDevice* mDevice;
-            std::shared_ptr<const game::GameState> mState;
+            std::shared_ptr<const game::State> mState;
 
             class EventRec;
             std::unique_ptr<EventRec> mEventReceiver;

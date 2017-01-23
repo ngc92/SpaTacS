@@ -5,7 +5,6 @@
 #ifndef SPATACS_WEAPONSPANEL_H
 #define SPATACS_WEAPONSPANEL_H
 
-#include "game/Starship.h"
 #include "UI/IrrRAII.h"
 #include "UI/gfx/HealthBar.h"
 #include <irrlicht/IGUIElement.h>

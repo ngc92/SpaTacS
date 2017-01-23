@@ -15,16 +15,7 @@ include_directories(.
 set(EVENT_SOURCE_FILES
         )
 
-set(COMMAND_SOURCE_FILES
-        cmd/Attack.h
-        cmd/Attack.cpp
-        cmd/Move.h
-        cmd/Move.cpp
-        cmd/ICommand.h
-        cmd/CommandManager.h
-        cmd/CommandManager.cpp
-        cmd/SetMode.h
-        cmd/SetMode.cpp)
+set(COMMAND_SOURCE_FILES)
 
 SET(CORE_SOURCE_FILES
         id.h
@@ -55,12 +46,10 @@ SET(GAME_SOURCE_FILES
         game/LevelLoader.h
         game/LevelLoader.cpp
         game/events/notifications.h
-        game/entity/common_comps.h
-        game/entity/entity_comps.h
+        game/entity/components.h
         game/entity/fwd.h
         game/entity/systems/Propulsion.h
         game/entity/systems/Propulsion.cpp
-        game/entity/common_comps.cpp
         game/entity/entity.h
         game/State.h
         game/State.cpp
@@ -71,16 +60,12 @@ SET(GAME_SOURCE_FILES
         game/events/context.h
         game/entity/systems/Physics.h
         game/entity/systems/Physics.cpp
-        game/entity/entity_comps.cpp
-        game/entity/subs/fwd.h
-        game/entity/subs/subcomponents.h
-        game/entity/subs/systems/Propulsion.h
-        game/entity/subs/systems/Propulsion.cpp
+        game/entity/components.cpp
         game/events/commands.h
         game/entity/systems/Timer.h
         game/entity/systems/Timer.cpp
         game/events/controls.h
-        game/events/controls.cpp game/entity/subs/systems/Power.h game/entity/subs/systems/Power.cpp game/entity/subs/managers.h game/entity/subs/manager.cpp game/entity/systems/SubSys.h game/entity/systems/SubSys.cpp game/entity/subs/systems/Fuel.h game/entity/subs/systems/Fuel.cpp)
+        game/events/controls.cpp game/entity/systems/ShipSystems.h game/ObjectID.h)
 
 SET(PHYSICS_SOURCE_FILES
         vec.h
@@ -100,47 +85,52 @@ SET(PHYSICS_SOURCE_FILES
         physics/ObjectID.h
         )
 
-set(UI_SOURCE_FILES
+set(IRR_FX_FILES
         UI/gfx/GridNode.h
         UI/gfx/GridNode.cpp
         UI/gfx/ShotFx.cpp
         UI/gfx/ShotFx.h
-        UI/IrrlichtUI.cpp
-        UI/IrrlichtUI.h
-        UI/IInputMode.h
-        UI/IInputMode.cpp
-        UI/inputs/UnitCommand.cpp
-        UI/inputs/UnitCommand.h
-        UI/inputs/UnitSelection.cpp
-        UI/inputs/UnitSelection.h
         UI/gfx/ShipFx.cpp
         UI/gfx/ShipFx.h
-        UI/convert.h
-        UI/convert.cpp
-        UI/IrrRAII.h 
-        UI/states/MainMenu.h 
-        UI/states/MainMenu.cpp 
-        UI/AppState.h 
-        UI/states/GameState.h 
-        UI/states/GameState.cpp 
-        UI/states/SettingsMenu.h
-        UI/states/SettingsMenu.cpp
-        UI/StateManager.h 
-        UI/StateManager.cpp 
-        UI/gfx/MultiLineNode.h 
+        UI/gfx/MultiLineNode.h
         UI/gfx/MultiLineNode.cpp
-        UI/states/LevelSelection.h
-        UI/states/LevelSelection.cpp
-        UI/panels/ShipStatus.h
-        UI/panels/ShipStatus.cpp
-        UI/panels/DamageReport.h
-        UI/panels/DamageReport.cpp
         UI/gfx/HealthBar.h
         UI/gfx/HealthBar.cpp
-        UI/panels/WeaponsPanel.h
-        UI/panels/WeaponsPanel.cpp
         UI/gfx/ShieldFx.h
-        UI/gfx/ShieldFx.cpp)
+        UI/gfx/ShieldFx.cpp
+
+        UI/IrrRAII.h
+        UI/AppState.h
+        UI/StateManager.h
+        UI/StateManager.cpp
+        UI/states/MainMenu.h
+        UI/states/MainMenu.cpp
+        UI/states/SettingsMenu.h
+        UI/states/SettingsMenu.cpp
+        UI/states/LevelSelection.h
+        UI/states/LevelSelection.cpp
+        )
+
+set(UI_SOURCE_FILES
+        UI/IrrlichtUI.cpp
+        UI/IrrlichtUI.h
+#        UI/IInputMode.h
+#        UI/IInputMode.cpp
+#        UI/inputs/UnitCommand.cpp
+#        UI/inputs/UnitCommand.h
+#        UI/inputs/UnitSelection.cpp
+#        UI/inputs/UnitSelection.h
+#        UI/convert.h
+#        UI/convert.cpp
+#        UI/states/GameState.h
+#        UI/states/GameState.cpp
+#        UI/panels/ShipStatus.h
+#        UI/panels/ShipStatus.cpp
+#        UI/panels/DamageReport.h
+#        UI/panels/DamageReport.cpp
+#        UI/panels/WeaponsPanel.h
+#        UI/panels/WeaponsPanel.cpp
+        )
 
 set(SOURCE_FILES
         ${COMMAND_SOURCE_FILES}
@@ -150,9 +140,10 @@ set(SOURCE_FILES
 set(TEST_SOURCE_FILES test/vec_test.cpp test/collision_test.cpp test/units_test.cpp test/PhysicsWorld.cpp test/core/ecs_test.cpp test/core/ecs_storage.cpp)
 
 add_library(GameSimulation ${CORE_SOURCE_FILES} ${PHYSICS_SOURCE_FILES} ${GAME_SOURCE_FILES} ${EVENT_SOURCE_FILES})
+add_library(IrrlichtFX ${IRR_FX_FILES})
 add_executable(SpaTacS ${SOURCE_FILES})
 add_executable(tests ${TEST_SOURCE_FILES} ${PHYSICS_SOURCE_FILES})
-target_link_libraries(SpaTacS GameSimulation ${Irrlicht_LIB} ${Boost_FILESYSTEM_LIBRARY_DEBUG} ${Boost_SYSTEM_LIBRARY_DEBUG} pthread)
+target_link_libraries(SpaTacS GameSimulation IrrlichtFX ${Irrlicht_LIB} ${Boost_FILESYSTEM_LIBRARY_DEBUG} ${Boost_SYSTEM_LIBRARY_DEBUG} pthread)
 
 ## data files ##
 set(DATA_SHEETS data/destroyer.xml)

@@ -52,7 +52,7 @@ namespace ecs
         void remove_tag();
 
         template<class T>
-        bool has_tag();
+        bool has_tag() const;
 
         bool alive() const;
         void kill();
@@ -124,7 +124,7 @@ namespace ecs
 
     template<class C>
     template<class T>
-    bool EntityHandle<C>::has_tag()
+    bool EntityHandle<C>::has_tag() const
     {
         return mManager->template has_tag<T>(mID);
     }
