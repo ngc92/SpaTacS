@@ -3,8 +3,8 @@
 #include "PropulsionControlComponent.h"
 #include "SpaceMovementComponent.h"
 #include "GameFramework/Actor.h"
-#include "ShipComponents/EngineComponent.h"
-#include "ShipComponents/ThrusterComponent.h"
+#include "ShipComponents/Propulsion/EngineComponent.h"
+#include "ShipComponents/Propulsion/ThrusterComponent.h"
 #include "DistributionSystemComponent.h"
 #include <cmath>
 #include <Kismet/KismetMathLibrary.h>

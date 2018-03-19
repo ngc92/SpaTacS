@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ShipComponents/EngineComponent.h"
+#include "EngineComponent.h"
 #include "CombustionEngineComponent.generated.h"
 
 /**
