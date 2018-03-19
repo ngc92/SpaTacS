@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
+#include "ShipComponents/ShipComponentBase.h"
 #include "ThrusterComponent.generated.h"
 
 
@@ -12,8 +12,8 @@ class USpaceMovementComponent;
 class UPropulsionControlComponent;
 
 
-UCLASS( ClassGroup=(Spaceship), abstract, meta=(BlueprintSpawnableComponent), hideCategories = (Rendering, Replication, Physics, Collision))
-class SPATACS_API UThrusterComponent : public USceneComponent
+UCLASS( ClassGroup=(ShipComponent), abstract, meta=(BlueprintSpawnableComponent), hideCategories = (Rendering, Replication, Physics, Collision))
+class SPATACS_API UThrusterComponent : public UShipComponentBase
 {
 	GENERATED_BODY()
 

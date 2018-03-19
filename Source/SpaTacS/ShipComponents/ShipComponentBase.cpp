@@ -43,3 +43,8 @@ float UShipComponentBase::GetHealthStatus() const
 {
 	return CurrentHealth / MaximumHealth;
 }
+
+const FText& UShipComponentBase::GetComponentName() const
+{
+    return ComponentName;
+}

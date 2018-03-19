@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
+#include "ShipComponentBase.h"
 #include "Turret.generated.h"
 
 
@@ -37,7 +37,7 @@ public:
 
 
 UCLASS(Blueprintable, ClassGroup = (Spaceship), abstract, meta=(BlueprintSpawnableComponent), hideCategories = (Rendering, Replication, Physics, Collision))
-class SPATACS_API UTurret : public USceneComponent
+class SPATACS_API UTurret : public UShipComponentBase
 {
 	GENERATED_BODY()
 

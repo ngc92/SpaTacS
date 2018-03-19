@@ -33,6 +33,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetHealthStatus() const;
 
+    UFUNCTION(BlueprintPure)
+    const FText& GetComponentName() const;
+
 private:
 	UPROPERTY(EditAnywhere)
 	FText ComponentName;

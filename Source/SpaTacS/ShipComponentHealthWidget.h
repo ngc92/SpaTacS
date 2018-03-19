@@ -22,6 +22,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetShip(const AStarShip* Ship);
 
+    void NativeConstruct() override;
 	void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 protected:
 	UPROPERTY(BlueprintReadOnly)

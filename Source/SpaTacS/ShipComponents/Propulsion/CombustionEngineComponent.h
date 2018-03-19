@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS(ClassGroup = (Spaceship), meta = (BlueprintSpawnableComponent), hideCategories = (Rendering, Replication, Physics, Collision))
+UCLASS(ClassGroup = (ShipComponent), meta = (BlueprintSpawnableComponent), hideCategories = (Rendering, Replication, Physics, Collision))
 class SPATACS_API UCombustionEngineComponent : public UEngineComponent
 {
 	GENERATED_BODY()

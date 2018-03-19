@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "ShipComponentBase.h"
 #include "MagazineComponent.generated.h"
 
 
@@ -22,7 +22,7 @@ public:
 
 
 UCLASS(ClassGroup = (Spaceship), meta = (BlueprintSpawnableComponent), hideCategories = (Rendering, Replication, Physics, Collision))
-class SPATACS_API UMagazineComponent : public UActorComponent
+class SPATACS_API UMagazineComponent : public UShipComponentBase
 {
 	GENERATED_BODY()
 
