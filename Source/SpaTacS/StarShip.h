@@ -59,4 +59,7 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     UShipStructureComponent* StructureComponent;
+
+    UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
+    int OwningPlayerID;
 };
