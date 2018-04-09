@@ -108,6 +108,8 @@ public:
     /// If this is set to true the PropulsionSystem will regularly update the target rotation to optimize engine utilization for thrust.
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AngleControl)
     bool bRotateToAlignThrust;
+	
+	float GetShipMass() const;
 
 private:
 	UPROPERTY()

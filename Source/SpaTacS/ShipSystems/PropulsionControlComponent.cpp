@@ -135,3 +135,7 @@ FVector UPropulsionControlComponent::GetCurrentAcceleration() const
     return MovementComponent->GetAcceleration();
 }
 
+float UPropulsionControlComponent::GetShipMass() const
+{
+	return MovementComponent->GetMass();
+}

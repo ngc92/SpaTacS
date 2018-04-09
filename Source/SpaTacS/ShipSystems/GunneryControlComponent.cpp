@@ -64,6 +64,9 @@ void UGunneryControlComponent::SearchTargetForTurret(FTurretData& TurretData)
     float best_score = 0.f;
     for (auto& Target : TargetList)
     {
+		// check that target has a valid actor
+		if(!Target.TargetActor) continue;
+		
         FVector AimDir = TurretData.Turret->GetAimDirection(Target.TargetActor->GetActorLocation(), Target.TargetActor->GetVelocity());
         // For each possible target, get the rotation angle we need to fire.
 

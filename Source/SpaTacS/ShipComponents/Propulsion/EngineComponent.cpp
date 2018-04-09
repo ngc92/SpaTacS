@@ -12,10 +12,6 @@
 UEngineComponent::UEngineComponent()
 {
 	ThrustLevel = 0.f;
-    ProportionalControl = 1.f;
-    DifferentialControl = 1.f;
-    IntegralControl = 1.f;
-	GlobalControlFactor = 0.01f;
     
 	bAfterBurner = false;
     PrimaryComponentTick.bCanEverTick = true;
@@ -51,24 +47,37 @@ FVector UEngineComponent::GetThrustDirection() const
 void UEngineComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if(!MovementComponent || !PropulsionSystem || DeltaTime < 1e-6)
+		return;
 
     // Control
     FVector Error = PropulsionSystem->DesiredAcceleration - PropulsionSystem->GetCurrentAcceleration();
-    FVector Derivative = (Error - LastError) / DeltaTime;
-    LastError = Error;
-    IntegralError += DeltaTime * Error;
-    IntegralError *= std::exp(-DeltaTime);
+	
+    float directionalOverlap = FVector::DotProduct(GetThrustDirection(), Error);
+	// be somewhat optimistic about performance. also eliminates danger of div by zero.
+	float max_acc = getMaximumThrust() / PropulsionSystem->GetShipMass() + 0.1f;
+	float change = directionalOverlap / DeltaTime / max_acc;
+	UpdateThrustLevel(change, DeltaTime);
 
-    FVector ControlVector = ProportionalControl * Error + IntegralControl * IntegralError + DifferentialControl * Derivative;
-    float ControlStrength = ControlVector.Size();
-    if(ControlStrength > 1e-6) {
-        ControlVector *= 1.0 / ControlStrength;
-    }
+    ProducedThrust = ProduceThrust(DeltaTime);
+    MovementComponent->AddThrust( GetThrustVector() );
+}
 
-    float directionalOverlap = FVector::DotProduct(GetThrustDirection(), ControlVector);
-    ThrustLevel += GlobalControlFactor * ControlStrength * (4*directionalOverlap - 3) * DeltaTime;
-
-    if (ThrustLevel < 0.f)
+void UEngineComponent::UpdateThrustLevel(float Change, float DeltaTime)
+{
+	// limit the rate of change
+	if(Change > 1.f) {
+		Change = 1.f;
+	}
+	
+	if(Change < -1.f) {
+		Change = -1.f;
+	}
+	
+	ThrustLevel += Change * DeltaTime;
+	
+	// limit the thrust level
+	if (ThrustLevel < 0.f)
     {
 		ThrustLevel = 0.f;
 	}
@@ -76,10 +85,4 @@ void UEngineComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
     {
 		ThrustLevel = 1.f;
 	}
-
-    ProducedThrust = ProduceThrust(DeltaTime);
-    if(MovementComponent)
-    {
-        MovementComponent->AddThrust( GetThrustVector() );
-    }   
 }

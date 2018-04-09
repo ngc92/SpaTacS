@@ -45,7 +45,7 @@ public:
 
 	// Called every frame
 	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
-
+	
 protected:
     /// A reference to
 	UPROPERTY()
@@ -62,22 +62,8 @@ protected:
 
     UPROPERTY(EditInstanceOnly, BlueprintReadWrite)
     float ThrustLevel;
-
-    // PID Control
-    FVector IntegralError;
-    FVector LastError;
-
-    UPROPERTY(EditAnywhere, Category=Control)
-    float ProportionalControl;
-
-    UPROPERTY(EditAnywhere, Category = Control)
-    float DifferentialControl;
-
-    UPROPERTY(EditAnywhere, Category = Control)
-    float IntegralControl;
-
-	UPROPERTY(EditAnywhere, Category = Control)
-	float GlobalControlFactor;
+	
+	void UpdateThrustLevel(float Change, float DeltaTime);
 
 private:
     virtual float ProduceThrust(float DeltaTime) { check(0); return 0.f; }
